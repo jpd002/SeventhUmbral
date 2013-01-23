@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <WinSock2.h>
 #include "LobbyServer.h"
+#include "GameServer.h"
 
 int main(int argc, char** argv)
 {
@@ -13,6 +14,9 @@ int main(int argc, char** argv)
 
 	CLobbyServer lobbyServer;
 	lobbyServer.Start();
+
+	CGameServer gameServer;
+	gameServer.Start();
 
 	Sleep(INFINITE);
 

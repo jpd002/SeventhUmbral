@@ -24,12 +24,24 @@
     <ClCompile Include="..\common\BLOWFISH.C">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\GameServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\PacketUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\BLOWFISH.H">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\GameServer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\PacketUtils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
