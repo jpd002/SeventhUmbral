@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "..\..\Framewor
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Daemon", "Daemon.vcxproj", "{5E47C890-818C-402E-AAEF-48A40210BF1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterEditor", "..\tools\CharacterEditor\CharacterEditor.csproj", "{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -35,6 +37,12 @@ Global
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Release|Win32.ActiveCfg = Release|Win32
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Release|Win32.Build.0 = Release|Win32
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Release|x64.ActiveCfg = Release|Win32
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Debug|Win32.Build.0 = Debug|Any CPU
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.ActiveCfg = Release|Any CPU
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.Build.0 = Release|Any CPU
+		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
