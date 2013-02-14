@@ -878,6 +878,7 @@ static PacketData GetCharacterInfo()
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x38]) = character.GetFaceInfo();
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x40]) = character.hairStyle << 10;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x48]) = character.voice;
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = 0;						//weapon
 
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x88]) = character.headGear;		//headGear
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x90]) = character.bodyGear;		//bodyGear
@@ -1081,6 +1082,9 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 
 						switch(emoteId)
 						{
+						case 0x6A:		//Cheer
+							animationId = 0x05006000;
+							break;
 						case 0x6F:		//Dance
 							animationId = 0x0500B000;
 							break;

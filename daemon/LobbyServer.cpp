@@ -419,7 +419,7 @@ static PacketData GetCharacters(PacketData& incomingPacket)
 	*reinterpret_cast<uint32*>(&characterData[0x2D]) = character.GetFaceInfo();		//face Stuff?
 	*reinterpret_cast<uint32*>(&characterData[0x31]) = character.hairStyle << 10;	//hair model
 	*reinterpret_cast<uint32*>(&characterData[0x35]) = character.voice;				//voice
-	*reinterpret_cast<uint32*>(&characterData[0x39]) = 0x08D01400;					//Weapon
+	*reinterpret_cast<uint32*>(&characterData[0x39]) = 0;							//Weapon (0x08D01400)
 
 	*reinterpret_cast<uint32*>(&characterData[0x55]) = character.headGear;		//headGear
 	*reinterpret_cast<uint32*>(&characterData[0x59]) = character.bodyGear;		//bodyGear
