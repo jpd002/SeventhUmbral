@@ -28,6 +28,7 @@ public:
 	int				hairColor;
 	int				eyeColor;
 
+	int				faceType;
 	int				faceBrow;
 	int				faceEye;
 	int				faceIris;

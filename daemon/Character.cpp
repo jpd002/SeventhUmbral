@@ -8,16 +8,17 @@ struct FACEINFO
 	unsigned int options		: 5;
 	unsigned int optionsColor	: 3;
 
-	unsigned int eyes			: 3;
-	unsigned int unknown1		: 3;
-	unsigned int ears			: 2;
+	unsigned int type			: 6;
+	unsigned int jaw			: 2;
 
-	unsigned int unknown2		: 4;
+	unsigned int mouth			: 2;
+	unsigned int cheek			: 2;
 	unsigned int nose			: 3;
-	unsigned int unknown3		: 2;
+	unsigned int eye			: 3;
+	unsigned int iris			: 1;
 	unsigned int brows			: 3;
 
-	unsigned int unknown4		: 4;
+	unsigned int unknown		: 2;
 };
 static_assert(sizeof(FACEINFO) == 4, "FACEINFO must be 4 bytes");
 
@@ -29,6 +30,7 @@ CCharacter::CCharacter()
 , hairStyle(0)
 , hairColor(0)
 , eyeColor(0)
+, faceType(0)
 , faceBrow(0)
 , faceEye(0)
 , faceIris(0)
@@ -72,6 +74,7 @@ void CCharacter::Load(Framework::CStream& stream)
 
 	eyeColor = Framework::Xml::GetAttributeIntValue(characterNode, "EyeColor");
 
+	faceType = Framework::Xml::GetAttributeIntValue(characterNode, "FaceType");
 	faceBrow = Framework::Xml::GetAttributeIntValue(characterNode, "FaceBrow");
 	faceEye = Framework::Xml::GetAttributeIntValue(characterNode, "FaceEye");
 	faceIris = Framework::Xml::GetAttributeIntValue(characterNode, "FaceIris");
@@ -100,12 +103,15 @@ uint32 CCharacter::GetFaceInfo() const
 	FACEINFO faceInfo;
 	memset(&faceInfo, 0, sizeof(FACEINFO));
 	faceInfo.options = faceOption1;
-	faceInfo.optionsColor = 0;
-	faceInfo.eyes = 1;
+	faceInfo.optionsColor = faceOption2;
+	faceInfo.type = faceType;
+	faceInfo.mouth = faceMouth;
+	faceInfo.cheek = faceCheek;
 	faceInfo.nose = faceNose;
-	faceInfo.ears = 2;
+	faceInfo.jaw = faceJaw;
+	faceInfo.eye = faceEye;
+	faceInfo.iris = faceIris;
 	faceInfo.brows = faceBrow;
-	faceInfo.unknown4 = 0;
 	uint32 faceValue = *reinterpret_cast<uint32*>(&faceInfo);
 	return faceValue;
 }
