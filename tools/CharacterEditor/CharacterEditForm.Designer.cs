@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.activeCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.nameTextBox = new System.Windows.Forms.TextBox();
@@ -88,6 +89,8 @@
             this.feetGearTextBox = new System.Windows.Forms.TextBox();
             this.label27 = new System.Windows.Forms.Label();
             this.exportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.presetButton = new System.Windows.Forms.Button();
+            this.presetContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // activeCheckBox
@@ -597,11 +600,27 @@
             // 
             this.exportSaveFileDialog.Filter = "Character Description Files (*.xml)|*.xml";
             // 
+            // presetButton
+            // 
+            this.presetButton.Location = new System.Drawing.Point(333, 405);
+            this.presetButton.Name = "presetButton";
+            this.presetButton.Size = new System.Drawing.Size(95, 20);
+            this.presetButton.TabIndex = 57;
+            this.presetButton.Text = "Preset";
+            this.presetButton.UseVisualStyleBackColor = true;
+            this.presetButton.Click += new System.EventHandler(this.presetButton_Click);
+            // 
+            // presetContextMenu
+            // 
+            this.presetContextMenu.Name = "presetContextMenu";
+            this.presetContextMenu.Size = new System.Drawing.Size(61, 4);
+            // 
             // CharacterEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(440, 488);
+            this.Controls.Add(this.presetButton);
             this.Controls.Add(this.feetGearTextBox);
             this.Controls.Add(this.label27);
             this.Controls.Add(this.handsGearTextBox);
@@ -733,6 +752,8 @@
         private System.Windows.Forms.TextBox feetGearTextBox;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.SaveFileDialog exportSaveFileDialog;
+        private System.Windows.Forms.Button presetButton;
+        private System.Windows.Forms.ContextMenuStrip presetContextMenu;
 
     }
 }

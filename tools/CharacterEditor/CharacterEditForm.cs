@@ -16,6 +16,17 @@ namespace CharacterEditor
         Character _character = new Character();
         List<TribeItem> _tribeItems = new List<TribeItem>();
 
+        static EquipPreset[] _equipPresets = 
+        {
+            new EquipPreset { Name = "(None)",                              HeadGear = 0x00000, BodyGear = 0x00400, LegsGear = 0x00400, HandsGear = 0x00400, FeetGear = 0x00400 },
+            new EquipPreset { Name = "Miraudont",                           HeadGear = 0x04C2F, BodyGear = 0x03906, LegsGear = 0x00CC4, HandsGear = 0x038E0, FeetGear = 0x034A3 },
+            new EquipPreset { Name = "Estinien Wyrmblood",                  HeadGear = 0x09001, BodyGear = 0x09001, LegsGear = 0x09001, HandsGear = 0x09001, FeetGear = 0x09001 },
+            new EquipPreset { Name = "Widargelt",                           HeadGear = 0x0B001, BodyGear = 0x0B001, LegsGear = 0x0B001, HandsGear = 0x0B001, FeetGear = 0x0B001 },
+            new EquipPreset { Name = "Rubh Epocan",                         HeadGear = 0x05060, BodyGear = 0x01C40, LegsGear = 0x0144E, HandsGear = 0x01841, FeetGear = 0x01841 },
+            new EquipPreset { Name = "Nael van Darnus (Elezen Male Only)",  HeadGear = 0x00000, BodyGear = 0xE4000, LegsGear = 0x00400, HandsGear = 0x00400, FeetGear = 0x00400 },
+            new EquipPreset { Name = "Wrenix Wrong",                        HeadGear = 0x02061, BodyGear = 0x03100, LegsGear = 0x02440, HandsGear = 0x02CC0, FeetGear = 0x0548A }
+        };
+        
         public CharacterEditForm()
         {
             InitializeComponent();
@@ -184,6 +195,32 @@ namespace CharacterEditor
             {
                 XmlCharacterSerializer.Save(fileStream, _character);
             }
+        }
+
+        private void presetMenuItem_Click(object sender, EventArgs e)
+        {
+            var menuItem = (ToolStripItem)sender;
+            var preset = (EquipPreset)menuItem.Tag;
+
+            headGearTextBox.Text = preset.HeadGear.ToString();
+            bodyGearTextBox.Text = preset.BodyGear.ToString();
+            legsGearTextBox.Text = preset.LegsGear.ToString();
+            handsGearTextBox.Text = preset.HandsGear.ToString();
+            feetGearTextBox.Text = preset.FeetGear.ToString();
+        }
+
+        private void presetButton_Click(object sender, EventArgs e)
+        {
+            // Clear the contents of the context menu.
+            presetContextMenu.Items.Clear();
+
+            foreach (var preset in _equipPresets)
+            {
+                var menuItem = presetContextMenu.Items.Add(preset.Name, null, new System.EventHandler(presetMenuItem_Click));
+                menuItem.Tag = preset;
+            }
+
+            presetContextMenu.Show(presetButton, new Point(0, presetButton.Height));
         }
 
         #endregion
