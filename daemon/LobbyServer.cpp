@@ -412,8 +412,14 @@ static PacketData GetCharacters(PacketData& incomingPacket)
 	}
 
 	PacketData characterData(std::begin(g_characterData), std::end(g_characterData));
+	
 	characterData[0x21] = CCharacter::GetModelFromTribe(character.tribe);
 	characterData[0x9F] = character.tribe;
+	characterData[0xC7] = character.guardian;
+	characterData[0xC8] = character.birthMonth;
+	characterData[0xC9] = character.birthDay;
+
+	*reinterpret_cast<uint32*>(&characterData[0x25]) = character.size;				//size
 
 	*reinterpret_cast<uint32*>(&characterData[0x29]) = character.GetColorInfo();	//hairColor + skinColor
 	*reinterpret_cast<uint32*>(&characterData[0x2D]) = character.GetFaceInfo();		//face Stuff?

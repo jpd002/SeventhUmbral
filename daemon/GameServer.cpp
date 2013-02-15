@@ -912,6 +912,7 @@ static PacketData GetCharacterInfo()
 	const uint32 characterInfoBase = 0x368;
 
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x20]) = CCharacter::GetModelFromTribe(character.tribe);
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x28]) = character.size;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x30]) = character.GetColorInfo();
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x38]) = character.GetFaceInfo();
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x40]) = character.hairStyle << 10;

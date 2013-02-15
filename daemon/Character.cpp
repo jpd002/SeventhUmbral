@@ -25,6 +25,7 @@ static_assert(sizeof(FACEINFO) == 4, "FACEINFO must be 4 bytes");
 CCharacter::CCharacter()
 : active(false)
 , tribe(0)
+, size(0)
 , voice(0)
 , skinColor(0)
 , hairStyle(0)
@@ -40,6 +41,9 @@ CCharacter::CCharacter()
 , faceCheek(0)
 , faceOption1(0)
 , faceOption2(0)
+, guardian(0)
+, birthDay(0)
+, birthMonth(0)
 , headGear(0)
 , bodyGear(0)
 , legsGear(0)
@@ -66,6 +70,7 @@ void CCharacter::Load(Framework::CStream& stream)
 	name = characterNode->GetAttribute("Name");
 	Framework::Xml::GetAttributeBoolValue(characterNode, "Active", &active);
 	tribe = Framework::Xml::GetAttributeIntValue(characterNode, "Tribe");
+	size = Framework::Xml::GetAttributeIntValue(characterNode, "Size");
 	voice = Framework::Xml::GetAttributeIntValue(characterNode, "Voice");
 	skinColor = Framework::Xml::GetAttributeIntValue(characterNode, "Skin");
 
@@ -84,6 +89,10 @@ void CCharacter::Load(Framework::CStream& stream)
 	faceCheek = Framework::Xml::GetAttributeIntValue(characterNode, "FaceCheek");
 	faceOption1 = Framework::Xml::GetAttributeIntValue(characterNode, "FaceOption1");
 	faceOption2 = Framework::Xml::GetAttributeIntValue(characterNode, "FaceOption2");
+
+	guardian = Framework::Xml::GetAttributeIntValue(characterNode, "Guardian");
+	birthMonth = Framework::Xml::GetAttributeIntValue(characterNode, "BirthMonth");
+	birthDay = Framework::Xml::GetAttributeIntValue(characterNode, "BirthDay");
 
 	headGear = Framework::Xml::GetAttributeIntValue(characterNode, "HeadGear");
 	bodyGear = Framework::Xml::GetAttributeIntValue(characterNode, "BodyGear");

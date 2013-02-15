@@ -21,6 +21,7 @@ public:
 	std::string		name;
 
 	int				tribe;
+	int				size;
 	int				voice;
 	int				skinColor;
 
@@ -38,6 +39,10 @@ public:
 	int				faceCheek;
 	int				faceOption1;
 	int				faceOption2;
+
+	int				guardian;
+	int				birthMonth;
+	int				birthDay;
 
 	int				headGear;
 	int				bodyGear;
