@@ -1113,6 +1113,11 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 						uint32 animationId = 0x0500B000;
 						uint32 descriptionId = 0x526E;
 
+						if(emoteId >= 0x64 && emoteId < 0xA0)
+						{
+							animationId = 0x05000000 + ((emoteId - 0x64) << 12);
+						}
+/*
 						switch(emoteId)
 						{
 						case 0x6A:		//Cheer
@@ -1134,6 +1139,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 							animationId = 0x05015000;
 							break;
 						}
+*/
 
 						*reinterpret_cast<uint32*>(&commandRequestPacket[0x28]) = clientTime;
 						*reinterpret_cast<uint32*>(&commandRequestPacket[0x30]) = animationId;
