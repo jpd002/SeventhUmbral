@@ -1124,14 +1124,14 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 						case 0x71:		//Doze
 							animationId = 0x0500D000;
 							break;
+						case 0x75:		//Huh
+							animationId = 0x05011000;
+							break;
 						case 0x78:		//Chuckle
 							animationId = 0x05014000;
 							break;
 						case 0x79:		//Laugh
 							animationId = 0x05015000;
-							break;
-						case 0x85:		//Shrug
-							animationId = 0x05011000;
 							break;
 						}
 
