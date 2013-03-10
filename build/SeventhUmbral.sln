@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Daemon", "Daemon.vcxproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterEditor", "..\tools\CharacterEditor\CharacterEditor.csproj", "{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketUnpacker", "..\tools\PacketUnpacker\PacketUnpacker.csproj", "{AB3566EA-EF04-4CD3-B8E1-502BAC419588}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,12 @@ Global
 		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.ActiveCfg = Release|Any CPU
 		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.Build.0 = Release|Any CPU
 		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|x64.ActiveCfg = Release|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Debug|Win32.Build.0 = Debug|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Release|Win32.ActiveCfg = Release|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Release|Win32.Build.0 = Release|Any CPU
+		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Release|x64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
