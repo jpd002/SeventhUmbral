@@ -7,6 +7,7 @@
 #include "PathUtils.h"
 #include "StdStreamUtils.h"
 #include "GameServer_Login.h"
+#include "GameServer_MoveOutOfRoom.h"
 
 #define LOGNAME		("GameServer")
 
@@ -120,6 +121,17 @@ static PacketData GetCharacterInfo()
 	return outgoingPacket;
 }
 
+static uint16 GetSubPacketCommand(const PacketData& subPacket)
+{
+	return *reinterpret_cast<const uint16*>(subPacket.data() + 0x12);
+}
+
+static void SendPacket(SOCKET clientSocket, const void* packet, size_t size)
+{
+	int sent = send(clientSocket, reinterpret_cast<const char*>(packet), size, 0);
+	assert(sent == size);
+}
+
 static void UpdateEntities(SOCKET clientSocket)
 {
 	static int entityUpdateCounter = 0;
@@ -171,8 +183,81 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 
 	printf("%s: Received connection.\r\n", LOGNAME);
 
+	uint32 moorPart2Pending = 0;
+	uint32 moorPart3Pending = 0;
+	uint32 moorPart4Pending = 0;
+	uint32 moorPart5Pending = 0;
+	bool alreadyMovedOutOfRoom = false;
+
 	while(1)
 	{
+		if(moorPart2Pending != 0)
+		{
+			Sleep(100);
+
+			moorPart2Pending--;
+			if(moorPart2Pending == 0)
+			{
+				SendPacket(clientSocket, g_client0_moor20, sizeof(g_client0_moor20));
+				SendPacket(clientSocket, g_client0_moor21, sizeof(g_client0_moor21));
+				SendPacket(clientSocket, g_client0_moor22, sizeof(g_client0_moor22));
+				SendPacket(clientSocket, g_client0_moor23, sizeof(g_client0_moor23));
+				SendPacket(clientSocket, g_client0_moor24, sizeof(g_client0_moor24));
+
+				moorPart3Pending = 10;
+			}
+		}
+
+		if(moorPart3Pending != 0)
+		{
+			Sleep(100);
+
+			moorPart3Pending--;
+			if(moorPart3Pending == 0)
+			{
+				SendPacket(clientSocket, g_client0_moor25, sizeof(g_client0_moor25));
+				SendPacket(clientSocket, g_client0_moor26, sizeof(g_client0_moor26));
+				SendPacket(clientSocket, g_client0_moor27, sizeof(g_client0_moor27));
+				SendPacket(clientSocket, g_client0_moor28, sizeof(g_client0_moor28));
+				SendPacket(clientSocket, g_client0_moor29, sizeof(g_client0_moor29));
+
+				moorPart4Pending = 10;
+			}
+		}
+
+		if(moorPart4Pending != 0)
+		{
+			Sleep(100);
+
+			moorPart4Pending--;
+			if(moorPart4Pending == 0)
+			{
+				SendPacket(clientSocket, g_client0_moor30, sizeof(g_client0_moor30));
+				SendPacket(clientSocket, g_client0_moor31, sizeof(g_client0_moor31));
+				SendPacket(clientSocket, g_client0_moor32, sizeof(g_client0_moor32));
+				SendPacket(clientSocket, g_client0_moor33, sizeof(g_client0_moor33));
+				SendPacket(clientSocket, g_client0_moor34, sizeof(g_client0_moor34));
+
+				moorPart5Pending = 10;
+			}
+		}
+
+		if(moorPart5Pending != 0)
+		{
+			Sleep(100);
+
+			moorPart5Pending--;
+			if(moorPart5Pending == 0)
+			{
+				SendPacket(clientSocket, g_client0_moor35, sizeof(g_client0_moor35));
+				SendPacket(clientSocket, g_client0_moor36, sizeof(g_client0_moor36));
+				SendPacket(clientSocket, g_client0_moor37, sizeof(g_client0_moor37));
+				SendPacket(clientSocket, g_client0_moor38, sizeof(g_client0_moor38));
+				SendPacket(clientSocket, g_client0_moor39, sizeof(g_client0_moor39));
+				SendPacket(clientSocket, g_client0_moor40, sizeof(g_client0_moor40));
+			}
+		}
+
 		//Read from socket
 		{
 			static const unsigned int maxPacketSize = 0x10000;
@@ -301,7 +386,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 						assert(sent == outgoingPacket.size());
 					}
 				}
-				else if((clientId == 0) && (subPacket.size() == 0x40) && (subPacket[0x12] == 0xCA))
+				else if((clientId == 0) && (subPacket.size() == 0x40) && (GetSubPacketCommand(subPacket) == 0xCA))
 				{
 					//Some keep alive thing?
 					uint32 clientTime = *reinterpret_cast<const uint32*>(&subPacket[0x18]);
@@ -312,7 +397,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 //					printf("%s: Client Id (%d): Keeping Alive. Time: 0x%0.8X, Pos: (X: %f, Y: %f, Z: %f).\r\n",
 //						LOGNAME, clientId, clientTime, posX, posY, posZ);
 				}
-				else if((clientId == 0) && (subPacket.size() == 0xD8) && (subPacket[0x12] == 0x2D))		//Maybe 0x12D?
+				else if((clientId == 0) && (subPacket.size() == 0xD8) && (GetSubPacketCommand(subPacket) == 0x12D))
 				{
 					//commandRequest (emote, changing equipment, ...)
 
@@ -434,6 +519,36 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 						//Anything else will probably crash, so just bail
 						killConnection = true;
 						break;
+					}
+				}
+				else if((clientId == 0) && (subPacket.size() == 0x78) && (GetSubPacketCommand(subPacket) == 0x12E))
+				{
+					if(!alreadyMovedOutOfRoom)
+					{
+						printf("%s: Command 0x12E: Moving out of room\r\n", LOGNAME);
+
+						SendPacket(clientSocket, g_client0_moor1, sizeof(g_client0_moor1));
+						SendPacket(clientSocket, g_client0_moor2, sizeof(g_client0_moor2));
+						SendPacket(clientSocket, g_client0_moor3, sizeof(g_client0_moor3));
+						SendPacket(clientSocket, g_client0_moor4, sizeof(g_client0_moor4));
+						SendPacket(clientSocket, g_client0_moor5, sizeof(g_client0_moor5));
+						SendPacket(clientSocket, g_client0_moor6, sizeof(g_client0_moor6));
+						SendPacket(clientSocket, g_client0_moor7, sizeof(g_client0_moor7));
+						SendPacket(clientSocket, g_client0_moor8, sizeof(g_client0_moor8));
+						SendPacket(clientSocket, g_client0_moor9, sizeof(g_client0_moor9));
+						SendPacket(clientSocket, g_client0_moor10, sizeof(g_client0_moor10));
+						SendPacket(clientSocket, g_client0_moor11, sizeof(g_client0_moor11));
+						SendPacket(clientSocket, g_client0_moor12, sizeof(g_client0_moor12));
+						SendPacket(clientSocket, g_client0_moor13, sizeof(g_client0_moor13));
+						SendPacket(clientSocket, g_client0_moor14, sizeof(g_client0_moor14));
+						SendPacket(clientSocket, g_client0_moor15, sizeof(g_client0_moor15));
+						SendPacket(clientSocket, g_client0_moor16, sizeof(g_client0_moor16));
+						SendPacket(clientSocket, g_client0_moor17, sizeof(g_client0_moor17));
+						SendPacket(clientSocket, g_client0_moor18, sizeof(g_client0_moor18));
+						SendPacket(clientSocket, g_client0_moor19, sizeof(g_client0_moor19));
+
+						alreadyMovedOutOfRoom = true;
+						moorPart2Pending = 10;
 					}
 				}
 				else if((clientId == 1) && (subPacket.size() == 0x38) && (subPacket[0x10] == 0x00))
