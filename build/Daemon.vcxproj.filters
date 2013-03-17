@@ -50,5 +50,11 @@
     <ClInclude Include="..\daemon\Character.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\daemon\GameServer_Login.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
