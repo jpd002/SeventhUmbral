@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Unpackers\CodeStyleUnpacker.cs" />
+    <Compile Include="Unpackers\ReadableStyleUnpacker.cs" />
+    <Compile Include="Unpackers\Unpacker.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
