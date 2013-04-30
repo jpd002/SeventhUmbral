@@ -116,3 +116,8 @@ std::string CPacketUtils::DumpPacket(const PacketData& packet)
 
 	return result;
 }
+
+uint16 CPacketUtils::GetSubPacketCommand(const PacketData& subPacket)
+{
+	return *reinterpret_cast<const uint16*>(subPacket.data() + 0x12);
+}

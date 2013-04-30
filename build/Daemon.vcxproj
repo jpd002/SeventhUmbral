@@ -89,6 +89,7 @@
     <ClCompile Include="..\common\BLOWFISH.C" />
     <ClCompile Include="..\daemon\Character.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
+    <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
     <ClCompile Include="..\daemon\LobbyServer.cpp" />
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="..\common\BLOWFISH.H" />
     <ClInclude Include="..\daemon\Character.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
+    <ClInclude Include="..\daemon\GameServerPlayer.h" />
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />

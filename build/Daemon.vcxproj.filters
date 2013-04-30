@@ -33,6 +33,9 @@
     <ClCompile Include="..\daemon\Character.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\GameServerPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\GameServerPlayer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

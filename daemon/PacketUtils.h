@@ -33,4 +33,5 @@ public:
 	static PacketData			ReadPacket(Framework::CMemStream&);
 	static SubPacketArray		SplitPacket(const PacketData&);
 	static std::string			DumpPacket(const PacketData&);
+	static uint16				GetSubPacketCommand(const PacketData&);
 };
