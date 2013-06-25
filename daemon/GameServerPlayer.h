@@ -27,6 +27,10 @@ private:
 	void						ProcessScriptCommand(const PacketData&);
 	void						ProcessScriptResult(const PacketData&);
 
+	void						ScriptCommand_EquipItem(const PacketData&, uint32);
+	void						ScriptCommand_Emote(const PacketData&, uint32);
+	void						ScriptCommand_TrashItem(const PacketData&, uint32);
+
 	SOCKET						m_clientSocket;
 	Framework::CMemStream		m_incomingStream;
 	PacketQueue					m_packetQueue;
