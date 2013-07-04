@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Packets">
+      <UniqueIdentifier>{397c7450-e7d2-4175-b126-2c665541cb86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\daemon\Main.cpp">
@@ -35,6 +38,24 @@
     </ClCompile>
     <ClCompile Include="..\daemon\GameServerPlayer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\BasePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\SetWeatherPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\CompositePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\SetMusicPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\SetMapPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +82,24 @@
     </ClInclude>
     <ClInclude Include="..\daemon\GameServerPlayer.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\SetInitialPositionPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\BasePacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\SetWeatherPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\CompositePacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\SetMusicPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\SetMapPacket.h">
+      <Filter>Source Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

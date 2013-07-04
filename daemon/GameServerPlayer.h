@@ -23,13 +23,17 @@ private:
 	void						PrepareInitialPackets();
 
 	void						ProcessKeepAlive(const PacketData&);
+	void						ProcessChat(const PacketData&);
 	void						ProcessSetPlayerPosition(const PacketData&);
+	void						ProcessSetSelection(const PacketData&);
 	void						ProcessScriptCommand(const PacketData&);
 	void						ProcessScriptResult(const PacketData&);
 
 	void						ScriptCommand_EquipItem(const PacketData&, uint32);
 	void						ScriptCommand_Emote(const PacketData&, uint32);
 	void						ScriptCommand_TrashItem(const PacketData&, uint32);
+
+	void						SendTeleportSequence(uint32, uint32, float, float, float, float);
 
 	SOCKET						m_clientSocket;
 	Framework::CMemStream		m_incomingStream;

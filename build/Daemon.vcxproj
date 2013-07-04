@@ -87,22 +87,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\BLOWFISH.C" />
+    <ClCompile Include="..\daemon\BasePacket.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
+    <ClCompile Include="..\daemon\CompositePacket.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
     <ClCompile Include="..\daemon\LobbyServer.cpp" />
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
+    <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp" />
+    <ClCompile Include="..\daemon\SetMapPacket.cpp" />
+    <ClCompile Include="..\daemon\SetMusicPacket.cpp" />
+    <ClCompile Include="..\daemon\SetWeatherPacket.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
+    <ClInclude Include="..\daemon\BasePacket.h" />
     <ClInclude Include="..\daemon\Character.h" />
+    <ClInclude Include="..\daemon\CompositePacket.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
     <ClInclude Include="..\daemon\GameServerPlayer.h" />
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />
     <ClInclude Include="..\daemon\PacketUtils.h" />
+    <ClInclude Include="..\daemon\SetInitialPositionPacket.h" />
+    <ClInclude Include="..\daemon\SetMapPacket.h" />
+    <ClInclude Include="..\daemon\SetMusicPacket.h" />
+    <ClInclude Include="..\daemon\SetWeatherPacket.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">

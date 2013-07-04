@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <map>
 #include "GameServerPlayer.h"
 #include "PacketUtils.h"
 #include "GameServer_Login.h"
@@ -7,7 +8,22 @@
 #include "PathUtils.h"
 #include "StdStreamUtils.h"
 
+#include "SetInitialPositionPacket.h"
+#include "SetWeatherPacket.h"
+#include "SetMusicPacket.h"
+#include "SetMapPacket.h"
+
+#include "CompositePacket.h"
+
 #define LOGNAME "GameServerPlayer"
+
+#define PLAYER_ID	0x029B2941
+
+#define INITIAL_POSITION_GRIDANIA_INN	   58.92f,   4.00f, -1219.07f, 0.52f
+#define INITIAL_POSITION_MOR_DHONA		 -208.08f,  19.00f,  -669.79f, 0.00f
+#define INITIAL_POSITION_COERTHAS		  219.59f, 302.00f,  -246.00f, 0.00f
+#define INITIAL_POSITION_NOSCEA			 1111.33f,  54.00f,  -456.08f, 0.00f
+#define INITIAL_POSITION_THANALAN		 1247.79f, 264.10f,  -562.08f, 0.00f
 
 static const uint8 g_chocoboRider1[] =
 {
@@ -220,6 +236,20 @@ static PacketData GetCharacterInfo()
 {
 	PacketData outgoingPacket(std::begin(g_client0_login8), std::end(g_client0_login8));
 
+	{
+		const uint32 setInitialPositionBase = 0x320;
+		CSetInitialPositionPacket setInitialPosition;
+		setInitialPosition.SetSourceId(PLAYER_ID);
+		setInitialPosition.SetTargetId(PLAYER_ID);
+		setInitialPosition.SetX(157.55f);
+		setInitialPosition.SetY(0);
+		setInitialPosition.SetZ(165.05f);
+		setInitialPosition.SetAngle(-1.53f);
+		auto setInitialPositionPacket = setInitialPosition.ToPacketData();
+
+		memcpy(outgoingPacket.data() + setInitialPositionBase, setInitialPositionPacket.data(), setInitialPositionPacket.size());
+	}
+
 	CCharacter character;
 	auto personalDataPath = Framework::PathUtils::GetPersonalDataPath();
 	auto characterPath = personalDataPath / "ffxivd_character.xml";
@@ -312,8 +342,14 @@ void CGameServerPlayer::Update()
 			case 0x0001:
 				ProcessKeepAlive(subPacket);
 				break;
+			case 0x0003:
+				ProcessChat(subPacket);
+				break;
 			case 0x00CA:
 				ProcessSetPlayerPosition(subPacket);
+				break;
+			case 0x00CD:
+				ProcessSetSelection(subPacket);
 				break;
 			case 0x012D:
 				ProcessScriptCommand(subPacket);
@@ -367,6 +403,60 @@ void CGameServerPlayer::ProcessKeepAlive(const PacketData& subPacket)
 	QueuePacket(PacketData(std::begin(keepAlivePacket), std::end(keepAlivePacket)));
 }
 
+void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
+{
+	const char* chatText = reinterpret_cast<const char*>(subPacket.data() + 0x3C);
+
+	static std::map<std::string, uint32> weatherCommands;
+	if(weatherCommands.empty())
+	{
+		weatherCommands["weather_clear"]		= CSetWeatherPacket::WEATHER_CLEAR;
+		weatherCommands["weather_fine"]			= CSetWeatherPacket::WEATHER_FINE;
+		weatherCommands["weather_cloudy"]		= CSetWeatherPacket::WEATHER_CLOUDY;
+		weatherCommands["weather_foggy"]		= CSetWeatherPacket::WEATHER_FOGGY;
+		weatherCommands["weather_blustery"]		= CSetWeatherPacket::WEATHER_BLUSTERY;
+		weatherCommands["weather_rainy"]		= CSetWeatherPacket::WEATHER_RAINY;
+		weatherCommands["weather_stormy"]		= CSetWeatherPacket::WEATHER_STORMY;
+		weatherCommands["weather_sandy"]		= CSetWeatherPacket::WEATHER_SANDY;
+		weatherCommands["weather_gloomy"]		= CSetWeatherPacket::WEATHER_GLOOMY;
+		weatherCommands["weather_dalamund"]		= CSetWeatherPacket::WEATHER_DALAMUND;
+	}
+
+	auto weatherCommandIterator = weatherCommands.find(chatText);
+	if(weatherCommandIterator != std::end(weatherCommands))
+	{
+		CCompositePacket result;
+		
+		{
+			CSetWeatherPacket packet;
+			packet.SetSourceId(PLAYER_ID);
+			packet.SetTargetId(PLAYER_ID);
+			packet.SetWeatherId(weatherCommandIterator->second);
+			result.AddPacket(packet.ToPacketData());
+		}
+
+		QueuePacket(result.ToPacketData());
+	}
+	else if(!strcmp(chatText, "teleport_mordhona"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_MORDHONA, CSetMusicPacket::MUSIC_MORDHONA, INITIAL_POSITION_MOR_DHONA);
+	}
+	else if(!strcmp(chatText, "teleport_coerthas"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_COERTHAS, CSetMusicPacket::MUSIC_COERTHAS, INITIAL_POSITION_COERTHAS);
+	}
+	else if(!strcmp(chatText, "teleport_thanalan"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_THANALAN, CSetMusicPacket::MUSIC_THANALAN, INITIAL_POSITION_THANALAN);
+	}
+	else if(!strcmp(chatText, "teleport_lanocsea"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_NOSCEA, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_NOSCEA);
+	}
+
+//	printf("%s\r\n", chatText);
+}
+
 void CGameServerPlayer::ProcessSetPlayerPosition(const PacketData& subPacket)
 {
 	//Some keep alive thing?
@@ -375,18 +465,28 @@ void CGameServerPlayer::ProcessSetPlayerPosition(const PacketData& subPacket)
 	float posY = *reinterpret_cast<const float*>(&subPacket[0x2C]);
 	float posZ = *reinterpret_cast<const float*>(&subPacket[0x30]);
 
-//	printf("%s: Client Id (%d): Keeping Alive. Time: 0x%0.8X, Pos: (X: %f, Y: %f, Z: %f).\r\n",
-//		LOGNAME, clientId, clientTime, posX, posY, posZ);
+//	printf("%s: Keeping Alive. Time: 0x%0.8X, Pos: (X: %f, Y: %f, Z: %f).\r\n",
+//		LOGNAME, clientTime, posX, posY, posZ);
+}
+
+void CGameServerPlayer::ProcessSetSelection(const PacketData& subPacket)
+{
+	uint32 selectedId = *reinterpret_cast<const uint32*>(&subPacket[0x20]);
+	uint32 lockOnId = *reinterpret_cast<const uint32*>(&subPacket[0x24]);
+
+	printf("%s: Selected Id: 0x%0.8X, Lock On Id: 0x%0.8X\r\n", LOGNAME, selectedId, lockOnId);
 }
 
 void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 {
 	uint32 clientTime = *reinterpret_cast<const uint32*>(&subPacket[0x18]);
-	uint32 commandId = *reinterpret_cast<const uint32*>(&subPacket[0x20]);
-	uint32 commandSubId = *reinterpret_cast<const uint16*>(&subPacket[0x24]);
+	uint32 sourceId = *reinterpret_cast<const uint32*>(&subPacket[0x20]);
+	uint32 targetId = *reinterpret_cast<const uint32*>(&subPacket[0x24]);
 	const char* commandName = reinterpret_cast<const char*>(subPacket.data()) + 0x31;
 
-	printf("%s: %s Id = 0x%0.8X, SubId = 0x%0.4X.\r\n", LOGNAME, commandName, commandId, commandSubId);
+	printf("%s: ProcessScriptCommand: %s Source Id = 0x%0.8X, Target Id = 0x%0.8X.\r\n", LOGNAME, commandName, sourceId, targetId);
+
+	//printf("%s\r\n", CPacketUtils::DumpPacket(subPacket).c_str());
 
 	if(!strcmp(commandName, "commandRequest"))
 	{
@@ -400,17 +500,20 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 //			fclose(output);
 //		}
 
-		switch(commandSubId)
+		switch(targetId)
 		{
-		case 0x2EE9:
+		case 0xA0F02EE9:
 			ScriptCommand_EquipItem(subPacket, clientTime);
 			break;
-		case 0x5E26:
+		case 0xA0F05E26:
 			ScriptCommand_Emote(subPacket, clientTime);
 			break;
-		case 0x5EA2:
+		case 0xA0F05EA2:
 			//Trash Item
 			ScriptCommand_TrashItem(subPacket, clientTime);
+			break;
+		default:
+			printf("%s: Unknown target id (0x%0.8X).\r\n", LOGNAME, targetId);
 			break;
 		}
 	}
@@ -425,23 +528,53 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	}
 	else if(!strcmp(commandName, "talkDefault"))
 	{
-		static const uint8 commandRequestPacket[] =
+		switch(targetId)
 		{
-			0x01, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x01, 0x00, 0x52, 0xE2, 0xA4, 0xEE, 0x3B, 0x01, 0x00, 0x00,
-			0xb0, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9b, 0x02, 0x41, 0x29, 0x9b, 0x02, 0x00, 0xe0, 0xd2, 0xfe,
-			0x14, 0x00, 0x30, 0x01, 0x00, 0x00, 0x00, 0x00, 0xd3, 0xe9, 0xe0, 0x50, 0x00, 0x00, 0x00, 0x00,
-			0x41, 0x29, 0x9b, 0x02, 0x07, 0x00, 0xa0, 0x47, 0x01, 0x74, 0x61, 0x6c, 0x6b, 0x44, 0x65, 0x66,
-			0x61, 0x75, 0x6c, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x64, 0x65, 0x6c, 0x65, 0x67, 0x61, 0x74,
-			0x65, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x02, 0x9b, 0x29, 0x41, 0x06, 0xa0,
-			0xf1, 0xaf, 0xcd, 0x02, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x54, 0x61, 0x6c, 0x6b, 0x57,
-			0x69, 0x74, 0x68, 0x49, 0x6e, 0x6e, 0x5f, 0x45, 0x78, 0x69, 0x74, 0x44, 0x6f, 0x6f, 0x72, 0x00,
-			0x05, 0x05, 0x05, 0x05, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0xe8, 0x4e, 0x40, 0x00, 0x00, 0x00,
-		};
+		case 0x47A00007:
+			//Talking to the door inside the room
+			{
+				static const uint8 commandRequestPacket[] =
+				{
+					0x01, 0x00, 0x00, 0x00, 0xC0, 0x00, 0x01, 0x00, 0x52, 0xE2, 0xA4, 0xEE, 0x3B, 0x01, 0x00, 0x00,
+					0xb0, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9b, 0x02, 0x41, 0x29, 0x9b, 0x02, 0x00, 0xe0, 0xd2, 0xfe,
+					0x14, 0x00, 0x30, 0x01, 0x00, 0x00, 0x00, 0x00, 0xd3, 0xe9, 0xe0, 0x50, 0x00, 0x00, 0x00, 0x00,
+					0x41, 0x29, 0x9b, 0x02, 0x07, 0x00, 0xa0, 0x47, 0x01, 0x74, 0x61, 0x6c, 0x6b, 0x44, 0x65, 0x66,
+					0x61, 0x75, 0x6c, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x64, 0x65, 0x6c, 0x65, 0x67, 0x61, 0x74,
+					0x65, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x02, 0x9b, 0x29, 0x41, 0x06, 0xa0,
+					0xf1, 0xaf, 0xcd, 0x02, 0x64, 0x65, 0x66, 0x61, 0x75, 0x6c, 0x74, 0x54, 0x61, 0x6c, 0x6b, 0x57,
+					0x69, 0x74, 0x68, 0x49, 0x6e, 0x6e, 0x5f, 0x45, 0x78, 0x69, 0x74, 0x44, 0x6f, 0x6f, 0x72, 0x00,
+					0x05, 0x05, 0x05, 0x05, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x62, 0xe8, 0x4e, 0x40, 0x00, 0x00, 0x00,
+				};
 
-		QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
+				QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
+			}
+			break;
+		default:
+			//Talking Test (doesn't work)
+			{
+				static const uint8 commandRequestPacket[] =
+				{
+					0x01, 0x01, 0x00, 0x00, 0xC0, 0x00, 0x01, 0x00, 0xD2, 0x16, 0x9E, 0xEE, 0x3B, 0x01, 0x00, 0x00, 
+					0xB0, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9B, 0x02, 0x41, 0x29, 0x9B, 0x02, 0x00, 0xE0, 0xD2, 0xFE, 
+					0x14, 0x00, 0x30, 0x01, 0x00, 0x00, 0x00, 0x00, 0x14, 0xED, 0xE0, 0x50, 0x00, 0x00, 0x00, 0x00, 
+					0x41, 0x29, 0x9B, 0x02, 0x82, 0x00, 0x70, 0x46, 0x01, 0x74, 0x61, 0x6C, 0x6B, 0x44, 0x65, 0x66, 
+					0x61, 0x75, 0x6C, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x73, 0x77, 0x69, 0x74, 0x63, 0x68, 0x45, 
+					0x76, 0x65, 0x6E, 0x74, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xA0, 0xF1, 0xAF, 0xCD, 0x06, 0xA0, 
+					0xF1, 0xB4, 0x00, 0x05, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 
+					0x00, 0x00, 0x03, 0xF1, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x6C, 0xB8, 0x45, 0x40, 0x00, 0x00, 0x00, 
+				};
+
+				QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
+			}
+			break;
+		}
 	}
 	else
 	{
@@ -455,6 +588,10 @@ void CGameServerPlayer::ScriptCommand_EquipItem(const PacketData& subPacket, uin
 	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6E]);
 
 	printf("%s: Equipping Item: 0x%0.8X\r\n", LOGNAME, itemId);
+
+	//REMOVE
+	SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+	//REMOVE
 }
 
 void CGameServerPlayer::ScriptCommand_Emote(const PacketData& subPacket, uint32 clientTime)
@@ -545,51 +682,139 @@ void CGameServerPlayer::ScriptCommand_TrashItem(const PacketData& subPacket, uin
 
 void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)
 {
+	uint32 someId1 = *reinterpret_cast<const uint32*>(&subPacket[0x2C]);
+	uint32 someId2 = *reinterpret_cast<const uint32*>(&subPacket[0x30]);
+	uint32 someId3 = *reinterpret_cast<const uint32*>(&subPacket[0x34]);
+
+	printf("%s: ProcessScriptResult: Id1 = 0x%0.8X, Id2 = 0x%0.8X, Id3 = 0x%0.8X.\r\n", LOGNAME, someId1, someId2, someId3);
+
 	if(!m_alreadyMovedOutOfRoom)
 	{
 		printf("%s: Command 0x12E: Moving out of room\r\n", LOGNAME);
 
-		QueuePacket(PacketData(std::begin(g_client0_moor1), std::end(g_client0_moor1)));
-		QueuePacket(PacketData(std::begin(g_client0_moor2), std::end(g_client0_moor2)));
-		QueuePacket(PacketData(std::begin(g_client0_moor3), std::end(g_client0_moor3)));
-		QueuePacket(PacketData(std::begin(g_client0_moor4), std::end(g_client0_moor4)));
-		QueuePacket(PacketData(std::begin(g_client0_moor5), std::end(g_client0_moor5)));
-		QueuePacket(PacketData(std::begin(g_client0_moor6), std::end(g_client0_moor6)));
-		QueuePacket(PacketData(std::begin(g_client0_moor7), std::end(g_client0_moor7)));
-		QueuePacket(PacketData(std::begin(g_client0_moor8), std::end(g_client0_moor8)));
-		QueuePacket(PacketData(std::begin(g_client0_moor9), std::end(g_client0_moor9)));
-		QueuePacket(PacketData(std::begin(g_client0_moor10), std::end(g_client0_moor10)));
-		QueuePacket(PacketData(std::begin(g_client0_moor11), std::end(g_client0_moor11)));
-		QueuePacket(PacketData(std::begin(g_client0_moor12), std::end(g_client0_moor12)));
-		QueuePacket(PacketData(std::begin(g_client0_moor13), std::end(g_client0_moor13)));
-		QueuePacket(PacketData(std::begin(g_client0_moor14), std::end(g_client0_moor14)));
-		QueuePacket(PacketData(std::begin(g_client0_moor15), std::end(g_client0_moor15)));
-		QueuePacket(PacketData(std::begin(g_client0_moor16), std::end(g_client0_moor16)));
-		QueuePacket(PacketData(std::begin(g_client0_moor17), std::end(g_client0_moor17)));
-		QueuePacket(PacketData(std::begin(g_client0_moor18), std::end(g_client0_moor18)));
-		QueuePacket(PacketData(std::begin(g_client0_moor19), std::end(g_client0_moor19)));
-		QueuePacket(PacketData(std::begin(g_client0_moor20), std::end(g_client0_moor20)));
-		QueuePacket(PacketData(std::begin(g_client0_moor21), std::end(g_client0_moor21)));
-		QueuePacket(PacketData(std::begin(g_client0_moor22), std::end(g_client0_moor22)));
+		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+
+		m_alreadyMovedOutOfRoom = true;
+	}
+}
+
+void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, float x, float y, float z, float angle)
+{
+	QueuePacket(PacketData(std::begin(g_client0_moor1), std::end(g_client0_moor1)));
+	QueuePacket(PacketData(std::begin(g_client0_moor2), std::end(g_client0_moor2)));
+	QueuePacket(PacketData(std::begin(g_client0_moor3), std::end(g_client0_moor3)));
+	QueuePacket(PacketData(std::begin(g_client0_moor4), std::end(g_client0_moor4)));
+	QueuePacket(PacketData(std::begin(g_client0_moor5), std::end(g_client0_moor5)));
+	QueuePacket(PacketData(std::begin(g_client0_moor6), std::end(g_client0_moor6)));
+	QueuePacket(PacketData(std::begin(g_client0_moor7), std::end(g_client0_moor7)));
+	QueuePacket(PacketData(std::begin(g_client0_moor8), std::end(g_client0_moor8)));
+
+	QueuePacket(PacketData(std::begin(g_client0_moor9), std::end(g_client0_moor9)));
+
+	{
+		CCompositePacket result;
+
+		{
+			CSetMusicPacket packet;
+			packet.SetSourceId(PLAYER_ID);
+			packet.SetTargetId(PLAYER_ID);
+			packet.SetMusicId(musicId);
+			result.AddPacket(packet.ToPacketData());
+		}
+
+		{
+			CSetWeatherPacket packet;
+			packet.SetSourceId(PLAYER_ID);
+			packet.SetTargetId(PLAYER_ID);
+			packet.SetWeatherId(CSetWeatherPacket::WEATHER_CLEAR);
+			result.AddPacket(packet.ToPacketData());
+		}
+
+		{
+			CSetMapPacket packet;
+			packet.SetSourceId(PLAYER_ID);
+			packet.SetTargetId(PLAYER_ID);
+			packet.SetMapId(levelId);
+			result.AddPacket(packet.ToPacketData());
+		}
+
+		QueuePacket(result.ToPacketData());
+	}
+
+	QueuePacket(PacketData(std::begin(g_client0_moor11), std::end(g_client0_moor11)));
+	QueuePacket(PacketData(std::begin(g_client0_moor12), std::end(g_client0_moor12)));
+
+	{
+		PacketData outgoingPacket(std::begin(g_client0_moor13), std::end(g_client0_moor13));
+
+		{
+			const uint32 setInitialPositionBase = 0x360;
+
+			CSetInitialPositionPacket setInitialPosition;
+			setInitialPosition.SetSourceId(PLAYER_ID);
+			setInitialPosition.SetTargetId(PLAYER_ID);
+			setInitialPosition.SetX(x);
+			setInitialPosition.SetY(y);
+			setInitialPosition.SetZ(z);
+			setInitialPosition.SetAngle(angle);
+			auto setInitialPositionPacket = setInitialPosition.ToPacketData();
+
+			memcpy(outgoingPacket.data() + setInitialPositionBase, setInitialPositionPacket.data(), setInitialPositionPacket.size());
+		}
+
+		QueuePacket(outgoingPacket);
+	}
+
+	QueuePacket(PacketData(std::begin(g_client0_moor14), std::end(g_client0_moor14)));
+	QueuePacket(PacketData(std::begin(g_client0_moor15), std::end(g_client0_moor15)));
+	QueuePacket(PacketData(std::begin(g_client0_moor16), std::end(g_client0_moor16)));
+	QueuePacket(PacketData(std::begin(g_client0_moor17), std::end(g_client0_moor17)));
+	QueuePacket(PacketData(std::begin(g_client0_moor18), std::end(g_client0_moor18)));
+	QueuePacket(PacketData(std::begin(g_client0_moor19), std::end(g_client0_moor19)));
+	QueuePacket(PacketData(std::begin(g_client0_moor20), std::end(g_client0_moor20)));
+	QueuePacket(PacketData(std::begin(g_client0_moor21), std::end(g_client0_moor21)));
+	//QueuePacket(PacketData(std::begin(g_client0_moor22), std::end(g_client0_moor22)));
+	
+	static bool zoneMasterCreated = false;
+
+	if(!zoneMasterCreated)
+	{
+		//Zone Master
 		QueuePacket(PacketData(std::begin(g_client0_moor23), std::end(g_client0_moor23)));
+
+	/*
 		QueuePacket(PacketData(std::begin(g_client0_moor24), std::end(g_client0_moor24)));
 		QueuePacket(PacketData(std::begin(g_client0_moor25), std::end(g_client0_moor25)));
+
 		QueuePacket(PacketData(std::begin(g_client0_moor26), std::end(g_client0_moor26)));
 		QueuePacket(PacketData(std::begin(g_client0_moor27), std::end(g_client0_moor27)));
 		QueuePacket(PacketData(std::begin(g_client0_moor28), std::end(g_client0_moor28)));
 		QueuePacket(PacketData(std::begin(g_client0_moor29), std::end(g_client0_moor29)));
+
 		QueuePacket(PacketData(std::begin(g_client0_moor30), std::end(g_client0_moor30)));
 		QueuePacket(PacketData(std::begin(g_client0_moor31), std::end(g_client0_moor31)));
+
 		QueuePacket(PacketData(std::begin(g_client0_moor32), std::end(g_client0_moor32)));
 		QueuePacket(PacketData(std::begin(g_client0_moor33), std::end(g_client0_moor33)));
 		QueuePacket(PacketData(std::begin(g_client0_moor34), std::end(g_client0_moor34)));
 		QueuePacket(PacketData(std::begin(g_client0_moor35), std::end(g_client0_moor35)));
 		QueuePacket(PacketData(std::begin(g_client0_moor36), std::end(g_client0_moor36)));
 		QueuePacket(PacketData(std::begin(g_client0_moor37), std::end(g_client0_moor37)));
-		QueuePacket(PacketData(std::begin(g_client0_moor38), std::end(g_client0_moor38)));
-		QueuePacket(PacketData(std::begin(g_client0_moor39), std::end(g_client0_moor39)));
-		QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
+	*/
+		//Enables chat?
+	//	QueuePacket(PacketData(std::begin(g_client0_moor38), std::end(g_client0_moor38)));
 
-		m_alreadyMovedOutOfRoom = true;
+		{
+			CCompositePacket packet;
+			packet.AddPacket(PacketData(std::begin(g_client0_moor38), std::end(g_client0_moor38)));
+			QueuePacket(packet.ToPacketData());
+		}
+
+	//	QueuePacket(PacketData(std::begin(g_client0_moor39), std::end(g_client0_moor39)));
+
+	//	QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
+
+		zoneMasterCreated = true;
 	}
+
 }
