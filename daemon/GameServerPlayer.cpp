@@ -453,6 +453,10 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 	{
 		SendTeleportSequence(CSetMapPacket::MAP_NOSCEA, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_NOSCEA);
 	}
+	else if(!strcmp(chatText, "teleport_gridania"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+	}
 
 //	printf("%s\r\n", chatText);
 }
