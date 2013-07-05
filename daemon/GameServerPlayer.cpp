@@ -147,6 +147,7 @@ CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 : m_clientSocket(clientSocket)
 , m_disconnect(false)
 , m_alreadyMovedOutOfRoom(false)
+, m_zoneMasterCreated(false)
 {
 	PrepareInitialPackets();
 }
@@ -779,9 +780,7 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 	QueuePacket(PacketData(std::begin(g_client0_moor21), std::end(g_client0_moor21)));
 	//QueuePacket(PacketData(std::begin(g_client0_moor22), std::end(g_client0_moor22)));
 	
-	static bool zoneMasterCreated = false;
-
-	if(!zoneMasterCreated)
+	if(!m_zoneMasterCreated)
 	{
 		//Zone Master
 		QueuePacket(PacketData(std::begin(g_client0_moor23), std::end(g_client0_moor23)));
@@ -818,7 +817,7 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 
 	//	QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
 
-		zoneMasterCreated = true;
+		m_zoneMasterCreated = true;
 	}
 
 }

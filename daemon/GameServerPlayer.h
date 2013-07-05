@@ -40,4 +40,5 @@ private:
 	PacketQueue					m_packetQueue;
 	bool						m_disconnect;
 	bool						m_alreadyMovedOutOfRoom;
+	bool						m_zoneMasterCreated;
 };
