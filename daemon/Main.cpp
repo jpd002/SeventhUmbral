@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <WinSock2.h>
+#include "SocketDef.h"
 #include "LobbyServer.h"
 #include "GameServer.h"
 

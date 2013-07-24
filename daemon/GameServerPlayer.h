@@ -1,7 +1,7 @@
 #pragma once
 
 #include <deque>
-#include <WinSock2.h>
+#include "SocketDef.h"
 #include "Types.h"
 #include "MemStream.h"
 #include "PacketUtils.h"

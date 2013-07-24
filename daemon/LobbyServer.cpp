@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <assert.h>
-#include <WinSock2.h>
+#include "SocketDef.h"
 #include "Types.h"
 #include "MemStream.h"
 #include "Base64.h"

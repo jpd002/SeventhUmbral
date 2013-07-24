@@ -1,4 +1,4 @@
-#include <WinSock2.h>
+#include "SocketDef.h"
 #include <assert.h>
 #include "GameServer.h"
 #include "PacketUtils.h"
