@@ -59,8 +59,13 @@ static void UpdateEntities(SOCKET clientSocket)
 
 static void ClientThreadProc(SOCKET clientSocket, int clientId)
 {
+#ifdef WIN32
 	u_long notBlockingMode = 1;
 	ioctlsocket(clientSocket, FIONBIO, &notBlockingMode);
+#else
+	int flags = fcntl(fd, F_GETFL, 0);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#endif
 
 	printf("%s: Received connection.\r\n", LOGNAME);
 
@@ -97,7 +102,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 				printf("%s: Client disconnected.\r\n", LOGNAME);
 				break;
 			}
-			Sleep(100);
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 	}
 

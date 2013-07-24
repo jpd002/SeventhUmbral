@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <map>
+#include <thread>
 #include "GameServerPlayer.h"
 #include "PacketUtils.h"
 #include "GameServer_Login.h"
@@ -300,7 +301,7 @@ void CGameServerPlayer::Update()
 		{
 			if(totalSent >= 0x1000)
 			{
-				Sleep(100);
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				break;
 			}
 			const auto& nextPacket = m_packetQueue.front();

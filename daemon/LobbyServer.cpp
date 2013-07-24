@@ -461,8 +461,14 @@ static PacketData GetCharacters(PacketData& incomingPacket)
 
 static void ClientThreadProc(SOCKET clientSocket)
 {
+#ifdef WIN32
 	u_long notBlockingMode = 1;
 	ioctlsocket(clientSocket, FIONBIO, &notBlockingMode);
+#else
+	int flags = fcntl(fd, F_GETFL, 0);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#endif
+
 	Framework::CMemStream incomingStream;
 
 	printf("%s: Received connection.\r\n", LOGNAME);
