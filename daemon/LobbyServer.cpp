@@ -605,7 +605,7 @@ void CLobbyServer::ServerThreadProc()
 	while(1)
 	{
 		sockaddr_in incomingAddr;
-		int incomingAddrSize = sizeof(sockaddr_in);
+		socklen_t incomingAddrSize = sizeof(sockaddr_in);
 		SOCKET incomingSocket = accept(listenSocket, reinterpret_cast<sockaddr*>(&incomingAddr), &incomingAddrSize);
 		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket));
 		clientThread.detach();
