@@ -1,5 +1,6 @@
 #include "SocketDef.h"
 #include <assert.h>
+#include <math.h>
 #include "GameServer.h"
 #include "PacketUtils.h"
 #include "GameServerPlayer.h"
