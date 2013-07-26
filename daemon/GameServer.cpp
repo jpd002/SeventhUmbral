@@ -63,8 +63,8 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 	u_long notBlockingMode = 1;
 	ioctlsocket(clientSocket, FIONBIO, &notBlockingMode);
 #else
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+	int flags = fcntl(clientSocket, F_GETFL, 0);
+	fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
 #endif
 
 	printf("%s: Received connection.\r\n", LOGNAME);
