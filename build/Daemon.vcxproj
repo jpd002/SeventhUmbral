@@ -115,6 +115,7 @@
     <ClInclude Include="..\daemon\SetMapPacket.h" />
     <ClInclude Include="..\daemon\SetMusicPacket.h" />
     <ClInclude Include="..\daemon\SetWeatherPacket.h" />
+    <ClInclude Include="..\daemon\SocketDef.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">

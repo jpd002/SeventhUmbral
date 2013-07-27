@@ -101,5 +101,8 @@
     <ClInclude Include="..\daemon\SetMapPacket.h">
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\daemon\SocketDef.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
