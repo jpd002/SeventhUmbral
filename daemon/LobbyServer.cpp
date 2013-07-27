@@ -465,8 +465,8 @@ static void ClientThreadProc(SOCKET clientSocket)
 	u_long notBlockingMode = 1;
 	ioctlsocket(clientSocket, FIONBIO, &notBlockingMode);
 #else
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+	int flags = fcntl(clientSocket, F_GETFL, 0);
+	fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
 #endif
 
 	Framework::CMemStream incomingStream;
@@ -566,7 +566,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 					LOGNAME, incomingPacket.size(), CPacketUtils::DumpPacket(incomingPacket).c_str());
 			}
 		}
-		Sleep(16);
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 }
 

@@ -25,7 +25,7 @@
    #include <Types.h>
 #endif
 
-#include "Blowfish.h"
+#include "BLOWFISH.H"
 
 #define N               16
 #define noErr            0
