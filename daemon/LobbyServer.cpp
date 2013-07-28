@@ -13,6 +13,8 @@
 #include "PathUtils.h"
 #include "StdStreamUtils.h"
 
+static const char* g_gameServerAddress = "127.0.0.1";
+
 static const uint8 g_secureConnectionAcknowledgment[0x2A0] =
 {
 	0x00, 0x00, 0x00, 0x00, 0xA0, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -541,7 +543,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 					LOGNAME, characterId);
 
 				std::vector<uint8> outgoingPacket(std::begin(g_selectCharacterPacket), std::end(g_selectCharacterPacket));
-				strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), "127.0.0.1");
+				strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), g_gameServerAddress);
 				*reinterpret_cast<uint16*>(outgoingPacket.data() + 0x86) = CGameServer::GAME_SERVER_PORT;
 
 				EncryptPacket(outgoingPacket);
@@ -592,7 +594,7 @@ void CLobbyServer::ServerThreadProc()
 
 	sockaddr_in service;
 	service.sin_family			= AF_INET;
-	service.sin_addr.s_addr		= inet_addr("127.0.0.1");
+	service.sin_addr.s_addr		= htonl(INADDR_ANY);
 	service.sin_port			= htons(54994);
 	if(bind(listenSocket, reinterpret_cast<sockaddr*>(&service), sizeof(sockaddr_in)))
 	{

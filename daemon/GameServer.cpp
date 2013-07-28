@@ -131,7 +131,7 @@ void CGameServer::ServerThreadProc()
 
 	sockaddr_in service;
 	service.sin_family			= AF_INET;
-	service.sin_addr.s_addr		= inet_addr("127.0.0.1");
+	service.sin_addr.s_addr		= htonl(INADDR_ANY);
 	service.sin_port			= htons(GAME_SERVER_PORT);
 	if(bind(listenSocket, reinterpret_cast<sockaddr*>(&service), sizeof(sockaddr_in)))
 	{
