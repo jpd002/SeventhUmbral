@@ -361,8 +361,8 @@ void DecryptPacket(PacketData& packet)
 	for(unsigned int i = 0; i < dataLength; i += 8)
 	{
 		Blowfish_decipher(
-			reinterpret_cast<unsigned long*>(data + i), 
-			reinterpret_cast<unsigned long*>(data + i + 4));
+			reinterpret_cast<uint32*>(data + i), 
+			reinterpret_cast<uint32*>(data + i + 4));
 	}
 }
 
@@ -389,8 +389,8 @@ void EncryptPacket(PacketData& packet)
 		for(unsigned int i = 0; i < subPacketSize; i += 8)
 		{
 			Blowfish_encipher(
-				reinterpret_cast<unsigned long*>(data + i), 
-				reinterpret_cast<unsigned long*>(data + i + 4));
+				reinterpret_cast<uint32*>(data + i), 
+				reinterpret_cast<uint32*>(data + i + 4));
 		}
 		data += subPacketSize;
 		if(size == 0) break;
