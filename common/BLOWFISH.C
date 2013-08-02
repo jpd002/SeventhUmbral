@@ -32,10 +32,10 @@
 #define DATAERROR         -1
 #define KEYBYTES         8
 
-unsigned long P[N + 2];
-unsigned long S[4][256];
+uint32 P[N + 2];
+uint32 S[4][256];
 
-unsigned char P_values[(N + 2) * 4] =
+uint8 P_values[(N + 2) * 4] =
 {
 	0x88, 0x6A, 0x3F, 0x24, 0xD3, 0x08, 0xA3, 0x85, 0x2E, 0x8A, 0x19, 0x13, 0x44, 0x73, 0x70, 0x03,
 	0x22, 0x38, 0x09, 0xA4, 0xD0, 0x31, 0x9F, 0x29, 0x98, 0xFA, 0x2E, 0x08, 0x89, 0x6C, 0x4E, 0xEC,
@@ -44,7 +44,7 @@ unsigned char P_values[(N + 2) * 4] =
 	0xD9, 0xD5, 0x16, 0x92, 0x1B, 0xFB, 0x79, 0x89
 };
 
-unsigned char S_values[4 * 4 * 256] =
+uint8 S_values[4 * 4 * 256] =
 {
 	0xA6, 0x0B, 0x31, 0xD1, 0xAC, 0xB5, 0xDF, 0x98, 0xDB, 0x72, 0xFD, 0x2F, 0xB7, 0xDF, 0x1A, 0xD0, 
 	0xED, 0xAF, 0xE1, 0xB8, 0x96, 0x7E, 0x26, 0x6A, 0x45, 0x90, 0x7C, 0xBA, 0x99, 0x7F, 0x2C, 0xF1, 
@@ -304,13 +304,13 @@ unsigned char S_values[4 * 4 * 256] =
 	0x32, 0x61, 0x4E, 0xB7, 0x5B, 0xE2, 0x77, 0xCE, 0xE3, 0xDF, 0x8F, 0x57, 0xE6, 0x72, 0xC3, 0x3A
 };
 
-unsigned long F(unsigned long x)
+uint32 F(uint32 x)
 {
-   unsigned short a;
-   unsigned short b;
-   unsigned short c;
-   unsigned short d;
-   unsigned long  y;
+   uint16 a;
+   uint16 b;
+   uint16 c;
+   uint16 d;
+   uint32 y;
 
    d = x & 0x00FF;
    x >>= 8;
@@ -327,12 +327,12 @@ unsigned long F(unsigned long x)
    return y;
 }
 
-void Blowfish_encipher(unsigned long *xl, unsigned long *xr)
+void Blowfish_encipher(uint32 *xl, uint32 *xr)
 {
-   unsigned long  Xl;
-   unsigned long  Xr;
-   unsigned long  temp;
-   short          i;
+   uint32  Xl;
+   uint32  Xr;
+   uint32  temp;
+   int16          i;
 
    Xl = *xl;
    Xr = *xr;
@@ -357,12 +357,12 @@ void Blowfish_encipher(unsigned long *xl, unsigned long *xr)
    *xr = Xr;
 }
 
-void Blowfish_decipher(unsigned long *xl, unsigned long *xr)
+void Blowfish_decipher(uint32 *xl, uint32 *xr)
 {
-   unsigned long  Xl;
-   unsigned long  Xr;
-   unsigned long  temp;
-   short          i;
+   uint32  Xl;
+   uint32  Xr;
+   uint32  temp;
+   int16          i;
 
    Xl = *xl;
    Xr = *xr;
@@ -389,14 +389,14 @@ void Blowfish_decipher(unsigned long *xl, unsigned long *xr)
    *xr = Xr;
 }
 
-short InitializeBlowfish(char key[], short keybytes)
+int16 InitializeBlowfish(char key[], int16 keybytes)
 {
-	short          i;
-	short          j;
-	short          k;
-	unsigned long  data;
-	unsigned long  datal;
-	unsigned long  datar;
+	int16          i;
+	int16          j;
+	int16          k;
+	uint32  data;
+	uint32  datal;
+	uint32  datar;
 
 	memcpy(&P, &P_values, sizeof(P_values));
 	memcpy(&S, &S_values, sizeof(S_values));
