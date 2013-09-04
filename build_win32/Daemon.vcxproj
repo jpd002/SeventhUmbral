@@ -57,7 +57,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FrameworkRoot)/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -74,7 +74,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FrameworkRoot)/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -93,6 +93,7 @@
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
     <ClCompile Include="..\daemon\LobbyServer.cpp" />
+    <ClCompile Include="..\daemon\Log.cpp" />
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
     <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />
+    <ClInclude Include="..\daemon\Log.h" />
     <ClInclude Include="..\daemon\PacketUtils.h" />
     <ClInclude Include="..\daemon\SetInitialPositionPacket.h" />
     <ClInclude Include="..\daemon\SetMapPacket.h" />

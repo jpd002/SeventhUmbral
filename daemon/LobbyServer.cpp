@@ -12,6 +12,7 @@
 #include "Character.h"
 #include "PathUtils.h"
 #include "StdStreamUtils.h"
+#include "Log.h"
 
 static const char* g_gameServerAddress = "127.0.0.1";
 
@@ -400,7 +401,7 @@ void EncryptPacket(PacketData& packet)
 static PacketData GetCharacters(PacketData& incomingPacket)
 {
 	DecryptPacket(incomingPacket);
-	printf("%s: GetCharacters.\r\n", LOGNAME);
+	CLog::GetInstance().LogMessage(LOGNAME, "GetCharacters");
 
 	PacketData outgoingPacket(std::begin(g_characterListPacket), std::end(g_characterListPacket));
 
@@ -473,7 +474,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 
 	Framework::CMemStream incomingStream;
 
-	printf("%s: Received connection.\r\n", LOGNAME);
+	CLog::GetInstance().LogMessage(LOGNAME, "Received connection.");
 
 	while(1)
 	{
@@ -485,7 +486,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 			if(read == 0)
 			{
 				//Client disconnected
-				printf("%s: Client disconnected.\r\n", LOGNAME);
+				CLog::GetInstance().LogMessage(LOGNAME, "Client disconnected.");
 				break;
 			}
 			if(read > 0)
@@ -504,8 +505,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 				uint8 blowfishKey[0x10] = { 0xB4, 0xEE, 0x3F, 0x6C, 0x01, 0x6F, 0x5B, 0xD9, 0x71, 0x50, 0x0D, 0xB1, 0x85, 0xA2, 0xAB, 0x43 };
 				InitializeBlowfish(reinterpret_cast<char*>(blowfishKey), 0x10);
 
-				printf("%s: Received encryption key: 0x%0.8X.\r\n", 
-					LOGNAME, clientTime);
+				CLog::GetInstance().LogMessage(LOGNAME, "Received encryption key: 0x%0.8X.\r\n", clientTime);
 
 				//Respond with acknowledgment
 				std::vector<uint8> outgoingPacket(std::begin(g_secureConnectionAcknowledgment), std::end(g_secureConnectionAcknowledgment));
@@ -516,9 +516,9 @@ static void ClientThreadProc(SOCKET clientSocket)
 			else if(incomingPacket.size() == 0xC0)
 			{
 				DecryptPacket(incomingPacket);
-				printf("%s: Got acknowledgment for secure session.\r\n", LOGNAME);
-				printf("%s: SESSION_ID: %s\r\n", LOGNAME, &incomingPacket[0x40]);
-				printf("%s: CLIENT_VERSION: %s\r\n", LOGNAME, &incomingPacket[0x80]);
+				CLog::GetInstance().LogMessage(LOGNAME, "Got acknowledgment for secure session.");
+				CLog::GetInstance().LogMessage(LOGNAME, "SESSION_ID: %s", &incomingPacket[0x40]);
+				CLog::GetInstance().LogMessage(LOGNAME, "CLIENT_VERSION: %s", &incomingPacket[0x80]);
 
 				std::vector<uint8> outgoingPacket(std::begin(g_loginAcknowledgment), std::end(g_loginAcknowledgment));
 				EncryptPacket(outgoingPacket);
@@ -539,8 +539,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 
 				uint32 characterId = *reinterpret_cast<uint32*>(&incomingPacket[0x38]);
 
-				printf("%s: SelectCharacter(id = %d).\r\n", 
-					LOGNAME, characterId);
+				CLog::GetInstance().LogMessage(LOGNAME, "SelectCharacter(id = %d).", characterId);
 
 				std::vector<uint8> outgoingPacket(std::begin(g_selectCharacterPacket), std::end(g_selectCharacterPacket));
 				strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), g_gameServerAddress);
@@ -552,7 +551,7 @@ static void ClientThreadProc(SOCKET clientSocket)
 			}
 			else if(incomingPacket.size() == 0x200)
 			{
-				printf("%s: CheckNameAvailability().\r\n", LOGNAME);
+				CLog::GetInstance().LogMessage(LOGNAME, "CheckNameAvailability().");
 				DecryptPacket(incomingPacket);
 
 				{
@@ -564,8 +563,8 @@ static void ClientThreadProc(SOCKET clientSocket)
 			}
 			else
 			{
-				printf("%s: Received unknown packet of size 0x%0.4X.\r\n%s\r\n",
-					LOGNAME, incomingPacket.size(), CPacketUtils::DumpPacket(incomingPacket).c_str());
+				CLog::GetInstance().LogDebug(LOGNAME, "Received unknown packet of size 0x%0.4X.\r\n%s\r\n",
+					incomingPacket.size(), CPacketUtils::DumpPacket(incomingPacket).c_str());
 			}
 		}
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));
@@ -598,17 +597,17 @@ void CLobbyServer::ServerThreadProc()
 	service.sin_port			= htons(54994);
 	if(bind(listenSocket, reinterpret_cast<sockaddr*>(&service), sizeof(sockaddr_in)))
 	{
-		printf("Failed to bind socket.\r\n");
+		CLog::GetInstance().LogError(LOGNAME, "Failed to bind socket.");
 		return;
 	}
 
 	if(listen(listenSocket, SOMAXCONN))
 	{
-		printf("Failed to listen on socket.\r\n");
+		CLog::GetInstance().LogError(LOGNAME, "Failed to listen on socket.");
 		return;
 	}
 
-	printf("Lobby server started.\r\n");
+	CLog::GetInstance().LogMessage(LOGNAME, "Lobby server started.");
 
 	while(1)
 	{

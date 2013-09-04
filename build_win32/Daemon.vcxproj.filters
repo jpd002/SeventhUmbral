@@ -57,6 +57,9 @@
     <ClCompile Include="..\daemon\SetMapPacket.cpp">
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -102,6 +105,9 @@
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\SocketDef.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\Log.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,6 +5,7 @@
 #include "PacketUtils.h"
 #include "GameServerPlayer.h"
 #include "GameServer_Login.h"
+#include "Log.h"
 
 #define LOGNAME		("GameServer")
 
@@ -67,7 +68,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 	fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
 #endif
 
-	printf("%s: Received connection.\r\n", LOGNAME);
+	CLog::GetInstance().LogMessage(LOGNAME, "Received connection.");
 
 	if(clientId == 0)
 	{
@@ -99,7 +100,7 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 			if(read == 0)
 			{
 				//Client disconnected
-				printf("%s: Client disconnected.\r\n", LOGNAME);
+				CLog::GetInstance().LogMessage(LOGNAME, "Client disconnected.");
 				break;
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -135,17 +136,17 @@ void CGameServer::ServerThreadProc()
 	service.sin_port			= htons(GAME_SERVER_PORT);
 	if(bind(listenSocket, reinterpret_cast<sockaddr*>(&service), sizeof(sockaddr_in)))
 	{
-		printf("Failed to bind socket.\r\n");
+		CLog::GetInstance().LogError(LOGNAME, "Failed to bind socket.");
 		return;
 	}
 
 	if(listen(listenSocket, SOMAXCONN))
 	{
-		printf("Failed to listen on socket.\r\n");
+		CLog::GetInstance().LogError(LOGNAME, "Failed to listen on socket.");
 		return;
 	}
 
-	printf("Game server started.\r\n");
+	CLog::GetInstance().LogMessage(LOGNAME, "Game server started.");
 
 	int clientId = 0;
 
