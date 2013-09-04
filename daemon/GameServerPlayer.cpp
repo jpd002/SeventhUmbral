@@ -26,6 +26,9 @@
 #define INITIAL_POSITION_COERTHAS		  219.59f, 302.00f,  -246.00f, 0.00f
 #define INITIAL_POSITION_NOSCEA			 1111.33f,  54.00f,  -456.08f, 0.00f
 #define INITIAL_POSITION_THANALAN		 1247.79f, 264.10f,  -562.08f, 0.00f
+#define INITIAL_POSITION_RIVENROAD		    0.00f,   0.00f,     0.00f, 0.00f
+#define INITIAL_POSITION_LARGEBOAT		    0.00f,  15.00f,     0.00f, 0.00f
+#define INITIAL_POSITION_SMALLBOAT		    0.00f,  15.00f,     0.00f, 0.00f
 
 static const uint8 g_chocoboRider1[] =
 {
@@ -459,6 +462,18 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 	else if(!strcmp(chatText, "teleport_gridania"))
 	{
 		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+	}
+	else if(!strcmp(chatText, "teleport_rivenroad"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_RIVENROAD, CSetMusicPacket::MUSIC_MORDHONA, INITIAL_POSITION_RIVENROAD);
+	}
+	else if(!strcmp(chatText, "teleport_largeboat"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_LARGEBOAT, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_LARGEBOAT);
+	}
+	else if(!strcmp(chatText, "teleport_smallboat"))
+	{
+		SendTeleportSequence(CSetMapPacket::MAP_SMALLBOAT, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_SMALLBOAT);
 	}
 
 //	printf("%s\r\n", chatText);
