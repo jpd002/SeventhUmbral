@@ -11,4 +11,7 @@ public:
 	void		LogDebug(const char*, const char*, ...);
 	void		LogMessage(const char*, const char*, ...);
 	void		LogError(const char*, const char*, ...);
+
+private:
+	void		WriteToLog(const char*);
 };
