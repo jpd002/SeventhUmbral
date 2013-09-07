@@ -1,15 +1,16 @@
 #include <stdarg.h>
+#include <syslog.h>
 #include "Log.h"
 #include "string_format.h"
 
 CLog::CLog()
 {
-
+	openlog("ffxivd", LOG_PID | LOG_NDELAY, LOG_USER);
 }
 
 CLog::~CLog()
 {
-
+	closelog();
 }
 
 void CLog::LogDebug(const char* serviceName, const char* format, ...)
@@ -46,5 +47,9 @@ void CLog::LogError(const char* serviceName, const char* format, ...)
 
 void CLog::WriteToLog(const char* message)
 {
+#ifdef WIN32
 	puts(message);
+#else
+	syslog(LOG_NOTICE, "%s", message);
+#endif
 }

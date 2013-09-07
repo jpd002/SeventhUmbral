@@ -15,6 +15,7 @@ add_executable(ffxivd
 	../daemon/GameServer.cpp
 	../daemon/GameServerPlayer.cpp
 	../daemon/LobbyServer.cpp
+	../daemon/Log.cpp
 	../daemon/Main.cpp
 	../daemon/PacketUtils.cpp
 	../daemon/SetInitialPositionPacket.cpp
