@@ -3,7 +3,7 @@
 #include "SocketDef.h"
 #include "LobbyServer.h"
 #include "GameServer.h"
-#ifdef _POSIX_VERSION
+#ifdef __unix__
 #include <sys/ioctl.h>
 #endif
 
@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 	}
 #endif
 
-#ifdef _POSIX_VERSION
+#ifdef __unix__
 
 	if(fork() != 0)
 	{

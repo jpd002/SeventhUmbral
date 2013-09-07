@@ -1,16 +1,22 @@
 #include <stdarg.h>
+#ifdef __unix__
 #include <syslog.h>
+#endif
 #include "Log.h"
 #include "string_format.h"
 
 CLog::CLog()
 {
+#ifdef __unix__
 	openlog("ffxivd", LOG_PID | LOG_NDELAY, LOG_USER);
+#endif
 }
 
 CLog::~CLog()
 {
+#ifdef __unix__
 	closelog();
+#endif
 }
 
 void CLog::LogDebug(const char* serviceName, const char* format, ...)
@@ -47,9 +53,9 @@ void CLog::LogError(const char* serviceName, const char* format, ...)
 
 void CLog::WriteToLog(const char* message)
 {
-#ifdef WIN32
-	puts(message);
-#else
+#ifdef __unix__
 	syslog(LOG_NOTICE, "%s", message);
+#else
+	puts(message);
 #endif
 }
