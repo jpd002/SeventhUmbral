@@ -1,4 +1,5 @@
 #include "SocketUtils.h"
+#include <errno.h>
 
 std::string GetSocketIpAddressString(const sockaddr_in& socketAddress)
 {
@@ -36,7 +37,7 @@ std::string GetSocketIpAddressString(const sockaddr_in& socketAddress)
 	while(1)
 	{
 		result.resize(addressStringLength);
-		const char* error = inet_ntop(socketAddress->sin_family, socketAddress->sin_addr, const_cast<char*>(result.data()), &addressStringLength);
+		const char* error = inet_ntop(socketAddress.sin_family, &socketAddress.sin_addr, const_cast<char*>(result.data()), addressStringLength);
 		if(error != NULL)
 		{
 			break;

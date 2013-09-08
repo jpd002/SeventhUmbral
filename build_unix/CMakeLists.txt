@@ -9,6 +9,7 @@ include_directories(${FRAMEWORK_ROOT}/include /usr/local/include)
 link_directories(../${FRAMEWORK_ROOT}/build_unix/build /usr/local/lib)
 
 add_executable(ffxivd 
+	../daemon/AppConfig.cpp
 	../daemon/BasePacket.cpp
 	../daemon/Character.cpp
 	../daemon/CompositePacket.cpp
@@ -22,6 +23,7 @@ add_executable(ffxivd
 	../daemon/SetMapPacket.cpp
 	../daemon/SetMusicPacket.cpp
 	../daemon/SetWeatherPacket.cpp
+	../daemon/SocketUtils.cpp
 	../common/BLOWFISH.C
 )
 
