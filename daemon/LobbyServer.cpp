@@ -10,11 +10,11 @@
 #include "GameServer.h"
 #include "PacketUtils.h"
 #include "Character.h"
-#include "PathUtils.h"
 #include "StdStreamUtils.h"
 #include "Log.h"
+#include "AppConfig.h"
 
-static const char* g_gameServerAddress = "127.0.0.1";
+#define PREF_FFXIVD_GAMESERVER_ADDRESS "ffxivd.gameserver.address"
 
 static const uint8 g_secureConnectionAcknowledgment[0x2A0] =
 {
@@ -406,12 +406,16 @@ static PacketData GetCharacters(PacketData& incomingPacket)
 	PacketData outgoingPacket(std::begin(g_characterListPacket), std::end(g_characterListPacket));
 
 	CCharacter character;
-	auto personalDataPath = Framework::PathUtils::GetPersonalDataPath();
-	auto characterPath = personalDataPath / "ffxivd_character.xml";
+	auto configPath = CAppConfig::GetInstance().GetBasePath();
+	auto characterPath = configPath / "ffxivd_character.xml";
 	if(boost::filesystem::exists(characterPath))
 	{
 		auto inputStream = Framework::CreateInputStdStream(characterPath.native());
 		character.Load(inputStream);
+	}
+	else
+	{
+		CLog::GetInstance().LogMessage(LOGNAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
 	}
 
 	PacketData characterData(std::begin(g_characterData), std::end(g_characterData));
@@ -543,8 +547,10 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 
 				CLog::GetInstance().LogMessage(LOGNAME, "SelectCharacter(id = %d).", characterId);
 
+				const char* gameServerAddress = CAppConfig::GetInstance().GetPreferenceString(PREF_FFXIVD_GAMESERVER_ADDRESS);
+
 				std::vector<uint8> outgoingPacket(std::begin(g_selectCharacterPacket), std::end(g_selectCharacterPacket));
-				strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), g_gameServerAddress);
+				strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), gameServerAddress);
 				*reinterpret_cast<uint16*>(outgoingPacket.data() + 0x86) = CGameServer::GAME_SERVER_PORT;
 
 				EncryptPacket(outgoingPacket);

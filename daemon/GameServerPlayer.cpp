@@ -9,6 +9,7 @@
 #include "PathUtils.h"
 #include "StdStreamUtils.h"
 #include "Log.h"
+#include "AppConfig.h"
 
 #include "SetInitialPositionPacket.h"
 #include "SetWeatherPacket.h"
@@ -257,12 +258,16 @@ static PacketData GetCharacterInfo()
 	}
 
 	CCharacter character;
-	auto personalDataPath = Framework::PathUtils::GetPersonalDataPath();
-	auto characterPath = personalDataPath / "ffxivd_character.xml";
+	auto configPath = CAppConfig::GetInstance().GetBasePath();
+	auto characterPath = configPath / "ffxivd_character.xml";
 	if(boost::filesystem::exists(characterPath))
 	{
 		auto inputStream = Framework::CreateInputStdStream(characterPath.native());
 		character.Load(inputStream);
+	}
+	else
+	{
+		CLog::GetInstance().LogMessage(LOGNAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
 	}
 
 	const uint32 characterInfoBase = 0x368;

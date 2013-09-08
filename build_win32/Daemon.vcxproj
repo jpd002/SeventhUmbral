@@ -87,6 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\BLOWFISH.C" />
+    <ClCompile Include="..\daemon\AppConfig.cpp" />
     <ClCompile Include="..\daemon\BasePacket.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
     <ClCompile Include="..\daemon\CompositePacket.cpp" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
+    <ClInclude Include="..\daemon\AppConfig.h" />
     <ClInclude Include="..\daemon\BasePacket.h" />
     <ClInclude Include="..\daemon\Character.h" />
     <ClInclude Include="..\daemon\CompositePacket.h" />
