@@ -462,7 +462,7 @@ static PacketData GetCharacters(PacketData& incomingPacket)
 	return outgoingPacket;
 }
 
-static void ClientThreadProc(SOCKET clientSocket)
+static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocketAddress)
 {
 #ifdef WIN32
 	u_long notBlockingMode = 1;
@@ -474,7 +474,9 @@ static void ClientThreadProc(SOCKET clientSocket)
 
 	Framework::CMemStream incomingStream;
 
-	CLog::GetInstance().LogMessage(LOGNAME, "Received connection.");
+	CLog::GetInstance().LogMessage(LOGNAME, "Received connection from %u.%u.%u.%u.",
+		clientSocketAddress.sin_addr.S_un.S_un_b.s_b1, clientSocketAddress.sin_addr.S_un.S_un_b.s_b2,
+		clientSocketAddress.sin_addr.S_un.S_un_b.s_b3, clientSocketAddress.sin_addr.S_un.S_un_b.s_b4);
 
 	while(1)
 	{
@@ -614,7 +616,7 @@ void CLobbyServer::ServerThreadProc()
 		sockaddr_in incomingAddr;
 		socklen_t incomingAddrSize = sizeof(sockaddr_in);
 		SOCKET incomingSocket = accept(listenSocket, reinterpret_cast<sockaddr*>(&incomingAddr), &incomingAddrSize);
-		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket));
+		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket, incomingAddr));
 		clientThread.detach();
 	}
 

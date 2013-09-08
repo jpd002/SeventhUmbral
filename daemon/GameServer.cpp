@@ -58,7 +58,7 @@ static void UpdateEntities(SOCKET clientSocket)
 	entityUpdateCounter++;
 }
 
-static void ClientThreadProc(SOCKET clientSocket, int clientId)
+static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocketAddress, int clientId)
 {
 #ifdef WIN32
 	u_long notBlockingMode = 1;
@@ -68,7 +68,9 @@ static void ClientThreadProc(SOCKET clientSocket, int clientId)
 	fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
 #endif
 
-	CLog::GetInstance().LogMessage(LOGNAME, "Received connection.");
+	CLog::GetInstance().LogMessage(LOGNAME, "Received connection from %u.%u.%u.%u.",
+		clientSocketAddress.sin_addr.S_un.S_un_b.s_b1, clientSocketAddress.sin_addr.S_un.S_un_b.s_b2,
+		clientSocketAddress.sin_addr.S_un.S_un_b.s_b3, clientSocketAddress.sin_addr.S_un.S_un_b.s_b4);
 
 	if(clientId == 0)
 	{
@@ -155,7 +157,7 @@ void CGameServer::ServerThreadProc()
 		sockaddr_in incomingAddr;
 		socklen_t incomingAddrSize = sizeof(sockaddr_in);
 		SOCKET incomingSocket = accept(listenSocket, reinterpret_cast<sockaddr*>(&incomingAddr), &incomingAddrSize);
-		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket, clientId & 1));
+		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket, incomingAddr, clientId & 1));
 		clientThread.detach();
 		clientId++;
 	}
