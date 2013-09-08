@@ -9,6 +9,7 @@
 #include "../common/BLOWFISH.H"
 #include "GameServer.h"
 #include "PacketUtils.h"
+#include "SocketUtils.h"
 #include "Character.h"
 #include "StdStreamUtils.h"
 #include "Log.h"
@@ -478,9 +479,7 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 
 	Framework::CMemStream incomingStream;
 
-	CLog::GetInstance().LogMessage(LOGNAME, "Received connection from %u.%u.%u.%u.",
-		clientSocketAddress.sin_addr.S_un.S_un_b.s_b1, clientSocketAddress.sin_addr.S_un.S_un_b.s_b2,
-		clientSocketAddress.sin_addr.S_un.S_un_b.s_b3, clientSocketAddress.sin_addr.S_un.S_un_b.s_b4);
+	CLog::GetInstance().LogMessage(LOGNAME, "Received connection from %s.", GetSocketIpAddressString(clientSocketAddress).c_str());
 
 	while(1)
 	{

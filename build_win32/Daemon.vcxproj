@@ -101,6 +101,7 @@
     <ClCompile Include="..\daemon\SetMapPacket.cpp" />
     <ClCompile Include="..\daemon\SetMusicPacket.cpp" />
     <ClCompile Include="..\daemon\SetWeatherPacket.cpp" />
+    <ClCompile Include="..\daemon\SocketUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
@@ -120,6 +121,7 @@
     <ClInclude Include="..\daemon\SetMusicPacket.h" />
     <ClInclude Include="..\daemon\SetWeatherPacket.h" />
     <ClInclude Include="..\daemon\SocketDef.h" />
+    <ClInclude Include="..\daemon\SocketUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
