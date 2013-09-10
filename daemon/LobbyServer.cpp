@@ -598,6 +598,12 @@ void CLobbyServer::ServerThreadProc()
 {
 	SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
+	{
+		int reuseOptionValue = 1;
+		int result = setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&reuseOptionValue), sizeof(reuseOptionValue));
+		assert(result != SOCKET_ERROR);
+	}
+
 	sockaddr_in service;
 	service.sin_family			= AF_INET;
 	service.sin_addr.s_addr		= htonl(INADDR_ANY);
