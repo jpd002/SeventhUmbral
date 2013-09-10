@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
     <ClInclude Include="..\Launcher\AppConfig.h" />
+    <ClInclude Include="..\launcher\AppDef.h" />
     <ClInclude Include="..\launcher\Launcher.h" />
     <ClInclude Include="..\launcher\LauncherWindow.h" />
     <ClInclude Include="..\Launcher\Pch.h" />

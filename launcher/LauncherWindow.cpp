@@ -7,6 +7,7 @@
 #include "string_cast.h"
 #include "string_format.h"
 #include "AppConfig.h"
+#include "AppDef.h"
 #include "Utf8.h"
 #include "StdStream.h"
 
@@ -53,8 +54,12 @@ CLauncherWindow::CLauncherWindow()
 	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
 	m_gameLocationEdit.SetText(gameLocation.c_str());
 
+	m_serverAddressComboBox = Framework::Win32::CComboBox(GetItem(IDC_SERVERADDRESS_COMBOBOX));
+	m_versionInfoLabel = Framework::Win32::CStatic(GetItem(IDC_VERSIONINFO_LABEL));
+
 	FillServerAddressComboBox();
 	LoadServerAddressComboBoxSetting();
+	SetVersionInfo();
 }
 
 CLauncherWindow::~CLauncherWindow()
@@ -79,9 +84,23 @@ long CLauncherWindow::OnCommand(unsigned short cmdId, unsigned short, HWND)
 	return FALSE;
 }
 
+long CLauncherWindow::OnCtlColorStatic(HDC dc, HWND wnd)
+{
+	if(wnd == m_versionInfoLabel)
+	{
+		HBRUSH result = reinterpret_cast<HBRUSH>(GetSysColorBrush(COLOR_BTNFACE));
+		SetTextColor(dc, RGB(0x80, 0x80, 0x80));
+		SetBkMode(dc, TRANSPARENT);
+		return reinterpret_cast<long>(result);
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 void CLauncherWindow::FillServerAddressComboBox()
 {
-	m_serverAddressComboBox = Framework::Win32::CComboBox(GetItem(IDC_SERVERADDRESS_COMBOBOX));
 	m_serverAddressComboItemKeys.clear();
 	uint32 currentKey = 1;
 	for(const auto& server : m_serverDefs.GetServers())
@@ -127,6 +146,12 @@ void CLauncherWindow::LoadServerAddressComboBoxSetting()
 	m_serverAddressComboBox.SetText(string_cast<std::tstring>(selectedServerAddress).c_str());
 }
 
+void CLauncherWindow::SetVersionInfo()
+{
+	auto versionString = string_format(_T("Version: %s"), APP_VERSIONSTR);
+	m_versionInfoLabel.SetText(versionString.c_str());
+}
+
 void CLauncherWindow::LaunchGame()
 {
 	try
@@ -134,7 +159,7 @@ void CLauncherWindow::LaunchGame()
 		std::string savedServerName;
 		std::string savedServerAddress;
 
-		std::string serverAddress = string_cast<std::string>(m_serverAddressComboBox.GetText());
+		auto serverAddress = string_cast<std::string>(m_serverAddressComboBox.GetText());
 		int serverAddressSelection = m_serverAddressComboBox.GetSelection();
 		if(serverAddressSelection != -1)
 		{
