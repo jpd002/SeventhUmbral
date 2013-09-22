@@ -38,7 +38,7 @@ private:
 	void							SetVersionInfo();
 
 	void							ShowGameSettings();
-	void							LaunchGame();
+	void							LaunchGame(const char*);
 
 	bool							m_pageLoaded;
 	UINT_PTR						m_pageLoadTimerId;

@@ -66,16 +66,18 @@ static bool ApplyPatches(HANDLE hProcess, HANDLE hThread, const char* lobbyHostN
 	return true;
 }
 
-void CLauncher::Launch(const char* workingDirectory, const char* lobbyHostName)
+void CLauncher::Launch(const char* workingDirectory, const char* lobbyHostName, const char* sessionId)
 {
 	if((strlen(lobbyHostName) + 1) > g_lobbyHostNamePatchSize)
 	{
 		throw std::runtime_error("Lobby host name too large.");
 	}
 
+	assert(strlen(sessionId) == 56);
+
 	char commandLine[1024];
 	uint32 currentTickCount = GetTickCount();
-	sprintf(commandLine, " T =%d /LANG =en-us /REGION =2 /SERVER_UTC =1356916742 /SESSION_ID =c45c427aabbf5bfeec6eb317678f324d7716e22e1e51c5682b03debd", currentTickCount);
+	sprintf(commandLine, " T =%d /LANG =en-us /REGION =2 /SERVER_UTC =1356916742 /SESSION_ID =%s", currentTickCount, sessionId);
 
 	char encryptionKey[9];
 	sprintf(encryptionKey, "%0.8x", currentTickCount & ~0xFFFF);

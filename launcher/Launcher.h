@@ -3,7 +3,7 @@
 class CLauncher
 {
 public:
-	static void		Launch(const char*, const char*);
+	static void		Launch(const char*, const char*, const char*);
 
 private:
 

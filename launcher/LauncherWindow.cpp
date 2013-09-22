@@ -207,7 +207,7 @@ void CLauncherWindow::ShowGameSettings()
 	gameSettingsWindow.DoModal();
 }
 
-void CLauncherWindow::LaunchGame()
+void CLauncherWindow::LaunchGame(const char* sessionId)
 {
 	std::string savedServerName;
 	std::string savedServerAddress;
@@ -268,13 +268,13 @@ void CLauncherWindow::LaunchGame()
 		throw std::runtime_error("Specified location doesn't contain the game.");
 	}
 
-	CLauncher::Launch(gameLocationPath.string().c_str(), serverIpAddress.c_str());
+	CLauncher::Launch(gameLocationPath.string().c_str(), serverIpAddress.c_str(), sessionId);
 
 	//Save and we're done
 	CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_NAME, savedServerName.c_str());
 	CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_ADDRESS, savedServerAddress.c_str());
 
-	DestroyWindow(m_hWnd);
+	Destroy();
 }
 
 void CLauncherWindow::LoadLoginPage()
@@ -411,10 +411,10 @@ void CLauncherWindow::BeforeNavigate(Framework::Win32::CWebBrowser::BEFORENAVIGA
 	auto sessionIdIterator = parameters.find(_T("sessionId"));
 	if(sessionIdIterator != std::end(parameters))
 	{
-//		m_sessionId = sessionIdIterator->second;
+		auto sessionId = string_cast<std::string>(sessionIdIterator->second);
 		try
 		{
-			LaunchGame();
+			LaunchGame(sessionId.c_str());
 		}
 		catch(const std::exception& except)
 		{
