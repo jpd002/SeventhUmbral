@@ -36,6 +36,9 @@
     <ClCompile Include="..\Launcher\Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\launcher\GameSettingsWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H">
@@ -43,9 +46,6 @@
     </ClInclude>
     <ClInclude Include="..\launcher\LauncherWindow.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\launcher\resource.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\launcher\Launcher.h">
       <Filter>Source Files</Filter>
@@ -60,6 +60,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\launcher\AppDef.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\launcher\resource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\launcher\GameSettingsWindow.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\launcher\AppPreferences.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

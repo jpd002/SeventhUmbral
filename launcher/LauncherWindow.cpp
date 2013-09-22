@@ -1,26 +1,29 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include <Shlobj.h>
+#include <WinInet.h>
 #include "LauncherWindow.h"
+#include "GameSettingsWindow.h"
 #include "Launcher.h"
 #include "resource.h"
 #include "string_cast.h"
 #include "string_format.h"
 #include "AppConfig.h"
+#include "AppPreferences.h"
 #include "AppDef.h"
 #include "Utf8.h"
 #include "StdStream.h"
 
 #define APP_TITLE _T("Seventh Umbral FFXIV Launcher")
 
-#define PREF_LAUNCHER_GAME_LOCATION		"launcher.game.location"
-#define PREF_LAUNCHER_SERVER_NAME		"launcher.server.name"
-#define PREF_LAUNCHER_SERVER_ADDRESS	"launcher.server.address"
-
 #define GAME_INSTALL_REGKEY _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F2C4E6E0-EB78-4824-A212-6DF6AF0E8E82}")
+
+#define PAGE_LOAD_TIMER_ID					0xBEEF
 
 CLauncherWindow::CLauncherWindow()
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_LAUNCHERWINDOW))
+, m_pageLoaded(false)
+, m_pageLoadTimerId(NULL)
 {
 	CAppConfig::GetInstance().RegisterPreferenceString(PREF_LAUNCHER_GAME_LOCATION, Framework::Utf8::ConvertTo(GetGameLocationFromInstallInfo()).c_str());
 	CAppConfig::GetInstance().RegisterPreferenceString(PREF_LAUNCHER_SERVER_NAME, "");
@@ -50,9 +53,15 @@ CLauncherWindow::CLauncherWindow()
 
 	}
 
-	m_gameLocationEdit = Framework::Win32::CEdit(GetItem(IDC_GAMELOCATION_EDIT));
-	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
-	m_gameLocationEdit.SetText(gameLocation.c_str());
+	{
+		auto webBrowserPlaceholder = Framework::Win32::CStatic(GetItem(IDC_WEBBROWSER_PLACEHODLER));
+
+		RECT placeHolderRect = webBrowserPlaceholder.GetWindowRect();
+		ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&placeHolderRect) + 0);
+		ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&placeHolderRect) + 1);
+
+		m_webBrowser = Framework::Win32::CWebBrowser(m_hWnd, placeHolderRect);
+	}
 
 	m_serverAddressComboBox = Framework::Win32::CComboBox(GetItem(IDC_SERVERADDRESS_COMBOBOX));
 	m_versionInfoLabel = Framework::Win32::CStatic(GetItem(IDC_VERSIONINFO_LABEL));
@@ -60,6 +69,7 @@ CLauncherWindow::CLauncherWindow()
 	FillServerAddressComboBox();
 	LoadServerAddressComboBoxSetting();
 	SetVersionInfo();
+	LoadLoginPage();
 }
 
 CLauncherWindow::~CLauncherWindow()
@@ -67,19 +77,58 @@ CLauncherWindow::~CLauncherWindow()
 
 }
 
-long CLauncherWindow::OnCommand(unsigned short cmdId, unsigned short, HWND)
+long CLauncherWindow::OnCommand(unsigned short cmdId, unsigned short cmdType, HWND hwndFrom)
 {
 	switch(cmdId)
 	{
-	case IDOK:
-		LaunchGame();
-		break;
 	case IDCANCEL:
-		DestroyWindow(m_hWnd);
+		Destroy();
 		break;
-	case IDC_BROWSE_GAMELOCATION:
-		BrowseGameLocation();
+	case IDC_GAMESETTINGS_BUTTON:
+		ShowGameSettings();
 		break;
+	}
+	if(CWindow::IsCommandSource(&m_serverAddressComboBox, hwndFrom))
+	{
+		switch(cmdType)
+		{
+		case CBN_EDITCHANGE:
+			if(m_pageLoadTimerId != NULL)
+			{
+				KillTimer(m_hWnd, m_pageLoadTimerId);
+			}
+			m_pageLoadTimerId = SetTimer(m_hWnd, PAGE_LOAD_TIMER_ID, 1000, nullptr);
+			ResetLoginPage();
+			break;
+		case CBN_SELCHANGE:
+			LoadLoginPage();
+			break;
+		}
+	}
+	return FALSE;
+}
+
+long CLauncherWindow::OnNotify(WPARAM wparam, NMHDR* hdr)
+{
+	if(CWindow::IsNotifySource(&m_webBrowser, hdr))
+	{
+		switch(hdr->code)
+		{
+		case Framework::Win32::CWebBrowser::NOTIFICATION_BEFORENAVIGATE:
+			BeforeNavigate(static_cast<Framework::Win32::CWebBrowser::BEFORENAVIGATE_INFO*>(hdr));
+			break;
+		}
+	}
+	return FALSE;
+}
+
+long CLauncherWindow::OnTimer(WPARAM wparam)
+{
+	if(wparam == PAGE_LOAD_TIMER_ID)
+	{
+		KillTimer(m_hWnd, m_pageLoadTimerId);
+		m_pageLoadTimerId = NULL;
+		LoadLoginPage();
 	}
 	return FALSE;
 }
@@ -152,102 +201,255 @@ void CLauncherWindow::SetVersionInfo()
 	m_versionInfoLabel.SetText(versionString.c_str());
 }
 
+void CLauncherWindow::ShowGameSettings()
+{
+	CGameSettingsWindow gameSettingsWindow(m_hWnd);
+	gameSettingsWindow.DoModal();
+}
+
 void CLauncherWindow::LaunchGame()
 {
-	try
+	std::string savedServerName;
+	std::string savedServerAddress;
+
+	auto serverAddress = string_cast<std::string>(m_serverAddressComboBox.GetText());
+	int serverAddressSelection = m_serverAddressComboBox.GetSelection();
+	if(serverAddressSelection != -1)
 	{
-		std::string savedServerName;
-		std::string savedServerAddress;
-
-		auto serverAddress = string_cast<std::string>(m_serverAddressComboBox.GetText());
-		int serverAddressSelection = m_serverAddressComboBox.GetSelection();
-		if(serverAddressSelection != -1)
+		uint32 itemKey = m_serverAddressComboBox.GetItemData(serverAddressSelection);
+		if(m_serverAddressComboItemKeys.find(itemKey) != std::end(m_serverAddressComboItemKeys))
 		{
-			uint32 itemKey = m_serverAddressComboBox.GetItemData(serverAddressSelection);
-			if(m_serverAddressComboItemKeys.find(itemKey) != std::end(m_serverAddressComboItemKeys))
+			auto serverName = m_serverAddressComboItemKeys[itemKey];
+			auto serverIterator = m_serverDefs.GetServers().find(serverName);
+			if(serverIterator != std::end(m_serverDefs.GetServers()))
 			{
-				auto serverName = m_serverAddressComboItemKeys[itemKey];
-				auto serverIterator = m_serverDefs.GetServers().find(serverName);
-				if(serverIterator != std::end(m_serverDefs.GetServers()))
-				{
-					serverAddress = serverIterator->second.address;
-					savedServerName = serverName;
-				}
-				else
-				{
-					serverAddress = serverName;
-				}
+				serverAddress = serverIterator->second.address;
+				savedServerName = serverName;
+			}
+			else
+			{
+				serverAddress = serverName;
 			}
 		}
-
-		savedServerAddress = serverAddress;
-		if(serverAddress.empty())
-		{
-			throw std::runtime_error("No server address specified.");
-		}
-
-		std::string serverIpAddress = serverAddress;
-		hostent* hostAddress = gethostbyname(serverAddress.c_str());
-		if(hostAddress)
-		{
-			char** addrList = hostAddress->h_addr_list;
-			if(*addrList != NULL)
-			{
-				char* addr = (*addrList);
-				serverIpAddress = string_format("%u.%u.%u.%u", 
-					static_cast<uint8>(addr[0]), 
-					static_cast<uint8>(addr[1]), 
-					static_cast<uint8>(addr[2]),
-					static_cast<uint8>(addr[3])
-					);
-			}
-		}
-
-		auto gameLocation = m_gameLocationEdit.GetText();
-		if(gameLocation.empty())
-		{
-			throw std::runtime_error("No game location specified.");
-		}
-
-		auto gameLocationPath = boost::filesystem::path(gameLocation);
-		if(!IsValidGameLocationPath(gameLocationPath))
-		{
-			throw std::runtime_error("Specified location doesn't contain the game.");
-		}
-
-		CLauncher::Launch(gameLocationPath.string().c_str(), serverIpAddress.c_str());
-
-		//Save and we're done
-		CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_NAME, savedServerName.c_str());
-		CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_ADDRESS, savedServerAddress.c_str());
-
-		DestroyWindow(m_hWnd);
 	}
-	catch(const std::exception& except)
+
+	savedServerAddress = serverAddress;
+	if(serverAddress.empty())
 	{
-		auto message = _T("Failed to launch game: ") + string_cast<std::tstring>(except.what());
-		MessageBox(m_hWnd, message.c_str(), APP_TITLE, MB_ICONERROR);
+		throw std::runtime_error("No server address specified.");
+	}
+
+	std::string serverIpAddress = serverAddress;
+	hostent* hostAddress = gethostbyname(serverAddress.c_str());
+	if(hostAddress)
+	{
+		char** addrList = hostAddress->h_addr_list;
+		if(*addrList != NULL)
+		{
+			char* addr = (*addrList);
+			serverIpAddress = string_format("%u.%u.%u.%u", 
+				static_cast<uint8>(addr[0]), 
+				static_cast<uint8>(addr[1]), 
+				static_cast<uint8>(addr[2]),
+				static_cast<uint8>(addr[3])
+				);
+		}
+	}
+
+	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
+	if(gameLocation.empty())
+	{
+		throw std::runtime_error("No game location specified.");
+	}
+
+	auto gameLocationPath = boost::filesystem::path(gameLocation);
+	if(!IsValidGameLocationPath(gameLocationPath))
+	{
+		throw std::runtime_error("Specified location doesn't contain the game.");
+	}
+
+	CLauncher::Launch(gameLocationPath.string().c_str(), serverIpAddress.c_str());
+
+	//Save and we're done
+	CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_NAME, savedServerName.c_str());
+	CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_SERVER_ADDRESS, savedServerAddress.c_str());
+
+	DestroyWindow(m_hWnd);
+}
+
+void CLauncherWindow::LoadLoginPage()
+{
+	m_webBrowser.Stop();
+	m_pageLoaded = true;
+
+	int serverAddressSelection = m_serverAddressComboBox.GetSelection();
+	if(serverAddressSelection == -1)
+	{
+		auto serverAddressText = m_serverAddressComboBox.GetText();
+		if(serverAddressText.empty())
+		{
+			m_webBrowser.Navigate(_T("about:blank"));
+		}
+		else
+		{
+			LoadNullLoginPage();
+		}
 		return;
+	}
+
+	uint32 itemKey = m_serverAddressComboBox.GetItemData(serverAddressSelection);
+	if(m_serverAddressComboItemKeys.find(itemKey) == std::end(m_serverAddressComboItemKeys))
+	{
+		LoadNullLoginPage();
+		return;
+	}
+
+	auto serverName = m_serverAddressComboItemKeys[itemKey];
+	auto serverIterator = m_serverDefs.GetServers().find(serverName);
+	if(serverIterator == std::end(m_serverDefs.GetServers()))
+	{
+		LoadNullLoginPage();
+		return;
+	}
+
+	const auto& serverDef = serverIterator->second;
+	if(serverDef.loginUrl.empty())
+	{
+		LoadNullLoginPage();
+		return;
+	}
+
+	m_webBrowser.Navigate(string_cast<std::tstring>(serverDef.loginUrl).c_str());
+}
+
+void CLauncherWindow::LoadNullLoginPage()
+{
+	auto document = m_webBrowser.GetDocument();
+	if(!document.IsEmpty())
+	{
+		auto page = GetNullLoginPage();
+
+		HRESULT result = S_OK;
+
+		BSTR documentText = SysAllocString(page.c_str());
+
+		{
+			SAFEARRAYBOUND documentBounds = {};
+			documentBounds.cElements = 1;
+			documentBounds.lLbound = 0;
+			auto documentArray = SafeArrayCreate(VT_VARIANT, 1, &documentBounds);
+			{
+				result = SafeArrayLock(documentArray);
+				assert(SUCCEEDED(result));
+				auto& elementVar = reinterpret_cast<VARIANT*>(documentArray->pvData)[0];
+				elementVar.vt		= VT_BSTR;
+				elementVar.bstrVal	= documentText;
+				result = SafeArrayUnlock(documentArray);
+				assert(SUCCEEDED(result));
+			}
+			result = document->write(documentArray);
+			assert(SUCCEEDED(result));
+			SafeArrayDestroy(documentArray);
+		}
+
+		SysFreeString(documentText);
+
+		document->close();
 	}
 }
 
-void CLauncherWindow::BrowseGameLocation()
+void CLauncherWindow::ResetLoginPage()
 {
-	BROWSEINFO browseInfo = {};
-	browseInfo.hwndOwner = m_hWnd;
-	browseInfo.lpszTitle = _T("Specify FFXIV folder");
-	browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
-	PIDLIST_ABSOLUTE result = SHBrowseForFolder(&browseInfo);
-	if(result != NULL)
+	if(m_pageLoaded)
 	{
-		TCHAR selectedPath[MAX_PATH];
-		if(SHGetPathFromIDList(result, selectedPath))
-		{
-			CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_GAME_LOCATION, Framework::Utf8::ConvertTo(selectedPath).c_str());
-			m_gameLocationEdit.SetText(selectedPath);
-		}
-		CoTaskMemFree(result);
+		m_webBrowser.Stop();
+		m_webBrowser.Navigate(_T("about:blank"));
+		m_pageLoaded = false;
 	}
+}
+
+std::tstring CLauncherWindow::GetNullLoginPage()
+{
+	HRSRC pageResource = FindResource(NULL, MAKEINTRESOURCE(IDR_NULL_LOGIN_PAGE), RT_RCDATA);
+	assert(pageResource != NULL);
+	HGLOBAL pageResourceHandle = LoadResource(NULL, pageResource);
+	DWORD pageResourceSize = SizeofResource(NULL, pageResource);
+	assert(pageResourceHandle != NULL);
+	const char* pageResourceData = static_cast<const char*>(LockResource(pageResourceHandle));
+	std::string pageText = std::string(pageResourceData, pageResourceData + pageResourceSize);
+	UnlockResource(pageResourceHandle);
+	return string_cast<std::tstring>(pageText);
+}
+
+void CLauncherWindow::BeforeNavigate(Framework::Win32::CWebBrowser::BEFORENAVIGATE_INFO* beforeNavigateInfo)
+{
+	const auto& navigateUrl = beforeNavigateInfo->navigateUrl;
+	
+	const int partSize = 256;
+	TCHAR scheme[partSize];
+	TCHAR hostName[partSize];
+	TCHAR urlPath[partSize];
+
+	URL_COMPONENTS components;
+	memset(&components, 0, sizeof(URL_COMPONENTS));
+	components.dwStructSize = sizeof(URL_COMPONENTS);
+	components.lpszScheme		= scheme;
+	components.dwSchemeLength	= partSize;
+	components.lpszHostName		= hostName;
+	components.dwHostNameLength	= partSize;
+	components.lpszUrlPath		= urlPath;
+	components.dwUrlPathLength	= partSize;
+
+	BOOL result = InternetCrackUrl(navigateUrl.c_str(), 0, ICU_ESCAPE, &components);
+	if(result == FALSE) return;
+
+	if(_tcscmp(components.lpszScheme, _T("ffxiv"))) return;
+	if(_tcscmp(components.lpszHostName, _T("login_success"))) return;
+
+	auto parameters = GetUrlParameters(components.lpszUrlPath);
+
+	auto sessionIdIterator = parameters.find(_T("sessionId"));
+	if(sessionIdIterator != std::end(parameters))
+	{
+//		m_sessionId = sessionIdIterator->second;
+		try
+		{
+			LaunchGame();
+		}
+		catch(const std::exception& except)
+		{
+			auto message = _T("Failed to launch game: ") + string_cast<std::tstring>(except.what());
+			MessageBox(m_hWnd, message.c_str(), APP_TITLE, MB_ICONERROR);
+			LoadLoginPage();
+			beforeNavigateInfo->cancel = true;
+			return;
+		}
+	}
+}
+
+CLauncherWindow::StringKeyValueMap CLauncherWindow::GetUrlParameters(const TCHAR* url)
+{
+	std::map<std::tstring, std::tstring> parameters;
+	auto paramStart = _tcschr(url, _T('?'));
+	if(paramStart != nullptr)
+	{
+		while(1)
+		{
+			paramStart++;
+			auto nextParam = _tcschr(paramStart, _T('&'));
+			auto paramSeparatorPos = _tcschr(paramStart, _T('='));
+			if(paramSeparatorPos != nullptr)
+			{
+				auto paramEnd = nextParam ? nextParam : (paramStart + _tcslen(paramStart));
+				std::tstring paramName(paramStart, paramSeparatorPos);
+				std::tstring paramValue(paramSeparatorPos + 1, paramEnd);
+				parameters.insert(std::make_pair(paramName, paramValue));
+			}
+			if(nextParam == nullptr) break;
+			paramStart = nextParam;
+		}
+	}
+	return parameters;
 }
 
 std::tstring CLauncherWindow::GetGameLocationFromInstallInfo()
