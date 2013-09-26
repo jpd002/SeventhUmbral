@@ -18,7 +18,7 @@
 
 #include "CompositePacket.h"
 
-#define LOGNAME "GameServerPlayer"
+#define LOG_NAME "GameServerPlayer"
 
 #define PLAYER_ID	0x029B2941
 
@@ -267,7 +267,7 @@ static PacketData GetCharacterInfo()
 	}
 	else
 	{
-		CLog::GetInstance().LogMessage(LOGNAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
+		CLog::GetInstance().LogMessage(LOG_NAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
 	}
 
 	const uint32 characterInfoBase = 0x368;
@@ -329,7 +329,7 @@ void CGameServerPlayer::Update()
 		if(read == 0)
 		{
 			//Client disconnected
-			CLog::GetInstance().LogMessage(LOGNAME, "Client disconnected.");
+			CLog::GetInstance().LogMessage(LOG_NAME, "Client disconnected.");
 			m_disconnect = true;
 			return;
 		}
@@ -343,7 +343,6 @@ void CGameServerPlayer::Update()
 	{
 		auto incomingPacket = CPacketUtils::ReadPacket(m_incomingStream);
 		auto subPackets = CPacketUtils::SplitPacket(incomingPacket);
-		bool killConnection = false;
 
 		for(const auto& subPacket : subPackets)
 		{
@@ -369,7 +368,7 @@ void CGameServerPlayer::Update()
 				ProcessScriptResult(subPacket);
 				break;
 			default:
-				CLog::GetInstance().LogDebug(LOGNAME, "Unknown command 0x%0.4X received.", commandId);
+				CLog::GetInstance().LogDebug(LOG_NAME, "Unknown command 0x%0.4X received.", commandId);
 				break;
 			}
 		}
@@ -493,7 +492,7 @@ void CGameServerPlayer::ProcessSetPlayerPosition(const PacketData& subPacket)
 	float posZ = *reinterpret_cast<const float*>(&subPacket[0x30]);
 
 //	printf("%s: Keeping Alive. Time: 0x%0.8X, Pos: (X: %f, Y: %f, Z: %f).\r\n",
-//		LOGNAME, clientTime, posX, posY, posZ);
+//		LOG_NAME, clientTime, posX, posY, posZ);
 }
 
 void CGameServerPlayer::ProcessSetSelection(const PacketData& subPacket)
@@ -501,7 +500,7 @@ void CGameServerPlayer::ProcessSetSelection(const PacketData& subPacket)
 	uint32 selectedId = *reinterpret_cast<const uint32*>(&subPacket[0x20]);
 	uint32 lockOnId = *reinterpret_cast<const uint32*>(&subPacket[0x24]);
 
-	CLog::GetInstance().LogDebug(LOGNAME, "Selected Id: 0x%0.8X, Lock On Id: 0x%0.8X", selectedId, lockOnId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Selected Id: 0x%0.8X, Lock On Id: 0x%0.8X", selectedId, lockOnId);
 }
 
 void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
@@ -511,7 +510,7 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	uint32 targetId = *reinterpret_cast<const uint32*>(&subPacket[0x24]);
 	const char* commandName = reinterpret_cast<const char*>(subPacket.data()) + 0x31;
 
-	CLog::GetInstance().LogDebug(LOGNAME, "ProcessScriptCommand: %s Source Id = 0x%0.8X, Target Id = 0x%0.8X.", commandName, sourceId, targetId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "ProcessScriptCommand: %s Source Id = 0x%0.8X, Target Id = 0x%0.8X.", commandName, sourceId, targetId);
 
 	//printf("%s\r\n", CPacketUtils::DumpPacket(subPacket).c_str());
 
@@ -540,7 +539,7 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 			ScriptCommand_TrashItem(subPacket, clientTime);
 			break;
 		default:
-			CLog::GetInstance().LogDebug(LOGNAME, "Unknown target id (0x%0.8X).", targetId);
+			CLog::GetInstance().LogDebug(LOG_NAME, "Unknown target id (0x%0.8X).", targetId);
 			break;
 		}
 	}
@@ -612,7 +611,7 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 
 void CGameServerPlayer::ScriptCommand_EquipItem(const PacketData& subPacket, uint32 clientTime)
 {
-	CLog::GetInstance().LogDebug(LOGNAME, "EquipItem: %s", CPacketUtils::DumpPacket(subPacket).c_str());
+	CLog::GetInstance().LogDebug(LOG_NAME, "EquipItem: %s", CPacketUtils::DumpPacket(subPacket).c_str());
 
 	static const uint8 unknownPacket1[] =
 	{
@@ -817,7 +816,7 @@ void CGameServerPlayer::ScriptCommand_EquipItem(const PacketData& subPacket, uin
 
 	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6E]);
 
-	CLog::GetInstance().LogDebug(LOGNAME, "Equipping Item: 0x%0.8X", itemId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Equipping Item: 0x%0.8X", itemId);
 	
 //	CCompositePacket packet;
 //	packet.AddPacket(PacketData(std::begin(unknownPacket1), std::end(unknownPacket1)));
@@ -830,7 +829,7 @@ void CGameServerPlayer::ScriptCommand_Emote(const PacketData& subPacket, uint32 
 {
 	uint8 emoteId = subPacket[0x55];
 
-	CLog::GetInstance().LogDebug(LOGNAME, "Executing Emote 0x%0.2X", emoteId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Executing Emote 0x%0.2X", emoteId);
 
 	uint8 commandRequestPacket[0x40] =
 	{
@@ -909,7 +908,7 @@ void CGameServerPlayer::ScriptCommand_Emote(const PacketData& subPacket, uint32 
 void CGameServerPlayer::ScriptCommand_TrashItem(const PacketData& subPacket, uint32 clientTime)
 {
 	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6A]);
-	CLog::GetInstance().LogDebug(LOGNAME, "Trashing Item: 0x%0.8X", itemId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Trashing Item: 0x%0.8X", itemId);
 }
 
 void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)
@@ -918,11 +917,11 @@ void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)
 	uint32 someId2 = *reinterpret_cast<const uint32*>(&subPacket[0x30]);
 	uint32 someId3 = *reinterpret_cast<const uint32*>(&subPacket[0x34]);
 
-	CLog::GetInstance().LogDebug(LOGNAME, "ProcessScriptResult: Id1 = 0x%0.8X, Id2 = 0x%0.8X, Id3 = 0x%0.8X.", someId1, someId2, someId3);
+	CLog::GetInstance().LogDebug(LOG_NAME, "ProcessScriptResult: Id1 = 0x%0.8X, Id2 = 0x%0.8X, Id3 = 0x%0.8X.", someId1, someId2, someId3);
 
 	if(!m_alreadyMovedOutOfRoom)
 	{
-		CLog::GetInstance().LogDebug(LOGNAME, "Command 0x12E: Moving out of room");
+		CLog::GetInstance().LogDebug(LOG_NAME, "Command 0x12E: Moving out of room");
 
 		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
 

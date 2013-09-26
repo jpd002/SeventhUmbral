@@ -8,13 +8,7 @@
 #include "GameServer_Login.h"
 #include "Log.h"
 
-#define LOGNAME		("GameServer")
-
-static void SendPacket(SOCKET clientSocket, const void* packet, size_t size)
-{
-	int sent = send(clientSocket, reinterpret_cast<const char*>(packet), size, 0);
-	assert(sent == size);
-}
+#define LOG_NAME		("GameServer")
 
 static void UpdateEntities(SOCKET clientSocket)
 {
@@ -69,7 +63,7 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 	fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
 #endif
 
-	CLog::GetInstance().LogMessage(LOGNAME, "Received connection from %s.", GetSocketIpAddressString(clientSocketAddress).c_str());
+	CLog::GetInstance().LogMessage(LOG_NAME, "Received connection from %s.", GetSocketIpAddressString(clientSocketAddress).c_str());
 
 	if(clientId == 0)
 	{
@@ -77,6 +71,7 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 		while(player.IsConnected())
 		{
 			player.Update();
+			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 		}
 	}
 	else
@@ -101,7 +96,7 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 			if(read == 0)
 			{
 				//Client disconnected
-				CLog::GetInstance().LogMessage(LOGNAME, "Client disconnected.");
+				CLog::GetInstance().LogMessage(LOG_NAME, "Client disconnected.");
 				break;
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -143,17 +138,17 @@ void CGameServer::ServerThreadProc()
 	service.sin_port			= htons(GAME_SERVER_PORT);
 	if(bind(listenSocket, reinterpret_cast<sockaddr*>(&service), sizeof(sockaddr_in)))
 	{
-		CLog::GetInstance().LogError(LOGNAME, "Failed to bind socket.");
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to bind socket.");
 		return;
 	}
 
 	if(listen(listenSocket, SOMAXCONN))
 	{
-		CLog::GetInstance().LogError(LOGNAME, "Failed to listen on socket.");
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to listen on socket.");
 		return;
 	}
 
-	CLog::GetInstance().LogMessage(LOGNAME, "Game server started.");
+	CLog::GetInstance().LogMessage(LOG_NAME, "Game server started.");
 
 	int clientId = 0;
 

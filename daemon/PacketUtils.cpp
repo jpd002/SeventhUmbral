@@ -1,4 +1,5 @@
 #include "PacketUtils.h"
+#include "../common/BLOWFISH.H"
 #include <assert.h>
 
 bool CPacketUtils::HasPacket(Framework::CMemStream& stream)
@@ -63,7 +64,8 @@ SubPacketArray CPacketUtils::SplitPacket(const PacketData& packet)
 	{
 		SUBPACKETHEADER subHeader = *reinterpret_cast<const SUBPACKETHEADER*>(packetData);
 		assert(currentSize >= subHeader.subPacketSize);
-		subPackets.push_back(PacketData(packetData, packetData + subHeader.subPacketSize));
+		auto subPacket = PacketData(packetData, packetData + subHeader.subPacketSize);
+		subPackets.push_back(subPacket);
 		currentSize -= subHeader.subPacketSize;
 		packetData += subHeader.subPacketSize;
 	}
@@ -120,4 +122,51 @@ std::string CPacketUtils::DumpPacket(const PacketData& packet)
 uint16 CPacketUtils::GetSubPacketCommand(const PacketData& subPacket)
 {
 	return *reinterpret_cast<const uint16*>(subPacket.data() + 0x12);
+}
+
+void CPacketUtils::EncryptPacket(PacketData& packet)
+{
+	if(packet.size() <= sizeof(PACKETHEADER))
+	{
+		assert(0);
+		return;
+	}
+
+	uint8* data = &packet[0];
+	uint32 size = packet.size();
+
+	data += 0x10;
+	size -= 0x10;
+
+	while(1)
+	{
+		uint32 subPacketSize = *reinterpret_cast<uint16*>(data);
+		size -= subPacketSize;
+		subPacketSize -= 0x10;
+		data += 0x10;
+		for(unsigned int i = 0; i < subPacketSize; i += 8)
+		{
+			Blowfish_encipher(
+				reinterpret_cast<uint32*>(data + i), 
+				reinterpret_cast<uint32*>(data + i + 4));
+		}
+		data += subPacketSize;
+		if(size == 0) break;
+	}
+}
+
+PacketData CPacketUtils::DecryptSubPacket(const PacketData& packet)
+{
+	PacketData result(packet);
+	SUBPACKETHEADER subHeader = *reinterpret_cast<const SUBPACKETHEADER*>(result.data());
+	if(subHeader.unknown0 != 0x03) return result;
+	uint8* subPacketData = result.data() + 8;
+	uint32 decryptSize = result.size() - 8;
+	for(uint32 i = 0; i < decryptSize; i += 8)
+	{
+		Blowfish_decipher(
+			reinterpret_cast<uint32*>(subPacketData + i), 
+			reinterpret_cast<uint32*>(subPacketData + i + 4));
+	}
+	return result;
 }

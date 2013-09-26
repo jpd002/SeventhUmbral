@@ -63,7 +63,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,7 +82,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -91,9 +91,11 @@
     <ClCompile Include="..\daemon\BasePacket.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
     <ClCompile Include="..\daemon\CompositePacket.cpp" />
+    <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
     <ClCompile Include="..\daemon\LobbyServer.cpp" />
+    <ClCompile Include="..\daemon\LobbyServerPlayer.cpp" />
     <ClCompile Include="..\daemon\Log.cpp" />
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
@@ -109,11 +111,14 @@
     <ClInclude Include="..\daemon\BasePacket.h" />
     <ClInclude Include="..\daemon\Character.h" />
     <ClInclude Include="..\daemon\CompositePacket.h" />
+    <ClInclude Include="..\daemon\DatabaseConnectionManager.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
     <ClInclude Include="..\daemon\GameServerPlayer.h" />
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />
+    <ClInclude Include="..\daemon\LobbyServerPlayer.h" />
+    <ClInclude Include="..\daemon\LobbyServer_Login.h" />
     <ClInclude Include="..\daemon\Log.h" />
     <ClInclude Include="..\daemon\PacketUtils.h" />
     <ClInclude Include="..\daemon\SetInitialPositionPacket.h" />
@@ -126,6 +131,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
       <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\build_win32\FrameworkMySql.vcxproj">
+      <Project>{de7ec936-f8a7-4a7a-85e2-5d0439365f21}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

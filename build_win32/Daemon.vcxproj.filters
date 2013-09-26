@@ -66,6 +66,12 @@
     <ClCompile Include="..\daemon\SocketUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\LobbyServerPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -120,6 +126,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\SocketUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\LobbyServerPlayer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\LobbyServer_Login.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\DatabaseConnectionManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
