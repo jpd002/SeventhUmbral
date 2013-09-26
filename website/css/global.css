@@ -1,0 +1,28 @@
+body
+{
+	padding: 5px;
+	font-family: Verdana;
+	font-size: 10pt;
+}
+
+table.center
+{
+	margin-left: auto;
+	margin-right: auto;
+}
+
+td
+{
+	padding: 2px;
+}
+
+p
+{
+	padding: 2px;
+}
+
+p.errorMessage
+{
+	color: red;
+	font-weight: bold;
+}
