@@ -2,7 +2,7 @@ delimiter $$
 
 CREATE DATABASE `ffxiv` /*!40100 DEFAULT CHARACTER SET utf8 */$$
 
-USE ffxiv;
+USE `ffxiv`;
 
 CREATE TABLE `ffxiv_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
