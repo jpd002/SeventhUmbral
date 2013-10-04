@@ -14,8 +14,6 @@
 #include "Utf8.h"
 #include "StdStream.h"
 
-#define APP_TITLE _T("Seventh Umbral FFXIV Launcher")
-
 #define GAME_INSTALL_REGKEY _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F2C4E6E0-EB78-4824-A212-6DF6AF0E8E82}")
 
 #define PAGE_LOAD_TIMER_ID					0xBEEF
@@ -419,7 +417,7 @@ void CLauncherWindow::BeforeNavigate(Framework::Win32::CWebBrowser::BEFORENAVIGA
 		catch(const std::exception& except)
 		{
 			auto message = _T("Failed to launch game: ") + string_cast<std::tstring>(except.what());
-			MessageBox(m_hWnd, message.c_str(), APP_TITLE, MB_ICONERROR);
+			MessageBox(m_hWnd, message.c_str(), APP_NAME, MB_ICONERROR);
 			LoadLoginPage();
 			beforeNavigateInfo->cancel = true;
 			return;
