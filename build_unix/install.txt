@@ -1,0 +1,4 @@
+- Run "build_clang.sh" script
+- Copy "ffxivd_daemon" to "/usr/local/etc/rc.d"
+- Add "ffxivd_enable="YES"" in "/etc/rc.conf"
+

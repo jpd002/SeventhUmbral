@@ -31,3 +31,5 @@ add_executable(ffxivd
 
 target_link_libraries(ffxivd Framework Framework_MySql pthread boost_system boost_filesystem mysqlclient)
 
+install(TARGETS ffxivd RUNTIME DESTINATION bin)
+

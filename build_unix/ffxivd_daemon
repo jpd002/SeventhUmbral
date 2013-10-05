@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# PROVIDE: ffxivd
+# REQUIRE: DAEMON cleanvar
+# BEFORE:  LOGIN
+# KEYWORD: nojail shutdown
+
+. /etc/rc.subr
+
+name=ffxivd
+rcvar=ffxivd_enable
+
+command="/usr/local/bin/ffxivd"
+
+load_rc_config $name
+run_rc_command "$1"
+
