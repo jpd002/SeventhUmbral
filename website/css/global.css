@@ -1,8 +1,51 @@
 body
 {
-	padding: 5px;
 	font-family: Verdana;
 	font-size: 10pt;
+	line-height: 14pt;
+	height: 100%;
+}
+
+div.info
+{
+	width: 400px;
+	margin-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 20px;
+	background-color: lightblue;
+}
+
+div.inner
+{
+	position: relative;
+	max-width: 1250px;
+	margin: 0px auto;
+	min-height: 100%
+}
+
+h1
+{
+	line-height: 23px;
+	font-size: 23px;
+	padding: 5px 0px;
+}
+
+h2
+{
+	line-height: 17px;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px;
+}
+
+header.top
+{
+	padding: 20px 0px;
+	background: none repeat scroll 0% 0% lavender;
+	position: relative;
+	z-index: 999;
 }
 
 table.center
@@ -11,9 +54,14 @@ table.center
 	margin-right: auto;
 }
 
+table.infoForm
+{
+	width: 100%;
+}
+
 td
 {
-	padding: 2px;
+	padding: 3px;
 }
 
 p
@@ -23,6 +71,32 @@ p
 
 p.errorMessage
 {
-	color: red;
+	color: darkred;
 	font-weight: bold;
+}
+
+p.pageTitle
+{
+	font-weight: bold;
+	font-size: 28px;
+	line-height: 20px;
+	padding: 0px 0px;
+}
+
+p.pageTitle a
+{
+	text-decoration: none;
+	color: black;
+}
+
+p.pageSubTitle
+{
+	font-size: 10px;
+	line-height: 18px;
+	padding: 0px 0px;
+}
+
+#recaptcha_area
+{
+    margin: 0 auto;
 }

@@ -1,5 +1,5 @@
 <?php
-include("dbconfig.php");
+include("config.php");
 
 $db_connect = mysql_connect($db_server, $db_username, $db_password);
 

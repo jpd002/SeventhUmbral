@@ -1,6 +1,6 @@
-<!DOCTYPE HTML>
 <?php 
 
+include("config.php");
 include("database.php"); 
 
 function LoginPage_Login()
@@ -38,9 +38,10 @@ if(isset($_POST["login"]))
 }
 
 ?>
+<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>Seventh Umbral FFXIV Server - Login</title>
+		<title>Seventh Umbral Server</title>
 		<link rel="stylesheet" type="text/css" href="css/reset.css" />	
 		<link rel="stylesheet" type="text/css" href="css/global.css" />	
 	</head>
@@ -51,23 +52,28 @@ if(isset($_POST["login"]))
 				echo "<script>window.location=\"ffxiv://login_success?sessionId=" . $sessionId . "\";</script>";
 			}
 		?>
-		<form method="post" autocomplete="off">
-			<table>
-				<tr>
-					<td>Username:</td>
-					<td><input type="text" name="username" /></td>
-				</tr>
-				<tr>
-					<td>Password:</td>
-					<td><input type="password" name="password" /></td>
-				</tr>
-				<tr>
-					<td>
-						<input type="submit" name="login" value="Login" />
-					</td>
-				</tr>
-			</table>
-		</form>
-		<p class="errorMessage"><?php echo($loginError); ?></p>
+		<?php include("header.php"); ?>
+		<div class="info">
+			<h2>Login</h2>
+			<br />
+			<form method="post" autocomplete="off">
+				<table class="infoForm">
+					<tr>
+						<td>Username:</td>
+						<td><input type="text" name="username" /></td>
+					</tr>
+					<tr>
+						<td>Password:</td>
+						<td><input type="password" name="password" /></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="submit" name="login" value="Login" />
+						</td>
+					</tr>
+				</table>
+			</form>
+			<p class="errorMessage"><?php echo($loginError); ?></p>
+		</div>
 	</body>
 </html>
