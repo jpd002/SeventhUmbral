@@ -1,4 +1,3 @@
 <Servers>
-	<Server Name="localhost" Address="localhost" LoginUrl="" />
-	<Server Name="Van Darnus Server" Address="vandarnus.purei.org" LoginUrl="http://seventhumbral.purei.org/login.php" />
+	<Server Name="Van Darnus Server" Address="vandarnus.seventhumbral.org" LoginUrl="http://vandarnus.seventhumbral.org/login.php" />
 </Servers>
