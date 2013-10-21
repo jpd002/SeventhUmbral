@@ -429,7 +429,7 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 		weatherCommands["weather_stormy"]		= CSetWeatherPacket::WEATHER_STORMY;
 		weatherCommands["weather_sandy"]		= CSetWeatherPacket::WEATHER_SANDY;
 		weatherCommands["weather_gloomy"]		= CSetWeatherPacket::WEATHER_GLOOMY;
-		weatherCommands["weather_dalamund"]		= CSetWeatherPacket::WEATHER_DALAMUND;
+		weatherCommands["weather_dalamud"]		= CSetWeatherPacket::WEATHER_DALAMUD;
 	}
 
 	auto weatherCommandIterator = weatherCommands.find(chatText);
@@ -459,7 +459,7 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 	{
 		SendTeleportSequence(CSetMapPacket::MAP_THANALAN, CSetMusicPacket::MUSIC_THANALAN, INITIAL_POSITION_THANALAN);
 	}
-	else if(!strcmp(chatText, "teleport_lanocsea"))
+	else if(!strcmp(chatText, "teleport_lanoscea"))
 	{
 		SendTeleportSequence(CSetMapPacket::MAP_NOSCEA, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_NOSCEA);
 	}
@@ -545,7 +545,19 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	}
 	else if(!strcmp(commandName, "commandContent"))
 	{
-		//Called when trying to teleport
+		switch(targetId)
+		{
+		case 0xA0F05E9B:
+			//Quit
+			CLog::GetInstance().LogDebug(LOG_NAME, "Quit.");
+			m_disconnect = true;
+			break;
+		case 0xA0F05E9C:
+			//Teleport
+			CLog::GetInstance().LogDebug(LOG_NAME, "Teleport.");
+			m_disconnect = true;
+			break;
+		}
 	}
 	else if(!strcmp(commandName, "commandForced"))
 	{
@@ -579,6 +591,7 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 			}
 			break;
 		default:
+#if 0
 			//Talking Test (doesn't work)
 			{
 				static const uint8 commandRequestPacket[] =
@@ -599,6 +612,8 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 
 				QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
 			}
+#endif
+			m_disconnect = true;
 			break;
 		}
 	}
