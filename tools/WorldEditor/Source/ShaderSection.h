@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseSection.h"
+#include "BaseChunk.h"
 
 class CShaderSection : public CBaseSection
 {
@@ -11,5 +12,5 @@ public:
 	virtual void	Read(Framework::CStream&);
 
 private:
-
+	ChunkPtr		m_rootChunk;
 };

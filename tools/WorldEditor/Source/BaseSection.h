@@ -2,6 +2,7 @@
 
 #include "Types.h"
 #include "Stream.h"
+#include <memory>
 
 class CBaseSection
 {
@@ -25,3 +26,5 @@ protected:
 
 	SEDB_HEADER			m_header;
 };
+
+typedef std::shared_ptr<CBaseSection> SectionPtr;

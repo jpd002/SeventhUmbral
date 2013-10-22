@@ -24,9 +24,6 @@
     <ClCompile Include="Source\WinMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SectionLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\BaseSection.cpp">
       <Filter>Source Files\Sections</Filter>
     </ClCompile>
@@ -42,11 +39,47 @@
     <ClCompile Include="Source\ContainerChunk.cpp">
       <Filter>Source Files\Chunks</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SectionLoader.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ChunkLoader.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ShaderChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FileChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ModelSection.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ModelChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ModelContainerChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HeaderChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LtcdChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WrbChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\NameChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StringChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\SectionLoader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\BaseSection.h">
       <Filter>Source Files\Sections</Filter>
     </ClInclude>
@@ -60,6 +93,45 @@
       <Filter>Source Files\Chunks</Filter>
     </ClInclude>
     <ClInclude Include="Source\ContainerChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SectionLoader.h">
+      <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ChunkLoader.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ShaderChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FileChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelSection.h">
+      <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelContainerChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\HeaderChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LtcdChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WrbChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\NameChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MeshChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StringChunk.h">
       <Filter>Source Files\Chunks</Filter>
     </ClInclude>
   </ItemGroup>

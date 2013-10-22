@@ -1,7 +1,8 @@
-#include "ResourceSection.h"
-#include "ShaderSection.h"
 #include <vector>
 #include <assert.h>
+#include "ResourceSection.h"
+#include "ShaderSection.h"
+#include "ModelSection.h"
 
 CResourceSection::CResourceSection()
 {
@@ -48,22 +49,22 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 		const auto& entry = entries[i];
 		uint32 resourceType = resourceTypes[i];
 		inputStream.Seek(basePosition + entry.offset, Framework::STREAM_SEEK_SET);
+		SectionPtr section;
 		switch(resourceType)
 		{
 		case '\0trb':
-			{
-				auto section = new CResourceSection();
-				section->Read(inputStream);
-				delete section;
-			}
+			section = std::make_shared<CResourceSection>();
 			break;
 		case 'sdrb':
-			{
-				auto section = new CShaderSection();
-				section->Read(inputStream);
-				delete section;
-			}
+			section = std::make_shared<CShaderSection>();
+			break;
+		case '\0wrb':
+			section = std::make_shared<CModelSection>();
+			break;
+		default:
+			assert(0);
 			break;
 		}
+		section->Read(inputStream);
 	}
 }

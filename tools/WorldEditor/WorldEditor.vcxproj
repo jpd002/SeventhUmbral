@@ -80,19 +80,43 @@
   <ItemGroup>
     <ClCompile Include="Source\BaseChunk.cpp" />
     <ClCompile Include="Source\BaseSection.cpp" />
+    <ClCompile Include="Source\ChunkLoader.cpp" />
     <ClCompile Include="Source\ContainerChunk.cpp" />
+    <ClCompile Include="Source\FileChunk.cpp" />
+    <ClCompile Include="Source\HeaderChunk.cpp" />
+    <ClCompile Include="Source\LtcdChunk.cpp" />
+    <ClCompile Include="Source\MeshChunk.cpp" />
+    <ClCompile Include="Source\ModelChunk.cpp" />
+    <ClCompile Include="Source\ModelContainerChunk.cpp" />
+    <ClCompile Include="Source\ModelSection.cpp" />
+    <ClCompile Include="Source\NameChunk.cpp" />
     <ClCompile Include="Source\ResourceSection.cpp" />
     <ClCompile Include="Source\SectionLoader.cpp" />
+    <ClCompile Include="Source\ShaderChunk.cpp" />
     <ClCompile Include="Source\ShaderSection.cpp" />
+    <ClCompile Include="Source\StringChunk.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
+    <ClCompile Include="Source\WrbChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseChunk.h" />
     <ClInclude Include="Source\BaseSection.h" />
+    <ClInclude Include="Source\ChunkLoader.h" />
     <ClInclude Include="Source\ContainerChunk.h" />
+    <ClInclude Include="Source\FileChunk.h" />
+    <ClInclude Include="Source\HeaderChunk.h" />
+    <ClInclude Include="Source\LtcdChunk.h" />
+    <ClInclude Include="Source\MeshChunk.h" />
+    <ClInclude Include="Source\ModelChunk.h" />
+    <ClInclude Include="Source\ModelContainerChunk.h" />
+    <ClInclude Include="Source\ModelSection.h" />
+    <ClInclude Include="Source\NameChunk.h" />
     <ClInclude Include="Source\ResourceSection.h" />
     <ClInclude Include="Source\SectionLoader.h" />
+    <ClInclude Include="Source\ShaderChunk.h" />
     <ClInclude Include="Source\ShaderSection.h" />
+    <ClInclude Include="Source\StringChunk.h" />
+    <ClInclude Include="Source\WrbChunk.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Athena\build_win32\Athena.vcxproj">

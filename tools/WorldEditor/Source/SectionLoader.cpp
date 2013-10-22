@@ -18,15 +18,17 @@ void CSectionLoader::ReadSEDBSection(Framework::CStream& inputStream)
 	uint32 sectionId = inputStream.Read32();
 	uint32 subSectionId = inputStream.Read32();
 	inputStream.Seek(-8, Framework::STREAM_SEEK_CUR);
-	CBaseSection* section(nullptr);
+	SectionPtr section;
 	switch(subSectionId)
 	{
 	case ' SER':	//RES 
-		section = new CResourceSection();
+		section = std::make_shared<CResourceSection>();
+		break;
+	default:
+		assert(0);
 		break;
 	}
 	section->Read(inputStream);
-	delete section;
 }
 
 void CSectionLoader::ReadSections(Framework::CStream& inputStream)

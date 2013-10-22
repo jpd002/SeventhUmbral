@@ -1,6 +1,10 @@
 #include "BaseChunk.h"
 
 CBaseChunk::CBaseChunk()
+: m_type(0)
+, m_unknown1(0)
+, m_dataSize(0)
+, m_nextChunkOffset(0)
 {
 
 }
@@ -8,6 +12,11 @@ CBaseChunk::CBaseChunk()
 CBaseChunk::~CBaseChunk()
 {
 
+}
+
+uint32 CBaseChunk::GetNextChunkOffset() const
+{
+	return m_nextChunkOffset;
 }
 
 void CBaseChunk::Read(Framework::CStream& inputStream)
