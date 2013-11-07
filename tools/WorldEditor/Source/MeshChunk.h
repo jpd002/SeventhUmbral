@@ -6,3 +6,5 @@ class CMeshChunk : public CContainerChunk
 {
 
 };
+
+typedef std::shared_ptr<CMeshChunk> MeshChunkPtr;

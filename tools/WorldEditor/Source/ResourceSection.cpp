@@ -3,6 +3,8 @@
 #include "ResourceSection.h"
 #include "ShaderSection.h"
 #include "ModelSection.h"
+#include "SkeletonSection.h"
+#include "PhbSection.h"
 
 CResourceSection::CResourceSection()
 {
@@ -47,6 +49,7 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 	for(unsigned int i = 0; i < header.resourceCount; i++)
 	{
 		const auto& entry = entries[i];
+		if(entry.type == 0 || entry.size == 0) continue;
 		uint32 resourceType = resourceTypes[i];
 		inputStream.Seek(basePosition + entry.offset, Framework::STREAM_SEEK_SET);
 		SectionPtr section;
@@ -61,10 +64,19 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 		case '\0wrb':
 			section = std::make_shared<CModelSection>();
 			break;
+		case '\0skl':
+			section = std::make_shared<CSkeletonSection>();
+			break;
+		case '\0phb':
+			section = std::make_shared<CPhbSection>();
+			break;
 		default:
 			assert(0);
 			break;
 		}
 		section->Read(inputStream);
+		m_children.push_back(section);
 	}
+
+	inputStream.Seek(basePosition, Framework::STREAM_SEEK_SET);
 }

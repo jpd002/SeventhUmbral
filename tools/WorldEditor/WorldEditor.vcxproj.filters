@@ -78,6 +78,27 @@
     <ClCompile Include="Source\StringChunk.cpp">
       <Filter>Source Files\Chunks</Filter>
     </ClCompile>
+    <ClCompile Include="Source\WorldEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SkeletonSection.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PhbSection.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PwibSection.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StreamChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UmbralMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UmbralModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -133,6 +154,30 @@
     </ClInclude>
     <ClInclude Include="Source\StringChunk.h">
       <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WorldEditor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SkeletonSection.h">
+      <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PhbSection.h">
+      <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PwibSection.h">
+      <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StreamChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UmbralMesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UmbralModel.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

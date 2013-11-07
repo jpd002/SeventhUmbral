@@ -10,7 +10,4 @@ public:
 	virtual			~CModelSection();
 
 	virtual void	Read(Framework::CStream&) override;
-
-private:
-	ChunkPtr		m_rootChunk;
 };

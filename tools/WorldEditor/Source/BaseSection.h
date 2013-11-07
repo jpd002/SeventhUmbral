@@ -2,9 +2,10 @@
 
 #include "Types.h"
 #include "Stream.h"
+#include "ResourceNode.h"
 #include <memory>
 
-class CBaseSection
+class CBaseSection : public CResourceNode
 {
 public:
 						CBaseSection();

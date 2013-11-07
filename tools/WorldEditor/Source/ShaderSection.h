@@ -10,7 +10,4 @@ public:
 	virtual			~CShaderSection();
 
 	virtual void	Read(Framework::CStream&);
-
-private:
-	ChunkPtr		m_rootChunk;
 };

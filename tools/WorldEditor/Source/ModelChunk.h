@@ -6,3 +6,5 @@ class CModelChunk : public CContainerChunk
 {
 
 };
+
+typedef std::shared_ptr<CModelChunk> ModelChunkPtr;

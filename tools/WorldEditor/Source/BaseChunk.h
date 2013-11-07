@@ -1,9 +1,10 @@
 #pragma once
 
+#include "ResourceNode.h"
 #include "StdStream.h"
 #include <memory>
 
-class CBaseChunk
+class CBaseChunk : public CResourceNode
 {
 public:
 					CBaseChunk();

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -52,11 +52,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(FrameworkRoot)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FrameworkRoot)\include;D:\Projects\Athena\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -68,13 +69,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(FrameworkRoot)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FrameworkRoot)\include;D:\Projects\Athena\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -90,12 +92,19 @@
     <ClCompile Include="Source\ModelContainerChunk.cpp" />
     <ClCompile Include="Source\ModelSection.cpp" />
     <ClCompile Include="Source\NameChunk.cpp" />
+    <ClCompile Include="Source\PhbSection.cpp" />
+    <ClCompile Include="Source\PwibSection.cpp" />
     <ClCompile Include="Source\ResourceSection.cpp" />
     <ClCompile Include="Source\SectionLoader.cpp" />
     <ClCompile Include="Source\ShaderChunk.cpp" />
     <ClCompile Include="Source\ShaderSection.cpp" />
+    <ClCompile Include="Source\SkeletonSection.cpp" />
+    <ClCompile Include="Source\StreamChunk.cpp" />
     <ClCompile Include="Source\StringChunk.cpp" />
+    <ClCompile Include="Source\UmbralMesh.cpp" />
+    <ClCompile Include="Source\UmbralModel.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
+    <ClCompile Include="Source\WorldEditor.cpp" />
     <ClCompile Include="Source\WrbChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -111,11 +120,19 @@
     <ClInclude Include="Source\ModelContainerChunk.h" />
     <ClInclude Include="Source\ModelSection.h" />
     <ClInclude Include="Source\NameChunk.h" />
+    <ClInclude Include="Source\PhbSection.h" />
+    <ClInclude Include="Source\PwibSection.h" />
+    <ClInclude Include="Source\ResourceNode.h" />
     <ClInclude Include="Source\ResourceSection.h" />
     <ClInclude Include="Source\SectionLoader.h" />
     <ClInclude Include="Source\ShaderChunk.h" />
     <ClInclude Include="Source\ShaderSection.h" />
+    <ClInclude Include="Source\SkeletonSection.h" />
+    <ClInclude Include="Source\StreamChunk.h" />
     <ClInclude Include="Source\StringChunk.h" />
+    <ClInclude Include="Source\UmbralMesh.h" />
+    <ClInclude Include="Source\UmbralModel.h" />
+    <ClInclude Include="Source\WorldEditor.h" />
     <ClInclude Include="Source\WrbChunk.h" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +141,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Framework\build_win32\Framework.vcxproj">
       <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\zlib-1.2.5-msvc100\zlib-1.2.5-msvc100.vcxproj">
+      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
