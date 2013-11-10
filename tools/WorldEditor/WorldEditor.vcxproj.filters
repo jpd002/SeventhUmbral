@@ -99,6 +99,12 @@
     <ClCompile Include="Source\UmbralModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GtexData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TextureSection.cpp">
+      <Filter>Source Files\Sections</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -178,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="Source\UmbralModel.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GtexData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextureSection.h">
+      <Filter>Source Files\Sections</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

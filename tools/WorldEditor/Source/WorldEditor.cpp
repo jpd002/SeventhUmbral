@@ -3,6 +3,8 @@
 #include "StdStreamUtils.h"
 #include "SectionLoader.h"
 #include "UmbralModel.h"
+#include "PwibSection.h"
+#include "GtexData.h"
 
 CWorldEditor::CWorldEditor()
 : m_elapsed(0)
@@ -12,7 +14,7 @@ CWorldEditor::CWorldEditor()
 	{
 		auto camera = Athena::CCamera::Create();
 		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 1000.f);
-		camera->LookAt(CVector3(0, 0, 100.f), CVector3(0, 0, 0), CVector3(0, 1, 0));
+		camera->LookAt(CVector3(100.f, 0, 0.f), CVector3(0, 0, 0), CVector3(0, 1, 0));
 		m_mainCamera = camera;
 	}
 
@@ -36,7 +38,7 @@ CWorldEditor::CWorldEditor()
 		sphere->SetPosition(CVector3(0, 0, 0));
 		sphere->GetMaterial()->SetShadowCasting(true);
 		sphere->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-		m_viewport->GetSceneRoot()->AppendChild(sphere);
+//		m_viewport->GetSceneRoot()->AppendChild(sphere);
 		m_sphere = sphere;
 	}
 
@@ -49,18 +51,41 @@ CWorldEditor::CWorldEditor()
 		m_viewport->GetSceneRoot()->AppendChild(cube);
 	}
 
+	std::vector<Athena::TexturePtr> textures;
+	{
+		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\mon\\m003\\equ\\e001\\top_tex2\\0000"));
+		auto pwibSection = std::dynamic_pointer_cast<CPwibSection>(CSectionLoader::ReadSection(inputStream));
+		auto texDatas = pwibSection->SelectNodes<CGtexData>();
+		for(const auto& texData : texDatas)
+		{
+			auto textureFormat = texData->GetTextureFormat();
+			auto textureWidth = texData->GetTextureWidth();
+			auto textureHeight = texData->GetTextureHeight();
+			assert(textureFormat == CGtexData::TEXTURE_FORMAT_DXT1);
+			const auto& mipMapInfo = texData->GetMipMapInfos()[0];
+			uint32 textureDataOffset = pwibSection->GetDataOffset() + mipMapInfo.offset;
+			uint8* textureData = new uint8[mipMapInfo.length];
+			inputStream.Seek(textureDataOffset, Framework::STREAM_SEEK_SET);
+			inputStream.Read(textureData, mipMapInfo.length);
+			auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, Athena::TEXTURE_FORMAT_DXT1, textureWidth, textureHeight);
+			delete [] textureData;
+			textures.push_back(texture);
+		}
+	}
+
 	{
 //		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\bgobj\\b901\\equ\\e001\\top_mdl\\0001"));
 		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\mon\\m003\\equ\\e001\\top_mdl\\0001"));
 		auto resourceNode = CSectionLoader::ReadSection(inputStream);
 		auto modelNodes = resourceNode->SelectNodes<CModelChunk>();
 		auto model = std::make_shared<CUmbralModel>(modelNodes[0]);
-		model->SetScale(CVector3(10, 10, 10));
+		model->SetScale(CVector3(20, 20, 20));
 		model->TraverseNodes(
-			[] (const Athena::SceneNodePtr& node) 
+			[&] (const Athena::SceneNodePtr& node) 
 			{
 				if(auto mesh = std::dynamic_pointer_cast<Athena::CMesh>(node))
 				{
+					mesh->GetMaterial()->SetTexture(0, textures[2]);
 					mesh->GetMaterial()->SetShadowCasting(true);
 				}
 				return true;

@@ -30,6 +30,14 @@ public:
 		return result;
 	}
 
+	template <typename NodeType>
+	std::shared_ptr<NodeType> SelectNode()
+	{
+		auto nodes = SelectNodes<NodeType>();
+		if(nodes.empty()) return std::shared_ptr<NodeType>();
+		return nodes[0];
+	}
+
 protected:
 	ResourceNodeArray			m_children;
 };

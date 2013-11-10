@@ -3,6 +3,7 @@
 #include "SectionLoader.h"
 
 CPwibSection::CPwibSection()
+: m_dataOffset(0)
 {
 
 }
@@ -18,7 +19,12 @@ void CPwibSection::Read(Framework::CStream& inputStream)
 	assert(signature == 'BIWP');
 	uint32 fileSize = inputStream.Read32_MSBF();
 	uint32 unknown = inputStream.Read32_MSBF();
-	uint32 dataOffset = inputStream.Read32_MSBF();
+	m_dataOffset = inputStream.Read32_MSBF();
 	auto child = CSectionLoader::ReadSection(inputStream);
 	m_children.push_back(child);
+}
+
+uint32 CPwibSection::GetDataOffset() const
+{
+	return m_dataOffset;
 }

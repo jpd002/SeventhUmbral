@@ -85,6 +85,7 @@
     <ClCompile Include="Source\ChunkLoader.cpp" />
     <ClCompile Include="Source\ContainerChunk.cpp" />
     <ClCompile Include="Source\FileChunk.cpp" />
+    <ClCompile Include="Source\GtexData.cpp" />
     <ClCompile Include="Source\HeaderChunk.cpp" />
     <ClCompile Include="Source\LtcdChunk.cpp" />
     <ClCompile Include="Source\MeshChunk.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Source\SkeletonSection.cpp" />
     <ClCompile Include="Source\StreamChunk.cpp" />
     <ClCompile Include="Source\StringChunk.cpp" />
+    <ClCompile Include="Source\TextureSection.cpp" />
     <ClCompile Include="Source\UmbralMesh.cpp" />
     <ClCompile Include="Source\UmbralModel.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
@@ -113,6 +115,7 @@
     <ClInclude Include="Source\ChunkLoader.h" />
     <ClInclude Include="Source\ContainerChunk.h" />
     <ClInclude Include="Source\FileChunk.h" />
+    <ClInclude Include="Source\GtexData.h" />
     <ClInclude Include="Source\HeaderChunk.h" />
     <ClInclude Include="Source\LtcdChunk.h" />
     <ClInclude Include="Source\MeshChunk.h" />
@@ -130,6 +133,7 @@
     <ClInclude Include="Source\SkeletonSection.h" />
     <ClInclude Include="Source\StreamChunk.h" />
     <ClInclude Include="Source\StringChunk.h" />
+    <ClInclude Include="Source\TextureSection.h" />
     <ClInclude Include="Source\UmbralMesh.h" />
     <ClInclude Include="Source\UmbralModel.h" />
     <ClInclude Include="Source\WorldEditor.h" />

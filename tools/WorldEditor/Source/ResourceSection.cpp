@@ -5,6 +5,7 @@
 #include "ModelSection.h"
 #include "SkeletonSection.h"
 #include "PhbSection.h"
+#include "TextureSection.h"
 
 CResourceSection::CResourceSection()
 {
@@ -69,6 +70,9 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 			break;
 		case '\0phb':
 			section = std::make_shared<CPhbSection>();
+			break;
+		case '\0txb':
+			section = std::make_shared<CTextureSection>();
 			break;
 		default:
 			assert(0);

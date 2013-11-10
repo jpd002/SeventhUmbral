@@ -6,8 +6,13 @@
 class CPwibSection : public CResourceNode
 {
 public:
-								CPwibSection();
-	virtual						~CPwibSection();
+							CPwibSection();
+	virtual					~CPwibSection();
 
-	void						Read(Framework::CStream&);
+	void					Read(Framework::CStream&);
+
+	uint32					GetDataOffset() const;
+
+private:
+	uint32					m_dataOffset;
 };
