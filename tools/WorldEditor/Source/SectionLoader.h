@@ -6,8 +6,8 @@
 class CSectionLoader
 {
 public:
-	static ResourceNodePtr		ReadSection(Framework::CStream&);
+	static ResourceNodePtr		ReadSection(const ResourceNodePtr&, Framework::CStream&);
 
 private:
-	static ResourceNodePtr		ReadSEDBSection(Framework::CStream&);
+	static ResourceNodePtr		ReadSEDBSection(const ResourceNodePtr&, Framework::CStream&);
 };

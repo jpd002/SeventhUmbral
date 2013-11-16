@@ -20,8 +20,7 @@ void CPwibSection::Read(Framework::CStream& inputStream)
 	uint32 fileSize = inputStream.Read32_MSBF();
 	uint32 unknown = inputStream.Read32_MSBF();
 	m_dataOffset = inputStream.Read32_MSBF();
-	auto child = CSectionLoader::ReadSection(inputStream);
-	m_children.push_back(child);
+	auto child = CSectionLoader::ReadSection(shared_from_this(), inputStream);
 }
 
 uint32 CPwibSection::GetDataOffset() const

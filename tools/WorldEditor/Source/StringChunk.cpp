@@ -6,3 +6,8 @@ void CStringChunk::Read(Framework::CStream& inputStream)
 
 	m_string = inputStream.ReadString();
 }
+
+std::string CStringChunk::GetString() const
+{
+	return m_string;
+}

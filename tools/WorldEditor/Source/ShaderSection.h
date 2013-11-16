@@ -11,3 +11,5 @@ public:
 
 	virtual void	Read(Framework::CStream&);
 };
+
+typedef std::shared_ptr<CShaderSection> ShaderSectionPtr;

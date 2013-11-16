@@ -1,0 +1,26 @@
+<Scene>
+	<Materials>
+		<Material Name="BackwardMaterial" Texture0="backward.png" AlphaBlendingMode="lerp" />
+		<Material Name="ForwardMaterial" Texture0="forward.png" AlphaBlendingMode="lerp" />
+	</Materials>
+	<Root>
+		<SpriteButton 
+			Name="PrevModelButton" Text="M-" Position="8, 8, 0" Size="48, 48" 
+			Font="font.fnt"
+		/>
+		<SpriteButton 
+			Name="NextModelButton" Text="M+" Position="64, 8, 0" Size="48, 48"
+			Font="font.fnt"
+		/>
+		<SpriteButton 
+			Name="PrevTextureButton" Text="T-" Position="8, 64, 0" Size="48, 48" 
+			Font="font.fnt"
+		/>
+		<SpriteButton 
+			Name="NextTextureButton" Text="T+" Position="64, 64, 0" Size="48, 48"
+			Font="font.fnt"
+		/>
+		<Sprite Name="BackwardSprite" Material="BackwardMaterial" Position="8, 696, 0" Size="64, 64" />
+		<Sprite Name="ForwardSprite" Material="ForwardMaterial" Position="952, 696, 0" Size="64, 64" />
+	</Root>
+</Scene>

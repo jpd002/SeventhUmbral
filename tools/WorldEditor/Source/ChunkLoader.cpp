@@ -10,6 +10,7 @@
 #include "MeshChunk.h"
 #include "StringChunk.h"
 #include "StreamChunk.h"
+#include "PramChunk.h"
 
 ChunkPtr CChunkLoader::Load(Framework::CStream& inputStream)
 {
@@ -51,6 +52,9 @@ ChunkPtr CChunkLoader::Load(Framework::CStream& inputStream)
 		break;
 	case 'SMTS':
 		result = std::make_shared<CStreamChunk>();
+		break;
+	case 'MARP':
+		result = std::make_shared<CPramChunk>();
 		break;
 	default:
 		//Unknown chunk type

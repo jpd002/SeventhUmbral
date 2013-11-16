@@ -29,7 +29,7 @@ void CContainerChunk::LoadChildren(Framework::CStream& inputStream)
 	{
 		uint64 baseOffset = inputStream.Tell();
 		auto chunk = CChunkLoader::Load(inputStream);
-		m_children.push_back(chunk);
+		AddChild(chunk);
 		uint64 nextOffset = baseOffset + chunk->GetNextChunkOffset();
 		inputStream.Seek(nextOffset, Framework::STREAM_SEEK_SET);
 	}

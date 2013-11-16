@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Chunks">
       <UniqueIdentifier>{872644ee-c881-44c5-829c-f5eeef0db3c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{8f1f8864-aea6-42c2-a2c3-ce91d92cfaa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Other Resources">
+      <UniqueIdentifier>{136a5019-1744-4908-b462-69d9d08f5c63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\WinMain.cpp">
@@ -93,17 +99,35 @@
     <ClCompile Include="Source\StreamChunk.cpp">
       <Filter>Source Files\Chunks</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UmbralMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UmbralModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GtexData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TextureSection.cpp">
       <Filter>Source Files\Sections</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UmbralModel.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UmbralMesh.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GtexData.cpp">
+      <Filter>Source Files\Other Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MapLayout.cpp">
+      <Filter>Source Files\Other Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TouchFreeCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PramChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,17 +203,35 @@
     <ClInclude Include="Source\StreamChunk.h">
       <Filter>Source Files\Chunks</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UmbralMesh.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\UmbralModel.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GtexData.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\TextureSection.h">
       <Filter>Source Files\Sections</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UmbralModel.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UmbralMesh.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GtexData.h">
+      <Filter>Source Files\Other Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MapLayout.h">
+      <Filter>Source Files\Other Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FileManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TouchFreeCamera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PramChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceDefs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResourceManager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

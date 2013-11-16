@@ -1,4 +1,5 @@
 #include "GtexData.h"
+#include "PwibSection.h"
 #include <assert.h>
 
 CGtexData::CGtexData()
@@ -13,13 +14,14 @@ CGtexData::CGtexData()
 , m_depth(0)
 , m_unknown5(0)
 , m_dataOffset(0)
+, m_textureData(nullptr)
 {
 
 }
 
 CGtexData::~CGtexData()
 {
-
+	delete [] m_textureData;
 }
 
 void CGtexData::Read(Framework::CStream& inputStream)
@@ -44,6 +46,23 @@ void CGtexData::Read(Framework::CStream& inputStream)
 		mipMapInfo.offset = inputStream.Read32_MSBF();
 		mipMapInfo.length = inputStream.Read32_MSBF();
 	}
+	
+	ReadSurfaces(inputStream);
+}
+
+void CGtexData::ReadSurfaces(Framework::CStream& inputStream)
+{
+	uint32 dataOffset = GetRealDataOffset();
+
+	auto currentOffset = inputStream.Tell();
+
+	const auto& mipMapInfo = m_mipMapInfos[0];
+	uint32 textureDataOffset = dataOffset + mipMapInfo.offset;
+	m_textureData = new uint8[mipMapInfo.length];
+	inputStream.Seek(textureDataOffset, Framework::STREAM_SEEK_SET);
+	inputStream.Read(m_textureData, mipMapInfo.length);
+
+	inputStream.Seek(currentOffset, Framework::STREAM_SEEK_SET);
 }
 
 CGtexData::TEXTURE_FORMAT CGtexData::GetTextureFormat() const
@@ -64,4 +83,30 @@ uint32 CGtexData::GetTextureHeight() const
 const CGtexData::MipMapInfoArray& CGtexData::GetMipMapInfos() const
 {
 	return m_mipMapInfos;
+}
+
+uint8* CGtexData::GetTextureData() const
+{
+	return m_textureData;
+}
+
+uint32 CGtexData::GetRealDataOffset() const
+{
+	if(m_dataOffset != 0)
+	{
+		return m_dataOffset;
+	}
+
+	auto parent = GetParent();
+	while(parent)
+	{
+		if(auto pwibSection = std::dynamic_pointer_cast<CPwibSection>(parent))
+		{
+			return pwibSection->GetDataOffset();
+		}
+		parent = parent->GetParent();
+	}
+
+	assert(0);
+	return 0;
 }

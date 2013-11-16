@@ -7,11 +7,14 @@ class CResourceNode;
 typedef std::shared_ptr<CResourceNode> ResourceNodePtr;
 typedef std::vector<ResourceNodePtr> ResourceNodeArray;
 
-class CResourceNode
+class CResourceNode : public std::enable_shared_from_this<CResourceNode>
 {
 public:
-	virtual						~CResourceNode() {};
+								CResourceNode();
+	virtual						~CResourceNode();
 
+	void						AddChild(const ResourceNodePtr&);
+	ResourceNodePtr				GetParent() const;
 	const ResourceNodeArray&	GetChildren() const;
 
 	template <typename NodeType>
@@ -39,5 +42,6 @@ public:
 	}
 
 protected:
-	ResourceNodeArray			m_children;
+	std::weak_ptr<CResourceNode>	m_parent;
+	ResourceNodeArray				m_children;
 };

@@ -17,6 +17,6 @@ void CTextureSection::Read(Framework::CStream& inputStream)
 	inputStream.Read(m_header, sizeof(m_header));
 
 	auto gtex = std::make_shared<CGtexData>();
+	AddChild(gtex);
 	gtex->Read(inputStream);
-	m_children.push_back(gtex);
 }

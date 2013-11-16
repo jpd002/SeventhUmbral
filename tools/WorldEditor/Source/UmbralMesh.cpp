@@ -1,5 +1,5 @@
 #include "UmbralMesh.h"
-#include "StreamChunk.h"
+#include "ResourceManager.h"
 
 static uint16 ByteSwap16(uint16 value)
 {
@@ -52,7 +52,18 @@ static CVector3 ConvertVec3FromUint16(const uint8* rawData)
 	return result;
 }
 
-CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk)
+CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk, const ShaderSectionPtr& shaderSection)
+{
+	SetupGeometry(meshChunk);
+	SetupMaterial(shaderSection);
+}
+
+CUmbralMesh::~CUmbralMesh()
+{
+
+}
+
+void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 {
 	auto streamChunks = meshChunk->SelectNodes<CStreamChunk>();
 	assert(streamChunks.size() == 2);
@@ -62,7 +73,14 @@ CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk)
 	uint32 indexCount = indexStream->GetVertexCount();
 	uint32 vertexCount = vertexStream->GetVertexCount();
 
-	auto bufferDesc = Athena::GenerateVertexBufferDescriptor(vertexCount, indexCount, Athena::VERTEX_BUFFER_HAS_POS | Athena::VERTEX_BUFFER_HAS_UV0);
+	auto positionElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_POSITION);
+	auto uv1Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV1);
+	assert(positionElement != nullptr);
+
+	uint32 vertexFlags = Athena::VERTEX_BUFFER_HAS_POS;
+	if(uv1Element != nullptr) vertexFlags |= Athena::VERTEX_BUFFER_HAS_UV0;
+
+	auto bufferDesc = Athena::GenerateVertexBufferDescriptor(vertexCount, indexCount, vertexFlags);
 
 	m_primitiveType = Athena::PRIMITIVE_TRIANGLE_LIST;
 	m_primitiveCount = indexCount / 3;
@@ -79,21 +97,20 @@ CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk)
 	}
 
 	{
-		auto positionElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_POSITION);
-		auto uv1Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV1);
-		assert(positionElement != nullptr);
-		assert(uv1Element != nullptr);
 		assert(positionElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_INT16);
-		assert(uv1Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
+		assert(!uv1Element || uv1Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 		const uint8* srcVertices = vertexStream->GetData();
 		uint8* dstVertices = reinterpret_cast<uint8*>(m_vertexBuffer->LockVertices());
 		for(unsigned int i = 0; i < vertexCount; i++)
 		{
 			auto position = ConvertVec3FromInt16(srcVertices + positionElement->offsetInVertex);
-			auto uv1 = ConvertVec2FromHalf(srcVertices + uv1Element->offsetInVertex);
-			uv1.y = 1 - uv1.y;
 			*reinterpret_cast<CVector3*>(dstVertices + bufferDesc.posOffset) = position;
-			*reinterpret_cast<CVector2*>(dstVertices + bufferDesc.uv0Offset) = uv1;
+			if(uv1Element)
+			{
+				auto uv1 = ConvertVec2FromHalf(srcVertices + uv1Element->offsetInVertex);
+				uv1.y = 1 - uv1.y;
+				*reinterpret_cast<CVector2*>(dstVertices + bufferDesc.uv0Offset) = uv1;
+			}
 			srcVertices += vertexStream->GetVertexSize();
 			dstVertices += bufferDesc.GetVertexSize();
 		}
@@ -101,7 +118,50 @@ CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk)
 	}
 }
 
-CUmbralMesh::~CUmbralMesh()
+void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 {
+	auto pramChunk = shaderSection->SelectNode<CPramChunk>();
+	assert(pramChunk);
+	ResourceNodePtr textureResource;
+	for(const auto& sampler : pramChunk->GetSamplers())
+	{
+		if(sampler.name == "_sampler_00")
+		{
+			for(const auto& string : sampler.strings)
+			{
+				textureResource = CResourceManager::GetInstance().GetResource(string);
+				if(textureResource) break;
+			}
+			break;
+		}
+	}
 
+	if(!textureResource) return;
+
+	auto textureDataInfo = textureResource->SelectNode<CGtexData>();
+	assert(textureDataInfo);
+
+	auto textureFormat = textureDataInfo->GetTextureFormat();
+	auto textureWidth = textureDataInfo->GetTextureWidth();
+	auto textureHeight = textureDataInfo->GetTextureHeight();
+	auto textureData = textureDataInfo->GetTextureData();
+	Athena::TEXTURE_FORMAT specTextureFormat = Athena::TEXTURE_FORMAT_UNKNOWN;
+	switch(textureFormat)
+	{
+	case CGtexData::TEXTURE_FORMAT_DXT1:
+		specTextureFormat = Athena::TEXTURE_FORMAT_DXT1;
+		break;
+	case CGtexData::TEXTURE_FORMAT_A8R8G8B8:
+	case CGtexData::TEXTURE_FORMAT_X8R8G8B8:
+		specTextureFormat = Athena::TEXTURE_FORMAT_RGBA8888;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, specTextureFormat, textureWidth, textureHeight);
+	GetMaterial()->SetTexture(0, texture);
+	GetMaterial()->SetTextureAddressModeU(0, Athena::TEXTURE_ADDRESS_REPEAT);
+	GetMaterial()->SetTextureAddressModeV(0, Athena::TEXTURE_ADDRESS_REPEAT);
 }

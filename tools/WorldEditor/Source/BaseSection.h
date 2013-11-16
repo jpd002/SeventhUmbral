@@ -13,6 +13,11 @@ public:
 
 	virtual void		Read(Framework::CStream&);
 
+	void				SetResourceId(const std::string&);
+
+	std::string			GetResourcePath() const;
+	void				SetResourcePath(const std::string&);
+
 protected:
 	struct SEDB_HEADER
 	{
@@ -26,6 +31,8 @@ protected:
 	static_assert(sizeof(SEDB_HEADER) == 0x30, "Size of SEDB_HEADER struct must be 48 bytes.");
 
 	SEDB_HEADER			m_header;
+	std::string			m_resourceId;
+	std::string			m_resourcePath;
 };
 
 typedef std::shared_ptr<CBaseSection> SectionPtr;

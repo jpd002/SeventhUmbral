@@ -3,130 +3,321 @@
 #include "StdStreamUtils.h"
 #include "SectionLoader.h"
 #include "UmbralModel.h"
-#include "PwibSection.h"
-#include "GtexData.h"
+#include "FileManager.h"
+#include "ResourceDefs.h"
+#include "ResourceManager.h"
 
 CWorldEditor::CWorldEditor()
 : m_elapsed(0)
+, m_mousePosition(0, 0)
+, m_forwardButtonBoundingBox(0, 0, 0, 0)
+, m_backwardButtonBoundingBox(0, 0, 0, 0)
 {
-	auto screenSize = Athena::CGraphicDevice::GetInstance().GetScreenSize();
+	m_package = Athena::CPackage::Create("global");
 
-	{
-		auto camera = Athena::CCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 1000.f);
-		camera->LookAt(CVector3(100.f, 0, 0.f), CVector3(0, 0, 0), CVector3(0, 1, 0));
-		m_mainCamera = camera;
-	}
+	auto mapLayoutPath = CFileManager::GetResourcePath(0xA09B0000);		//+1 for Limsa Lominsa room, +2 for Ul'dah room
+//	auto mapLayoutPath = CFileManager::GetResourcePath(0x72AD0000);
+	m_mapLayout = std::make_shared<CMapLayout>();
+	m_mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
 
-	{
-		auto camera = Athena::CCamera::Create();
-//		camera->SetOrthoProjection(2048 / 16, 2048 / 16, 100.f, 300.f);
-		camera->SetPerspectiveProjection(M_PI / 4.f, 1, 100.f, 300.f);
-		m_shadowCamera = camera;
-	}
-	
-	{
-		auto viewport = Athena::CViewport::Create();
-		viewport->SetCamera(m_mainCamera);
-		viewport->SetShadowCamera(m_shadowCamera);
-		m_viewport = viewport;
-	}
+	CreateUi();
+	CreateWorld();
 
-	{
-		auto sphere = Athena::CSphereMesh::Create();
-		sphere->SetScale(CVector3(4, 4, 4));
-		sphere->SetPosition(CVector3(0, 0, 0));
-		sphere->GetMaterial()->SetShadowCasting(true);
-		sphere->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-//		m_viewport->GetSceneRoot()->AppendChild(sphere);
-		m_sphere = sphere;
-	}
-
-	{
-		auto cube = Athena::CCubeMesh::Create();
-		cube->SetPosition(CVector3(30, -20, 0));
-		cube->SetScale(CVector3(10, 10, 10));
-		cube->GetMaterial()->SetShadowCasting(true);
-		cube->GetMaterial()->SetColor(CColor(0, 1, 1, 1));
-		m_viewport->GetSceneRoot()->AppendChild(cube);
-	}
-
-	std::vector<Athena::TexturePtr> textures;
-	{
-		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\mon\\m003\\equ\\e001\\top_tex2\\0000"));
-		auto pwibSection = std::dynamic_pointer_cast<CPwibSection>(CSectionLoader::ReadSection(inputStream));
-		auto texDatas = pwibSection->SelectNodes<CGtexData>();
-		for(const auto& texData : texDatas)
-		{
-			auto textureFormat = texData->GetTextureFormat();
-			auto textureWidth = texData->GetTextureWidth();
-			auto textureHeight = texData->GetTextureHeight();
-			assert(textureFormat == CGtexData::TEXTURE_FORMAT_DXT1);
-			const auto& mipMapInfo = texData->GetMipMapInfos()[0];
-			uint32 textureDataOffset = pwibSection->GetDataOffset() + mipMapInfo.offset;
-			uint8* textureData = new uint8[mipMapInfo.length];
-			inputStream.Seek(textureDataOffset, Framework::STREAM_SEEK_SET);
-			inputStream.Read(textureData, mipMapInfo.length);
-			auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, Athena::TEXTURE_FORMAT_DXT1, textureWidth, textureHeight);
-			delete [] textureData;
-			textures.push_back(texture);
-		}
-	}
-
-	{
-//		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\bgobj\\b901\\equ\\e001\\top_mdl\\0001"));
-		auto inputStream = Framework::CreateInputStdStream(std::string("F:\\Games\\SquareEnix\\FINAL FANTASY XIV\\client\\chara\\mon\\m003\\equ\\e001\\top_mdl\\0001"));
-		auto resourceNode = CSectionLoader::ReadSection(inputStream);
-		auto modelNodes = resourceNode->SelectNodes<CModelChunk>();
-		auto model = std::make_shared<CUmbralModel>(modelNodes[0]);
-		model->SetScale(CVector3(20, 20, 20));
-		model->TraverseNodes(
-			[&] (const Athena::SceneNodePtr& node) 
-			{
-				if(auto mesh = std::dynamic_pointer_cast<Athena::CMesh>(node))
-				{
-					mesh->GetMaterial()->SetTexture(0, textures[2]);
-					mesh->GetMaterial()->SetShadowCasting(true);
-				}
-				return true;
-			}
-		);
-		m_viewport->GetSceneRoot()->AppendChild(model);
-	}
-
-	//Ground
-	{
-		auto cube = Athena::CCubeMesh::Create();
-		cube->SetPosition(CVector3(0, -40, 0));
-		cube->SetScale(CVector3(100, 10, 100));
-		cube->GetMaterial()->SetColor(CColor(0, 0, 1, 1));
-		cube->GetMaterial()->SetShadowReceiving(true);
-		m_viewport->GetSceneRoot()->AppendChild(cube);
-		m_cube = cube;
-	}
-
-	Athena::CGraphicDevice::GetInstance().AddViewport(m_viewport.get());
+	Athena::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
+	Athena::CGraphicDevice::GetInstance().AddViewport(m_uiViewport.get());
 }
 
 CWorldEditor::~CWorldEditor()
 {
-	Athena::CGraphicDevice::GetInstance().RemoveViewport(m_viewport.get());
+	Athena::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
+	Athena::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
+}
+
+void CWorldEditor::CreateUi()
+{
+	auto screenSize = Athena::CGraphicDevice::GetInstance().GetScreenSize();
+
+	m_uiViewport = Athena::CViewport::Create();
+
+	{
+		Athena::CameraPtr camera = Athena::CCamera::Create();
+		camera->SetupOrthoCamera(screenSize.x, screenSize.y);
+		m_uiViewport->SetCamera(camera);
+	}
+
+	{
+		auto sceneRoot = m_uiViewport->GetSceneRoot();
+
+		{
+			auto scene = Athena::CScene::Create(Athena::CResourceManager::GetInstance().GetResource<Athena::CSceneDescriptor>("main_scene.xml"));
+
+			{
+				auto button = scene->FindNode<Athena::CButtonBase>("PrevModelButton");
+				button->Press.connect([&] (Athena::CSceneNode*) { OnPrevModelButtonPress(); });
+			}
+
+			{
+				auto button = scene->FindNode<Athena::CButtonBase>("NextModelButton");
+				button->Press.connect([&] (Athena::CSceneNode*) { OnNextModelButtonPress(); });
+			}
+
+			{
+				auto button = scene->FindNode<Athena::CButtonBase>("PrevTextureButton");
+				button->Press.connect([&] (Athena::CSceneNode*) { OnPrevTextureButtonPress(); });
+			}
+
+			{
+				auto button = scene->FindNode<Athena::CButtonBase>("NextTextureButton");
+				button->Press.connect([&] (Athena::CSceneNode*) { OnNextTextureButtonPress(); });
+			}
+
+			{
+				auto sprite = scene->FindNode<Athena::CSprite>("BackwardSprite");
+				m_backwardButtonBoundingBox.position = sprite->GetPosition().xy();
+				m_backwardButtonBoundingBox.size = sprite->GetSize();
+			}
+
+			{
+				auto sprite = scene->FindNode<Athena::CSprite>("ForwardSprite");
+				m_forwardButtonBoundingBox.position = sprite->GetPosition().xy();
+				m_forwardButtonBoundingBox.size = sprite->GetSize();
+			}
+
+			sceneRoot->AppendChild(scene);
+		}
+	}
+}
+
+void CWorldEditor::CreateWorld()
+{
+	auto screenSize = Athena::CGraphicDevice::GetInstance().GetScreenSize();
+
+	{
+		auto camera = CTouchFreeCamera::Create();
+		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 1000.f);
+		camera->SetPosition(CVector3(0, 0, -100.f));
+//		camera->LookAt(CVector3(0.f, 0, 100.f), CVector3(0, 0, 0), CVector3(0, 1, 0));
+		m_mainCamera = camera;
+	}
+
+	{
+		auto viewport = Athena::CViewport::Create();
+		viewport->SetCamera(m_mainCamera);
+		m_mainViewport = viewport;
+	}
+
+	auto sceneRoot = m_mainViewport->GetSceneRoot();
+
+	unsigned int nodeIdx = 0;
+
+	const auto& layoutNodes = m_mapLayout->GetLayoutNodes();
+	for(const auto& nodePair : layoutNodes)
+	{
+		if(auto instanceNode = std::dynamic_pointer_cast<CMapLayout::INSTANCE_OBJECT_NODE>(nodePair.second))
+		{
+			auto refNodeIterator = layoutNodes.find(instanceNode->refNodePtr);
+			if(refNodeIterator == std::end(layoutNodes)) continue;
+
+			CVector3 instancePosition(instanceNode->posX, instanceNode->posY, instanceNode->posZ);
+
+			auto refNode = refNodeIterator->second;
+			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
+			{
+//				if((nodeIdx > 41) && (nodeIdx < 44))
+				{
+/*
+					if(nodeIdx == 42)
+					{
+						{
+							auto cube = Athena::CCubeMesh::Create();
+							cube->SetPosition(instancePosition);
+							cube->SetScale(CVector3(1, 1, 9.24f / 2));
+							sceneRoot->AppendChild(cube);
+						}
+
+						{
+							auto cube = Athena::CCubeMesh::Create();
+							cube->SetPosition(CVector3(0, 0, -4.62f));
+							cube->GetMaterial()->SetColor(CColor(1, 1, 0, 1));
+							sceneRoot->AppendChild(cube);
+						}
+
+						{
+							auto cube = Athena::CCubeMesh::Create();
+							cube->SetPosition(CVector3(0, 0, 4.62f));
+							cube->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
+							sceneRoot->AppendChild(cube);
+						}
+					}
+					else if(nodeIdx == 43)
+					{
+						{
+							auto cube = Athena::CCubeMesh::Create();
+							cube->SetPosition(instancePosition);
+							cube->SetScale(CVector3(1, 1, 2.26f));
+							cube->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
+							sceneRoot->AppendChild(cube);
+						}
+					}
+*/
+
+					auto unitTreeObject = CreateUnitTreeObject(unitTreeObjectNode);
+					unitTreeObject->SetPosition(instancePosition);
+					sceneRoot->AppendChild(unitTreeObject);
+				}
+				nodeIdx++;
+			}
+		}
+	}
+}
+
+Athena::SceneNodePtr CWorldEditor::CreateUnitTreeObject(const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
+{
+	auto result = Athena::CSceneNode::Create();
+
+	const auto& layoutNodes = m_mapLayout->GetLayoutNodes();
+
+	for(const auto& item : node->items)
+	{
+		auto refNodeIterator = layoutNodes.find(item.nodePtr);
+		if(refNodeIterator == std::end(layoutNodes)) continue;
+
+		auto refNode = refNodeIterator->second;
+		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
+		{
+			auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
+			if(!modelResource) continue;
+
+			auto modelChunk = modelResource->SelectNode<CModelChunk>();
+			assert(modelChunk);
+			if(!modelChunk) continue;
+
+			CVector3 minPos(bgPartsBaseObjectNode->minX, bgPartsBaseObjectNode->minY, bgPartsBaseObjectNode->minZ);
+			CVector3 maxPos(bgPartsBaseObjectNode->maxX, bgPartsBaseObjectNode->maxY, bgPartsBaseObjectNode->maxZ);
+
+			CVector3 bgPartSize = (maxPos - minPos) / 2;
+			CVector3 bgPartPos = (maxPos + minPos) / 2;
+
+			auto model = std::make_shared<CUmbralModel>(modelChunk);
+			model->SetPosition(bgPartPos);
+			model->SetScale(bgPartSize);
+			result->AppendChild(model);
+		}
+	}
+
+	return result;
 }
 
 void CWorldEditor::Update(float dt)
 {
-	float angle = m_elapsed;
-	auto cameraPosition = CVector3(100.f * sin(angle), 200.f, 100.f * cos(angle));
-	auto cameraDir = cameraPosition.Normalize();
-	auto cameraUp = CVector3(cameraDir.x, -cameraDir.y, cameraDir.z);
-	m_shadowCamera->LookAt(cameraPosition, CVector3(0, 0, 0), cameraUp);
-//	m_shadowCamera->LookAt(CVector3(0, 100, 0), CVector3(0, 0, 0), CVector3(1, 0, 0));
-	m_viewport->GetSceneRoot()->Update(dt);
-	m_viewport->GetSceneRoot()->UpdateTransformations();
-	m_elapsed += dt;
+	m_mainCamera->Update(dt);
+	m_mainViewport->GetSceneRoot()->Update(dt);
+	m_mainViewport->GetSceneRoot()->UpdateTransformations();
+	m_uiViewport->GetSceneRoot()->Update(dt);
+	m_uiViewport->GetSceneRoot()->UpdateTransformations();
 }
+
+void CWorldEditor::NotifyMouseMove(unsigned int x, unsigned int y)
+{
+	m_mousePosition = CVector2(x, y);
+	m_mainCamera->NotifyMouseMove(x, y);
+}
+
+void CWorldEditor::NotifyMouseDown()
+{
+	Athena::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Athena::INPUT_EVENT_PRESSED);
+	if(m_forwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
+	{
+		m_mainCamera->NotifyMouseDown_MoveForward();
+	}
+	else if(m_backwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
+	{
+		m_mainCamera->NotifyMouseDown_MoveBackward();
+	}
+	else
+	{
+		m_mainCamera->NotifyMouseDown_Center();
+	}
+}
+
+void CWorldEditor::NotifyMouseUp()
+{
+	Athena::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Athena::INPUT_EVENT_RELEASED);
+	m_mainCamera->NotifyMouseUp();
+}
+
+void CWorldEditor::OnPrevModelButtonPress()
+{
+//	if(m_currentModelIdx == 0) return;
+//	SetCurrentModel(m_currentModelIdx - 1);
+}
+
+void CWorldEditor::OnNextModelButtonPress()
+{
+//	if(m_currentModelIdx == (m_models.size() - 1)) return;
+//	SetCurrentModel(m_currentModelIdx + 1);
+}
+
+void CWorldEditor::OnPrevTextureButtonPress()
+{
+//	if(m_currentTextureIdx == 0) return;
+//	SetCurrentTexture(m_currentTextureIdx - 1);
+}
+
+void CWorldEditor::OnNextTextureButtonPress()
+{
+//	if(m_currentTextureIdx == (m_textures.size() - 1)) return;
+//	SetCurrentTexture(m_currentTextureIdx + 1);
+}
+
+//#define _SCAN_LAYOUTS
+
+#ifdef _SCAN_LAYOUTS
+
+#include <Windows.h>
+#include "string_format.h"
+
+bool IsFileMapLayout(const boost::filesystem::path& filePath)
+{
+	auto inputStream = Framework::CreateInputStdStream(filePath.string());
+
+	uint8 header[0x10];
+	inputStream.Read(header, 0x10);
+	if(header[0] == 0x4D && header[1] == 0x61 && header[2] == 0x70 && header[3] == 0x4C)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void AnalyseDirectory(const boost::filesystem::path& directoryPath)
+{
+	for(boost::filesystem::directory_iterator pathIterator(directoryPath); 
+		pathIterator != boost::filesystem::directory_iterator(); pathIterator++)
+	{
+		const auto& path = *pathIterator;
+		if(boost::filesystem::is_directory(path))
+		{
+			AnalyseDirectory(path);
+			continue;
+		}
+		bool result = IsFileMapLayout(path);
+		if(result)
+		{
+			OutputDebugStringA(string_format("Found MapLayout File: '%s'...\r\n", path.path().string().c_str()).c_str());
+		}
+	}
+}
+
+#endif
 
 Athena::CApplication* CreateApplication()
 {
+#ifdef _SCAN_LAYOUTS
+	AnalyseDirectory(CFileManager::GetGamePath());
+#endif
 	return new CWorldEditor();
 }
