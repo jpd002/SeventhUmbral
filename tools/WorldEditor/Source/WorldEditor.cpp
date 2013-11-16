@@ -123,49 +123,9 @@ void CWorldEditor::CreateWorld()
 			auto refNode = refNodeIterator->second;
 			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
 			{
-//				if((nodeIdx > 41) && (nodeIdx < 44))
-				{
-/*
-					if(nodeIdx == 42)
-					{
-						{
-							auto cube = Athena::CCubeMesh::Create();
-							cube->SetPosition(instancePosition);
-							cube->SetScale(CVector3(1, 1, 9.24f / 2));
-							sceneRoot->AppendChild(cube);
-						}
-
-						{
-							auto cube = Athena::CCubeMesh::Create();
-							cube->SetPosition(CVector3(0, 0, -4.62f));
-							cube->GetMaterial()->SetColor(CColor(1, 1, 0, 1));
-							sceneRoot->AppendChild(cube);
-						}
-
-						{
-							auto cube = Athena::CCubeMesh::Create();
-							cube->SetPosition(CVector3(0, 0, 4.62f));
-							cube->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-							sceneRoot->AppendChild(cube);
-						}
-					}
-					else if(nodeIdx == 43)
-					{
-						{
-							auto cube = Athena::CCubeMesh::Create();
-							cube->SetPosition(instancePosition);
-							cube->SetScale(CVector3(1, 1, 2.26f));
-							cube->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-							sceneRoot->AppendChild(cube);
-						}
-					}
-*/
-
-					auto unitTreeObject = CreateUnitTreeObject(unitTreeObjectNode);
-					unitTreeObject->SetPosition(instancePosition);
-					sceneRoot->AppendChild(unitTreeObject);
-				}
-				nodeIdx++;
+				auto unitTreeObject = CreateUnitTreeObject(unitTreeObjectNode);
+				unitTreeObject->SetPosition(instancePosition);
+				sceneRoot->AppendChild(unitTreeObject);
 			}
 		}
 	}
