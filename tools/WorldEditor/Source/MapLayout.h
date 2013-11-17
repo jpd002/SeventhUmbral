@@ -45,9 +45,8 @@ public:
 	struct INSTANCE_OBJECT_NODE : public LAYOUT_NODE
 	{
 		uint32			refNodePtr;
-		float			posX;
-		float			posY;
-		float			posZ;
+		float			posX, posY, posZ;
+		float			rotX, rotY, rotZ;
 	};
 
 	struct BGPARTS_BASE_OBJECT_NODE : public LAYOUT_NODE

@@ -7,6 +7,21 @@
 #include "ResourceDefs.h"
 #include "ResourceManager.h"
 
+//0x03E70001 -> Mor'dhona
+//0x615A0001 -> Ul'dah
+//0x615A0002 -> Some Thanalan cavern?
+//0x615A0003 -> Ul'dah indoors
+//0x615A0004 -> Thanalan (part 1?)
+//0x615A0005 -> Thanalan (part 2?)
+//0xA09B0000 -> Gridania Inn Room
+//0xA09B0001 -> Limsa Lominsa Inn Room
+//0xA09B0002 -> Ul'dah Inn Room
+//0xABF40000 -> Rivenroad
+//0x8B380000 -> La Noscea (boats and towers)
+//0x8B380001 -> Airship
+//0x92050003 -> Some island
+//0x92050004 -> Some beach
+
 CWorldEditor::CWorldEditor()
 : m_elapsed(0)
 , m_mousePosition(0, 0)
@@ -15,8 +30,8 @@ CWorldEditor::CWorldEditor()
 {
 	m_package = Athena::CPackage::Create("global");
 
-	auto mapLayoutPath = CFileManager::GetResourcePath(0xA09B0000);		//+1 for Limsa Lominsa room, +2 for Ul'dah room
-//	auto mapLayoutPath = CFileManager::GetResourcePath(0x72AD0000);
+	auto mapLayoutPath = CFileManager::GetResourcePath(0x92050004);
+
 	m_mapLayout = std::make_shared<CMapLayout>();
 	m_mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
 
@@ -50,26 +65,6 @@ void CWorldEditor::CreateUi()
 
 		{
 			auto scene = Athena::CScene::Create(Athena::CResourceManager::GetInstance().GetResource<Athena::CSceneDescriptor>("main_scene.xml"));
-
-			{
-				auto button = scene->FindNode<Athena::CButtonBase>("PrevModelButton");
-				button->Press.connect([&] (Athena::CSceneNode*) { OnPrevModelButtonPress(); });
-			}
-
-			{
-				auto button = scene->FindNode<Athena::CButtonBase>("NextModelButton");
-				button->Press.connect([&] (Athena::CSceneNode*) { OnNextModelButtonPress(); });
-			}
-
-			{
-				auto button = scene->FindNode<Athena::CButtonBase>("PrevTextureButton");
-				button->Press.connect([&] (Athena::CSceneNode*) { OnPrevTextureButtonPress(); });
-			}
-
-			{
-				auto button = scene->FindNode<Athena::CButtonBase>("NextTextureButton");
-				button->Press.connect([&] (Athena::CSceneNode*) { OnNextTextureButtonPress(); });
-			}
 
 			{
 				auto sprite = scene->FindNode<Athena::CSprite>("BackwardSprite");
@@ -119,12 +114,14 @@ void CWorldEditor::CreateWorld()
 			if(refNodeIterator == std::end(layoutNodes)) continue;
 
 			CVector3 instancePosition(instanceNode->posX, instanceNode->posY, instanceNode->posZ);
+			CQuaternion instanceRotY(CVector3(0, -1, 0), instanceNode->rotY);
 
 			auto refNode = refNodeIterator->second;
 			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
 			{
 				auto unitTreeObject = CreateUnitTreeObject(unitTreeObjectNode);
 				unitTreeObject->SetPosition(instancePosition);
+				unitTreeObject->SetRotation(instanceRotY);
 				sceneRoot->AppendChild(unitTreeObject);
 			}
 		}
@@ -146,6 +143,7 @@ Athena::SceneNodePtr CWorldEditor::CreateUnitTreeObject(const std::shared_ptr<CM
 		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 		{
 			auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
+			assert(modelResource);
 			if(!modelResource) continue;
 
 			auto modelChunk = modelResource->SelectNode<CModelChunk>();
@@ -204,30 +202,6 @@ void CWorldEditor::NotifyMouseUp()
 {
 	Athena::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Athena::INPUT_EVENT_RELEASED);
 	m_mainCamera->NotifyMouseUp();
-}
-
-void CWorldEditor::OnPrevModelButtonPress()
-{
-//	if(m_currentModelIdx == 0) return;
-//	SetCurrentModel(m_currentModelIdx - 1);
-}
-
-void CWorldEditor::OnNextModelButtonPress()
-{
-//	if(m_currentModelIdx == (m_models.size() - 1)) return;
-//	SetCurrentModel(m_currentModelIdx + 1);
-}
-
-void CWorldEditor::OnPrevTextureButtonPress()
-{
-//	if(m_currentTextureIdx == 0) return;
-//	SetCurrentTexture(m_currentTextureIdx - 1);
-}
-
-void CWorldEditor::OnNextTextureButtonPress()
-{
-//	if(m_currentTextureIdx == (m_textures.size() - 1)) return;
-//	SetCurrentTexture(m_currentTextureIdx + 1);
 }
 
 //#define _SCAN_LAYOUTS

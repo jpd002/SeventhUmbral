@@ -1,6 +1,8 @@
 #include "UmbralMesh.h"
 #include "ResourceManager.h"
 
+CUmbralMesh::TextureMap CUmbralMesh::m_textures;
+
 static uint16 ByteSwap16(uint16 value)
 {
 	return
@@ -122,21 +124,32 @@ void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 {
 	auto pramChunk = shaderSection->SelectNode<CPramChunk>();
 	assert(pramChunk);
-	ResourceNodePtr textureResource;
+	Athena::TexturePtr texture;
 	for(const auto& sampler : pramChunk->GetSamplers())
 	{
 		if(sampler.name == "_sampler_00")
 		{
 			for(const auto& string : sampler.strings)
 			{
-				textureResource = CResourceManager::GetInstance().GetResource(string);
-				if(textureResource) break;
+				texture = GetTexture(string);
+				if(texture) break;
 			}
 			break;
 		}
 	}
 
-	if(!textureResource) return;
+	GetMaterial()->SetTexture(0, texture);
+	GetMaterial()->SetTextureAddressModeU(0, Athena::TEXTURE_ADDRESS_REPEAT);
+	GetMaterial()->SetTextureAddressModeV(0, Athena::TEXTURE_ADDRESS_REPEAT);
+}
+
+Athena::TexturePtr CUmbralMesh::GetTexture(const std::string& textureName)
+{
+	auto textureIterator = m_textures.find(textureName);
+	if(textureIterator != std::end(m_textures)) return textureIterator->second;
+
+	auto textureResource = CResourceManager::GetInstance().GetResource(textureName);
+	if(!textureResource) return Athena::TexturePtr();
 
 	auto textureDataInfo = textureResource->SelectNode<CGtexData>();
 	assert(textureDataInfo);
@@ -151,6 +164,12 @@ void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 	case CGtexData::TEXTURE_FORMAT_DXT1:
 		specTextureFormat = Athena::TEXTURE_FORMAT_DXT1;
 		break;
+	case CGtexData::TEXTURE_FORMAT_DXT3:
+		specTextureFormat = Athena::TEXTURE_FORMAT_DXT3;
+		break;
+	case CGtexData::TEXTURE_FORMAT_DXT5:
+		specTextureFormat = Athena::TEXTURE_FORMAT_DXT5;
+		break;
 	case CGtexData::TEXTURE_FORMAT_A8R8G8B8:
 	case CGtexData::TEXTURE_FORMAT_X8R8G8B8:
 		specTextureFormat = Athena::TEXTURE_FORMAT_RGBA8888;
@@ -161,7 +180,6 @@ void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 	}
 
 	auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, specTextureFormat, textureWidth, textureHeight);
-	GetMaterial()->SetTexture(0, texture);
-	GetMaterial()->SetTextureAddressModeU(0, Athena::TEXTURE_ADDRESS_REPEAT);
-	GetMaterial()->SetTextureAddressModeV(0, Athena::TEXTURE_ADDRESS_REPEAT);
+	m_textures.insert(std::make_pair(textureName, texture));
+	return texture;
 }

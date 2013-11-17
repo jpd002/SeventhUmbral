@@ -10,6 +10,12 @@ public:
 	virtual				~CUmbralMesh();
 
 private:
-	void				SetupGeometry(const MeshChunkPtr&);
-	void				SetupMaterial(const ShaderSectionPtr&);
+	typedef std::map<std::string, Athena::TexturePtr> TextureMap;
+
+	void						SetupGeometry(const MeshChunkPtr&);
+	void						SetupMaterial(const ShaderSectionPtr&);
+
+	static Athena::TexturePtr	GetTexture(const std::string&);
+
+	static TextureMap			m_textures;
 };

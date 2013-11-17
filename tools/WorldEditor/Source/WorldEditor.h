@@ -25,12 +25,6 @@ private:
 	
 	Athena::SceneNodePtr	CreateUnitTreeObject(const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>&);
 
-	void					OnPrevModelButtonPress();
-	void					OnNextModelButtonPress();
-
-	void					OnPrevTextureButtonPress();
-	void					OnNextTextureButtonPress();
-
 	CVector2				m_mousePosition;
 
 	Athena::PackagePtr		m_package;

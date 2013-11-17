@@ -156,6 +156,18 @@ void CMapLayout::Read(Framework::CStream& inputStream)
 
 			instanceObjectNode->refNodePtr = nodeData[0x0F];
 
+			uint32 rotAbsPtr = nodeData[0x0B] + headerSize + 0x30;
+			uint32 scaleAbsPtr = nodeData[0x0C] + headerSize + 0x30;
+
+			float rotData[4];
+
+			inputStream.Seek(rotAbsPtr, Framework::STREAM_SEEK_SET);
+			inputStream.Read(rotData, sizeof(rotData));
+
+			instanceObjectNode->rotX = rotData[0];
+			instanceObjectNode->rotY = rotData[1];
+			instanceObjectNode->rotZ = rotData[2];
+
 			result = instanceObjectNode;
 		}
 		else if(parentNodeName == "RefObjects/UnitTree/UnitTreeObject")
@@ -193,7 +205,7 @@ void CMapLayout::Read(Framework::CStream& inputStream)
 
 			result = unitTreeObjectNode;
 		}
-		else if(parentNodeName == "BaseObjects/BG/BGPartsBaseObject")
+		else if(parentNodeName == "BaseObjects/BG/BGPartsBaseObject" || parentNodeName == "BaseObjects/BG/BGChipBaseObject")
 		{
 			auto bgPartsBaseObjectNode = std::make_shared<BGPARTS_BASE_OBJECT_NODE>();
 
