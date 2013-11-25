@@ -6,7 +6,7 @@
 
 struct PATCH_RESULT
 {
-	bool success = false;
+	bool succeeded = false;
 	std::vector<std::string> messages;
 };
 

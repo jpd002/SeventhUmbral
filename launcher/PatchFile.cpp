@@ -19,21 +19,18 @@ CPatchFile::~CPatchFile()
 
 PATCH_RESULT CPatchFile::Execute(Framework::CStream& stream, const boost::filesystem::path& gameLocationPath)
 {
-//	try
+	try
 	{
 		CPatchFile patchFile(gameLocationPath);
 		patchFile.DoExecute(stream);
 		return patchFile.GetResult();
 	}
-/*
-	catch(const std::exception& exception)
+	catch(...)
 	{
-		OutputDebugStringA(exception.what());
 		PATCH_RESULT result;
-		result.success = false;
+		result.succeeded = false;
 		return result;
 	}
-*/
 }
 
 const PATCH_RESULT& CPatchFile::GetResult() const
@@ -100,7 +97,7 @@ void CPatchFile::DoExecute(Framework::CStream& stream)
 		if(stream.IsEOF()) break;
 	}
 
-	m_result.success = true;
+	m_result.succeeded = true;
 }
 
 void CPatchFile::ExecuteFHDR(Framework::CStream& stream)
@@ -211,8 +208,10 @@ void CPatchFile::ExecuteETRY(Framework::CStream& inputStream)
 		uint32 hashMode = inputStream.Read32();
 		assert(hashMode == 0x41 || hashMode == 0x44 || hashMode == 0x4D);
 
-		uint8 fileHash[0x28];
-		inputStream.Read(fileHash, sizeof(fileHash));
+		uint8 srcFileHash[0x14];
+		uint8 dstFileHash[0x14];
+		inputStream.Read(srcFileHash, sizeof(srcFileHash));
+		inputStream.Read(dstFileHash, sizeof(dstFileHash));
 
 		//4E is no compression
 		//5A is zlib compression
@@ -231,6 +230,9 @@ void CPatchFile::ExecuteETRY(Framework::CStream& inputStream)
 
 		//Data starts here
 		{
+			//Retrying here because explorer.exe can sometimes open the ffxiv*.exe files to load
+			//the icons making the open operation fail if we need to patch it again.
+			
 			auto outputStream = CreateOutputStdStreamWithRetry(fullFilePath.native());
 			if(compressionMode == 0x4E)
 			{
