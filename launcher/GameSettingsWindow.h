@@ -13,9 +13,7 @@ protected:
 	long							OnCommand(unsigned short, unsigned short, HWND) override;
 
 private:
-	void							BrowseGameLocation();
 	void							Save();
 
 	Framework::Win32::CEdit			m_gameLocationEdit;
-
 };

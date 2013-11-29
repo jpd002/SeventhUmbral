@@ -13,8 +13,7 @@
 #include "AppDef.h"
 #include "Utf8.h"
 #include "StdStream.h"
-
-#define GAME_INSTALL_REGKEY _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F2C4E6E0-EB78-4824-A212-6DF6AF0E8E82}")
+#include "Utils.h"
 
 #define PAGE_LOAD_TIMER_ID					0xBEEF
 
@@ -23,7 +22,6 @@ CLauncherWindow::CLauncherWindow()
 , m_pageLoaded(false)
 , m_pageLoadTimerId(NULL)
 {
-	CAppConfig::GetInstance().RegisterPreferenceString(PREF_LAUNCHER_GAME_LOCATION, Framework::Utf8::ConvertTo(GetGameLocationFromInstallInfo()).c_str());
 	CAppConfig::GetInstance().RegisterPreferenceString(PREF_LAUNCHER_SERVER_NAME, "");
 	CAppConfig::GetInstance().RegisterPreferenceString(PREF_LAUNCHER_SERVER_ADDRESS, "");
 
@@ -261,7 +259,7 @@ void CLauncherWindow::LaunchGame(const char* sessionId)
 	}
 
 	auto gameLocationPath = boost::filesystem::path(gameLocation);
-	if(!IsValidGameLocationPath(gameLocationPath))
+	if(!Utils::IsValidGameLocationPath(gameLocationPath))
 	{
 		throw std::runtime_error("Specified location doesn't contain the game.");
 	}
@@ -448,30 +446,4 @@ CLauncherWindow::StringKeyValueMap CLauncherWindow::GetUrlParameters(const TCHAR
 		}
 	}
 	return parameters;
-}
-
-std::tstring CLauncherWindow::GetGameLocationFromInstallInfo()
-{
-	LSTATUS result = ERROR_SUCCESS;
-	TCHAR installPath[256];
-	TCHAR displayName[256];
-	{
-		DWORD keyType = REG_SZ;
-		DWORD dataSize = _countof(installPath);
-		result = RegGetValue(HKEY_LOCAL_MACHINE, GAME_INSTALL_REGKEY, _T("InstallLocation"), RRF_RT_REG_SZ, &keyType, installPath, &dataSize);
-		if(result != ERROR_SUCCESS) return std::tstring();
-	}
-	{
-		DWORD keyType = REG_SZ;
-		DWORD dataSize = _countof(displayName);
-		result = RegGetValue(HKEY_LOCAL_MACHINE, GAME_INSTALL_REGKEY, _T("DisplayName"), RRF_RT_REG_SZ, &keyType, displayName, &dataSize);
-		if(result != ERROR_SUCCESS) return std::tstring();
-	}
-	return std::tstring(installPath) + _T("\\") + std::tstring(displayName);
-}
-
-bool CLauncherWindow::IsValidGameLocationPath(const boost::filesystem::path& gameLocationPath)
-{
-	auto bootExecutablePath = gameLocationPath / "ffxivboot.exe";
-	return boost::filesystem::exists(bootExecutablePath);
 }

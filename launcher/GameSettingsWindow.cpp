@@ -4,6 +4,7 @@
 #include "AppPreferences.h"
 #include "string_cast.h"
 #include "Utf8.h"
+#include "Utils.h"
 
 CGameSettingsWindow::CGameSettingsWindow(HWND parentWnd)
 : CDialog(MAKEINTRESOURCE(IDD_GAMESETTINGSWINDOW), parentWnd)
@@ -32,7 +33,13 @@ long CGameSettingsWindow::OnCommand(unsigned short cmdId, unsigned short cmdType
 		Destroy();
 		break;
 	case IDC_BROWSE_GAMELOCATION:
-		BrowseGameLocation();
+		{
+			auto newLocation = Utils::BrowseForGameLocation(m_hWnd);
+			if(!newLocation.empty())
+			{
+				m_gameLocationEdit.SetText(newLocation.c_str());
+			}
+		}
 		break;
 	}
 	return FALSE;
@@ -42,22 +49,4 @@ void CGameSettingsWindow::Save()
 {
 	auto gameLocation = m_gameLocationEdit.GetText();
 	CAppConfig::GetInstance().SetPreferenceString(PREF_LAUNCHER_GAME_LOCATION, Framework::Utf8::ConvertTo(gameLocation).c_str());
-}
-
-void CGameSettingsWindow::BrowseGameLocation()
-{
-	BROWSEINFO browseInfo = {};
-	browseInfo.hwndOwner = m_hWnd;
-	browseInfo.lpszTitle = _T("Specify FFXIV folder");
-	browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
-	PIDLIST_ABSOLUTE result = SHBrowseForFolder(&browseInfo);
-	if(result != NULL)
-	{
-		TCHAR selectedPath[MAX_PATH];
-		if(SHGetPathFromIDList(result, selectedPath))
-		{
-			m_gameLocationEdit.SetText(selectedPath);
-		}
-		CoTaskMemFree(result);
-	}
 }

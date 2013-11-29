@@ -1,5 +1,6 @@
 #include <WinInet.h>
 #include <zlib.h>
+#include "Utils.h"
 #include "DownloaderService.h"
 #include "StdStreamUtils.h"
 #include "string_cast.h"
@@ -56,12 +57,18 @@ void CDownloaderService::Download(const std::string& srcUrl, const boost::filesy
 	command.fileSize	= fileSize;
 	command.crc			= crc;
 	m_downloadedSize = 0;
+	m_downloadCancelled = false;
 	LaunchCommand(command, continuation);
 }
 
 uint32 CDownloaderService::GetDownloadedSize() const
 {
 	return m_downloadedSize;
+}
+
+void CDownloaderService::CancelDownload()
+{
+	m_downloadCancelled = true;
 }
 
 DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_COMMAND& command)
@@ -101,7 +108,7 @@ DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_C
 		assert(m_downloadedSize == 0);
 		auto downloadCrc = crc32(0, Z_NULL, 0);
 		auto outputStream = Framework::CreateOutputStdStream(command.dstPath.native());
-		while(1)
+		while(!m_downloadCancelled)
 		{
 			const uint32 bufferSize = 0x10000;
 			uint8 buffer[bufferSize];
@@ -120,6 +127,11 @@ DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_C
 			outputStream.Write(buffer, actualRead);
 			m_downloadedSize += actualRead;
 			downloadCrc = crc32(downloadCrc, buffer, actualRead);
+		}
+
+		if(m_downloadCancelled)
+		{
+			result.succeeded = false;
 		}
 
 		if(m_downloadedSize != command.fileSize)
@@ -150,23 +162,7 @@ bool CDownloaderService::IsDownloadRequired(const DOWNLOADER_SERVICE_COMMAND& co
 	{
 		return true;
 	}
-	auto inputStream = Framework::CreateInputStdStream(command.dstPath.native());
-	auto crc = crc32(0, Z_NULL, 0);
-	while(1)
-	{
-		const uint32 bufferSize = 0x4000;
-		uint8 buffer[bufferSize];
-		auto actualRead = inputStream.Read(buffer, bufferSize);
-		if(actualRead == 0)
-		{
-			break;
-		}
-		crc = crc32(crc, buffer, static_cast<uInt>(actualRead));
-		if(inputStream.IsEOF())
-		{
-			break;
-		}
-	}
+	auto crc = Utils::ComputeFileCrc32(command.dstPath);
 	if(crc != command.crc)
 	{
 		return true;

@@ -10,7 +10,7 @@
 class CPatcherWindow : public Framework::Win32::CDialog
 {
 public:
-									CPatcherWindow();
+									CPatcherWindow(const boost::filesystem::path&, const boost::filesystem::path&);
 	virtual							~CPatcherWindow();
 
 protected:
@@ -48,6 +48,11 @@ private:
 	{
 		MAX_DOWNLOAD_SIZE_HISTORY = 0x20
 	};
+
+	bool							m_cancelPending = false;
+
+	boost::filesystem::path			m_downloadPath;
+	boost::filesystem::path			m_gamePath;
 
 	CDownloaderService				m_downloaderService;
 	static const DownloadInfoArray	m_downloads;

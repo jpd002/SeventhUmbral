@@ -1,12 +1,12 @@
 #include "PatcherWindow.h"
 #include "resource.h"
 #include "string_format.h"
+#include "AppDef.h"
 
 #define UNIT_KILOBYTE	(0x400)
 #define TIMER_RATE		(400)
 
 const char* g_patchUrlBase = "https://ffxivpatches.s3.amazonaws.com/";
-static const boost::filesystem::path g_downloadPath("F:\\PatchTemp_Download");
 
 const CPatcherWindow::DownloadInfoArray CPatcherWindow::m_downloads =
 {
@@ -86,8 +86,10 @@ const CPatcherWindow::DownloadInfoArray CPatcherWindow::m_downloads =
 	{ "48eca647/patch/D2012.09.19.0001.patch", 20874726,	0x8A775526 }
 };
 
-CPatcherWindow::CPatcherWindow()
+CPatcherWindow::CPatcherWindow(const boost::filesystem::path& gamePath, const boost::filesystem::path& downloadPath)
 : CDialog(MAKEINTRESOURCE(IDD_PATCHERWINDOW))
+, m_gamePath(gamePath)
+, m_downloadPath(downloadPath)
 {
 	SetClassPtr();
 
@@ -116,12 +118,17 @@ CPatcherWindow::~CPatcherWindow()
 
 long CPatcherWindow::OnTimer(WPARAM timerId)
 {
+	if((m_downloadComplete || m_patchComplete) && m_cancelPending)
+	{
+		Destroy();
+		return FALSE;
+	}
 	if(m_downloadComplete)
 	{
 		m_downloadComplete = false;
 		StepDownloader();
 	}
-	if(m_downloaderService.IsActive())
+	if(m_downloaderService.IsActive() && !m_cancelPending)
 	{
 		UpdateDownloaderStatus();
 	}
@@ -142,6 +149,15 @@ long CPatcherWindow::OnCommand(unsigned short cmdId, unsigned short cmdType, HWN
 		{
 			Destroy();
 		}
+		else
+		{
+			if(MessageBox(m_hWnd, _T("Are you sure that you want to cancel the update process?"), APP_NAME, MB_YESNO) == IDYES)
+			{
+				SetText(_T("Cancelling, please wait..."));
+				m_cancelPending = true;
+				m_downloaderService.CancelDownload();
+			}
+		}
 		break;
 	}
 	return FALSE;
@@ -153,7 +169,7 @@ void CPatcherWindow::StepDownloader()
 	{
 		for(const auto& downloadInfo : m_downloads)
 		{
-			auto patchPath = g_downloadPath / boost::filesystem::path(downloadInfo.path);
+			auto patchPath = m_downloadPath / boost::filesystem::path(downloadInfo.path);
 			m_patchPaths.push_back(patchPath);
 		}
 
@@ -169,7 +185,7 @@ void CPatcherWindow::StepDownloader()
 	else
 	{
 		const auto& downloadInfo = m_downloads[m_downloadIdx];
-		auto downloadDstPath = g_downloadPath / boost::filesystem::path(downloadInfo.path);
+		auto downloadDstPath = m_downloadPath / boost::filesystem::path(downloadInfo.path);
 		auto downloadUrl = std::string(g_patchUrlBase) + std::string(downloadInfo.path);
 		m_downloadSizeHistoryIndex = 0;
 		memset(m_downloadSizeHistory, 0, sizeof(m_downloadSizeHistory));
@@ -196,10 +212,9 @@ void CPatcherWindow::StepPatcher()
 	}
 	else
 	{
-		boost::filesystem::path patchDstPath("F:\\PatchTemp");
 		auto nextPatchPath = m_patchPaths[m_patchIdx];
 
-		m_patcherService.Patch(nextPatchPath, patchDstPath,
+		m_patcherService.Patch(nextPatchPath, m_gamePath,
 			[&](const PATCHER_SERVICE_RESULT& result)
 			{
 				assert(result.succeeded);
@@ -286,7 +301,7 @@ void CPatcherWindow::UpdateDownloaderStatus()
 		downloadRate *= 1000.f / static_cast<float>(TIMER_RATE);
 		
 		const auto& downloadInfo = m_downloads[m_downloadIdx];
-		auto downloadDstPath = g_downloadPath / boost::filesystem::path(downloadInfo.path);
+		auto downloadDstPath = m_downloadPath / boost::filesystem::path(downloadInfo.path);
 
 		unsigned int downloadPercent = static_cast<unsigned int>(static_cast<float>(downloadedSize) / static_cast<float>(totalDownloadSize) * 100.f);
 

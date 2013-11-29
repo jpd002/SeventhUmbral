@@ -23,8 +23,6 @@ private:
 	typedef std::map<unsigned int, std::string> ServerAddressComboItemKeyMap;
 	typedef std::map<std::tstring, std::tstring> StringKeyValueMap;
 
-	static std::tstring				GetGameLocationFromInstallInfo();
-	static bool						IsValidGameLocationPath(const boost::filesystem::path&);
 	static StringKeyValueMap		GetUrlParameters(const TCHAR*);
 
 	void							LoadLoginPage();
