@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -62,7 +62,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wininet.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>$(ProjectDir)../Launcher/manifest.xml</AdditionalManifestFiles>
@@ -92,7 +92,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>ws2_32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;wininet.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>$(ProjectDir)../Launcher/manifest.xml</AdditionalManifestFiles>
@@ -115,19 +115,28 @@
       </ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="..\Launcher\AppConfig.cpp" />
+    <ClCompile Include="..\launcher\DownloaderService.cpp" />
     <ClCompile Include="..\launcher\GameSettingsWindow.cpp" />
     <ClCompile Include="..\launcher\Launcher.cpp" />
     <ClCompile Include="..\launcher\LauncherWindow.cpp" />
+    <ClCompile Include="..\launcher\PatcherService.cpp" />
+    <ClCompile Include="..\launcher\PatcherWindow.cpp" />
+    <ClCompile Include="..\launcher\PatchFile.cpp" />
+    <ClCompile Include="..\launcher\PatchProcess.cpp" />
     <ClCompile Include="..\Launcher\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Launcher\ServerDefs.cpp" />
+    <ClCompile Include="..\launcher\Utils.cpp" />
     <ClCompile Include="..\launcher\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
       <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
+      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -135,12 +144,19 @@
     <ClInclude Include="..\Launcher\AppConfig.h" />
     <ClInclude Include="..\launcher\AppDef.h" />
     <ClInclude Include="..\launcher\AppPreferences.h" />
+    <ClInclude Include="..\launcher\AsyncService.h" />
+    <ClInclude Include="..\launcher\DownloaderService.h" />
     <ClInclude Include="..\launcher\GameSettingsWindow.h" />
     <ClInclude Include="..\launcher\Launcher.h" />
     <ClInclude Include="..\launcher\LauncherWindow.h" />
+    <ClInclude Include="..\launcher\PatcherService.h" />
+    <ClInclude Include="..\launcher\PatcherWindow.h" />
+    <ClInclude Include="..\launcher\PatchFile.h" />
+    <ClInclude Include="..\launcher\PatchProcess.h" />
     <ClInclude Include="..\Launcher\Pch.h" />
     <ClInclude Include="..\launcher\resource.h" />
     <ClInclude Include="..\Launcher\ServerDefs.h" />
+    <ClInclude Include="..\launcher\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\launcher\Res.rc" />
@@ -150,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\launcher\icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\launcher\null_login.html" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
