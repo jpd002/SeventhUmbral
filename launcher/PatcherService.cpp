@@ -22,18 +22,19 @@ void CPatcherService::Patch(const boost::filesystem::path& patchSrcPath, const b
 
 PATCHER_SERVICE_RESULT CPatcherService::Execute(const PATCHER_SERVICE_COMMAND& command)
 {
-	PATCHER_SERVICE_RESULT result;
-
 	try
 	{
 		auto inputStream = Framework::CreateInputStdStream(command.patchSrcPath.native());
 		auto patcherResult = CPatchFile::Execute(inputStream, command.patchDstPath);
-		result.succeeded = patcherResult.succeeded;
+		if(!patcherResult.succeeded)
+		{
+			return PATCHER_SERVICE_RESULT_ERROR;
+		}
 	}
 	catch(...)
 	{
-
+		return PATCHER_SERVICE_RESULT_ERROR;
 	}
 
-	return result;
+	return PATCHER_SERVICE_RESULT_SUCCESS;
 }

@@ -30,9 +30,10 @@ private:
 
 	void							StepDownloader();
 	void							StepPatcher();
+	void							FinishProcess();
 
-	void							UpdatePatcherStatus();
 	void							UpdateDownloaderStatus();
+	void							UpdatePatcherStatus();
 
 	Framework::Win32::CStatic		m_downloadStatusLabel;
 	Framework::Win32::CStatic		m_downloadProgressLabel;
@@ -59,12 +60,14 @@ private:
 	unsigned int					m_downloadIdx = 0;
 	unsigned int					m_downloadSizeHistoryIndex = 0;
 	uint32							m_downloadSizeHistory[MAX_DOWNLOAD_SIZE_HISTORY];
-	bool							m_downloadComplete = false;
+	DOWNLOADER_SERVICE_RESULT		m_downloadResult = DOWNLOADER_SERVICE_RESULT_SUCCESS;
+	std::atomic<bool>				m_downloadComplete = false;
 
 	CPatcherService					m_patcherService;
 	PatchPathArray					m_patchPaths;
 	unsigned int					m_patchIdx = 0;
-	bool							m_patchComplete = false;
+	PATCHER_SERVICE_RESULT			m_patchResult = PATCHER_SERVICE_RESULT_SUCCESS;
+	std::atomic<bool>				m_patchComplete = false;
 
 	bool							m_processComplete = false;
 };

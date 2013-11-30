@@ -109,6 +109,7 @@ CPatcherWindow::CPatcherWindow(const boost::filesystem::path& gamePath, const bo
 	m_patchProgressLabel.SetText(_T("0%"));
 
 	StepDownloader();
+	UpdateDownloaderStatus();
 }
 
 CPatcherWindow::~CPatcherWindow()
@@ -126,7 +127,15 @@ long CPatcherWindow::OnTimer(WPARAM timerId)
 	if(m_downloadComplete)
 	{
 		m_downloadComplete = false;
-		StepDownloader();
+		if(m_downloadResult == DOWNLOADER_SERVICE_RESULT_SUCCESS)
+		{
+			StepDownloader();
+		}
+		else
+		{
+			FinishProcess();
+		}
+		UpdateDownloaderStatus();
 	}
 	if(m_downloaderService.IsActive() && !m_cancelPending)
 	{
@@ -135,7 +144,15 @@ long CPatcherWindow::OnTimer(WPARAM timerId)
 	if(m_patchComplete)
 	{
 		m_patchComplete = false;
-		StepPatcher();
+		if(m_patchResult == PATCHER_SERVICE_RESULT_SUCCESS)
+		{
+			StepPatcher();
+		}
+		else
+		{
+			FinishProcess();
+		}
+		UpdatePatcherStatus();
 	}
 	return FALSE;
 }
@@ -151,7 +168,7 @@ long CPatcherWindow::OnCommand(unsigned short cmdId, unsigned short cmdType, HWN
 		}
 		else
 		{
-			if(MessageBox(m_hWnd, _T("Are you sure that you want to cancel the update process?"), APP_NAME, MB_YESNO) == IDYES)
+			if(MessageBox(m_hWnd, _T("Are you sure that you want to cancel the update process?"), APP_NAME, MB_YESNO | MB_ICONWARNING) == IDYES)
 			{
 				SetText(_T("Cancelling, please wait..."));
 				m_cancelPending = true;
@@ -193,22 +210,19 @@ void CPatcherWindow::StepDownloader()
 		m_downloaderService.Download(downloadUrl, downloadDstPath, downloadInfo.size, downloadInfo.crc, 
 			[&] (const DOWNLOADER_SERVICE_RESULT& result) 
 			{
-				assert(result.succeeded);
-				m_downloadComplete = true;
+				m_downloadResult = result;
 				m_downloadIdx++;
+				m_downloadComplete = true;
 			}
 		);
 	}
-
-	UpdateDownloaderStatus();
 }
 
 void CPatcherWindow::StepPatcher()
 {
 	if(m_patchIdx == m_patchPaths.size())
 	{
-		m_cancelButton.SetText(_T("Close"));
-		m_processComplete = true;
+		FinishProcess();
 	}
 	else
 	{
@@ -217,35 +231,18 @@ void CPatcherWindow::StepPatcher()
 		m_patcherService.Patch(nextPatchPath, m_gamePath,
 			[&](const PATCHER_SERVICE_RESULT& result)
 			{
-				assert(result.succeeded);
-				m_patchComplete = true;
+				m_patchResult = result;
 				m_patchIdx++;
+				m_patchComplete = true;
 			}
 		);
 	}
-
-	UpdatePatcherStatus();
 }
 
-void CPatcherWindow::UpdatePatcherStatus()
+void CPatcherWindow::FinishProcess()
 {
-	m_patchProgress.SetRange(0, m_patchPaths.size());
-
-	if(m_patchIdx == m_patchPaths.size())
-	{
-		//Complete
-		m_patchStatusLabel.SetText(_T("Complete!"));
-		m_patchProgressLabel.SetText(_T("100%"));
-		m_patchProgress.SetPosition(m_patchIdx);
-	}
-	else
-	{
-		auto nextPatchPath = m_patchPaths[m_patchIdx];
-		unsigned int patchPercent = static_cast<unsigned int>(static_cast<float>(m_patchIdx) / static_cast<float>(m_patchPaths.size()) * 100.f);
-		m_patchProgress.SetPosition(m_patchIdx);
-		m_patchStatusLabel.SetText(string_format(_T("Applying '%s'..."), nextPatchPath.leaf().native().c_str()).c_str());
-		m_patchProgressLabel.SetText(string_format(_T("%d%%"), patchPercent).c_str());
-	}
+	m_cancelButton.SetText(_T("Close"));
+	m_processComplete = true;
 }
 
 void CPatcherWindow::UpdateDownloaderStatus()
@@ -264,7 +261,27 @@ void CPatcherWindow::UpdateDownloaderStatus()
 
 	m_downloadProgress.SetRange(0, static_cast<uint32>(totalDownloadSize / UNIT_KILOBYTE));
 
-	if(m_downloadIdx == m_downloads.size())
+	if(m_downloadResult != DOWNLOADER_SERVICE_RESULT_SUCCESS)
+	{
+		switch(m_downloadResult)
+		{
+		case DOWNLOADER_SERVICE_RESULT_ERROR_BADCHECKSUM:
+			m_downloadStatusLabel.SetText(_T("Download failed. Wrong checksum."));
+			break;
+		case DOWNLOADER_SERVICE_RESULT_ERROR_BADFILESIZE:
+			m_downloadStatusLabel.SetText(_T("Download failed. Wrong file size."));
+			break;
+		case DOWNLOADER_SERVICE_RESULT_ERROR_NETWORK:
+			m_downloadStatusLabel.SetText(_T("Download failed. Network error."));
+			break;
+		default:
+			m_downloadStatusLabel.SetText(_T("Download failed."));
+			break;
+		}
+		m_downloadProgress.SetPosition(static_cast<uint32>(totalDownloadSize / UNIT_KILOBYTE));
+		m_downloadProgress.SetState(PBST_ERROR);
+	}
+	else if(m_downloadIdx == m_downloads.size())
 	{
 		m_downloadStatusLabel.SetText(_T("Download Completed!"));
 		m_downloadProgressLabel.SetText(_T("100%"));
@@ -309,5 +326,32 @@ void CPatcherWindow::UpdateDownloaderStatus()
 		m_downloadStatusLabel.SetText(string_format(_T("Downloading '%s'... (%d/%d KB) @ %0.2f KB/s"), 
 			downloadDstPath.leaf().native().c_str(), currentDownloadSize / UNIT_KILOBYTE, downloadInfo.size / UNIT_KILOBYTE, downloadRate).c_str());
 		m_downloadProgressLabel.SetText(string_format(_T("%d%%"), downloadPercent).c_str());
+	}
+}
+
+void CPatcherWindow::UpdatePatcherStatus()
+{
+	m_patchProgress.SetRange(0, m_patchPaths.size());
+
+	if(m_patchResult != PATCHER_SERVICE_RESULT_SUCCESS)
+	{
+		m_patchStatusLabel.SetText(_T("Patch failed."));
+		m_patchProgress.SetPosition(m_patchPaths.size());
+		m_patchProgress.SetState(PBST_ERROR);
+	}
+	else if(m_patchIdx == m_patchPaths.size())
+	{
+		//Complete
+		m_patchStatusLabel.SetText(_T("Complete!"));
+		m_patchProgressLabel.SetText(_T("100%"));
+		m_patchProgress.SetPosition(m_patchIdx);
+	}
+	else
+	{
+		auto nextPatchPath = m_patchPaths[m_patchIdx];
+		unsigned int patchPercent = static_cast<unsigned int>(static_cast<float>(m_patchIdx) / static_cast<float>(m_patchPaths.size()) * 100.f);
+		m_patchProgress.SetPosition(m_patchIdx);
+		m_patchStatusLabel.SetText(string_format(_T("Applying '%s'..."), nextPatchPath.leaf().native().c_str()).c_str());
+		m_patchProgressLabel.SetText(string_format(_T("%d%%"), patchPercent).c_str());
 	}
 }

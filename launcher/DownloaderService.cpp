@@ -73,14 +73,11 @@ void CDownloaderService::CancelDownload()
 
 DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_COMMAND& command)
 {
-	DOWNLOADER_SERVICE_RESULT result;
-
 	try
 	{
 		if(!IsDownloadRequired(command))
 		{
-			result.succeeded = true;
-			return result;
+			return DOWNLOADER_SERVICE_RESULT_SUCCESS;
 		}
 	}
 	catch(...)
@@ -101,9 +98,9 @@ DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_C
 		}
 
 		CInternetHandle inet = InternetOpen(NULL, INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
-		if(inet.IsEmpty()) return result;
+		if(inet.IsEmpty()) return DOWNLOADER_SERVICE_RESULT_ERROR_NETWORK;
 		CInternetHandle inetUrl = InternetOpenUrl(inet, string_cast<std::tstring>(command.srcUrl).c_str(), NULL, 0, 0, NULL);
-		if(inetUrl.IsEmpty()) return result;
+		if(inetUrl.IsEmpty()) return DOWNLOADER_SERVICE_RESULT_ERROR_NETWORK;
 
 		assert(m_downloadedSize == 0);
 		auto downloadCrc = crc32(0, Z_NULL, 0);
@@ -117,11 +114,10 @@ DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_C
 			BOOL readResult = InternetReadFile(inetUrl, buffer, toRead, &actualRead);
 			if(readResult == FALSE)
 			{
-				return result;
+				return DOWNLOADER_SERVICE_RESULT_ERROR_NETWORK;
 			}
 			if(actualRead == 0)
 			{
-				result.succeeded = true;
 				break;
 			}
 			outputStream.Write(buffer, actualRead);
@@ -131,24 +127,25 @@ DOWNLOADER_SERVICE_RESULT CDownloaderService::Execute(const DOWNLOADER_SERVICE_C
 
 		if(m_downloadCancelled)
 		{
-			result.succeeded = false;
+			return DOWNLOADER_SERVICE_RESULT_ERROR_CANCELLED;
 		}
 
 		if(m_downloadedSize != command.fileSize)
 		{
-			result.succeeded = false;
+			return DOWNLOADER_SERVICE_RESULT_ERROR_BADFILESIZE;
 		}
 
 		if(downloadCrc != command.crc)
 		{
-			result.succeeded = false;
+			return DOWNLOADER_SERVICE_RESULT_ERROR_BADCHECKSUM;
 		}
 	}
 	catch(...)
 	{
-	
+		return DOWNLOADER_SERVICE_RESULT_ERROR_GENERIC;
 	}
-	return result;
+
+	return DOWNLOADER_SERVICE_RESULT_SUCCESS;
 }
 
 bool CDownloaderService::IsDownloadRequired(const DOWNLOADER_SERVICE_COMMAND& command)

@@ -3,17 +3,22 @@
 #include "AsyncService.h"
 #include <boost/filesystem.hpp>
 
+enum DOWNLOADER_SERVICE_RESULT
+{
+	DOWNLOADER_SERVICE_RESULT_SUCCESS,
+	DOWNLOADER_SERVICE_RESULT_ERROR_GENERIC,
+	DOWNLOADER_SERVICE_RESULT_ERROR_CANCELLED,
+	DOWNLOADER_SERVICE_RESULT_ERROR_NETWORK,
+	DOWNLOADER_SERVICE_RESULT_ERROR_BADCHECKSUM,
+	DOWNLOADER_SERVICE_RESULT_ERROR_BADFILESIZE
+};
+
 struct DOWNLOADER_SERVICE_COMMAND
 {
 	std::string						srcUrl;
 	boost::filesystem::path			dstPath;
 	uint32							fileSize;
 	uint32							crc;
-};
-
-struct DOWNLOADER_SERVICE_RESULT
-{
-	bool succeeded = false;
 };
 
 class CDownloaderService : public CAsyncService<DOWNLOADER_SERVICE_COMMAND, DOWNLOADER_SERVICE_RESULT>

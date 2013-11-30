@@ -3,15 +3,16 @@
 #include <boost/filesystem.hpp>
 #include "AsyncService.h"
 
+enum PATCHER_SERVICE_RESULT
+{
+	PATCHER_SERVICE_RESULT_SUCCESS,
+	PATCHER_SERVICE_RESULT_ERROR,
+};
+
 struct PATCHER_SERVICE_COMMAND
 {
 	boost::filesystem::path			patchSrcPath;
 	boost::filesystem::path			patchDstPath;
-};
-
-struct PATCHER_SERVICE_RESULT
-{
-	bool succeeded = false;
 };
 
 class CPatcherService : public CAsyncService<PATCHER_SERVICE_COMMAND, PATCHER_SERVICE_RESULT>
