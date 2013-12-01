@@ -2,11 +2,10 @@
 #include "PathUtils.h"
 #include "PatcherWindow.h"
 #include "string_format.h"
+#include "Utils.h"
+#include "StdStreamUtils.h"
 #include "AppDef.h"
 #include "AppConfig.h"
-#include "AppPreferences.h"
-#include "Utils.h"
-#include "Utf8.h"
 
 void CPatchProcess::PatchGame()
 {
@@ -55,29 +54,26 @@ void CPatchProcess::PatchGame()
 		}
 	}
 
-	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
-	auto gameLocationPath = boost::filesystem::path(gameLocation);
-
+	auto gameLocationPath = Utils::GetGameLocationPathFromSettings();
 	CPatcherWindow patcherWindow(gameLocationPath, patchDownloadLocationPath);
 	patcherWindow.DoModal();
 }
 
 bool CPatchProcess::IsGameUpToDate()
 {
-	static const uint32 bootExeCrcRef = 0xB63645E4;
+	auto gameLocationPath = Utils::GetGameLocationPathFromSettings();
+	auto gameVerPath = gameLocationPath / "game.ver";
 
-	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
-	if(gameLocation.empty())
+	try
 	{
-		throw std::runtime_error("No game location specified.");
+		auto inputStream = Framework::CreateInputStdStream(gameVerPath.native());
+		auto gameVersion = inputStream.ReadString();
+		return (gameVersion == FFXIV_GAME_VERSION);
 	}
-
-	auto gameLocationPath = boost::filesystem::path(gameLocation);
-	auto bootExePath = gameLocationPath / "ffxivboot.exe";
-
-	auto bootExeCrc = Utils::ComputeFileCrc32(bootExePath);
-
-	return (bootExeCrcRef == bootExeCrc);
+	catch(...)
+	{
+		return false;
+	}
 }
 
 HRESULT CALLBACK OutdatedGameTaskDialogCallback(HWND hwnd, UINT msg, WPARAM, LPARAM, LONG_PTR)
@@ -95,9 +91,7 @@ void CPatchProcess::CheckGameVersionAndStartUpdate()
 {
 	try
 	{
-		auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
-		auto gameLocationPath = boost::filesystem::path(gameLocation);
-
+		auto gameLocationPath = Utils::GetGameLocationPathFromSettings();
 		if(!Utils::IsValidGameLocationPath(gameLocationPath))
 		{
 			return;

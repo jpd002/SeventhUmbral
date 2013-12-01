@@ -35,6 +35,8 @@ private:
 	void							UpdateDownloaderStatus();
 	void							UpdatePatcherStatus();
 
+	void							WriteVersionFiles();
+
 	Framework::Win32::CStatic		m_downloadStatusLabel;
 	Framework::Win32::CStatic		m_downloadProgressLabel;
 	Framework::Win32::CProgress		m_downloadProgress;

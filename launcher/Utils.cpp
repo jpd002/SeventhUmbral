@@ -1,6 +1,9 @@
 #include <zlib.h>
 #include "Utils.h"
 #include "StdStreamUtils.h"
+#include "Utf8.h"
+#include "AppConfig.h"
+#include "AppPreferences.h"
 
 #define GAME_INSTALL_REGKEY _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{F2C4E6E0-EB78-4824-A212-6DF6AF0E8E82}")
 
@@ -24,6 +27,18 @@ uint32 Utils::ComputeFileCrc32(const boost::filesystem::path& filePath)
 		}
 	}
 	return crc;
+}
+
+boost::filesystem::path Utils::GetGameLocationPathFromSettings()
+{
+	auto gameLocation = Framework::Utf8::ConvertFrom(CAppConfig::GetInstance().GetPreferenceString(PREF_LAUNCHER_GAME_LOCATION));
+	if(gameLocation.empty())
+	{
+		throw std::runtime_error("No game location specified.");
+	}
+
+	auto gameLocationPath = boost::filesystem::path(gameLocation);
+	return gameLocationPath;
 }
 
 std::tstring Utils::GetGameLocationFromInstallInfo()
@@ -52,7 +67,7 @@ std::tstring Utils::BrowseForFolder(HWND parentWnd, const TCHAR* title)
 	BROWSEINFO browseInfo = {};
 	browseInfo.hwndOwner = parentWnd;
 	browseInfo.lpszTitle = title;
-	browseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
+	browseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 	PIDLIST_ABSOLUTE result = SHBrowseForFolder(&browseInfo);
 	if(result != NULL)
 	{
@@ -75,26 +90,4 @@ bool Utils::IsValidGameLocationPath(const boost::filesystem::path& gameLocationP
 {
 	auto bootExecutablePath = gameLocationPath / "ffxivboot.exe";
 	return boost::filesystem::exists(bootExecutablePath);
-}
-
-bool Utils::IsProcessElevated()
-{
-	HANDLE tokenHandle = NULL;
-	if(!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &tokenHandle))
-	{
-		return false;
-	}
-
-	TOKEN_ELEVATION tokenElevation;
-	DWORD tokenSize = 0;
-	if(!GetTokenInformation(tokenHandle, TokenElevation, &tokenElevation, sizeof(tokenElevation), &tokenSize))
-	{
-		CloseHandle(tokenHandle);
-		return false;
-	}
-
-	bool result = (tokenElevation.TokenIsElevated == TRUE);
-	CloseHandle(tokenHandle);
-
-	return result;
 }

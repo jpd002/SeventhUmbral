@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "string_format.h"
 #include "AppDef.h"
+#include "StdStreamUtils.h"
 
 #define UNIT_KILOBYTE	(0x400)
 #define TIMER_RATE		(400)
@@ -222,6 +223,7 @@ void CPatcherWindow::StepPatcher()
 {
 	if(m_patchIdx == m_patchPaths.size())
 	{
+		WriteVersionFiles();
 		FinishProcess();
 	}
 	else
@@ -353,5 +355,31 @@ void CPatcherWindow::UpdatePatcherStatus()
 		m_patchProgress.SetPosition(m_patchIdx);
 		m_patchStatusLabel.SetText(string_format(_T("Applying '%s'..."), nextPatchPath.leaf().native().c_str()).c_str());
 		m_patchProgressLabel.SetText(string_format(_T("%d%%"), patchPercent).c_str());
+	}
+}
+
+void CPatcherWindow::WriteVersionFiles()
+{
+	auto gameVerPath = m_gamePath / "game.ver";
+	auto bootVerPath = m_gamePath / "boot.ver";
+
+	try
+	{
+		auto outputStream = Framework::CreateOutputStdStream(gameVerPath.native());
+		outputStream.Write(FFXIV_GAME_VERSION, strlen(FFXIV_GAME_VERSION));
+	}
+	catch(...)
+	{
+
+	}
+
+	try
+	{
+		auto outputStream = Framework::CreateOutputStdStream(bootVerPath.native());
+		outputStream.Write(FFXIV_BOOT_VERSION, strlen(FFXIV_BOOT_VERSION));
+	}
+	catch(...)
+	{
+
 	}
 }
