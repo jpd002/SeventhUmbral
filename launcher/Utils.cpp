@@ -43,22 +43,31 @@ boost::filesystem::path Utils::GetGameLocationPathFromSettings()
 
 std::tstring Utils::GetGameLocationFromInstallInfo()
 {
-	LSTATUS result = ERROR_SUCCESS;
-	TCHAR installPath[256];
-	TCHAR displayName[256];
+	HKEY gameInstallKey = NULL;
+	LSTATUS result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, GAME_INSTALL_REGKEY, 0, KEY_QUERY_VALUE, &gameInstallKey);
+	if(result != ERROR_SUCCESS)
 	{
-		DWORD keyType = REG_SZ;
-		DWORD dataSize = _countof(installPath);
-		result = RegGetValue(HKEY_LOCAL_MACHINE, GAME_INSTALL_REGKEY, _T("InstallLocation"), RRF_RT_REG_SZ, &keyType, installPath, &dataSize);
-		if(result != ERROR_SUCCESS) return std::tstring();
+		return std::tstring();
 	}
+
+	TCHAR installPath[MAX_PATH];
+	TCHAR displayName[MAX_PATH];
+	DWORD installPathLength = sizeof(installPath);
+	DWORD displayNameLength = sizeof(displayName);
+
+	LSTATUS installPathResult = RegQueryValueEx(gameInstallKey, _T("InstallLocation"), 0, NULL, reinterpret_cast<LPBYTE>(installPath), &installPathLength);
+	LSTATUS displayNameResult = RegQueryValueEx(gameInstallKey, _T("DisplayName"), 0, NULL, reinterpret_cast<LPBYTE>(displayName), &displayNameLength);
+
+	RegCloseKey(gameInstallKey);
+
+	if((installPathResult == ERROR_SUCCESS) && (displayNameResult == ERROR_SUCCESS))
 	{
-		DWORD keyType = REG_SZ;
-		DWORD dataSize = _countof(displayName);
-		result = RegGetValue(HKEY_LOCAL_MACHINE, GAME_INSTALL_REGKEY, _T("DisplayName"), RRF_RT_REG_SZ, &keyType, displayName, &dataSize);
-		if(result != ERROR_SUCCESS) return std::tstring();
+		return std::tstring(installPath) + _T("\\") + std::tstring(displayName);
 	}
-	return std::tstring(installPath) + _T("\\") + std::tstring(displayName);
+	else
+	{
+		return std::tstring();
+	}
 }
 
 std::tstring Utils::BrowseForFolder(HWND parentWnd, const TCHAR* title)

@@ -1,3 +1,4 @@
+#include <tdemu.h>
 #include "PatchProcess.h"
 #include "PathUtils.h"
 #include "PatcherWindow.h"
@@ -35,7 +36,7 @@ void CPatchProcess::PatchGame()
 		tdc.pszMainInstruction	= _T("Patch Download Location");
 		tdc.pszContent			= message.c_str();
 		tdc.pszMainIcon			= TD_INFORMATION_ICON;
-		HRESULT result = TaskDialogIndirect(&tdc, &pressedButton, NULL, NULL);
+		HRESULT result = TaskDialogIndirectEmulate(&tdc, &pressedButton, NULL, NULL);
 		if(SUCCEEDED(result))
 		{
 			if(pressedButton == IDNO)
@@ -99,6 +100,11 @@ void CPatchProcess::CheckGameVersionAndStartUpdate()
 
 		if(!IsGameUpToDate())
 		{
+			OSVERSIONINFO versionInfo = {};
+			versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+			GetVersionEx(&versionInfo);
+			bool elevationRequired = (versionInfo.dwMajorVersion >= 6);
+
 			int pressedButton = 0;
 			TASKDIALOGCONFIG tdc;
 			memset(&tdc, 0, sizeof(tdc));
@@ -109,7 +115,7 @@ void CPatchProcess::CheckGameVersionAndStartUpdate()
 			tdc.pszContent			= _T("The launcher has detected that your game is not up to date. Would you like to update it to v1.23b?");
 			tdc.pszMainIcon			= TD_WARNING_ICON;
 			tdc.pfCallback			= &OutdatedGameTaskDialogCallback;
-			HRESULT result = TaskDialogIndirect(&tdc, &pressedButton, NULL, NULL);
+			HRESULT result = TaskDialogIndirectEmulate(&tdc, &pressedButton, NULL, NULL);
 			if(SUCCEEDED(result))
 			{
 				if(pressedButton == IDYES)
@@ -121,7 +127,7 @@ void CPatchProcess::CheckGameVersionAndStartUpdate()
 					SHELLEXECUTEINFO sei;
 					memset(&sei, 0, sizeof(SHELLEXECUTEINFO));
 					sei.cbSize = sizeof(SHELLEXECUTEINFO);
-					sei.lpVerb = _T("runas");
+					sei.lpVerb = elevationRequired ? _T("runas") : NULL;
 					sei.nShow = SW_SHOWNORMAL;
 					sei.lpParameters = PARAMETER_UPDATE_GAME;
 					sei.lpFile = moduleName;

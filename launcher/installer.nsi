@@ -63,6 +63,7 @@ Section "Seventh Umbral Launcher (required)"
   
   ; Put file there
   File "..\build_win32\Win32\Release\Launcher.exe"
+  File "..\build_win32\Win32\Release\TDEmu.dll"
   File "changelog.html"
   File "servers.xml"
   
@@ -102,6 +103,7 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   Delete $INSTDIR\Launcher.exe
+  Delete $INSTDIR\TDEmu.dll
   Delete $INSTDIR\servers.xml
   Delete $INSTDIR\changelog.html
   Delete $INSTDIR\uninstall.exe

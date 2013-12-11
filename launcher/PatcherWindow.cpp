@@ -7,7 +7,7 @@
 #define UNIT_KILOBYTE	(0x400)
 #define TIMER_RATE		(400)
 
-const char* g_patchUrlBase = "https://ffxivpatches.s3.amazonaws.com/";
+const char* g_patchUrlBase = "http://ffxivpatches.s3.amazonaws.com/";
 
 const CPatcherWindow::DownloadInfoArray CPatcherWindow::m_downloads =
 {
