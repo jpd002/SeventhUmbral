@@ -10,6 +10,9 @@ public:
 
 	virtual void	Read(Framework::CStream&) override;
 
+	const uint8*	GetCompiledShader() const;
+	uint32			GetCompiledShaderLength() const;
+
 private:
 	uint32			m_blockSize;
 	uint32			m_stringOffset;

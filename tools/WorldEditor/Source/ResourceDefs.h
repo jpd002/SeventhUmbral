@@ -13,3 +13,4 @@
 #include "StringChunk.h"
 #include "StreamChunk.h"
 #include "PramChunk.h"
+#include "FileChunk.h"

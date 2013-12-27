@@ -39,3 +39,13 @@ void CFileChunk::Read(Framework::CStream& inputStream)
 	m_compiledShader = new uint8[m_compiledShaderLength];
 	inputStream.Read(m_compiledShader, m_compiledShaderLength);
 }
+
+const uint8* CFileChunk::GetCompiledShader() const
+{
+	return m_compiledShader;
+}
+
+uint32 CFileChunk::GetCompiledShaderLength() const
+{
+	return m_compiledShaderLength;
+}
