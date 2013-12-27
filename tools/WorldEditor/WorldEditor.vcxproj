@@ -98,6 +98,12 @@
     <ClCompile Include="Source\PhbSection.cpp" />
     <ClCompile Include="Source\PramChunk.cpp" />
     <ClCompile Include="Source\PwibSection.cpp" />
+    <ClCompile Include="Source\Rendering\D3DShader.cpp" />
+    <ClCompile Include="Source\Rendering\D3DShaderConstantTable.cpp" />
+    <ClCompile Include="Source\Rendering\D3DShaderDisassembler.cpp" />
+    <ClCompile Include="Source\Rendering\Dx11UmbralEffect.cpp" />
+    <ClCompile Include="Source\Rendering\Dx11UmbralEffectGenerator.cpp" />
+    <ClCompile Include="Source\Rendering\Dx11UmbralEffectProvider.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\ResourceNode.cpp" />
     <ClCompile Include="Source\ResourceSection.cpp" />
@@ -134,6 +140,12 @@
     <ClInclude Include="Source\PhbSection.h" />
     <ClInclude Include="Source\PramChunk.h" />
     <ClInclude Include="Source\PwibSection.h" />
+    <ClInclude Include="Source\Rendering\D3DShader.h" />
+    <ClInclude Include="Source\Rendering\D3DShaderConstantTable.h" />
+    <ClInclude Include="Source\Rendering\D3DShaderDisassembler.h" />
+    <ClInclude Include="Source\Rendering\Dx11UmbralEffect.h" />
+    <ClInclude Include="Source\Rendering\Dx11UmbralEffectGenerator.h" />
+    <ClInclude Include="Source\Rendering\Dx11UmbralEffectProvider.h" />
     <ClInclude Include="Source\ResourceDefs.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\ResourceNode.h" />
