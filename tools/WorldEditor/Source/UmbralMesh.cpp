@@ -1,5 +1,8 @@
 #include "UmbralMesh.h"
 #include "ResourceManager.h"
+#include "PtrStream.h"
+#include "Rendering/D3DShader.h"
+#include "Rendering/D3DShaderDisassembler.h"
 
 CUmbralMesh::TextureMap CUmbralMesh::m_textures;
 
@@ -122,6 +125,22 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 
 void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 {
+	auto fileChunks = shaderSection->SelectNodes<CFileChunk>();
+	for(const auto& fileChunk : fileChunks)
+	{
+		const auto compiledShader = fileChunk->GetCompiledShader();
+		uint32 compiledShaderLength = fileChunk->GetCompiledShaderLength();
+		Framework::CPtrStream stream(compiledShader, compiledShaderLength);
+//		CD3DShader shader(stream);
+//		auto shaderType = shader.GetType();
+//		for(const auto& instruction : shader.GetInstructions())
+//		{
+//			auto mnemonic = CD3DShaderDisassembler::GetInstructionMnemonic(shaderType, instruction);
+//			auto operands = CD3DShaderDisassembler::GetInstructionOperands(shaderType, instruction);
+//			printf("%s", mnemonic.c_str());
+//		}
+	}
+
 	auto pramChunk = shaderSection->SelectNode<CPramChunk>();
 	assert(pramChunk);
 	Athena::TexturePtr texture;
