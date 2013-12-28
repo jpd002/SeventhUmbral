@@ -2,7 +2,7 @@
 #include "StdStream.h"
 #include "StdStreamUtils.h"
 #include "SectionLoader.h"
-#include "UmbralModel.h"
+#include "Rendering/UmbralModel.h"
 #include "FileManager.h"
 #include "ResourceDefs.h"
 #include "ResourceManager.h"

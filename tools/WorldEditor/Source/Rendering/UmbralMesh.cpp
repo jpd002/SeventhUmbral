@@ -1,8 +1,8 @@
 #include "UmbralMesh.h"
-#include "ResourceManager.h"
+#include "../ResourceManager.h"
 #include "PtrStream.h"
-#include "Rendering/D3DShader.h"
-#include "Rendering/D3DShaderDisassembler.h"
+#include "D3DShader.h"
+#include "D3DShaderDisassembler.h"
 
 CUmbralMesh::TextureMap CUmbralMesh::m_textures;
 

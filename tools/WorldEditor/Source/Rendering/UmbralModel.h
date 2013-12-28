@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AthenaEngine.h"
-#include "ResourceDefs.h"
+#include "../ResourceDefs.h"
 
 class CUmbralModel : public Athena::CSceneNode
 {

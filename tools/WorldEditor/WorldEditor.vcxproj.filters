@@ -102,12 +102,6 @@
     <ClCompile Include="Source\TextureSection.cpp">
       <Filter>Source Files\Sections</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UmbralModel.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\UmbralMesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GtexData.cpp">
       <Filter>Source Files\Other Resources</Filter>
     </ClCompile>
@@ -145,6 +139,12 @@
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rendering\Dx11UmbralEffectProvider.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\UmbralMesh.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\UmbralModel.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,12 +224,6 @@
     <ClInclude Include="Source\TextureSection.h">
       <Filter>Source Files\Sections</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UmbralModel.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\UmbralMesh.h">
-      <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\GtexData.h">
       <Filter>Source Files\Other Resources</Filter>
     </ClInclude>
@@ -267,6 +261,12 @@
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\Dx11UmbralEffectProvider.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\UmbralMesh.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\UmbralModel.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

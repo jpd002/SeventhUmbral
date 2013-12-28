@@ -104,6 +104,8 @@
     <ClCompile Include="Source\Rendering\Dx11UmbralEffect.cpp" />
     <ClCompile Include="Source\Rendering\Dx11UmbralEffectGenerator.cpp" />
     <ClCompile Include="Source\Rendering\Dx11UmbralEffectProvider.cpp" />
+    <ClCompile Include="Source\Rendering\UmbralMesh.cpp" />
+    <ClCompile Include="Source\Rendering\UmbralModel.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\ResourceNode.cpp" />
     <ClCompile Include="Source\ResourceSection.cpp" />
@@ -115,8 +117,6 @@
     <ClCompile Include="Source\StringChunk.cpp" />
     <ClCompile Include="Source\TextureSection.cpp" />
     <ClCompile Include="Source\TouchFreeCamera.cpp" />
-    <ClCompile Include="Source\UmbralMesh.cpp" />
-    <ClCompile Include="Source\UmbralModel.cpp" />
     <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\WorldEditor.cpp" />
     <ClCompile Include="Source\WrbChunk.cpp" />
@@ -146,6 +146,8 @@
     <ClInclude Include="Source\Rendering\Dx11UmbralEffect.h" />
     <ClInclude Include="Source\Rendering\Dx11UmbralEffectGenerator.h" />
     <ClInclude Include="Source\Rendering\Dx11UmbralEffectProvider.h" />
+    <ClInclude Include="Source\Rendering\UmbralMesh.h" />
+    <ClInclude Include="Source\Rendering\UmbralModel.h" />
     <ClInclude Include="Source\ResourceDefs.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\ResourceNode.h" />
@@ -158,8 +160,6 @@
     <ClInclude Include="Source\StringChunk.h" />
     <ClInclude Include="Source\TextureSection.h" />
     <ClInclude Include="Source\TouchFreeCamera.h" />
-    <ClInclude Include="Source\UmbralMesh.h" />
-    <ClInclude Include="Source\UmbralModel.h" />
     <ClInclude Include="Source\WorldEditor.h" />
     <ClInclude Include="Source\WrbChunk.h" />
   </ItemGroup>
