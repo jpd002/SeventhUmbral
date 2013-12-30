@@ -40,6 +40,11 @@ void CFileChunk::Read(Framework::CStream& inputStream)
 	inputStream.Read(m_compiledShader, m_compiledShaderLength);
 }
 
+std::string CFileChunk::GetName() const
+{
+	return m_name;
+}
+
 const uint8* CFileChunk::GetCompiledShader() const
 {
 	return m_compiledShader;
