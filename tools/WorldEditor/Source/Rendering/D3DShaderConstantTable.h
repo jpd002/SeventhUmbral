@@ -6,6 +6,14 @@
 class CD3DShaderConstantTable
 {
 public:
+	enum REGISTER_SET : uint16
+	{
+		REGISTER_SET_BOOL,
+		REGISTER_SET_INT4,
+		REGISTER_SET_FLOAT4,
+		REGISTER_SET_SAMPLER
+	};
+
 	enum CONSTANT_TYPE : uint16
 	{
 		CONSTANT_TYPE_VOID,
@@ -13,6 +21,7 @@ public:
 		CONSTANT_TYPE_INT,
 		CONSTANT_TYPE_FLOAT,
 		CONSTANT_TYPE_STRING,
+		CONSTANT_TYPE_TEXTURE,
 		CONSTANT_TYPE_TEXTURE1D,
 		CONSTANT_TYPE_TEXTURE2D,
 		CONSTANT_TYPE_TEXTURE3D,
@@ -53,13 +62,13 @@ public:
 
 	struct D3DCONSTANTINFO
 	{
-		uint32	name;
-		uint16	registerSet;
-		uint16	registerIndex;
-		uint16	registerCount;
-		uint16	reserved;
-		uint32	typeInfo;
-		uint32	defaultValue;
+		uint32			name;
+		REGISTER_SET	registerSet;
+		uint16			registerIndex;
+		uint16			registerCount;
+		uint16			reserved;
+		uint32			typeInfo;
+		uint32			defaultValue;
 	};
 	static_assert(sizeof(D3DCONSTANTINFO) == 0x14, "Size of D3DCONSTANTINFO struct must be 20 bytes.");
 
