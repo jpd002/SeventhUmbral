@@ -1,4 +1,5 @@
 //#include <d3d9types.h>
+//#include <d3dx9shader.h>
 #include "D3DShaderDisassembler.h"
 #include <assert.h>
 #include "string_format.h"
@@ -73,6 +74,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "endif";
 	case CD3DShader::OPCODE_DEFI:
 		return "defi";
+	case CD3DShader::OPCODE_TEXLD:
+		return "texld";
 	case CD3DShader::OPCODE_DEF:
 		return "def";
 	default:
@@ -120,6 +123,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 	case CD3DShader::OPCODE_DP3:
 	case CD3DShader::OPCODE_DP4:
 	case CD3DShader::OPCODE_MAX:
+	case CD3DShader::OPCODE_TEXLD:
 		{
 			assert(instruction.token.size == 3);
 			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
@@ -247,6 +251,8 @@ std::string CD3DShaderDisassembler::PrintParameterRegister(CD3DShader::SHADER_RE
 		return string_format("i%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_COLOROUT:
 		return string_format("oC%d", registerNumber);
+	case CD3DShader::SHADER_REGISTER_SAMPLER:
+		return string_format("s%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_CONSTBOOL:
 		return string_format("b%d", registerNumber);
 	default:

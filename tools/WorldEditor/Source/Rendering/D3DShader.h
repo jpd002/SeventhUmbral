@@ -75,6 +75,7 @@ public:
 		OPCODE_IF		= 0x28,
 		OPCODE_ENDIF	= 0x2B,
 		OPCODE_DEFI		= 0x30,
+		OPCODE_TEXLD	= 0x42,
 		OPCODE_DEF		= 0x51,
 		OPCODE_COMMENT	= 0xFFFE,
 		OPCODE_END		= 0xFFFF
@@ -152,7 +153,7 @@ public:
 private:
 	void						Read(Framework::CStream&);
 
-	SHADER_TYPE					m_type;
+	SHADER_TYPE					m_type = SHADER_TYPE_INVALID;
 	InstructionArray			m_instructions;
 	CommentArray				m_comments;
 };

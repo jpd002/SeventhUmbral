@@ -4,7 +4,6 @@
 #include "PtrStream.h"
 
 CD3DShader::CD3DShader(Framework::CStream& stream)
-: m_type(SHADER_TYPE_INVALID)
 {
 	Read(stream);
 }
