@@ -41,13 +41,11 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 	inputStream.Read(resourceTypes.data(), sizeof(uint32) * header.resourceCount);
 
 	//Read resource ids
-	inputStream.Seek(basePosition + resourceIdEntry.offset, Framework::STREAM_SEEK_SET);
 	std::vector<std::string> resourceIds;
 	for(unsigned int i = 0; i < header.resourceCount; i++)
 	{
-		auto currentPos = inputStream.Tell();
+		inputStream.Seek(basePosition + resourceIdEntry.offset + (i * 0x10), Framework::STREAM_SEEK_SET);
 		resourceIds.push_back(inputStream.ReadString());
-		currentPos += 0x10;
 	}
 
 	//Read string table
@@ -89,10 +87,10 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 			assert(0);
 			break;
 		}
+		AddChild(section);
 		section->Read(inputStream);
 		section->SetResourceId(resourceIds[i]);
 		section->SetResourcePath(strings[i]);
-		AddChild(section);
 	}
 
 	inputStream.Seek(basePosition, Framework::STREAM_SEEK_SET);

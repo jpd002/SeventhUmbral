@@ -56,3 +56,5 @@ private:
 
 	MipMapInfoArray			m_mipMapInfos;
 };
+
+typedef std::shared_ptr<CGtexData> GtexDataPtr;

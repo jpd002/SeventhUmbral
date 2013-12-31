@@ -18,6 +18,11 @@ void CBaseSection::Read(Framework::CStream& inputStream)
 	assert(m_header.sectionId == 'BDES');
 }
 
+std::string CBaseSection::GetResourceId() const
+{
+	return m_resourceId;
+}
+
 void CBaseSection::SetResourceId(const std::string& resourceId)
 {
 	m_resourceId = resourceId;

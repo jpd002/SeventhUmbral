@@ -13,6 +13,7 @@ public:
 
 	virtual void		Read(Framework::CStream&);
 
+	std::string			GetResourceId() const;
 	void				SetResourceId(const std::string&);
 
 	std::string			GetResourcePath() const;
