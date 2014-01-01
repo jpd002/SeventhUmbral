@@ -274,15 +274,15 @@ std::string CD3DShaderDisassembler::PrintDestinationParameterToken(const CD3DSha
 	auto regString = PrintParameterRegister(dstParam.parameter.GetRegisterType(), dstParam.parameter.registerNumber);
 	regString += ".";
 	regString += g_writeMask[dstParam.parameter.writeMask];
-	if(dstParam.parameter.resultModifier & 0x01)
+	if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
 	{
 		regString += " [sat]";
 	}
-	if(dstParam.parameter.resultModifier & 0x02)
+	if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_PARTIALPRECISION)
 	{
 		assert(0);
 	}
-	if(dstParam.parameter.resultModifier & 0x04)
+	if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_CENTROID)
 	{
 		assert(0);
 	}
