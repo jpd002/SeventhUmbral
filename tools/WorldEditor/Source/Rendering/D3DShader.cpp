@@ -44,6 +44,44 @@ CD3DShaderConstantTable CD3DShader::GetConstantTable() const
 	return CD3DShaderConstantTable();
 }
 
+CD3DShader::DESTINATION_PARAMETER CD3DShader::ReadDestinationParameter(CTokenStream& stream)
+{
+	DESTINATION_PARAMETER result;
+	memset(&result, 0, sizeof(result));
+	{
+		uint32 dstToken = stream.ReadToken();
+		result.parameter = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&dstToken);
+	}
+	if(result.parameter.useRelativeAddressing)
+	{
+		uint32 addrToken = stream.ReadToken();
+		result.relativeAddress = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&addrToken);
+		auto addressRegisterType = result.relativeAddress.GetRegisterType();
+		assert(addressRegisterType == SHADER_REGISTER_TEXTURE || addressRegisterType == SHADER_REGISTER_LOOP);
+		assert(result.relativeAddress.reserved2 == 1);
+	}
+	return result;
+}
+
+CD3DShader::SOURCE_PARAMETER CD3DShader::ReadSourceParameter(CTokenStream& stream)
+{
+	SOURCE_PARAMETER result;
+	memset(&result, 0, sizeof(result));
+	{
+		uint32 srcToken = stream.ReadToken();
+		result.parameter = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&srcToken);
+	}
+	if(result.parameter.useRelativeAddressing)
+	{
+		uint32 addrToken = stream.ReadToken();
+		result.relativeAddress = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&addrToken);
+		auto addressRegisterType = result.relativeAddress.GetRegisterType();
+		assert(addressRegisterType == SHADER_REGISTER_TEXTURE || addressRegisterType == SHADER_REGISTER_LOOP);
+		assert(result.relativeAddress.reserved2 == 1);
+	}
+	return result;
+}
+
 void CD3DShader::Read(Framework::CStream& stream)
 {
 	uint32 shaderInfo = stream.Read32();
@@ -79,4 +117,24 @@ void CD3DShader::Read(Framework::CStream& stream)
 			break;
 		}
 	}
+}
+
+CD3DShader::CTokenStream::CTokenStream(const TokenArray& tokens)
+: m_tokens(tokens)
+{
+
+}
+
+CD3DShader::CTokenStream::~CTokenStream()
+{
+
+}
+
+uint32 CD3DShader::CTokenStream::ReadToken()
+{
+	if(m_position >= m_tokens.size())
+	{
+		throw std::runtime_error("No more tokens to read.");
+	}
+	return m_tokens[m_position++];
 }

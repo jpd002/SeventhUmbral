@@ -68,12 +68,18 @@ public:
 		OPCODE_DP3		= 0x08,
 		OPCODE_DP4		= 0x09,
 		OPCODE_MAX		= 0x0B,
+		OPCODE_SLT		= 0x0C,
+		OPCODE_EXP		= 0x0E,
+		OPCODE_LOG		= 0x0F,
 		OPCODE_LRP		= 0x12,
+		OPCODE_FRC		= 0x13,
 		OPCODE_LOOP		= 0x1B,
+		OPCODE_ENDLOOP	= 0x1D,
 		OPCODE_DCL		= 0x1F,
 		OPCODE_NRM		= 0x24,
 		OPCODE_IF		= 0x28,
 		OPCODE_ENDIF	= 0x2B,
+		OPCODE_MOVA		= 0x2E,
 		OPCODE_DEFI		= 0x30,
 		OPCODE_TEXLD	= 0x42,
 		OPCODE_DEF		= 0x51,
@@ -93,6 +99,12 @@ public:
 	};
 	static_assert(sizeof(INSTRUCTION_TOKEN) == 4, "Size of INSTRUCTION_TOKEN must be 4 bytes.");
 
+	enum SOURCE_MODIFIER_TYPE
+	{
+		SOURCE_MODIFIER_NONE,
+		SOURCE_MODIFIER_NEGATE,
+	};
+
 	struct SOURCE_PARAMETER_TOKEN
 	{
 		unsigned int			registerNumber			: 11;
@@ -103,7 +115,7 @@ public:
 		unsigned int			swizzleY				: 2;
 		unsigned int			swizzleZ				: 2;
 		unsigned int			swizzleW				: 2;
-		unsigned int			sourceModifier			: 4;
+		SOURCE_MODIFIER_TYPE	sourceModifier			: 4;
 		unsigned int			registerTypeLo			: 3;
 		unsigned int			reserved2				: 1;
 
@@ -127,6 +139,8 @@ public:
 	};
 	static_assert(sizeof(DESTINATION_PARAMETER_TOKEN) == 4, "Size of DESTINATION_PARAMETER_TOKEN must be 4 bytes.");
 
+	typedef std::vector<uint32> TokenArray;
+
 	struct INSTRUCTION
 	{
 		INSTRUCTION()
@@ -135,25 +149,53 @@ public:
 		}
 
 		INSTRUCTION_TOKEN		token;
-		std::vector<uint32>		additionalTokens;
+		TokenArray				additionalTokens;
 	};
 	typedef std::vector<INSTRUCTION> InstructionArray;
+
+	struct DESTINATION_PARAMETER
+	{
+		DESTINATION_PARAMETER_TOKEN		parameter;
+		SOURCE_PARAMETER_TOKEN			relativeAddress;
+	};
+
+	struct SOURCE_PARAMETER
+	{
+		SOURCE_PARAMETER_TOKEN			parameter;
+		SOURCE_PARAMETER_TOKEN			relativeAddress;
+	};
+
+	class CTokenStream
+	{
+	public:
+							CTokenStream(const TokenArray&);
+		virtual				~CTokenStream();
+
+		uint32				ReadToken();
+
+	private:
+		const TokenArray&	m_tokens;
+		unsigned int		m_position = 0;
+	};
 
 	typedef std::vector<uint8> Comment;
 	typedef std::vector<Comment> CommentArray;
 
-								CD3DShader(Framework::CStream&);
-	virtual						~CD3DShader();
+									CD3DShader(Framework::CStream&);
+	virtual							~CD3DShader();
 
-	SHADER_TYPE					GetType() const;
-	const InstructionArray&		GetInstructions() const;
-	const CommentArray&			GetComments() const;
-	CD3DShaderConstantTable		GetConstantTable() const;
+	SHADER_TYPE						GetType() const;
+	const InstructionArray&			GetInstructions() const;
+	const CommentArray&				GetComments() const;
+	CD3DShaderConstantTable			GetConstantTable() const;
+
+	static DESTINATION_PARAMETER	ReadDestinationParameter(CTokenStream&);
+	static SOURCE_PARAMETER			ReadSourceParameter(CTokenStream&);
 
 private:
-	void						Read(Framework::CStream&);
+	void							Read(Framework::CStream&);
 
-	SHADER_TYPE					m_type = SHADER_TYPE_INVALID;
-	InstructionArray			m_instructions;
-	CommentArray				m_comments;
+	SHADER_TYPE						m_type = SHADER_TYPE_INVALID;
+	InstructionArray				m_instructions;
+	CommentArray					m_comments;
 };

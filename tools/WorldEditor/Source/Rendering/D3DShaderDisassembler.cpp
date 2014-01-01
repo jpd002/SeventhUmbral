@@ -34,6 +34,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "mad";
 	case CD3DShader::OPCODE_MUL:
 		return "mul";
+	case CD3DShader::OPCODE_RCP:
+		return "rcp";
 	case CD3DShader::OPCODE_RSQ:
 		return "rsq";
 	case CD3DShader::OPCODE_DP3:
@@ -42,10 +44,20 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "dp4";
 	case CD3DShader::OPCODE_MAX:
 		return "max";
+	case CD3DShader::OPCODE_SLT:
+		return "slt";
+	case CD3DShader::OPCODE_EXP:
+		return "exp";
+	case CD3DShader::OPCODE_LOG:
+		return "log";
 	case CD3DShader::OPCODE_LRP:
 		return "lrp";
+	case CD3DShader::OPCODE_FRC:
+		return "frc";
 	case CD3DShader::OPCODE_LOOP:
 		return "loop";
+	case CD3DShader::OPCODE_ENDLOOP:
+		return "endloop";
 	case CD3DShader::OPCODE_DCL:
 		assert(instruction.token.size == 2);
 		if(shaderType == CD3DShader::SHADER_TYPE_VERTEX)
@@ -72,6 +84,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "if";
 	case CD3DShader::OPCODE_ENDIF:
 		return "endif";
+	case CD3DShader::OPCODE_MOVA:
+		return "mova";
 	case CD3DShader::OPCODE_DEFI:
 		return "defi";
 	case CD3DShader::OPCODE_TEXLD:
@@ -86,36 +100,24 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 
 std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TYPE, const CD3DShader::INSTRUCTION& instruction)
 {
+	CD3DShader::CTokenStream tokenStream(instruction.additionalTokens);
 	switch(instruction.token.opcode)
 	{
 	case CD3DShader::OPCODE_MOV:
+	case CD3DShader::OPCODE_MOVA:
+	case CD3DShader::OPCODE_RCP:
 	case CD3DShader::OPCODE_RSQ:
+	case CD3DShader::OPCODE_EXP:
+	case CD3DShader::OPCODE_LOG:
 	case CD3DShader::OPCODE_NRM:
+	case CD3DShader::OPCODE_FRC:
 		{
-			assert(instruction.token.size == 2);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
-			auto srcParam = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[1]);
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+			auto srcParam = CD3DShader::ReadSourceParameter(tokenStream);
 
 			auto dstParamString = PrintDestinationParameterToken(dstParam);
-			auto srcParamString = PrintSourceParameterToken(srcParam, dstParam.writeMask);
+			auto srcParamString = PrintSourceParameterToken(srcParam, dstParam.parameter.writeMask);
 			return string_format("%s, %s", dstParamString.c_str(), srcParamString.c_str());
-		}
-		break;
-	case CD3DShader::OPCODE_MAD:
-	case CD3DShader::OPCODE_LRP:
-		{
-			assert(instruction.token.size == 4);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
-			auto src1Param = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[1]);
-			auto src2Param = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[2]);
-			auto src3Param = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[3]);
-
-			auto dstParamString = PrintDestinationParameterToken(dstParam);
-			auto src1ParamString = PrintSourceParameterToken(src1Param, dstParam.writeMask);
-			auto src2ParamString = PrintSourceParameterToken(src2Param, dstParam.writeMask);
-			auto src3ParamString = PrintSourceParameterToken(src3Param, dstParam.writeMask);
-			return string_format("%s, %s, %s, %s", dstParamString.c_str(), 
-				src1ParamString.c_str(), src2ParamString.c_str(), src3ParamString.c_str());
 		}
 		break;
 	case CD3DShader::OPCODE_ADD:
@@ -123,39 +125,62 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 	case CD3DShader::OPCODE_DP3:
 	case CD3DShader::OPCODE_DP4:
 	case CD3DShader::OPCODE_MAX:
+	case CD3DShader::OPCODE_SLT:
 	case CD3DShader::OPCODE_TEXLD:
 		{
-			assert(instruction.token.size == 3);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
-			auto src1Param = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[1]);
-			auto src2Param = *reinterpret_cast<const CD3DShader::SOURCE_PARAMETER_TOKEN*>(&instruction.additionalTokens[2]);
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+			auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+			auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
 
 			auto dstParamString = PrintDestinationParameterToken(dstParam);
-			auto src1ParamString = PrintSourceParameterToken(src1Param, dstParam.writeMask);
-			auto src2ParamString = PrintSourceParameterToken(src2Param, dstParam.writeMask);
+			auto src1ParamString = PrintSourceParameterToken(src1Param, dstParam.parameter.writeMask);
+			auto src2ParamString = PrintSourceParameterToken(src2Param, dstParam.parameter.writeMask);
 			return string_format("%s, %s, %s", dstParamString.c_str(), src1ParamString.c_str(), src2ParamString.c_str());
+		}
+		break;
+	case CD3DShader::OPCODE_MAD:
+	case CD3DShader::OPCODE_LRP:
+		{
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+			auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+			auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+			auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+
+			auto dstParamString = PrintDestinationParameterToken(dstParam);
+			auto src1ParamString = PrintSourceParameterToken(src1Param, dstParam.parameter.writeMask);
+			auto src2ParamString = PrintSourceParameterToken(src2Param, dstParam.parameter.writeMask);
+			auto src3ParamString = PrintSourceParameterToken(src3Param, dstParam.parameter.writeMask);
+			return string_format("%s, %s, %s, %s", dstParamString.c_str(), 
+				src1ParamString.c_str(), src2ParamString.c_str(), src3ParamString.c_str());
+		}
+		break;
+	case CD3DShader::OPCODE_LOOP:
+		{
+			auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+			auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+			auto src1ParamString = PrintSourceParameterToken(src1Param, 0xF);
+			auto src2ParamString = PrintSourceParameterToken(src2Param, 0xF);
+			return string_format("%s, %s", src1ParamString.c_str(), src2ParamString.c_str());
 		}
 		break;
 	case CD3DShader::OPCODE_DCL:
 		{
-			assert(instruction.token.size == 2);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[1]);
+			auto customParamToken = tokenStream.ReadToken();
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
 			auto dstParamString = PrintDestinationParameterToken(dstParam);
 			return string_format("%s", dstParamString.c_str());
 		}
 		break;
 	case CD3DShader::OPCODE_IF:
 		{
-			assert(instruction.token.size == 1);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
-			auto dstParamString = PrintDestinationParameterToken(dstParam);
-			return string_format("%s", dstParamString.c_str());
+			auto srcParam = CD3DShader::ReadSourceParameter(tokenStream);
+			auto srcParamString = PrintSourceParameterToken(srcParam, 0x0F);
+			return string_format("%s", srcParamString.c_str());
 		}
 		break;
 	case CD3DShader::OPCODE_DEFI:
 		{
-			assert(instruction.token.size == 5);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
 			auto dstParamString = PrintDestinationParameterToken(dstParam);
 			return string_format("%s, %d, %d, %d, %d", dstParamString.c_str(), 
 				instruction.additionalTokens[1], instruction.additionalTokens[2],
@@ -165,8 +190,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 		break;
 	case CD3DShader::OPCODE_DEF:
 		{
-			assert(instruction.token.size == 5);
-			auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
 			auto dstParamString = PrintDestinationParameterToken(dstParam);
 			float cst[4] =
 			{
@@ -178,6 +202,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 			return string_format("%s, %f, %f, %f, %f", dstParamString.c_str(), cst[0], cst[1], cst[2], cst[3]);
 		}
 		break;
+	case CD3DShader::OPCODE_ENDLOOP:
 	case CD3DShader::OPCODE_ENDIF:
 		return std::string();
 		break;
@@ -188,7 +213,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 	}
 }
 
-std::string CD3DShaderDisassembler::PrintSourceParameterToken(const CD3DShader::SOURCE_PARAMETER_TOKEN& srcToken, uint32 writeMask)
+std::string CD3DShaderDisassembler::PrintSourceParameterToken(const CD3DShader::SOURCE_PARAMETER& srcParam, uint32 writeMask)
 {
 	static const char* g_element[4] =
 	{
@@ -197,17 +222,34 @@ std::string CD3DShaderDisassembler::PrintSourceParameterToken(const CD3DShader::
 		"z",
 		"w"
 	};
-	assert(srcToken.useRelativeAddressing == 0);
-	auto regString = PrintParameterRegister(srcToken.GetRegisterType(), srcToken.registerNumber);
+	auto regString = PrintParameterRegister(srcParam.parameter.GetRegisterType(), srcParam.parameter.registerNumber);
+	if(srcParam.parameter.useRelativeAddressing)
+	{
+		auto addrString = PrintParameterRegister(srcParam.relativeAddress.GetRegisterType(), srcParam.relativeAddress.registerNumber);
+		addrString += ".";
+		addrString += g_element[srcParam.relativeAddress.swizzleX];
+		regString = string_format("%s[%s]", regString.c_str(), addrString.c_str());
+	}
+	switch(srcParam.parameter.sourceModifier)
+	{
+	case CD3DShader::SOURCE_MODIFIER_NONE:
+		break;
+	case CD3DShader::SOURCE_MODIFIER_NEGATE:
+		regString = string_format("-%s", regString.c_str());
+		break;
+	default:
+		assert(0);
+		break;
+	}
 	regString += ".";
-	if(writeMask & 0x1) regString += g_element[srcToken.swizzleX];
-	if(writeMask & 0x2) regString += g_element[srcToken.swizzleY];
-	if(writeMask & 0x4) regString += g_element[srcToken.swizzleZ];
-	if(writeMask & 0x8) regString += g_element[srcToken.swizzleW];
+	if(writeMask & 0x1) regString += g_element[srcParam.parameter.swizzleX];
+	if(writeMask & 0x2) regString += g_element[srcParam.parameter.swizzleY];
+	if(writeMask & 0x4) regString += g_element[srcParam.parameter.swizzleZ];
+	if(writeMask & 0x8) regString += g_element[srcParam.parameter.swizzleW];
 	return regString;
 }
 
-std::string CD3DShaderDisassembler::PrintDestinationParameterToken(const CD3DShader::DESTINATION_PARAMETER_TOKEN& dstToken)
+std::string CD3DShaderDisassembler::PrintDestinationParameterToken(const CD3DShader::DESTINATION_PARAMETER& dstParam)
 {
 	static const char* g_writeMask[0x10] =
 	{
@@ -228,10 +270,22 @@ std::string CD3DShaderDisassembler::PrintDestinationParameterToken(const CD3DSha
 		"yzw",
 		"xyzw"
 	};
-	assert(dstToken.useRelativeAddressing == 0);
-	auto regString = PrintParameterRegister(dstToken.GetRegisterType(), dstToken.registerNumber);
+	assert(dstParam.parameter.useRelativeAddressing == 0);
+	auto regString = PrintParameterRegister(dstParam.parameter.GetRegisterType(), dstParam.parameter.registerNumber);
 	regString += ".";
-	regString += g_writeMask[dstToken.writeMask];
+	regString += g_writeMask[dstParam.parameter.writeMask];
+	if(dstParam.parameter.resultModifier & 0x01)
+	{
+		regString += " [sat]";
+	}
+	if(dstParam.parameter.resultModifier & 0x02)
+	{
+		assert(0);
+	}
+	if(dstParam.parameter.resultModifier & 0x04)
+	{
+		assert(0);
+	}
 	return regString;
 }
 
@@ -245,6 +299,8 @@ std::string CD3DShaderDisassembler::PrintParameterRegister(CD3DShader::SHADER_RE
 		return string_format("v%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_CONST:
 		return string_format("c%d", registerNumber);
+	case CD3DShader::SHADER_REGISTER_TEXTURE:
+		return string_format("a%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_OUTPUT:
 		return string_format("o%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_CONSTINT:
@@ -255,6 +311,8 @@ std::string CD3DShaderDisassembler::PrintParameterRegister(CD3DShader::SHADER_RE
 		return string_format("s%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_CONSTBOOL:
 		return string_format("b%d", registerNumber);
+	case CD3DShader::SHADER_REGISTER_LOOP:
+		return "aL";
 	default:
 		assert(0);
 		return string_format("?%d", registerNumber);
