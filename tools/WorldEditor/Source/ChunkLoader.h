@@ -6,5 +6,5 @@
 class CChunkLoader
 {
 public:
-	static ChunkPtr		Load(Framework::CStream&);
+	static ChunkPtr		Load(const ResourceNodePtr&, Framework::CStream&);
 };

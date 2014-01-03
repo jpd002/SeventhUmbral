@@ -1,18 +1,7 @@
+#include "ResourceDefs.h"
 #include "ChunkLoader.h"
-#include "ShaderChunk.h"
-#include "FileChunk.h"
-#include "ModelChunk.h"
-#include "ModelContainerChunk.h"
-#include "HeaderChunk.h"
-#include "LtcdChunk.h"
-#include "WrbChunk.h"
-#include "NameChunk.h"
-#include "MeshChunk.h"
-#include "StringChunk.h"
-#include "StreamChunk.h"
-#include "PramChunk.h"
 
-ChunkPtr CChunkLoader::Load(Framework::CStream& inputStream)
+ChunkPtr CChunkLoader::Load(const ResourceNodePtr& parent, Framework::CStream& inputStream)
 {
 	uint32 chunkType = inputStream.Read32();
 	inputStream.Seek(-4, Framework::STREAM_SEEK_CUR);
@@ -55,6 +44,19 @@ ChunkPtr CChunkLoader::Load(Framework::CStream& inputStream)
 		break;
 	case 'MARP':
 		result = std::make_shared<CPramChunk>();
+		break;
+	case 'BBAA':
+		if(auto boundingBoxContainerChunk = std::dynamic_pointer_cast<CBoundingBoxContainerChunk>(parent))
+		{
+			result = std::make_shared<CBoundingBoxChunk>();
+		}
+		else
+		{
+			result = std::make_shared<CBoundingBoxContainerChunk>();
+		}
+		break;
+	case 'PMOC':
+		result = std::make_shared<CCompChunk>();
 		break;
 	default:
 		//Unknown chunk type

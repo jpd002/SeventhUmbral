@@ -147,6 +147,15 @@
     <ClCompile Include="Source\Rendering\UmbralModel.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BoundingBoxContainerChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BoundingBoxChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CompChunk.cpp">
+      <Filter>Source Files\Chunks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -268,6 +277,15 @@
     </ClInclude>
     <ClInclude Include="Source\Rendering\UmbralModel.h">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoundingBoxContainerChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BoundingBoxChunk.h">
+      <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CompChunk.h">
+      <Filter>Source Files\Chunks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

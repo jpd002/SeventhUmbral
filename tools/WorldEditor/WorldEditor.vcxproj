@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FrameworkRoot)\include;D:\Projects\Athena\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -68,7 +68,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(FrameworkRoot)\include;D:\Projects\Athena\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -82,7 +82,10 @@
   <ItemGroup>
     <ClCompile Include="Source\BaseChunk.cpp" />
     <ClCompile Include="Source\BaseSection.cpp" />
+    <ClCompile Include="Source\BoundingBoxChunk.cpp" />
+    <ClCompile Include="Source\BoundingBoxContainerChunk.cpp" />
     <ClCompile Include="Source\ChunkLoader.cpp" />
+    <ClCompile Include="Source\CompChunk.cpp" />
     <ClCompile Include="Source\ContainerChunk.cpp" />
     <ClCompile Include="Source\FileChunk.cpp" />
     <ClCompile Include="Source\FileManager.cpp" />
@@ -124,7 +127,10 @@
   <ItemGroup>
     <ClInclude Include="Source\BaseChunk.h" />
     <ClInclude Include="Source\BaseSection.h" />
+    <ClInclude Include="Source\BoundingBoxChunk.h" />
+    <ClInclude Include="Source\BoundingBoxContainerChunk.h" />
     <ClInclude Include="Source\ChunkLoader.h" />
+    <ClInclude Include="Source\CompChunk.h" />
     <ClInclude Include="Source\ContainerChunk.h" />
     <ClInclude Include="Source\FileChunk.h" />
     <ClInclude Include="Source\FileManager.h" />

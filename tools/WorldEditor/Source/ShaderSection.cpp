@@ -14,6 +14,6 @@ CShaderSection::~CShaderSection()
 void CShaderSection::Read(Framework::CStream& inputStream)
 {
 	CBaseSection::Read(inputStream);
-	auto chunk = CChunkLoader::Load(inputStream);
+	auto chunk = CChunkLoader::Load(ResourceNodePtr(), inputStream);
 	AddChild(chunk);
 }
