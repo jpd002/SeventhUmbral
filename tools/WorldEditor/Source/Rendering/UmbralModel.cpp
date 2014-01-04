@@ -26,6 +26,17 @@ CUmbralModel::~CUmbralModel()
 
 }
 
+void CUmbralModel::SetLocalTexture(const ResourceNodePtr& texture)
+{
+	for(const auto& child : m_children)
+	{
+		if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(child))
+		{
+			mesh->SetLocalTexture(texture);
+		}
+	}
+}
+
 ShaderSectionPtr CUmbralModel::FindShaderForName(const std::vector<ShaderSectionPtr>& shaders, const std::string& name)
 {
 	for(const auto& shader : shaders)

@@ -1,8 +1,15 @@
 #include "UmbralMesh.h"
 #include "../ResourceManager.h"
 #include "PtrStream.h"
-#include "D3DShader.h"
+#include "StdStream.h"
 #include "D3DShaderDisassembler.h"
+
+//#define _USE_GAME_SHADERS
+
+#ifdef _USE_GAME_SHADERS
+#include "Dx11UmbralEffectProvider.h"
+#include "athena/win32/Dx11GraphicDevice.h"
+#endif
 
 CUmbralMesh::TextureMap CUmbralMesh::m_textures;
 
@@ -37,6 +44,15 @@ static CVector2 ConvertVec2FromHalf(const uint8* rawData)
 	return result;
 }
 
+static CVector3 ConvertVec3FromUint8(const uint8* rawData)
+{
+	CVector3 result;
+	result.x = static_cast<float>(rawData[0] / 255.f);
+	result.y = static_cast<float>(rawData[1] / 255.f);
+	result.z = static_cast<float>(rawData[2] / 255.f);
+	return result;
+}
+
 static CVector3 ConvertVec3FromInt16(const uint8* rawData)
 {
 	const int16* data = reinterpret_cast<const int16*>(rawData);
@@ -58,14 +74,22 @@ static CVector3 ConvertVec3FromUint16(const uint8* rawData)
 }
 
 CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk, const ShaderSectionPtr& shaderSection)
+: m_shaderSection(shaderSection)
 {
 	SetupGeometry(meshChunk);
-	SetupMaterial(shaderSection);
+	SetupEffect();
+	SetupTextures();
 }
 
 CUmbralMesh::~CUmbralMesh()
 {
 
+}
+
+void CUmbralMesh::SetLocalTexture(const ResourceNodePtr& texture)
+{
+	m_localTexture = texture;
+	SetupTextures();
 }
 
 void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
@@ -79,11 +103,15 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	uint32 vertexCount = vertexStream->GetVertexCount();
 
 	auto positionElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_POSITION);
+	auto normalElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_NORMAL);
 	auto uv1Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV1);
+	auto colorElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_COLOR);
 	assert(positionElement != nullptr);
 
 	uint32 vertexFlags = Athena::VERTEX_BUFFER_HAS_POS;
+	if(normalElement != nullptr) vertexFlags |= Athena::VERTEX_BUFFER_HAS_NRM;
 	if(uv1Element != nullptr) vertexFlags |= Athena::VERTEX_BUFFER_HAS_UV0;
+	if(colorElement != nullptr) vertexFlags |= Athena::VERTEX_BUFFER_HAS_COLOR;
 
 	auto bufferDesc = Athena::GenerateVertexBufferDescriptor(vertexCount, indexCount, vertexFlags);
 
@@ -103,6 +131,8 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 
 	{
 		assert(positionElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_INT16);
+		assert(!normalElement || normalElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_BYTE);
+		assert(!colorElement || colorElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_BYTE);
 		assert(!uv1Element || uv1Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 		const uint8* srcVertices = vertexStream->GetData();
 		uint8* dstVertices = reinterpret_cast<uint8*>(m_vertexBuffer->LockVertices());
@@ -110,11 +140,22 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 		{
 			auto position = ConvertVec3FromInt16(srcVertices + positionElement->offsetInVertex);
 			*reinterpret_cast<CVector3*>(dstVertices + bufferDesc.posOffset) = position;
+			if(normalElement)
+			{
+				auto normal = ConvertVec3FromUint8(srcVertices + normalElement->offsetInVertex);
+				*reinterpret_cast<CVector3*>(dstVertices + bufferDesc.nrmOffset) = normal;
+			}
 			if(uv1Element)
 			{
 				auto uv1 = ConvertVec2FromHalf(srcVertices + uv1Element->offsetInVertex);
-				uv1.y = 1 - uv1.y;
 				*reinterpret_cast<CVector2*>(dstVertices + bufferDesc.uv0Offset) = uv1;
+			}
+			if(colorElement)
+			{
+				*reinterpret_cast<uint8*>(dstVertices + bufferDesc.colorOffset + 0) = *(srcVertices + colorElement->offsetInVertex + 0);
+				*reinterpret_cast<uint8*>(dstVertices + bufferDesc.colorOffset + 1) = *(srcVertices + colorElement->offsetInVertex + 1);
+				*reinterpret_cast<uint8*>(dstVertices + bufferDesc.colorOffset + 2) = *(srcVertices + colorElement->offsetInVertex + 2);
+				*reinterpret_cast<uint8*>(dstVertices + bufferDesc.colorOffset + 3) = *(srcVertices + colorElement->offsetInVertex + 3);
 			}
 			srcVertices += vertexStream->GetVertexSize();
 			dstVertices += bufferDesc.GetVertexSize();
@@ -123,27 +164,66 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	}
 }
 
-void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
+void CUmbralMesh::SetupEffect()
 {
-	auto fileChunks = shaderSection->SelectNodes<CFileChunk>();
+#ifdef _USE_GAME_SHADERS
+	FileChunkPtr vertexShaderFile;
+	FileChunkPtr pixelShaderFile;
+	auto fileChunks = m_shaderSection->SelectNodes<CFileChunk>();
 	for(const auto& fileChunk : fileChunks)
 	{
-		const auto compiledShader = fileChunk->GetCompiledShader();
-		uint32 compiledShaderLength = fileChunk->GetCompiledShaderLength();
-		Framework::CPtrStream stream(compiledShader, compiledShaderLength);
-//		CD3DShader shader(stream);
-//		auto shaderType = shader.GetType();
-//		for(const auto& instruction : shader.GetInstructions())
-//		{
-//			auto mnemonic = CD3DShaderDisassembler::GetInstructionMnemonic(shaderType, instruction);
-//			auto operands = CD3DShaderDisassembler::GetInstructionOperands(shaderType, instruction);
-//			printf("%s", mnemonic.c_str());
-//		}
+		auto fileName = fileChunk->GetName();
+		if(!vertexShaderFile && fileName.find(".vpo") != std::string::npos)
+		{
+			vertexShaderFile = fileChunk;
+		}
+		if(!pixelShaderFile && fileName.find(".fpo") != std::string::npos)
+		{
+			pixelShaderFile = fileChunk;
+		}
 	}
 
-	auto pramChunk = shaderSection->SelectNode<CPramChunk>();
+	assert(vertexShaderFile && pixelShaderFile);
+
+	auto makeShaderStreamFromFile = 
+		[] (const FileChunkPtr& file)
+		{
+			const auto compiledShader = file->GetCompiledShader();
+			uint32 compiledShaderLength = file->GetCompiledShaderLength();
+			return Framework::CPtrStream(compiledShader, compiledShaderLength);
+		};
+
+	Framework::CPtrStream vertexShaderStream = makeShaderStreamFromFile(vertexShaderFile);
+	Framework::CPtrStream pixelShaderStream = makeShaderStreamFromFile(pixelShaderFile);
+
+//	CD3DShader vertexShader(Framework::CStdStream("D:\\Projects\\SeventhUmbral\\tools\\WorldEditor\\data\\standard.vso", "rb"));
+//	CD3DShader pixelShader(Framework::CStdStream("D:\\Projects\\SeventhUmbral\\tools\\WorldEditor\\data\\standard.pso", "rb"));
+
+	CD3DShader vertexShader(vertexShaderStream);
+	CD3DShader pixelShader(pixelShaderStream);
+
+#if 0
+	auto shaderType = vertexShader.GetType();
+	std::string shaderCode;
+	for(const auto& instruction : vertexShader.GetInstructions())
+	{
+		auto mnemonic = CD3DShaderDisassembler::GetInstructionMnemonic(shaderType, instruction);
+		auto operands = CD3DShaderDisassembler::GetInstructionOperands(shaderType, instruction);
+		shaderCode += string_format("%s %s\r\n", mnemonic.c_str(), operands.c_str());
+	}
+#endif
+
+	auto& graphicDevice = static_cast<Athena::CDx11GraphicDevice&>(Athena::CGraphicDevice::GetInstance());
+	SetEffectProvider(std::make_shared<CDx11UmbralEffectProvider>(graphicDevice.GetDevice(), graphicDevice.GetDeviceContext(), vertexShader, pixelShader));
+#endif
+}
+
+void CUmbralMesh::SetupTextures()
+{
+	auto pramChunk = m_shaderSection->SelectNode<CPramChunk>();
 	assert(pramChunk);
 	Athena::TexturePtr texture;
+	auto localTextureSections = m_localTexture ? m_localTexture->SelectNodes<CTextureSection>() : decltype(m_localTexture->SelectNodes<CTextureSection>())();
 	for(const auto& sampler : pramChunk->GetSamplers())
 	{
 		if(sampler.name == "_sampler_00")
@@ -151,6 +231,17 @@ void CUmbralMesh::SetupMaterial(const ShaderSectionPtr& shaderSection)
 			for(const auto& string : sampler.strings)
 			{
 				texture = GetTexture(string);
+				if(texture) break;
+				for(const auto& textureSection : localTextureSections)
+				{
+					const auto& sectionName = textureSection->GetResourceId();
+					if(string.find(sectionName) != std::string::npos)
+					{
+						auto textureDataInfo = textureSection->SelectNode<CGtexData>();
+						texture = CreateTextureFromGtex(textureDataInfo);
+						break;
+					}
+				}
 				if(texture) break;
 			}
 			break;
@@ -173,6 +264,14 @@ Athena::TexturePtr CUmbralMesh::GetTexture(const std::string& textureName)
 	auto textureDataInfo = textureResource->SelectNode<CGtexData>();
 	assert(textureDataInfo);
 
+	auto texture = CreateTextureFromGtex(textureDataInfo);
+
+	m_textures.insert(std::make_pair(textureName, texture));
+	return texture;
+}
+
+Athena::TexturePtr CUmbralMesh::CreateTextureFromGtex(const GtexDataPtr& textureDataInfo)
+{
 	auto textureFormat = textureDataInfo->GetTextureFormat();
 	auto textureWidth = textureDataInfo->GetTextureWidth();
 	auto textureHeight = textureDataInfo->GetTextureHeight();
@@ -199,6 +298,5 @@ Athena::TexturePtr CUmbralMesh::GetTexture(const std::string& textureName)
 	}
 
 	auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, specTextureFormat, textureWidth, textureHeight);
-	m_textures.insert(std::make_pair(textureName, texture));
 	return texture;
 }
