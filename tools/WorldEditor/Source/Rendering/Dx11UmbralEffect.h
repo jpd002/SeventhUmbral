@@ -15,6 +15,10 @@ private:
 	CD3DShader		m_vertexShader;
 	CD3DShader		m_pixelShader;
 
+	void			ParseVertexShaderConstantTable(OffsetKeeper&, const CD3DShaderConstantTable&, CD3DShaderConstantTable::REGISTER_SET);
+
+	uint32			m_modelBBoxOffsetOffset = -1;
+	uint32			m_modelBBoxScaleOffset = -1;
 	uint32			m_worldMatrixOffset = -1;
-	uint32			m_viewProjMatrixOffset = -1;
+	uint32			m_worldViewProjMatrixOffset = -1;
 };
