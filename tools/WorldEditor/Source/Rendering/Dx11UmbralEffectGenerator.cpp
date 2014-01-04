@@ -379,7 +379,7 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateCon
 		case CD3DShaderConstantTable::CONSTANT_CLASS_MATRIX_COLS:
 			{
 				constantsText += string_format("\tmatrix %s;\r\n", constant.name.c_str());
-				for(unsigned int i = 0; i < 4; i++)
+				for(unsigned int i = 0; i < constant.info.registerCount; i++)
 				{
 					unsigned int registerIndex = constant.info.registerIndex + i;
 					auto varName = string_format("%s[%d]", constant.name.c_str(), i);
