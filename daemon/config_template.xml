@@ -2,6 +2,6 @@
 	<Preference Name="ffxivd.database.address" Type="string" Value="" />
 	<Preference Name="ffxivd.database.username" Type="string" Value="" />
 	<Preference Name="ffxivd.database.password" Type="string" Value="" />
-	<Preference Name="ffxivd.database.name" Types="string" Value="" />
+	<Preference Name="ffxivd.database.name" Type="string" Value="" />
 	<Preference Name="ffxivd.gameserver.address" Type="string" Value="127.0.0.1" />
 </Config>
