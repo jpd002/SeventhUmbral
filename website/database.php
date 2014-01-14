@@ -68,7 +68,7 @@ function CreateSession($userId)
 	}
 	
 	$sessionId = GenerateRandomSha224();
-	$query = sprintf("INSERT INTO ffxiv_sessions (id, userid, expiration) VALUES ('%s', %d, NOW() + INTERVAL 1 HOUR)", $sessionId, $userId);
+	$query = sprintf("INSERT INTO ffxiv_sessions (id, userid, expiration) VALUES ('%s', %d, NOW() + INTERVAL 1 DAY)", $sessionId, $userId);
 	if(!mysql_query($query))
 	{
 		throw new Exception("Failed to create session.");
