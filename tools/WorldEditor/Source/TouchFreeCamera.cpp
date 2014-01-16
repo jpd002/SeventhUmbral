@@ -1,6 +1,6 @@
 #include "TouchFreeCamera.h"
 
-#define MOVE_SPEED	(20.f)
+#define MOVE_SPEED	(2.f)
 
 CTouchFreeCamera::CTouchFreeCamera()
 : m_commandMode(COMMAND_MODE_IDLE)
@@ -59,6 +59,16 @@ void CTouchFreeCamera::Update(float dt)
 void CTouchFreeCamera::SetPosition(const CVector3& position)
 {
 	m_cameraPosition = position;
+}
+
+void CTouchFreeCamera::SetHorizontalAngle(float hAngle)
+{
+	m_cameraHAngle = hAngle;
+}
+
+void CTouchFreeCamera::SetVerticalAngle(float vAngle)
+{
+	m_cameraVAngle = vAngle;
 }
 
 void CTouchFreeCamera::NotifyMouseMove(unsigned int x, unsigned int y)

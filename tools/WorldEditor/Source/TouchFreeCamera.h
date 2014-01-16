@@ -16,6 +16,8 @@ public:
 	virtual void				Update(float);
 
 	void						SetPosition(const CVector3&);
+	void						SetHorizontalAngle(float);
+	void						SetVerticalAngle(float);
 
 	void						NotifyMouseMove(unsigned int, unsigned int);
 	void						NotifyMouseDown_MoveForward();
@@ -45,4 +47,3 @@ private:
 	CVector2			m_mousePosition;
 	CVector2			m_dragPosition;
 };
-
