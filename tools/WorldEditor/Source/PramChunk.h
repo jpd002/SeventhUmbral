@@ -34,3 +34,5 @@ private:
 
 	SamplerArray			m_samplers;
 };
+
+typedef std::shared_ptr<CPramChunk> PramChunkPtr;
