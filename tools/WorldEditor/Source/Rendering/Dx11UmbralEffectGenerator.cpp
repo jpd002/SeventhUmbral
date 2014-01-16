@@ -136,6 +136,12 @@ std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DSh
 	}
 
 	{
+		auto privateIntConstantInfo = GeneratePrivateIntConstants(inputPixelShader);
+		result += privateIntConstantInfo.first;
+		m_intConstantRegisterMap.insert(std::begin(privateIntConstantInfo.second), std::end(privateIntConstantInfo.second));
+	}
+
+	{
 		auto temporaryInfo = GenerateTemporaries(inputPixelShader);
 		m_temporaryRegisterMap = std::move(temporaryInfo.second);
 		result += temporaryInfo.first;
@@ -162,7 +168,13 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 			return result;
 		};
 
-	static const auto emitGenericUnaryOperation =
+	const auto makeSaturationOperation =
+		[](const std::string& identationString, const std::string& dstString)
+		{
+			return string_format("%s%s = saturate(%s);\r\n", identationString.c_str(), dstString.c_str(), dstString.c_str());
+		};
+
+	const auto emitGenericUnaryOperation =
 		[&](CD3DShader::CTokenStream& tokenStream, const std::string& identationString, const char* format)
 		{
 			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
@@ -171,10 +183,15 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 			auto dstString = PrintDestinationOperand(dstParam);
 			auto srcString = PrintSourceOperand(srcParam, dstParam.parameter.writeMask);
 
-			return string_format(format, identationString.c_str(), dstString.c_str(), srcString.c_str());
+			auto result = string_format(format, identationString.c_str(), dstString.c_str(), srcString.c_str());
+			if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) 
+			{
+				result += makeSaturationOperation(identationString, dstString);
+			}
+			return result;
 		};
 
-	static const auto emitGenericBinaryOperation =
+	const auto emitGenericBinaryOperation =
 		[&](CD3DShader::CTokenStream& tokenStream, const std::string& identationString, const char* format)
 		{
 			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
@@ -185,7 +202,12 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 			auto src1String = PrintSourceOperand(src1Param, dstParam.parameter.writeMask);
 			auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
 
-			return string_format(format, identationString.c_str(), dstString.c_str(), src1String.c_str(), src2String.c_str());
+			auto result = string_format(format, identationString.c_str(), dstString.c_str(), src1String.c_str(), src2String.c_str());
+			if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
+			{
+				result += makeSaturationOperation(identationString, dstString);
+			}
+			return result;
 		};
 
 	std::string result;
@@ -220,6 +242,8 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
 				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
 
+				assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
+
 				result += string_format("%s%s = %s * %s + %s;\r\n", identationString.c_str(), 
 					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
 			}
@@ -245,6 +269,10 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 
 				result += string_format("%s%s = dot(%s, %s);\r\n", identationString.c_str(), 
 					dstString.c_str(), src1String.c_str(), src2String.c_str());
+				if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
+				{
+					result += makeSaturationOperation(identationString, dstString);
+				}
 			}
 			break;
 		case CD3DShader::OPCODE_DP4:
@@ -257,9 +285,14 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto src1String = PrintSourceOperand(src1Param, 0x0F);
 				auto src2String = PrintSourceOperand(src2Param, 0x0F);
 
+				assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
+
 				result += string_format("%s%s = dot(%s, %s);\r\n", identationString.c_str(), 
 					dstString.c_str(), src1String.c_str(), src2String.c_str());
 			}
+			break;
+		case CD3DShader::OPCODE_MIN:
+			result += emitGenericBinaryOperation(tokenStream, identationString, "%s%s = min(%s, %s);\r\n");
 			break;
 		case CD3DShader::OPCODE_MAX:
 			result += emitGenericBinaryOperation(tokenStream, identationString, "%s%s = max(%s, %s);\r\n");
@@ -272,6 +305,26 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 			break;
 		case CD3DShader::OPCODE_LOG:
 			result += emitGenericUnaryOperation(tokenStream, identationString, "%s%s = log2(%s);\r\n");
+			break;
+		case CD3DShader::OPCODE_LRP:
+			{
+				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+				auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+
+				auto dstString = PrintDestinationOperand(dstParam);
+				auto src1String = PrintSourceOperand(src1Param, dstParam.parameter.writeMask);
+				auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
+				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
+
+				result += string_format("%s%s = lerp(%s, %s, %s);\r\n", identationString.c_str(), 
+					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+				if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
+				{
+					result += makeSaturationOperation(identationString, dstString);
+				}
+			}
 			break;
 		case CD3DShader::OPCODE_FRC:
 			result += emitGenericUnaryOperation(tokenStream, identationString, "%s%s = frac(%s);\r\n");
@@ -293,8 +346,28 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				identationString = makeIdentationString(identationLevel);
 			}
 			break;
+		case CD3DShader::OPCODE_POW:
+			result += emitGenericBinaryOperation(tokenStream, identationString, "%s%s = pow(%s, %s);\r\n");
+			break;
+		case CD3DShader::OPCODE_ABS:
+			result += emitGenericUnaryOperation(tokenStream, identationString, "%s%s = abs(%s);\r\n");
+			break;
 		case CD3DShader::OPCODE_NRM:
 			result += emitGenericUnaryOperation(tokenStream, identationString, "%s%s = normalize(%s);\r\n");
+			break;
+		case CD3DShader::OPCODE_REP:
+			{
+				auto srcParam = CD3DShader::ReadSourceParameter(tokenStream);
+				assert(srcParam.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_CONSTINT);
+
+				auto counterInfoVariable = GetVariableForRegister(srcParam.parameter.GetRegisterType(), srcParam.parameter.registerNumber);
+
+				result += string_format("%sfor(int repCounter = 0; repCounter < %d; repCounter++)\r\n", identationString.c_str(), counterInfoVariable.constantValue[0]);
+				result += string_format("%s{\r\n", identationString.c_str());
+
+				identationLevel++;
+				identationString = makeIdentationString(identationLevel);
+			}
 			break;
 		case CD3DShader::OPCODE_IF:
 			{
@@ -310,6 +383,7 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 			}
 			break;
 		case CD3DShader::OPCODE_ENDLOOP:
+		case CD3DShader::OPCODE_ENDREP:
 		case CD3DShader::OPCODE_ENDIF:
 			{
 				assert(identationLevel != 0);
@@ -337,6 +411,41 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 					dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.name.c_str());
 			}
 			break;
+		case CD3DShader::OPCODE_CMP:
+			{
+				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+				auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+
+				auto dstString = PrintDestinationOperand(dstParam);
+				auto src1String = PrintSourceOperand(src1Param, dstParam.parameter.writeMask);
+				auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
+				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
+
+				assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
+
+				result += string_format("%s%s = (%s >= 0) ? %s : %s;\r\n", identationString.c_str(), 
+					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+			}
+			break;
+		case CD3DShader::OPCODE_TEXLDL:
+			{
+				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+				auto locationParam = CD3DShader::ReadSourceParameter(tokenStream);
+				auto samplerParam = CD3DShader::ReadSourceParameter(tokenStream);
+
+				assert(samplerParam.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_SAMPLER);
+
+				auto dstString = PrintDestinationOperand(dstParam);
+				auto samplerVariable = GetVariableForRegister(CD3DShader::SHADER_REGISTER_SAMPLER, samplerParam.parameter.registerNumber);
+				auto textureString = string_format("%s_texture", samplerVariable.name.c_str());
+				auto locationVariable = GetVariableForRegister(locationParam.parameter.GetRegisterType(), locationParam.parameter.registerNumber);
+
+				result += string_format("%s%s = %s.SampleLevel(%s, %s, %s.w);\r\n", identationString.c_str(), 
+					dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.name.c_str(), locationVariable.name.c_str());
+			}
+			break;
 		default:
 			assert(0);
 			break;
@@ -357,6 +466,14 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateCon
 		assert(constant.typeInfo.type == CD3DShaderConstantTable::CONSTANT_TYPE_FLOAT);
 		switch(constant.typeInfo.typeClass)
 		{
+		case CD3DShaderConstantTable::CONSTANT_CLASS_SCALAR:
+			{
+				assert(constant.typeInfo.elements == 1);
+				constantsText += string_format("\tfloat4 %s;\r\n", constant.name.c_str());
+				VARIABLE_INFO variable(constant.name);
+				constantIndices.insert(std::make_pair(constant.info.registerIndex, variable));
+			}
+			break;
 		case CD3DShaderConstantTable::CONSTANT_CLASS_VECTOR:
 			{
 				if(constant.typeInfo.elements > 1)
@@ -421,13 +538,26 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateSam
 	for(const auto& constant : constantTable.GetConstants())
 	{
 		if(constant.info.registerSet != CD3DShaderConstantTable::REGISTER_SET_SAMPLER) continue;
-		if(constant.typeInfo.type != CD3DShaderConstantTable::CONSTANT_TYPE_SAMPLER2D) continue;
+		const char* textureType = nullptr;
+		switch(constant.typeInfo.type)
+		{
+		case CD3DShaderConstantTable::CONSTANT_TYPE_SAMPLER2D:
+			textureType = "Texture2D";
+			break;
+		case CD3DShaderConstantTable::CONSTANT_TYPE_SAMPLERCUBE:
+			textureType = "TextureCube";
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		if(!textureType) continue;
 		//In SM3.0, texture object binding was a part of the sampler state
 		//in SM4.0+, texture object binding is separated from the sampler state, this is why we declare a texture
 		auto samplerName = string_format("sampler_%s", constant.name.c_str());
 		auto samplerTextureName = string_format("%s_texture", samplerName.c_str());
-		samplersText += string_format("SamplerState %s;\r\n", samplerName.c_str());
-		samplersText += string_format("Texture2D %s;\r\n", samplerTextureName.c_str());
+		samplersText += string_format("SamplerState %s : register(s%d);\r\n", samplerName.c_str(), constant.info.registerIndex);
+		samplersText += string_format("%s %s : register(t%d);\r\n", textureType, samplerTextureName.c_str(), constant.info.registerIndex);
 		samplerIndices.insert(std::make_pair(constant.info.registerIndex, VARIABLE_INFO(samplerName)));
 	}
 
@@ -701,6 +831,9 @@ std::string CDx11UmbralEffectGenerator::PrintSourceOperand(const CD3DShader::SOU
 		break;
 	case CD3DShader::SOURCE_MODIFIER_NEGATE:
 		regString = string_format("-%s", regString.c_str());
+		break;
+	case CD3DShader::SOURCE_MODIFIER_ABSOLUTE_NEGATE:
+		regString = string_format("-abs(%s)", regString.c_str());
 		break;
 	default:
 		assert(0);
