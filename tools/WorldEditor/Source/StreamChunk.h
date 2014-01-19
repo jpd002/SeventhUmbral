@@ -68,3 +68,5 @@ private:
 	ElementArray		m_elements;
 	std::vector<uint8>	m_data;
 };
+
+typedef std::shared_ptr<CStreamChunk> StreamChunkPtr;
