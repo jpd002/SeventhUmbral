@@ -34,6 +34,15 @@ CDx11UmbralEffect::~CDx11UmbralEffect()
 
 }
 
+template <typename ParamType> 
+void SetParamValue(uint8* constantBufferPtr, uint32 paramOffset, const ParamType& value)
+{
+	if(paramOffset != -1)
+	{
+		*reinterpret_cast<ParamType*>(constantBufferPtr + paramOffset) = value;
+	}
+}
+
 void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix, 
 	const CMatrix4& shadowViewProjMatrix)
 {
@@ -50,8 +59,8 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		assert(SUCCEEDED(result));
 		auto constantBufferPtr = reinterpret_cast<uint8*>(mappedResource.pData);
 
-		*reinterpret_cast<CVector3*>(constantBufferPtr + m_modelBBoxOffsetOffset) = modelBBoxOffset;
-		*reinterpret_cast<CVector3*>(constantBufferPtr + m_modelBBoxScaleOffset) = modelBBoxScale;
+		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxOffsetOffset, modelBBoxOffset);
+		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldMatrixOffset) = worldMatrix.Transpose();
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
@@ -62,6 +71,7 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 
 	//Update pixel shader params
 	{
+		CVector2 pixelClippingDistance(-100, 100);
 		CColor diffuseColor(1, 1, 1, 1);
 		CColor multiDiffuseColor(1, 1, 1, 1);
 		CColor multiSpecularColor(1, 1, 1, 1);
@@ -79,20 +89,21 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		CColor modulateColor(1, 1, 1, 1);
 		float refAlphaRestrain = 1;
 		CColor ambientColor(0, 0, 0, 0);
-		CColor ambientLightColor(0, 0, 0, 0);
-
-		static float t = 0;
+		CColor ambientLightColor(0.75f, 0.75f, 0.75f, 0);
+		float ambientOcclusionColor = 1;
+		float mainLightOcclusionColor = 1;
+		float subLightOcclusionColor = 1;
 
 		CVector3 dirLightDirections[2] = 
 		{
-			CVector3(0, 0, -1).Normalize(),
+			CVector3(1, 0, 1).Normalize(),
 			CVector3(0, 0, 0)
 		};
 
 		CColor dirLightColors[2] =
 		{
 			CColor(1, 1, 1, 0),
-			CColor(0, 0, 0, 0)
+			CColor(1, 1, 1, 0)
 		};
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
@@ -100,24 +111,28 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		assert(SUCCEEDED(result));
 		auto constantBufferPtr = reinterpret_cast<uint8*>(mappedResource.pData);
 
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_diffuseColorOffset) = diffuseColor;
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_multiDiffuseColorOffset) = multiDiffuseColor;
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_multiSpecularColorOffset) = multiSpecularColor;
-		*reinterpret_cast<float*>(constantBufferPtr + m_shininessOffset) = shininess;
-		*reinterpret_cast<float*>(constantBufferPtr + m_multiShininessOffset) = multiShininess;
-		*reinterpret_cast<CVector3*>(constantBufferPtr + m_reflectivityOffset) = reflectivity;
-		*reinterpret_cast<CVector3*>(constantBufferPtr + m_multiReflectivityOffset) = multiReflectivity;
-		*reinterpret_cast<float*>(constantBufferPtr + m_reflectMapInfluenceOffset) = reflectMapInfluence;
-		*reinterpret_cast<float*>(constantBufferPtr + m_normalPowerOffset) = normalPower;
-		*reinterpret_cast<float*>(constantBufferPtr + m_fresnelExpOffset) = fresnelExp;
-		*reinterpret_cast<float*>(constantBufferPtr + m_fresnelLightDiffBiasOffset) = fresnelLightDiffBias;
-		*reinterpret_cast<float*>(constantBufferPtr + m_lightDiffusePowerOffset) = lightDiffusePower;
-		*reinterpret_cast<float*>(constantBufferPtr + m_glareLdrScaleOffset) = glareLdrScale;
-		*reinterpret_cast<CVector3*>(constantBufferPtr + m_latitudeParamOffset) = latitudeParam;
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_modulateColorOffset) = modulateColor;
-		*reinterpret_cast<float*>(constantBufferPtr + m_refAlphaRestrainOffset) = refAlphaRestrain;
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_ambientColorOffset) = ambientColor;
-		*reinterpret_cast<CColor*>(constantBufferPtr + m_ambientLightColorOffset) = ambientLightColor;
+		SetParamValue<CVector2>(constantBufferPtr, m_pixelClippingDistanceOffset, pixelClippingDistance);
+		SetParamValue<CColor>(constantBufferPtr, m_diffuseColorOffset, diffuseColor);
+		SetParamValue<CColor>(constantBufferPtr, m_multiDiffuseColorOffset, multiDiffuseColor);
+		SetParamValue<CColor>(constantBufferPtr, m_multiSpecularColorOffset, multiSpecularColor);
+		SetParamValue<float>(constantBufferPtr, m_shininessOffset, shininess);
+		SetParamValue<float>(constantBufferPtr, m_multiShininessOffset, multiShininess);
+		SetParamValue<CVector3>(constantBufferPtr, m_reflectivityOffset, reflectivity);
+		SetParamValue<CVector3>(constantBufferPtr, m_multiReflectivityOffset, multiReflectivity);
+		SetParamValue<float>(constantBufferPtr, m_reflectMapInfluenceOffset, reflectMapInfluence);
+		SetParamValue<float>(constantBufferPtr, m_normalPowerOffset, normalPower);
+		SetParamValue<float>(constantBufferPtr, m_fresnelExpOffset, fresnelExp);
+		SetParamValue<float>(constantBufferPtr, m_fresnelLightDiffBiasOffset, fresnelLightDiffBias);
+		SetParamValue<float>(constantBufferPtr, m_lightDiffusePowerOffset, lightDiffusePower);
+		SetParamValue<float>(constantBufferPtr, m_glareLdrScaleOffset, glareLdrScale);
+		SetParamValue<CVector3>(constantBufferPtr, m_latitudeParamOffset, latitudeParam);
+		SetParamValue<CColor>(constantBufferPtr, m_modulateColorOffset, modulateColor);
+		SetParamValue<float>(constantBufferPtr, m_refAlphaRestrainOffset, refAlphaRestrain);
+		SetParamValue<CColor>(constantBufferPtr, m_ambientColorOffset, ambientColor);
+		SetParamValue<CColor>(constantBufferPtr, m_ambientLightColorOffset, ambientLightColor);
+		SetParamValue<float>(constantBufferPtr, m_ambientOcclusionColorOffset, ambientOcclusionColor);
+		SetParamValue<float>(constantBufferPtr, m_mainLightOcclusionColorOffset, mainLightOcclusionColor);
+		SetParamValue<float>(constantBufferPtr, m_subLightOcclusionColorOffset, subLightOcclusionColor);
 		reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[0] = dirLightDirections[0];
 		reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[1] = dirLightDirections[1];
 		reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[0] = dirLightColors[0];
@@ -176,26 +191,30 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 {
 	std::map<std::string, uint32&> parameterOffsets =
 	{
-		{ "diffuseColor",			m_diffuseColorOffset			},
-		{ "multiDiffuseColor",		m_multiDiffuseColorOffset		},
-		{ "multiSpecularColor",		m_multiSpecularColorOffset		},
-		{ "shininess",				m_shininessOffset				},
-		{ "multiShininess",			m_multiShininessOffset			},
-		{ "reflectivity",			m_reflectivityOffset			},
-		{ "multiReflectivity",		m_multiReflectivityOffset		},
-		{ "reflectMapInfluence",	m_reflectMapInfluenceOffset		},
-		{ "normalPower",			m_normalPowerOffset				},
-		{ "fresnelExp",				m_fresnelExpOffset				},
-		{ "fresnelLightDiffBias",	m_fresnelLightDiffBiasOffset	},
-		{ "lightDiffusePower",		m_lightDiffusePowerOffset		},
-		{ "glareLdrScale",			m_glareLdrScaleOffset			},
-		{ "latitudeParam",			m_latitudeParamOffset			},
-		{ "modulateColor",			m_modulateColorOffset			},
-		{ "refAlphaRestrain",		m_refAlphaRestrainOffset		},
-		{ "ambientColor",			m_ambientColorOffset			},
-		{ "ambientLightColor",		m_ambientLightColorOffset		},
-		{ "DirLightDirections",		m_dirLightDirectionsOffset		},
-		{ "DirLightColors",			m_dirLightColorsOffset			},
+		{ "pixelClippingDistance",		m_pixelClippingDistanceOffset	},
+		{ "diffuseColor",				m_diffuseColorOffset			},
+		{ "multiDiffuseColor",			m_multiDiffuseColorOffset		},
+		{ "multiSpecularColor",			m_multiSpecularColorOffset		},
+		{ "shininess",					m_shininessOffset				},
+		{ "multiShininess",				m_multiShininessOffset			},
+		{ "reflectivity",				m_reflectivityOffset			},
+		{ "multiReflectivity",			m_multiReflectivityOffset		},
+		{ "reflectMapInfluence",		m_reflectMapInfluenceOffset		},
+		{ "normalPower",				m_normalPowerOffset				},
+		{ "fresnelExp",					m_fresnelExpOffset				},
+		{ "fresnelLightDiffBias",		m_fresnelLightDiffBiasOffset	},
+		{ "lightDiffusePower",			m_lightDiffusePowerOffset		},
+		{ "glareLdrScale",				m_glareLdrScaleOffset			},
+		{ "latitudeParam",				m_latitudeParamOffset			},
+		{ "modulateColor",				m_modulateColorOffset			},
+		{ "refAlphaRestrain",			m_refAlphaRestrainOffset		},
+		{ "ambientColor",				m_ambientColorOffset			},
+		{ "ambientLightColor",			m_ambientLightColorOffset		},
+		{ "ambentOcclusionColor",		m_ambientOcclusionColorOffset	},
+		{ "mainLightOcclusionColor",	m_mainLightOcclusionColorOffset	},
+		{ "subLightOcclusionColor",		m_subLightOcclusionColorOffset	},
+		{ "DirLightDirections",			m_dirLightDirectionsOffset		},
+		{ "DirLightColors",				m_dirLightColorsOffset			},
 	};
 
 	for(const auto& constant : pixelShaderConstantTable.GetConstants())
@@ -227,4 +246,148 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 			constantOffset.Allocate(size);
 		}
 	}
+}
+
+Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(const Athena::VERTEX_BUFFER_DESCRIPTOR& descriptor)
+{
+	typedef std::vector<D3D11_INPUT_ELEMENT_DESC> InputElementArray;
+
+	InputElementArray inputElements;
+
+	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_POSITION))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "POSITION";
+		inputElement.SemanticIndex			= 0;
+		inputElement.Format					= DXGI_FORMAT_R32G32B32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_NORMAL))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "NORMAL";
+		inputElement.SemanticIndex			= 0;
+		inputElement.Format					= DXGI_FORMAT_R32G32B32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_UV0))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 0;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_UV1))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 1;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(VERTEX_ITEM_ID_UV2))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 2;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_COLOR))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "COLOR";
+		inputElement.SemanticIndex			= 0;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+
+////////
+//TEMPORARY FOR SEVENTH UMBRAL
+		inputElement.SemanticName			= "COLOR";
+		inputElement.SemanticIndex			= 1;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+//TEMPORARY FOR SEVENTH UMBRAL
+////////
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(VERTEX_ITEM_ID_TANGENT))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 5;
+		inputElement.Format					= DXGI_FORMAT_R32G32B32A32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	//Used for instancing or skinning, pointing to unrelated data for now
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "BLENDINDICES";
+		inputElement.SemanticIndex			= 0;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= 0;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 6;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= 0;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 7;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= 0;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	D3D11InputLayoutPtr inputLayout;
+	HRESULT result = m_device->CreateInputLayout(inputElements.data(), inputElements.size(), 
+		m_vertexShaderCode->GetBufferPointer(), m_vertexShaderCode->GetBufferSize(), &inputLayout);
+	assert(SUCCEEDED(result));
+
+	return inputLayout;
 }
