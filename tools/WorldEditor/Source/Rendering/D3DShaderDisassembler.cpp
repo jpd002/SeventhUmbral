@@ -98,6 +98,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "mova";
 	case CD3DShader::OPCODE_DEFI:
 		return "defi";
+	case CD3DShader::OPCODE_TEXKILL:
+		return "texkill";
 	case CD3DShader::OPCODE_TEXLD:
 		return "texld";
 	case CD3DShader::OPCODE_DEF:
@@ -154,6 +156,13 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 			auto src1ParamString = PrintSourceParameterToken(src1Param, dstParam.parameter.writeMask);
 			auto src2ParamString = PrintSourceParameterToken(src2Param, dstParam.parameter.writeMask);
 			return string_format("%s, %s, %s", dstParamString.c_str(), src1ParamString.c_str(), src2ParamString.c_str());
+		}
+		break;
+	case CD3DShader::OPCODE_TEXKILL:
+		{
+			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+			auto dstParamString = PrintDestinationParameterToken(dstParam);
+			return string_format("%s", dstParamString.c_str());
 		}
 		break;
 	case CD3DShader::OPCODE_MAD:

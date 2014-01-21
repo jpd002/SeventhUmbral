@@ -394,6 +394,13 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				result += string_format("%s}\r\n", identationString.c_str());
 			}
 			break;
+		case CD3DShader::OPCODE_TEXKILL:
+			{
+				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+				auto dstString = PrintDestinationOperand(dstParam);
+				result += string_format("%sclip(%s);\r\n", identationString.c_str(), dstString.c_str());
+			}
+			break;
 		case CD3DShader::OPCODE_TEXLD:
 			{
 				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
@@ -941,6 +948,9 @@ std::string CDx11UmbralEffectGenerator::PrintDeclUsage(CD3DShader::SHADER_DECLUS
 		break;
 	case CD3DShader::SHADER_DECLUSAGE_COLOR:
 		usageText = string_format("COLOR%d", usageIndex);
+		break;
+	case CD3DShader::SHADER_DECLUSAGE_BLENDINDICES:
+		usageText = string_format("BLENDINDICES%d", usageIndex);
 		break;
 	default:
 		assert(0);
