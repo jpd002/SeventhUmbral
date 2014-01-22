@@ -24,7 +24,7 @@ static float HalfToFloat(uint16 half)
 {
 	uint32 result = 0;
 	if(half & 0x8000) result |= 0x80000000;
-	int8 exponent = ((half >> 10) & 0x1F);
+	uint8 exponent = ((half >> 10) & 0x1F);
 	//Flush denormal to zero
 	if(exponent == 0) return *reinterpret_cast<float*>(&result);
 	exponent -= 0xF;	//Convert to absolute exponent
