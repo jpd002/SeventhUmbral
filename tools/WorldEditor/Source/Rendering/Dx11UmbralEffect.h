@@ -33,6 +33,7 @@ private:
 	uint32							m_worldMatrixOffset = -1;
 	uint32							m_worldViewProjMatrixOffset = -1;
 	uint32							m_viewITMatrixOffset = -1;
+	uint32							m_isUseInstancingOffset = -1;
 
 	//Pixel Shader Constants
 	uint32							m_pixelClippingDistanceOffset = -1;

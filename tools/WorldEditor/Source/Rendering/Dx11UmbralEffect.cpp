@@ -61,6 +61,7 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 
 		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxOffsetOffset, modelBBoxOffset);
 		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
+		SetParamValue<uint32>(constantBufferPtr, m_isUseInstancingOffset, 0);
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldMatrixOffset) = worldMatrix.Transpose();
 		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
@@ -153,6 +154,7 @@ void CDx11UmbralEffect::ParseVertexShaderConstantTable(OffsetKeeper& constantOff
 		{ "worldMatrix",			m_worldMatrixOffset				},
 		{ "viewITMatrix",			m_viewITMatrixOffset			},
 		{ "worldViewProjMatrix",	m_worldViewProjMatrixOffset		},
+		{ "isUseInstancing",		m_isUseInstancingOffset			},
 	};
 
 	for(const auto& constant : vertexShaderConstantTable.GetConstants())
