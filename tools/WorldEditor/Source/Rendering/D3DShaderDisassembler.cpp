@@ -92,6 +92,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "endrep";
 	case CD3DShader::OPCODE_IF:
 		return "if";
+	case CD3DShader::OPCODE_ELSE:
+		return "else";
 	case CD3DShader::OPCODE_ENDIF:
 		return "endif";
 	case CD3DShader::OPCODE_MOVA:
@@ -233,6 +235,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 		break;
 	case CD3DShader::OPCODE_ENDLOOP:
 	case CD3DShader::OPCODE_ENDREP:
+	case CD3DShader::OPCODE_ELSE:
 	case CD3DShader::OPCODE_ENDIF:
 		return std::string();
 		break;
@@ -340,6 +343,8 @@ std::string CD3DShaderDisassembler::PrintParameterRegister(CD3DShader::SHADER_RE
 		return string_format("i%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_COLOROUT:
 		return string_format("oC%d", registerNumber);
+	case CD3DShader::SHADER_REGISTER_DEPTHOUT:
+		return "oDepth";
 	case CD3DShader::SHADER_REGISTER_SAMPLER:
 		return string_format("s%d", registerNumber);
 	case CD3DShader::SHADER_REGISTER_CONSTBOOL:
