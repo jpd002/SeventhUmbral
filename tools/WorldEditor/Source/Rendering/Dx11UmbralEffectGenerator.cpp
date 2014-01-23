@@ -50,7 +50,7 @@ std::string CDx11UmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DS
 	}
 
 	{
-		auto structure = GenerateOutputStructure(inputVertexShader);
+		auto structure = GenerateVertexOutputStructure(inputVertexShader);
 		m_outputRegisterMap = std::move(structure.second);
 		result += structure.first;
 	}
@@ -125,9 +125,14 @@ std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DSh
 		result += structure.first;
 	}
 
-	result += "float4 PixelProgram(SHADER_IN input) : SV_TARGET\r\n";
+	{
+		auto structure = GeneratePixelOutputStructure(inputPixelShader);
+		result += structure.first;
+	}
+
+	result += "SHADER_OUT PixelProgram(SHADER_IN input)\r\n";
 	result += "{\r\n";
-	result += "\tfloat4 oC0;\r\n";
+	result += "\tSHADER_OUT output;\r\n";
 
 	{
 		auto privateConstantInfo = GeneratePrivateConstants(inputPixelShader);
@@ -149,7 +154,7 @@ std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DSh
 
 	result += GenerateInstructions(inputPixelShader);
 
-	result += "\treturn oC0;\r\n";
+	result += "\treturn output;\r\n";
 	result += "}\r\n";
 
 	return result;
@@ -242,10 +247,12 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
 				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
 
-				assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
-
 				result += string_format("%s%s = %s * %s + %s;\r\n", identationString.c_str(), 
 					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+				if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
+				{
+					result += makeSaturationOperation(identationString, dstString);
+				}
 			}
 			break;
 		case CD3DShader::OPCODE_MUL:
@@ -319,7 +326,7 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
 
 				result += string_format("%s%s = lerp(%s, %s, %s);\r\n", identationString.c_str(), 
-					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+					dstString.c_str(), src2String.c_str(), src3String.c_str(), src1String.c_str());
 				if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
 				{
 					result += makeSaturationOperation(identationString, dstString);
@@ -382,6 +389,20 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				identationString = makeIdentationString(identationLevel);
 			}
 			break;
+		case CD3DShader::OPCODE_ELSE:
+			{
+				assert(identationLevel != 0);
+				identationLevel--;
+				identationString = makeIdentationString(identationLevel);
+
+				result += string_format("%s}\r\n", identationString.c_str());
+				result += string_format("%selse\r\n", identationString.c_str());
+				result += string_format("%s{\r\n", identationString.c_str());
+
+				identationLevel++;
+				identationString = makeIdentationString(identationLevel);
+			}
+			break;
 		case CD3DShader::OPCODE_ENDLOOP:
 		case CD3DShader::OPCODE_ENDREP:
 		case CD3DShader::OPCODE_ENDIF:
@@ -412,10 +433,10 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto dstString = PrintDestinationOperand(dstParam);
 				auto samplerVariable = GetVariableForRegister(CD3DShader::SHADER_REGISTER_SAMPLER, samplerParam.parameter.registerNumber);
 				auto textureString = string_format("%s_texture", samplerVariable.name.c_str());
-				auto locationVariable = GetVariableForRegister(locationParam.parameter.GetRegisterType(), locationParam.parameter.registerNumber);
+				auto locationVariable = PrintSourceOperand(locationParam, 0x0F);
 
 				result += string_format("%s%s = %s.Sample(%s, %s);\r\n", identationString.c_str(), 
-					dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.name.c_str());
+					dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.c_str());
 			}
 			break;
 		case CD3DShader::OPCODE_CMP:
@@ -776,7 +797,7 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GeneratePix
 	return std::make_pair(structureText, registerIndices);
 }
 
-CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateOutputStructure(const CD3DShader& inputShader)
+CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateVertexOutputStructure(const CD3DShader& inputShader)
 {
 	std::string structureText;
 	RegisterIndexMap registerIndices;
@@ -805,6 +826,51 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateOut
 		registerIndices.insert(std::make_pair(registerNumber, VARIABLE_INFO(globalName)));
 	}
 	
+	structureText += "};\r\n";
+	
+	return std::make_pair(structureText, registerIndices);
+}
+
+CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GeneratePixelOutputStructure(const CD3DShader& inputShader)
+{
+	std::string structureText;
+	RegisterIndexMap registerIndices;		//We don't generate indices for now, but it might be useful later
+
+	bool hasColor0 = false;
+	bool hasDepth = false;
+
+	structureText += "struct SHADER_OUT\r\n";
+	structureText += "{\r\n";
+
+	//Scan all instruction destination registers to see if there's any output registers being written to
+	for(const auto& instruction : inputShader.GetInstructions())
+	{
+		if(instruction.token.opcode == CD3DShader::OPCODE_DCL) continue;
+		if(instruction.token.opcode == CD3DShader::OPCODE_DEF) continue;
+		if(instruction.token.opcode == CD3DShader::OPCODE_DEFI) continue;
+		if(instruction.additionalTokens.empty()) continue;
+		auto dstParam = *reinterpret_cast<const CD3DShader::DESTINATION_PARAMETER_TOKEN*>(&instruction.additionalTokens[0]);
+		if(dstParam.GetRegisterType() == CD3DShader::SHADER_REGISTER_COLOROUT)
+		{
+			assert(dstParam.registerNumber == 0);
+			hasColor0 = true;
+		}
+		else if(dstParam.GetRegisterType() == CD3DShader::SHADER_REGISTER_DEPTHOUT)
+		{
+			assert(dstParam.registerNumber == 0);
+			hasDepth = true;
+		}
+	}
+
+	if(hasColor0)
+	{
+		structureText += "\tfloat4 oC0 : SV_TARGET;\r\n";
+	}
+	if(hasDepth)
+	{
+		structureText += "\tfloat oD : SV_DEPTH;\r\n";
+	}
+
 	structureText += "};\r\n";
 	
 	return std::make_pair(structureText, registerIndices);
@@ -881,8 +947,11 @@ std::string CDx11UmbralEffectGenerator::PrintDestinationOperand(const CD3DShader
 	assert(dstParam.parameter.useRelativeAddressing == 0);
 	auto regVariable = GetVariableForRegister(dstParam.parameter.GetRegisterType(), dstParam.parameter.registerNumber);
 	auto regString = regVariable.name;
-	regString += ".";
-	regString += g_writeMask[dstParam.parameter.writeMask];
+	if(dstParam.parameter.GetRegisterType() != CD3DShader::SHADER_REGISTER_DEPTHOUT)
+	{
+		regString += ".";
+		regString += g_writeMask[dstParam.parameter.writeMask];
+	}
 	return regString;
 }
 
@@ -918,7 +987,9 @@ CDx11UmbralEffectGenerator::VARIABLE_INFO CDx11UmbralEffectGenerator::GetVariabl
 	case CD3DShader::SHADER_REGISTER_CONSTINT:
 		return getRegisterFromMap(m_intConstantRegisterMap, registerNumber, "i%d");
 	case CD3DShader::SHADER_REGISTER_COLOROUT:
-		return VARIABLE_INFO(string_format("oC%d", registerNumber));
+		return VARIABLE_INFO(string_format("output.oC%d", registerNumber));
+	case CD3DShader::SHADER_REGISTER_DEPTHOUT:
+		return VARIABLE_INFO("output.oD");
 	case CD3DShader::SHADER_REGISTER_SAMPLER:
 		return getRegisterFromMap(m_samplerRegisterMap, registerNumber, "s%d");
 	case CD3DShader::SHADER_REGISTER_CONSTBOOL:

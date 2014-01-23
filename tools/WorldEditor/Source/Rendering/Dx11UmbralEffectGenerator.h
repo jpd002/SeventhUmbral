@@ -48,7 +48,8 @@ private:
 	static StructureDef		GenerateAddressTemporaries(const CD3DShader&);
 	static StructureDef		GenerateVertexInputStructure(const CD3DShader&);
 	static StructureDef		GeneratePixelInputStructure(const CD3DShader&, const CD3DShader&);
-	static StructureDef		GenerateOutputStructure(const CD3DShader&);
+	static StructureDef		GenerateVertexOutputStructure(const CD3DShader&);
+	static StructureDef		GeneratePixelOutputStructure(const CD3DShader&);
 
 	std::string				PrintSourceOperand(const CD3DShader::SOURCE_PARAMETER&, uint32) const;
 	std::string				PrintDestinationOperand(const CD3DShader::DESTINATION_PARAMETER&) const;
