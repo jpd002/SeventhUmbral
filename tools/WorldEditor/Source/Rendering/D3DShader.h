@@ -176,6 +176,13 @@ public:
 			memset(&token, 0, sizeof(token));
 		}
 
+		bool operator ==(const INSTRUCTION& rhs) const
+		{
+			return
+				(*reinterpret_cast<const uint32*>(&token) == *reinterpret_cast<const uint32*>(&rhs.token)) &&
+				(additionalTokens == rhs.additionalTokens);
+		}
+
 		INSTRUCTION_TOKEN		token;
 		TokenArray				additionalTokens;
 	};
@@ -209,8 +216,11 @@ public:
 	typedef std::vector<uint8> Comment;
 	typedef std::vector<Comment> CommentArray;
 
+									CD3DShader();
 									CD3DShader(Framework::CStream&);
 	virtual							~CD3DShader();
+
+	bool							operator ==(const CD3DShader&) const;
 
 	SHADER_TYPE						GetType() const;
 	const InstructionArray&			GetInstructions() const;

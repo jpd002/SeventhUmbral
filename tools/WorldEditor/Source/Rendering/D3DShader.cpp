@@ -3,6 +3,11 @@
 #include "D3DShader.h"
 #include "PtrStream.h"
 
+CD3DShader::CD3DShader()
+{
+
+}
+
 CD3DShader::CD3DShader(Framework::CStream& stream)
 {
 	Read(stream);
@@ -11,6 +16,14 @@ CD3DShader::CD3DShader(Framework::CStream& stream)
 CD3DShader::~CD3DShader()
 {
 
+}
+
+bool CD3DShader::operator ==(const CD3DShader& rhs) const
+{
+	if(m_type != rhs.m_type) return false;
+	if(m_comments != rhs.m_comments) return false;
+	if(m_instructions != rhs.m_instructions) return false;
+	return true;
 }
 
 CD3DShader::SHADER_TYPE CD3DShader::GetType() const
