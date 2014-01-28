@@ -2,27 +2,30 @@
 
 #include "AthenaEngine.h"
 #include "../ResourceDefs.h"
+#include "D3DShader.h"
 
 class CUmbralMesh : public Athena::CMesh
 {
 public:
-								CUmbralMesh(const MeshChunkPtr&, const ShaderSectionPtr&);
-	virtual						~CUmbralMesh();
+										CUmbralMesh(const MeshChunkPtr&, const ShaderSectionPtr&);
+	virtual								~CUmbralMesh();
 
-	void						SetLocalTexture(const ResourceNodePtr&);
+	Athena::EffectPtr					GetEffect() const;
+
+	void								SetLocalTexture(const ResourceNodePtr&);
 
 private:
-	typedef std::map<std::string, Athena::TexturePtr> TextureMap;
+	typedef std::map<std::string, unsigned int> SamplerRegisterMap;
 
-	void						SetupGeometry(const MeshChunkPtr&);
-	void						SetupEffect();
-	void						SetupTextures();
+	Athena::VERTEX_BUFFER_DESCRIPTOR	GenerateVertexBufferDescriptor(const StreamChunkPtr&, const StreamChunkPtr&);
 
-	static Athena::TexturePtr	GetTexture(const std::string&);
-	static Athena::TexturePtr	CreateTextureFromGtex(const GtexDataPtr&);
+	void								SetupGeometry(const MeshChunkPtr&);
+	void								SetupEffect();
+	void								SetupTextures();
 
-	static TextureMap			m_textures;
+	Athena::EffectPtr					m_effect;
 
-	ShaderSectionPtr			m_shaderSection;
-	ResourceNodePtr				m_localTexture;
+	ShaderSectionPtr					m_shaderSection;
+	ResourceNodePtr						m_localTexture;
+	SamplerRegisterMap					m_samplerRegisters;
 };

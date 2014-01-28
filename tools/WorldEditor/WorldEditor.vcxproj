@@ -107,6 +107,7 @@
     <ClCompile Include="Source\Rendering\Dx11UmbralEffect.cpp" />
     <ClCompile Include="Source\Rendering\Dx11UmbralEffectGenerator.cpp" />
     <ClCompile Include="Source\Rendering\Dx11UmbralEffectProvider.cpp" />
+    <ClCompile Include="Source\Rendering\GlobalResources.cpp" />
     <ClCompile Include="Source\Rendering\UmbralMesh.cpp" />
     <ClCompile Include="Source\Rendering\UmbralModel.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="Source\Rendering\Dx11UmbralEffect.h" />
     <ClInclude Include="Source\Rendering\Dx11UmbralEffectGenerator.h" />
     <ClInclude Include="Source\Rendering\Dx11UmbralEffectProvider.h" />
+    <ClInclude Include="Source\Rendering\GlobalResources.h" />
     <ClInclude Include="Source\Rendering\UmbralMesh.h" />
     <ClInclude Include="Source\Rendering\UmbralModel.h" />
     <ClInclude Include="Source\ResourceDefs.h" />

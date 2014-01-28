@@ -43,6 +43,43 @@ void SetParamValue(uint8* constantBufferPtr, uint32 paramOffset, const ParamType
 	}
 }
 
+template <typename ParamType>
+ParamType GetMaterialEffectParamOrDefault(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
+
+template <>
+float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
+{
+	auto effectParam = material->GetEffectParameter(paramName);
+	assert((paramOffset == -1) || !effectParam.IsNull());
+	if(effectParam.IsNull()) return defaultValue;
+	return effectParam.GetScalar();
+}
+
+template <>
+CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
+{
+	auto effectParam = material->GetEffectParameter(paramName);
+	assert((paramOffset == -1) || !effectParam.IsNull());
+	if(effectParam.IsNull()) return defaultValue;
+	return effectParam.GetVector3();
+}
+
+template <>
+CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
+{
+	auto effectParam = material->GetEffectParameter(paramName);
+	assert((paramOffset == -1) || !effectParam.IsNull());
+	if(effectParam.IsNull()) return defaultValue;
+	if(effectParam.IsVector3())
+	{
+		return CVector4(effectParam.GetVector3(), 0);
+	}
+	else
+	{
+		return effectParam.GetVector4();
+	}
+}
+
 void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix, 
 	const CMatrix4& shadowViewProjMatrix)
 {
@@ -50,61 +87,89 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 	{
 		auto worldITMatrix = worldMatrix.Inverse().Transpose();
 		auto viewITMatrix = viewMatrix.Inverse().Transpose();
-		auto worldViewProjMatrix = worldMatrix * viewMatrix * projMatrix;
+		auto worldViewMatrix = worldMatrix * viewMatrix;
+		auto worldViewProjMatrix = worldViewMatrix * projMatrix;
 		CVector3 modelBBoxOffset(0, 0, 0);
 		CVector3 modelBBoxScale(1, 1, 1);
+
+		auto vertexOcclusionScale = GetMaterialEffectParamOrDefault(material, "vs_vertexOcclusionScale", m_vertexOcclusionScaleOffset, 0.0f);
+		auto vertexColorBias = GetMaterialEffectParamOrDefault(material, "vs_vertexColorBias", m_vertexColorBiasOffset, CVector4(0, 0, 0, 0));
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 		HRESULT result = m_deviceContext->Map(m_vertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		assert(SUCCEEDED(result));
 		auto constantBufferPtr = reinterpret_cast<uint8*>(mappedResource.pData);
 
-		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxOffsetOffset, modelBBoxOffset);
-		SetParamValue<CVector3>(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
+		memset(constantBufferPtr, 0, mappedResource.RowPitch);
+
+		SetParamValue(constantBufferPtr, m_modelBBoxOffsetOffset, modelBBoxOffset);
+		SetParamValue(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
+		//Those two parameters don't give a good result for some reason
+//		SetParamValue(constantBufferPtr, m_vertexOcclusionScaleOffset, vertexOcclusionScale);
+//		SetParamValue(constantBufferPtr, m_vertexColorBiasOffset, vertexColorBias);
 		SetParamValue<uint32>(constantBufferPtr, m_isUseInstancingOffset, 0);
-		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
-		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldMatrixOffset) = worldMatrix.Transpose();
-		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
-		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldViewProjMatrixOffset) = worldViewProjMatrix.Transpose();
+		if(m_viewITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
+		if(m_worldITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
+		if(m_worldMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldMatrixOffset) = worldMatrix.Transpose();
+		if(m_worldViewMatrixOffset != -1)		*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldViewMatrixOffset) = worldViewMatrix.Transpose();
+		if(m_worldViewProjMatrixOffset != -1)	*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldViewProjMatrixOffset) = worldViewProjMatrix.Transpose();
 
 		m_deviceContext->Unmap(m_vertexConstantBuffer, 0);
 	}
 
 	//Update pixel shader params
 	{
-		CVector2 pixelClippingDistance(-100, 100);
-		CColor diffuseColor(1, 1, 1, 1);
-		CColor multiDiffuseColor(1, 1, 1, 1);
-		CColor multiSpecularColor(1, 1, 1, 1);
-		float shininess = 12;
-		float multiShininess = 12;
-		CVector3 reflectivity(0.5f, 0.5f, 0.5f);
-		CVector3 multiReflectivity(0.5f, 0.5f, 0.5f);
-		float reflectMapInfluence = 0.8f;
-		float normalPower = 1;
-		float fresnelExp = 1;
-		float fresnelLightDiffBias = 1;
-		float lightDiffusePower = 0.67f;
-		float glareLdrScale = 1;
+		auto modulateColor = GetMaterialEffectParamOrDefault(material, "ps_modulateColor", m_modulateColorOffset, CVector4(1, 1, 1, 1));
+		auto ambientColor = GetMaterialEffectParamOrDefault(material, "ps_ambientColor", m_ambientColorOffset, CVector4(0, 0, 0, 0));
+		auto diffuseColor = GetMaterialEffectParamOrDefault(material, "ps_diffuseColor", m_diffuseColorOffset, CVector4(0, 0, 0, 0));
+		auto specularColor = GetMaterialEffectParamOrDefault(material, "ps_specularColor", m_specularColorOffset, CVector4(0, 0, 0, 0));
+		auto shininess = GetMaterialEffectParamOrDefault(material, "ps_shininess", m_shininessOffset, 128.f);
+		auto reflectivity = GetMaterialEffectParamOrDefault(material, "ps_reflectivity", m_reflectivityOffset, CVector3(0, 0, 0));
+		auto normalPower = GetMaterialEffectParamOrDefault(material, "ps_normalPower", m_normalPowerOffset, 1.f);
+
+		auto multiDiffuseColor = GetMaterialEffectParamOrDefault(material, "ps_multiDiffuseColor", m_multiDiffuseColorOffset, CVector4(0, 0, 0, 0));
+		auto multiSpecularColor = GetMaterialEffectParamOrDefault(material, "ps_multiSpecularColor", m_multiSpecularColorOffset, CVector4(0, 0, 0, 0));
+		auto multiShininess = GetMaterialEffectParamOrDefault(material, "ps_multiShininess", m_multiShininessOffset, 128.f);
+		auto multiReflectivity = GetMaterialEffectParamOrDefault(material, "ps_multiReflectivity", m_multiReflectivityOffset, CVector3(0, 0, 0));
+		auto multiNormalPower = GetMaterialEffectParamOrDefault(material, "ps_multiNormalPower", m_multiNormalPowerOffset, 1.f);
+
+		auto fresnelExp = GetMaterialEffectParamOrDefault(material, "ps_fresnelExp", m_fresnelExpOffset, 1.f);
+		auto fresnelLightDiffBias = GetMaterialEffectParamOrDefault(material, "ps_fresnelLightDiffBias", m_fresnelLightDiffBiasOffset, 1.f);
+		auto lightDiffusePower = GetMaterialEffectParamOrDefault(material, "ps_lightDiffusePower", m_lightDiffusePowerOffset, 0.67f);
+		auto lightDiffuseInfluence = GetMaterialEffectParamOrDefault(material, "ps_lightDiffuseInfluence", m_lightDiffuseInfluenceOffset, 0.56f);
+		auto reflectMapInfluence = GetMaterialEffectParamOrDefault(material, "ps_reflectMapInfluence", m_reflectMapInfluenceOffset, 0.8f);
+
+		auto glareLdrScale = GetMaterialEffectParamOrDefault(material, "ps_glareLdrScale", m_glareLdrScaleOffset, 1.0f);
+		auto refAlphaRestrain = GetMaterialEffectParamOrDefault(material, "ps_refAlphaRestrain", m_refAlphaRestrainOffset, 0.f);
+		auto normalVector = GetMaterialEffectParamOrDefault(material, "ps_normalVector", m_normalVectorOffset, CVector4(0, 0, 0, 0));
+		auto depthBias = GetMaterialEffectParamOrDefault(material, "ps_depthBias", m_depthBiasOffset, 0.f);
+
+		auto ambientOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_ambentOcclusionColor", m_ambientOcclusionColorOffset, CVector3(0, 0, 0));
+		auto specularOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_specularOcclusionColor", m_specularOcclusionColorOffset, CVector3(0, 0, 0));
+		auto pointLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_pointLightOcclusionColor", m_pointLightOcclusionColorOffset, CVector3(0, 0, 0));
+		auto mainLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_mainLightOcclusionColor", m_mainLightOcclusionColorOffset, CVector3(0, 0, 0));
+		auto subLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_subLightOcclusionColor", m_subLightOcclusionColorOffset, CVector3(0, 0, 0));
+		auto lightMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_lightMapOcclusionColor", m_lightMapOcclusionColorOffset, CVector3(0, 0, 0));
+		auto reflectMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_reflectMapOcclusionColor", m_reflectMapOcclusionColorOffset, CVector3(0, 0, 0));
+
+		float lightDiffuseMapLod = 0;
+		float reflectMapLod = 0;
+
+		CVector2 pixelClippingDistance(-10000, 10000);
+		CVector3 enableShadowFlag(1, 0, 1);
+		CColor ambientLightColor(0, 0, 0, 0);
 		CVector3 latitudeParam(1, 0, 1);
-		CColor modulateColor(1, 1, 1, 1);
-		float refAlphaRestrain = 1;
-		CColor ambientColor(0, 0, 0, 0);
-		CColor ambientLightColor(0.75f, 0.75f, 0.75f, 0);
-		float ambientOcclusionColor = 1;
-		float mainLightOcclusionColor = 1;
-		float subLightOcclusionColor = 1;
 
 		CVector3 dirLightDirections[2] = 
 		{
-			CVector3(1, 0, 1).Normalize(),
+			CVector3(0, -5, 1).Normalize(),
 			CVector3(0, 0, 0)
 		};
 
 		CColor dirLightColors[2] =
 		{
 			CColor(1, 1, 1, 0),
-			CColor(1, 1, 1, 0)
+			CColor(0, 0, 0, 0),
 		};
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
@@ -112,32 +177,48 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		assert(SUCCEEDED(result));
 		auto constantBufferPtr = reinterpret_cast<uint8*>(mappedResource.pData);
 
-		SetParamValue<CVector2>(constantBufferPtr, m_pixelClippingDistanceOffset, pixelClippingDistance);
-		SetParamValue<CColor>(constantBufferPtr, m_diffuseColorOffset, diffuseColor);
-		SetParamValue<CColor>(constantBufferPtr, m_multiDiffuseColorOffset, multiDiffuseColor);
-		SetParamValue<CColor>(constantBufferPtr, m_multiSpecularColorOffset, multiSpecularColor);
-		SetParamValue<float>(constantBufferPtr, m_shininessOffset, shininess);
-		SetParamValue<float>(constantBufferPtr, m_multiShininessOffset, multiShininess);
-		SetParamValue<CVector3>(constantBufferPtr, m_reflectivityOffset, reflectivity);
-		SetParamValue<CVector3>(constantBufferPtr, m_multiReflectivityOffset, multiReflectivity);
-		SetParamValue<float>(constantBufferPtr, m_reflectMapInfluenceOffset, reflectMapInfluence);
-		SetParamValue<float>(constantBufferPtr, m_normalPowerOffset, normalPower);
-		SetParamValue<float>(constantBufferPtr, m_fresnelExpOffset, fresnelExp);
-		SetParamValue<float>(constantBufferPtr, m_fresnelLightDiffBiasOffset, fresnelLightDiffBias);
-		SetParamValue<float>(constantBufferPtr, m_lightDiffusePowerOffset, lightDiffusePower);
-		SetParamValue<float>(constantBufferPtr, m_glareLdrScaleOffset, glareLdrScale);
-		SetParamValue<CVector3>(constantBufferPtr, m_latitudeParamOffset, latitudeParam);
-		SetParamValue<CColor>(constantBufferPtr, m_modulateColorOffset, modulateColor);
-		SetParamValue<float>(constantBufferPtr, m_refAlphaRestrainOffset, refAlphaRestrain);
-		SetParamValue<CColor>(constantBufferPtr, m_ambientColorOffset, ambientColor);
-		SetParamValue<CColor>(constantBufferPtr, m_ambientLightColorOffset, ambientLightColor);
-		SetParamValue<float>(constantBufferPtr, m_ambientOcclusionColorOffset, ambientOcclusionColor);
-		SetParamValue<float>(constantBufferPtr, m_mainLightOcclusionColorOffset, mainLightOcclusionColor);
-		SetParamValue<float>(constantBufferPtr, m_subLightOcclusionColorOffset, subLightOcclusionColor);
-		reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[0] = dirLightDirections[0];
-		reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[1] = dirLightDirections[1];
-		reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[0] = dirLightColors[0];
-		reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[1] = dirLightColors[1];
+		memset(constantBufferPtr, 0, mappedResource.RowPitch);
+
+		SetParamValue(constantBufferPtr, m_pixelClippingDistanceOffset, pixelClippingDistance);
+		SetParamValue(constantBufferPtr, m_ambientColorOffset, ambientColor);
+		SetParamValue(constantBufferPtr, m_diffuseColorOffset, diffuseColor);
+		SetParamValue(constantBufferPtr, m_specularColorOffset, specularColor);
+		SetParamValue(constantBufferPtr, m_multiDiffuseColorOffset, multiDiffuseColor);
+		SetParamValue(constantBufferPtr, m_multiSpecularColorOffset, multiSpecularColor);
+		SetParamValue(constantBufferPtr, m_shininessOffset, shininess);
+		SetParamValue(constantBufferPtr, m_multiShininessOffset, multiShininess);
+		SetParamValue(constantBufferPtr, m_reflectivityOffset, reflectivity);
+		SetParamValue(constantBufferPtr, m_multiReflectivityOffset, multiReflectivity);
+		SetParamValue(constantBufferPtr, m_reflectMapInfluenceOffset, reflectMapInfluence);
+		SetParamValue(constantBufferPtr, m_reflectMapLodOffset, reflectMapLod);
+		SetParamValue(constantBufferPtr, m_normalPowerOffset, normalPower);
+		SetParamValue(constantBufferPtr, m_multiNormalPowerOffset, multiNormalPower);
+		SetParamValue(constantBufferPtr, m_fresnelExpOffset, fresnelExp);
+		SetParamValue(constantBufferPtr, m_fresnelLightDiffBiasOffset, fresnelLightDiffBias);
+		SetParamValue(constantBufferPtr, m_lightDiffusePowerOffset, lightDiffusePower);
+		SetParamValue(constantBufferPtr, m_lightDiffuseInfluenceOffset, lightDiffuseInfluence);
+		SetParamValue(constantBufferPtr, m_lightDiffuseMapLodOffset, lightDiffuseMapLod);
+		SetParamValue(constantBufferPtr, m_glareLdrScaleOffset, glareLdrScale);
+		SetParamValue(constantBufferPtr, m_normalVectorOffset, normalVector);
+		SetParamValue(constantBufferPtr, m_depthBiasOffset, depthBias);
+		SetParamValue(constantBufferPtr, m_latitudeParamOffset, latitudeParam);
+		SetParamValue(constantBufferPtr, m_modulateColorOffset, modulateColor);
+		SetParamValue(constantBufferPtr, m_refAlphaRestrainOffset, refAlphaRestrain);
+		SetParamValue(constantBufferPtr, m_ambientLightColorOffset, ambientLightColor);
+
+		SetParamValue(constantBufferPtr, m_ambientOcclusionColorOffset, ambientOcclusionColor);
+		SetParamValue(constantBufferPtr, m_specularOcclusionColorOffset, specularOcclusionColor);
+		SetParamValue(constantBufferPtr, m_pointLightOcclusionColorOffset, pointLightOcclusionColor);
+		SetParamValue(constantBufferPtr, m_mainLightOcclusionColorOffset, mainLightOcclusionColor);
+		SetParamValue(constantBufferPtr, m_subLightOcclusionColorOffset, subLightOcclusionColor);
+		SetParamValue(constantBufferPtr, m_lightMapOcclusionColorOffset, lightMapOcclusionColor);
+		SetParamValue(constantBufferPtr, m_reflectMapOcclusionColorOffset, reflectMapOcclusionColor);
+
+		SetParamValue(constantBufferPtr, m_enableShadowFlagOffset, enableShadowFlag);
+		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[0] = dirLightDirections[0];
+		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[1] = dirLightDirections[1];
+		if(m_dirLightColorsOffset != -1) reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[0] = dirLightColors[0];
+		if(m_dirLightColorsOffset != -1) reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[1] = dirLightColors[1];
 
 		m_deviceContext->Unmap(m_pixelConstantBuffer, 0);
 	}
@@ -150,9 +231,15 @@ void CDx11UmbralEffect::ParseVertexShaderConstantTable(OffsetKeeper& constantOff
 	{
 		{ "ModelBBoxOffSet",		m_modelBBoxOffsetOffset			},
 		{ "ModelBBoxScale",			m_modelBBoxScaleOffset			},
+		{ "vertexOcclusionScale",	m_vertexOcclusionScaleOffset	},
+		{ "vertexColorBias",		m_vertexColorBiasOffset			},
+		{ "PointLightColors",		m_pointLightColorsOffset		},
+		{ "PointLightParams",		m_pointLightParamsOffset		},
+		{ "PointLightPositions",	m_pointLightPositionsOffset		},
+		{ "viewITMatrix",			m_viewITMatrixOffset			},
 		{ "worldITMatrix",			m_worldITMatrixOffset			},
 		{ "worldMatrix",			m_worldMatrixOffset				},
-		{ "viewITMatrix",			m_viewITMatrixOffset			},
+		{ "worldViewMatrix",		m_worldViewMatrixOffset			},
 		{ "worldViewProjMatrix",	m_worldViewProjMatrixOffset		},
 		{ "isUseInstancing",		m_isUseInstancingOffset			},
 	};
@@ -193,30 +280,44 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 {
 	std::map<std::string, uint32&> parameterOffsets =
 	{
-		{ "pixelClippingDistance",		m_pixelClippingDistanceOffset	},
-		{ "diffuseColor",				m_diffuseColorOffset			},
-		{ "multiDiffuseColor",			m_multiDiffuseColorOffset		},
-		{ "multiSpecularColor",			m_multiSpecularColorOffset		},
-		{ "shininess",					m_shininessOffset				},
-		{ "multiShininess",				m_multiShininessOffset			},
-		{ "reflectivity",				m_reflectivityOffset			},
-		{ "multiReflectivity",			m_multiReflectivityOffset		},
-		{ "reflectMapInfluence",		m_reflectMapInfluenceOffset		},
-		{ "normalPower",				m_normalPowerOffset				},
-		{ "fresnelExp",					m_fresnelExpOffset				},
-		{ "fresnelLightDiffBias",		m_fresnelLightDiffBiasOffset	},
-		{ "lightDiffusePower",			m_lightDiffusePowerOffset		},
-		{ "glareLdrScale",				m_glareLdrScaleOffset			},
-		{ "latitudeParam",				m_latitudeParamOffset			},
-		{ "modulateColor",				m_modulateColorOffset			},
-		{ "refAlphaRestrain",			m_refAlphaRestrainOffset		},
-		{ "ambientColor",				m_ambientColorOffset			},
-		{ "ambientLightColor",			m_ambientLightColorOffset		},
-		{ "ambentOcclusionColor",		m_ambientOcclusionColorOffset	},
-		{ "mainLightOcclusionColor",	m_mainLightOcclusionColorOffset	},
-		{ "subLightOcclusionColor",		m_subLightOcclusionColorOffset	},
-		{ "DirLightDirections",			m_dirLightDirectionsOffset		},
-		{ "DirLightColors",				m_dirLightColorsOffset			},
+		{ "pixelClippingDistance",		m_pixelClippingDistanceOffset		},
+		{ "diffuseColor",				m_diffuseColorOffset				},
+		{ "specularColor",				m_specularColorOffset				},
+		{ "multiDiffuseColor",			m_multiDiffuseColorOffset			},
+		{ "multiSpecularColor",			m_multiSpecularColorOffset			},
+		{ "shininess",					m_shininessOffset					},
+		{ "multiShininess",				m_multiShininessOffset				},
+		{ "reflectivity",				m_reflectivityOffset				},
+		{ "multiReflectivity",			m_multiReflectivityOffset			},
+		{ "reflectMapInfluence",		m_reflectMapInfluenceOffset			},
+		{ "reflectMapLod",				m_reflectMapLodOffset				},
+		{ "normalVector",				m_normalVectorOffset				},
+		{ "depthBias",					m_depthBiasOffset					},
+		{ "normalPower",				m_normalPowerOffset					},
+		{ "multiNormalPower",			m_multiNormalPowerOffset			},
+		{ "fresnelExp",					m_fresnelExpOffset					},
+		{ "fresnelLightDiffBias",		m_fresnelLightDiffBiasOffset		},
+		{ "lightDiffusePower",			m_lightDiffusePowerOffset			},
+		{ "lightDiffuseInfluence",		m_lightDiffuseInfluenceOffset		},
+		{ "lightDiffuseMapLod",			m_lightDiffuseMapLodOffset			},
+		{ "glareLdrScale",				m_glareLdrScaleOffset				},
+		{ "latitudeParam",				m_latitudeParamOffset				},
+		{ "modulateColor",				m_modulateColorOffset				},
+		{ "refAlphaRestrain",			m_refAlphaRestrainOffset			},
+		{ "ambientColor",				m_ambientColorOffset				},
+		{ "ambientLightColor",			m_ambientLightColorOffset			},
+
+		{ "ambentOcclusionColor",		m_ambientOcclusionColorOffset		},
+		{ "specularOcclusionColor",		m_specularOcclusionColorOffset		},
+		{ "pointLightOcclusionColor",	m_pointLightOcclusionColorOffset	},
+		{ "mainLightOcclusionColor",	m_mainLightOcclusionColorOffset		},
+		{ "subLightOcclusionColor",		m_subLightOcclusionColorOffset		},
+		{ "lightMapOcclusionColor",		m_lightMapOcclusionColorOffset		},
+		{ "reflectMapOcclusionColor",	m_reflectMapOcclusionColorOffset	},
+
+		{ "EnableShadowFlag",			m_enableShadowFlagOffset			},
+		{ "DirLightDirections",			m_dirLightDirectionsOffset			},
+		{ "DirLightColors",				m_dirLightColorsOffset				},
 	};
 
 	for(const auto& constant : pixelShaderConstantTable.GetConstants())

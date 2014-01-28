@@ -156,6 +156,9 @@
     <ClCompile Include="Source\CompChunk.cpp">
       <Filter>Source Files\Chunks</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Rendering\GlobalResources.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -286,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="Source\CompChunk.h">
       <Filter>Source Files\Chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\GlobalResources.h">
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

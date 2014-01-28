@@ -6,6 +6,7 @@
 #include "FileManager.h"
 #include "ResourceDefs.h"
 #include "ResourceManager.h"
+#include "Rendering/GlobalResources.h"
 
 //0x03E70001 -> Mor'dhona
 //0x615A0001 -> Ul'dah
@@ -28,9 +29,10 @@ CWorldEditor::CWorldEditor()
 , m_forwardButtonBoundingBox(0, 0, 0, 0)
 , m_backwardButtonBoundingBox(0, 0, 0, 0)
 {
+	CGlobalResources::GetInstance().Initialize();
 	m_package = Athena::CPackage::Create("global");
 
-	auto mapLayoutPath = CFileManager::GetResourcePath(0x92050004);
+	auto mapLayoutPath = CFileManager::GetResourcePath(0x92050003);
 
 	m_mapLayout = std::make_shared<CMapLayout>();
 	m_mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
@@ -46,6 +48,7 @@ CWorldEditor::~CWorldEditor()
 {
 	Athena::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
 	Athena::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
+	CGlobalResources::GetInstance().Release();
 }
 
 void CWorldEditor::CreateUi()
