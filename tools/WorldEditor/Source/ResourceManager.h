@@ -13,5 +13,5 @@ public:
 private:
 	typedef std::map<std::string, ResourceNodePtr> ResourceMap;
 
-	ResourceMap		m_resources;
+	ResourceMap			m_resources;
 };
