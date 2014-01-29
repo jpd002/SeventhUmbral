@@ -33,10 +33,12 @@ public:
 	uint32					GetTextureWidth() const;
 	uint32					GetTextureHeight() const;
 	const MipMapInfoArray&	GetMipMapInfos() const;
-
-	uint8*					GetTextureData() const;
+	const uint8*			GetMipMapData(unsigned int) const;
 
 private:
+	typedef std::vector<uint8> SurfaceDataArray;
+	typedef std::vector<SurfaceDataArray> SurfaceArray;
+
 	uint32					GetRealDataOffset() const;
 
 	uint32					m_magic;
@@ -52,7 +54,7 @@ private:
 	uint32					m_unknown5;
 	uint32					m_dataOffset;
 
-	uint8*					m_textureData;
+	SurfaceArray			m_surfaces;
 
 	MipMapInfoArray			m_mipMapInfos;
 };

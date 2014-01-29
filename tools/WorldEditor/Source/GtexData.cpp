@@ -1,5 +1,6 @@
 #include "GtexData.h"
 #include "PwibSection.h"
+#include "TextureSection.h"
 #include <assert.h>
 
 CGtexData::CGtexData()
@@ -14,14 +15,13 @@ CGtexData::CGtexData()
 , m_depth(0)
 , m_unknown5(0)
 , m_dataOffset(0)
-, m_textureData(nullptr)
 {
 
 }
 
 CGtexData::~CGtexData()
 {
-	delete [] m_textureData;
+
 }
 
 void CGtexData::Read(Framework::CStream& inputStream)
@@ -54,13 +54,38 @@ void CGtexData::ReadSurfaces(Framework::CStream& inputStream)
 {
 	uint32 dataOffset = GetRealDataOffset();
 
+	//Humm, is this a better way to compute the offset?
+#if 0
+	{
+		uint32 totalSurfacesSize = 0;
+		for(const auto& mipMapInfo : m_mipMapInfos)
+		{
+			totalSurfacesSize += mipMapInfo.length;
+		}
+
+		auto parent = GetParent();
+		while(parent)
+		{
+			if(auto textureSection = std::dynamic_pointer_cast<CTextureSection>(parent))
+			{
+				uint32 totalSize = textureSection->GetSize();
+				dataOffset = totalSize - totalSurfacesSize;
+			}
+			parent = parent->GetParent();
+		}
+	}
+#endif
+
 	auto currentOffset = inputStream.Tell();
 
-	const auto& mipMapInfo = m_mipMapInfos[0];
-	uint32 textureDataOffset = dataOffset + mipMapInfo.offset;
-	m_textureData = new uint8[mipMapInfo.length];
-	inputStream.Seek(textureDataOffset, Framework::STREAM_SEEK_SET);
-	inputStream.Read(m_textureData, mipMapInfo.length);
+	for(const auto& mipMapInfo : m_mipMapInfos)
+	{
+		uint32 textureDataOffset = dataOffset + mipMapInfo.offset;
+		SurfaceDataArray surface(mipMapInfo.length);
+		inputStream.Seek(textureDataOffset, Framework::STREAM_SEEK_SET);
+		inputStream.Read(surface.data(), mipMapInfo.length);
+		m_surfaces.push_back(std::move(surface));
+	}
 
 	inputStream.Seek(currentOffset, Framework::STREAM_SEEK_SET);
 }
@@ -85,9 +110,9 @@ const CGtexData::MipMapInfoArray& CGtexData::GetMipMapInfos() const
 	return m_mipMapInfos;
 }
 
-uint8* CGtexData::GetTextureData() const
+const uint8* CGtexData::GetMipMapData(unsigned int mipLevel) const
 {
-	return m_textureData;
+	return m_surfaces[mipLevel].data();
 }
 
 uint32 CGtexData::GetRealDataOffset() const

@@ -26,7 +26,7 @@ void CGlobalResources::Initialize()
 	}
 
 	m_skyTexture = Athena::CGraphicDevice::GetInstance().CreateCubeTextureFromFile("./data/global/skybox.dds");
-	m_proxyShadowTexture = Athena::CGraphicDevice::GetInstance().CreateTexture(Athena::TEXTURE_FORMAT_RGBA8888, 32, 32);
+	m_proxyShadowTexture = Athena::CGraphicDevice::GetInstance().CreateTexture(Athena::TEXTURE_FORMAT_RGBA8888, 32, 32, 1);
 
 	auto& graphicDevice = static_cast<Athena::CDx11GraphicDevice&>(Athena::CGraphicDevice::GetInstance());
 	m_effectProvider = std::make_shared<CDx11UmbralEffectProvider>(graphicDevice.GetDevice(), graphicDevice.GetDeviceContext());
@@ -63,7 +63,6 @@ Athena::TexturePtr CGlobalResources::CreateTextureFromGtex(const GtexDataPtr& te
 	auto textureFormat = textureDataInfo->GetTextureFormat();
 	auto textureWidth = textureDataInfo->GetTextureWidth();
 	auto textureHeight = textureDataInfo->GetTextureHeight();
-	auto textureData = textureDataInfo->GetTextureData();
 	Athena::TEXTURE_FORMAT specTextureFormat = Athena::TEXTURE_FORMAT_UNKNOWN;
 	switch(textureFormat)
 	{
@@ -85,7 +84,13 @@ Athena::TexturePtr CGlobalResources::CreateTextureFromGtex(const GtexDataPtr& te
 		break;
 	}
 
-	auto texture = Athena::CGraphicDevice::GetInstance().CreateTextureFromRawData(textureData, specTextureFormat, textureWidth, textureHeight);
+	unsigned int mipCount = textureDataInfo->GetMipMapInfos().size();
+	auto texture = Athena::CGraphicDevice::GetInstance().CreateTexture(specTextureFormat, textureWidth, textureHeight, mipCount);
+	for(unsigned int i = 0; i < mipCount; i++)
+	{
+		const auto mipData = textureDataInfo->GetMipMapData(i);
+		texture->Update(i, mipData);
+	}
 	return texture;
 }
 
