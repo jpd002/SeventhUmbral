@@ -496,10 +496,21 @@ CDx11UmbralEffectGenerator::StructureDef CDx11UmbralEffectGenerator::GenerateCon
 		{
 		case CD3DShaderConstantTable::CONSTANT_CLASS_SCALAR:
 			{
-				assert(constant.typeInfo.elements == 1);
-				constantsText += string_format("\tfloat4 %s;\r\n", constant.name.c_str());
-				VARIABLE_INFO variable(constant.name);
-				constantIndices.insert(std::make_pair(constant.info.registerIndex, variable));
+				if(constant.typeInfo.elements > 1)
+				{
+					constantsText += string_format("\tfloat4 %s[%d];\r\n", constant.name.c_str(), constant.typeInfo.elements);
+				}
+				else
+				{
+					constantsText += string_format("\tfloat4 %s;\r\n", constant.name.c_str());
+				}
+				for(unsigned int i = 0; i < constant.typeInfo.elements; i++)
+				{
+					VARIABLE_INFO variable(constant.name);
+					variable.isArray = constant.typeInfo.elements > 1;
+					variable.subscript = i;
+					constantIndices.insert(std::make_pair(constant.info.registerIndex + i, variable));
+				}
 			}
 			break;
 		case CD3DShaderConstantTable::CONSTANT_CLASS_VECTOR:
