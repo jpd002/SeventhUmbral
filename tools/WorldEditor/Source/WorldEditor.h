@@ -30,10 +30,11 @@ private:
 	Athena::PackagePtr		m_package;
 
 	Athena::ViewportPtr		m_mainViewport;
-//	Athena::CameraPtr		m_mainCamera;
 	TouchFreeCameraPtr		m_mainCamera;
 	
 	Athena::ViewportPtr		m_uiViewport;
+	Athena::LabelPtr		m_positionLabel;
+	Athena::LabelPtr		m_metricsLabel;
 
 	MapLayoutPtr			m_mapLayout;
 

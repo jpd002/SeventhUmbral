@@ -15,7 +15,9 @@ public:
 
 	virtual void				Update(float);
 
+	CVector3					GetPosition() const;
 	void						SetPosition(const CVector3&);
+	
 	void						SetHorizontalAngle(float);
 	void						SetVerticalAngle(float);
 

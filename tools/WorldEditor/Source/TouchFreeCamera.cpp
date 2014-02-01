@@ -56,6 +56,11 @@ void CTouchFreeCamera::Update(float dt)
 	SetViewMatrix(totalMatrix);
 }
 
+CVector3 CTouchFreeCamera::GetPosition() const
+{
+	return m_cameraPosition;
+}
+
 void CTouchFreeCamera::SetPosition(const CVector3& position)
 {
 	m_cameraPosition = position;

@@ -7,6 +7,7 @@
 #include "ResourceDefs.h"
 #include "ResourceManager.h"
 #include "Rendering/GlobalResources.h"
+#include "string_format.h"
 
 //0x03E70001 -> Mor'dhona
 //0x25B10001 -> Some boat
@@ -72,6 +73,9 @@ void CWorldEditor::CreateUi()
 
 		{
 			auto scene = Athena::CScene::Create(Athena::CResourceManager::GetInstance().GetResource<Athena::CSceneDescriptor>("main_scene.xml"));
+
+			m_positionLabel = scene->FindNode<Athena::CLabel>("PositionLabel");
+			m_metricsLabel = scene->FindNode<Athena::CLabel>("MetricsLabel");
 
 			{
 				auto sprite = scene->FindNode<Athena::CSprite>("BackwardSprite");
@@ -173,6 +177,19 @@ Athena::SceneNodePtr CWorldEditor::CreateUnitTreeObject(const std::shared_ptr<CM
 
 void CWorldEditor::Update(float dt)
 {
+	{
+		auto cameraPosition = m_mainCamera->GetPosition();
+		auto positionText = string_format("Pos = (X: %0.2f, Y: %0.2f, Z: %0.2f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+		m_positionLabel->SetText(positionText);
+	}
+
+	{
+		auto metricsText = string_format("Draw Calls = %d - FPS = %d", 
+			Athena::CGraphicDevice::GetInstance().GetDrawCallCount(),
+			static_cast<int>(Athena::CGraphicDevice::GetInstance().GetFrameRate()));
+		m_metricsLabel->SetText(metricsText);
+	}
+
 	m_mainCamera->Update(dt);
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
