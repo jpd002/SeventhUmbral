@@ -41,6 +41,8 @@ private:
 
 	uint32					GetRealDataOffset() const;
 
+	uint32					m_baseOffset;
+
 	uint32					m_magic;
 	uint8					m_unknown1;
 	uint8					m_unknown2;

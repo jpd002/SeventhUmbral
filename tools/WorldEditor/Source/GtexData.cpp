@@ -26,6 +26,7 @@ CGtexData::~CGtexData()
 
 void CGtexData::Read(Framework::CStream& inputStream)
 {
+	m_baseOffset	= static_cast<uint32>(inputStream.Tell());
 	m_magic			= inputStream.Read32();
 	assert(m_magic = 'XETG');
 	m_unknown1		= inputStream.Read8();
@@ -53,29 +54,6 @@ void CGtexData::Read(Framework::CStream& inputStream)
 void CGtexData::ReadSurfaces(Framework::CStream& inputStream)
 {
 	uint32 dataOffset = GetRealDataOffset();
-
-	//Humm, is this a better way to compute the offset?
-#if 0
-	{
-		uint32 totalSurfacesSize = 0;
-		for(const auto& mipMapInfo : m_mipMapInfos)
-		{
-			totalSurfacesSize += mipMapInfo.length;
-		}
-
-		auto parent = GetParent();
-		while(parent)
-		{
-			if(auto textureSection = std::dynamic_pointer_cast<CTextureSection>(parent))
-			{
-				uint32 totalSize = textureSection->GetSize();
-				dataOffset = totalSize - totalSurfacesSize;
-			}
-			parent = parent->GetParent();
-		}
-	}
-#endif
-
 	auto currentOffset = inputStream.Tell();
 
 	for(const auto& mipMapInfo : m_mipMapInfos)
@@ -119,7 +97,7 @@ uint32 CGtexData::GetRealDataOffset() const
 {
 	if(m_dataOffset != 0)
 	{
-		return m_dataOffset;
+		return m_baseOffset + m_dataOffset;
 	}
 
 	auto parent = GetParent();
