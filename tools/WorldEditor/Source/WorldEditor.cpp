@@ -9,6 +9,10 @@
 #include "Rendering/GlobalResources.h"
 
 //0x03E70001 -> Mor'dhona
+//0x25B10001 -> Some boat
+//0x25B10002 -> Boat insides
+//0x28D90001 -> Coerthas
+//0x29B00001 -> Gridania
 //0x615A0001 -> Ul'dah
 //0x615A0002 -> Some Thanalan cavern?
 //0x615A0003 -> Ul'dah indoors
@@ -92,9 +96,7 @@ void CWorldEditor::CreateWorld()
 
 	{
 		auto camera = CTouchFreeCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 1000.f);
-		camera->SetPosition(CVector3(0, 0, -100.f));
-//		camera->LookAt(CVector3(0.f, 0, 100.f), CVector3(0, 0, 0), CVector3(0, 1, 0));
+		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 10000.f, Athena::HANDEDNESS_RIGHTHANDED);
 		m_mainCamera = camera;
 	}
 

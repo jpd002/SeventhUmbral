@@ -351,6 +351,7 @@ void CUmbralMesh::SetupEffect()
 		auto material = GetMaterial();
 
 		//material->SetAlphaBlendingMode(Athena::ALPHA_BLENDING_LERP);
+		material->SetCullingMode(Athena::CULLING_CW);
 
 		auto pramChunk = m_shaderSection->SelectNode<CPramChunk>();
 		assert(pramChunk);

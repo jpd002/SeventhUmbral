@@ -31,8 +31,8 @@ void CTouchFreeCamera::Update(float dt)
 	{
 		float deltaX = m_dragPosition.x - m_mousePosition.x;
 		float deltaY = m_dragPosition.y - m_mousePosition.y;
-		m_cameraHAngle = m_dragHAngle - deltaX * 0.015f;
-		m_cameraVAngle = m_dragVAngle - deltaY * 0.015f;
+		m_cameraHAngle = m_dragHAngle + deltaX * 0.015f;
+		m_cameraVAngle = m_dragVAngle + deltaY * 0.015f;
 		m_cameraVAngle = std::min<float>(m_cameraVAngle, M_PI / 2);
 		m_cameraVAngle = std::max<float>(m_cameraVAngle, -M_PI / 2);
 	}
@@ -42,7 +42,7 @@ void CTouchFreeCamera::Update(float dt)
 		CMatrix4 pitchMatrix(CMatrix4::MakeAxisXRotation(m_cameraVAngle));
 		CMatrix4 totalMatrix = yawMatrix * pitchMatrix;
 		CVector3 forwardVector = CVector3(0, 0, 1) * totalMatrix;
-		float direction = (m_commandMode == COMMAND_MODE_MOVE_BACKWARD) ? (-1.0f) : (1.0f);
+		float direction = (m_commandMode == COMMAND_MODE_MOVE_BACKWARD) ? (1.0f) : (-1.0f);
 		m_cameraPosition += (forwardVector * direction * MOVE_SPEED * dt);
 	}
 
