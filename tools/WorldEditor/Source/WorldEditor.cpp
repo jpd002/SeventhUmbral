@@ -37,11 +37,6 @@ CWorldEditor::CWorldEditor()
 	CGlobalResources::GetInstance().Initialize();
 	m_package = Athena::CPackage::Create("global");
 
-	auto mapLayoutPath = CFileManager::GetResourcePath(0x92050003);
-
-	m_mapLayout = std::make_shared<CMapLayout>();
-	m_mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
-
 	CreateUi();
 	CreateWorld();
 
@@ -100,7 +95,7 @@ void CWorldEditor::CreateWorld()
 
 	{
 		auto camera = CTouchFreeCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 10000.f, Athena::HANDEDNESS_RIGHTHANDED);
+		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 500.f, Athena::HANDEDNESS_RIGHTHANDED);
 		m_mainCamera = camera;
 	}
 
@@ -112,67 +107,23 @@ void CWorldEditor::CreateWorld()
 
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
-	unsigned int nodeIdx = 0;
-
-	const auto& layoutNodes = m_mapLayout->GetLayoutNodes();
-	for(const auto& nodePair : layoutNodes)
 	{
-		if(auto instanceNode = std::dynamic_pointer_cast<CMapLayout::INSTANCE_OBJECT_NODE>(nodePair.second))
-		{
-			auto refNodeIterator = layoutNodes.find(instanceNode->refNodePtr);
-			if(refNodeIterator == std::end(layoutNodes)) continue;
+		auto mapLayoutPath = CFileManager::GetResourcePath(0xA09B0000);
+		auto mapLayout = std::make_shared<CMapLayout>();
+		mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
 
-			CVector3 instancePosition(instanceNode->posX, instanceNode->posY, instanceNode->posZ);
-			CQuaternion instanceRotY(CVector3(0, -1, 0), instanceNode->rotY);
-
-			auto refNode = refNodeIterator->second;
-			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
-			{
-				auto unitTreeObject = CreateUnitTreeObject(unitTreeObjectNode);
-				unitTreeObject->SetPosition(instancePosition);
-				unitTreeObject->SetRotation(instanceRotY);
-				sceneRoot->AppendChild(unitTreeObject);
-			}
-		}
-	}
-}
-
-Athena::SceneNodePtr CWorldEditor::CreateUnitTreeObject(const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
-{
-	auto result = Athena::CSceneNode::Create();
-
-	const auto& layoutNodes = m_mapLayout->GetLayoutNodes();
-
-	for(const auto& item : node->items)
-	{
-		auto refNodeIterator = layoutNodes.find(item.nodePtr);
-		if(refNodeIterator == std::end(layoutNodes)) continue;
-
-		auto refNode = refNodeIterator->second;
-		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
-		{
-			auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
-			assert(modelResource);
-			if(!modelResource) continue;
-
-			auto modelChunk = modelResource->SelectNode<CModelChunk>();
-			assert(modelChunk);
-			if(!modelChunk) continue;
-
-			CVector3 minPos(bgPartsBaseObjectNode->minX, bgPartsBaseObjectNode->minY, bgPartsBaseObjectNode->minZ);
-			CVector3 maxPos(bgPartsBaseObjectNode->maxX, bgPartsBaseObjectNode->maxY, bgPartsBaseObjectNode->maxZ);
-
-			CVector3 bgPartSize = (maxPos - minPos) / 2;
-			CVector3 bgPartPos = (maxPos + minPos) / 2;
-
-			auto model = std::make_shared<CUmbralModel>(modelChunk);
-			model->SetPosition(bgPartPos);
-			model->SetScale(bgPartSize);
-			result->AppendChild(model);
-		}
+		auto map = std::make_shared<CUmbralMap>(mapLayout);
+		sceneRoot->AppendChild(map);
 	}
 
-	return result;
+//	{
+//		auto mapLayoutPath = CFileManager::GetResourcePath(0x29B00002);
+//		auto mapLayout = std::make_shared<CMapLayout>();
+//		mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
+//
+//		auto map = std::make_shared<CUmbralMap>(mapLayout);
+//		sceneRoot->AppendChild(map);
+//	}
 }
 
 void CWorldEditor::Update(float dt)

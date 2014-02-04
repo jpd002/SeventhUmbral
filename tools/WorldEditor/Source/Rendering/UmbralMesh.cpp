@@ -83,6 +83,11 @@ static CVector3 ConvertVec3FromUint16(const uint8* rawData)
 	return result;
 }
 
+CUmbralMesh::CUmbralMesh()
+{
+
+}
+
 CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk, const ShaderSectionPtr& shaderSection)
 : m_shaderSection(shaderSection)
 {
@@ -94,6 +99,31 @@ CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk, const ShaderSectionPtr& 
 CUmbralMesh::~CUmbralMesh()
 {
 
+}
+
+UmbralMeshPtr CUmbralMesh::CreateInstance() const
+{
+	auto result = std::make_shared<CUmbralMesh>();
+
+	//CSceneNode members
+	result->m_worldTransformation	= m_worldTransformation;
+
+	//CMesh members
+	result->m_primitiveType			= m_primitiveType;
+	result->m_primitiveCount		= m_primitiveCount;
+	result->m_material				= m_material;
+	result->m_effectProvider		= m_effectProvider;
+	result->m_vertexBuffer			= m_vertexBuffer;
+	result->m_boundingSphere		= m_boundingSphere;
+	result->m_isPeggedToOrigin		= m_isPeggedToOrigin;
+
+	//CUmbralMesh members
+	result->m_shaderSection			= m_shaderSection;
+	result->m_localTexture			= m_localTexture;
+	result->m_effect				= m_effect;
+	result->m_samplerRegisters		= m_samplerRegisters;
+
+	return result;
 }
 
 Athena::EffectPtr CUmbralMesh::GetEffect() const
@@ -138,6 +168,7 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 
 	m_primitiveType = Athena::PRIMITIVE_TRIANGLE_LIST;
 	m_primitiveCount = indexCount / 3;
+	m_boundingSphere.radius = sqrt(2.f);	//Vertex position range is [-1, 1]
 	m_vertexBuffer = Athena::CGraphicDevice::GetInstance().CreateVertexBuffer(bufferDesc);
 	const auto& posVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_POSITION);
 	const auto& nrmVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_NORMAL);

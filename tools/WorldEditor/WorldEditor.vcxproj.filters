@@ -159,6 +159,9 @@
     <ClCompile Include="Source\Rendering\GlobalResources.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Rendering\UmbralMap.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -291,6 +294,9 @@
       <Filter>Source Files\Chunks</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\GlobalResources.h">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\UmbralMap.h">
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

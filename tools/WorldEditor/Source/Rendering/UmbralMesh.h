@@ -4,11 +4,17 @@
 #include "../ResourceDefs.h"
 #include "D3DShader.h"
 
+class CUmbralMesh;
+typedef std::shared_ptr<CUmbralMesh> UmbralMeshPtr;
+
 class CUmbralMesh : public Athena::CMesh
 {
 public:
+										CUmbralMesh();
 										CUmbralMesh(const MeshChunkPtr&, const ShaderSectionPtr&);
 	virtual								~CUmbralMesh();
+
+	UmbralMeshPtr						CreateInstance() const;
 
 	Athena::EffectPtr					GetEffect() const;
 

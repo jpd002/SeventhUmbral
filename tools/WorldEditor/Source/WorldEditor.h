@@ -3,6 +3,7 @@
 #include "AthenaEngine.h"
 #include "TouchFreeCamera.h"
 #include "MapLayout.h"
+#include "Rendering/UmbralMap.h"
 
 class CWorldEditor : public Athena::CApplication
 {
@@ -23,8 +24,6 @@ private:
 	void					CreateUi();
 	void					CreateWorld();
 	
-	Athena::SceneNodePtr	CreateUnitTreeObject(const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>&);
-
 	CVector2				m_mousePosition;
 
 	Athena::PackagePtr		m_package;
@@ -35,8 +34,6 @@ private:
 	Athena::ViewportPtr		m_uiViewport;
 	Athena::LabelPtr		m_positionLabel;
 	Athena::LabelPtr		m_metricsLabel;
-
-	MapLayoutPtr			m_mapLayout;
 
 	float					m_elapsed;
 
