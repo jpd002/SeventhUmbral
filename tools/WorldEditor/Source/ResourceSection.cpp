@@ -66,6 +66,7 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 		switch(resourceType)
 		{
 		case '\0trb':
+		case '\0bin':
 			section = std::make_shared<CResourceSection>();
 			break;
 		case 'sdrb':
@@ -87,10 +88,13 @@ void CResourceSection::Read(Framework::CStream& inputStream)
 			assert(0);
 			break;
 		}
-		AddChild(section);
-		section->Read(inputStream);
-		section->SetResourceId(resourceIds[i]);
-		section->SetResourcePath(strings[i]);
+		if(section)
+		{
+			AddChild(section);
+			section->Read(inputStream);
+			section->SetResourceId(resourceIds[i]);
+			section->SetResourcePath(strings[i]);
+		}
 	}
 
 	inputStream.Seek(basePosition, Framework::STREAM_SEEK_SET);
