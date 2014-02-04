@@ -108,6 +108,8 @@ std::string CD3DShaderDisassembler::GetInstructionMnemonic(CD3DShader::SHADER_TY
 		return "def";
 	case CD3DShader::OPCODE_CMP:
 		return "cmp";
+	case CD3DShader::OPCODE_DP2ADD:
+		return "dp2add";
 	case CD3DShader::OPCODE_TEXLDL:
 		return "texldl";
 	default:
@@ -170,6 +172,7 @@ std::string CD3DShaderDisassembler::GetInstructionOperands(CD3DShader::SHADER_TY
 	case CD3DShader::OPCODE_MAD:
 	case CD3DShader::OPCODE_LRP:
 	case CD3DShader::OPCODE_CMP:
+	case CD3DShader::OPCODE_DP2ADD:
 		{
 			auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
 			auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
@@ -269,6 +272,9 @@ std::string CD3DShaderDisassembler::PrintSourceParameterToken(const CD3DShader::
 		break;
 	case CD3DShader::SOURCE_MODIFIER_NEGATE:
 		regString = string_format("-%s", regString.c_str());
+		break;
+	case CD3DShader::SOURCE_MODIFIER_ABSOLUTE:
+		regString = string_format("abs(%s)", regString.c_str());
 		break;
 	case CD3DShader::SOURCE_MODIFIER_ABSOLUTE_NEGATE:
 		regString = string_format("-abs(%s)", regString.c_str());

@@ -457,6 +457,27 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
 			}
 			break;
+		case CD3DShader::OPCODE_DP2ADD:
+			{
+				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+				auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+				auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+
+				src1Param.parameter.swizzleX = src2Param.parameter.swizzleX = 0;
+				src1Param.parameter.swizzleY = src2Param.parameter.swizzleY = 1;
+
+				auto dstString = PrintDestinationOperand(dstParam);
+				auto src1String = PrintSourceOperand(src1Param, 0x03);
+				auto src2String = PrintSourceOperand(src2Param, 0x03);
+				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
+
+				assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
+
+				result += string_format("%s%s = dot(%s, %s) + %s;\r\n", identationString.c_str(), 
+					dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+			}
+			break;
 		case CD3DShader::OPCODE_TEXLDL:
 			{
 				auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
@@ -915,6 +936,9 @@ std::string CDx11UmbralEffectGenerator::PrintSourceOperand(const CD3DShader::SOU
 		break;
 	case CD3DShader::SOURCE_MODIFIER_NEGATE:
 		regString = string_format("-%s", regString.c_str());
+		break;
+	case CD3DShader::SOURCE_MODIFIER_ABSOLUTE:
+		regString = string_format("abs(%s)", regString.c_str());
 		break;
 	case CD3DShader::SOURCE_MODIFIER_ABSOLUTE_NEGATE:
 		regString = string_format("-abs(%s)", regString.c_str());
