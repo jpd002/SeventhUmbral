@@ -81,8 +81,49 @@ Section "Seventh Umbral Launcher (required)"
   
 SectionEnd
 
+!define REDIST_NAME "Visual C++ 2013 Redistributable"
+!define REDIST_SETUP_FILENAME "vcredist_x86.exe"
+
+Section "${REDIST_NAME}" SEC_CRT2013
+
+  SectionIn RO
+
+  ClearErrors
+  ReadRegDword $R0 HKLM "SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x86" "Installed"
+  IfErrors 0 +2
+  DetailPrint "${REDIST_NAME} registry key was not found; assumed to be uninstalled."
+  StrCmp $R0 "1" 0 +3
+    DetailPrint "${REDIST_NAME} is already installed; skipping!"
+    Goto done
+
+  SetOutPath "$TEMP"
+
+  DetailPrint "Downloading ${REDIST_NAME} Setup..."
+  NSISdl::download /TIMEOUT=15000 "http://download.microsoft.com/download/2/E/6/2E61CFA4-993B-4DD4-91DA-3737CD5CD6E3/vcredist_x86.exe" "${REDIST_SETUP_FILENAME}"
+
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" OnSuccess
+
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" +2
+    MessageBox MB_OK "Could not download ${REDIST_NAME} Setup."
+    Goto done
+
+OnSuccess:
+  DetailPrint "Running ${REDIST_NAME} Setup..."
+  ExecWait '"$TEMP\${REDIST_SETUP_FILENAME}" /q /norestart'
+  DetailPrint "Finished ${REDIST_NAME} Setup"
+  
+  Delete "$TEMP\${REDIST_SETUP_FILENAME}"
+
+done:
+SectionEnd
+
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
+
+  ; Set output path to the installation directory (this path is used when creating shortcuts).
+  SetOutPath $INSTDIR
 
   CreateDirectory "$SMPROGRAMS\Seventh Umbral Launcher"
   CreateShortCut "$SMPROGRAMS\Seventh Umbral Launcher\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
