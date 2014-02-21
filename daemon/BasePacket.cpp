@@ -2,7 +2,7 @@
 #include <assert.h>
 
 CBasePacket::CBasePacket()
-: m_packetSize(MIN_PACKET_SIZE)
+: m_packetSize(PACKET_HEADER_SIZE)
 , m_sourceId(0)
 , m_targetId(0)
 , m_commandId(0)
@@ -27,7 +27,7 @@ void CBasePacket::SetTargetId(uint32 targetId)
 
 PacketData CBasePacket::ToPacketData() const
 {
-	assert(m_packetSize >= MIN_PACKET_SIZE);
+	assert(m_packetSize >= PACKET_HEADER_SIZE);
 
 	PacketData result;
 //	result.resize(m_packetSize + 0x10);

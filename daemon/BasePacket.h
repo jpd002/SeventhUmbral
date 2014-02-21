@@ -7,7 +7,7 @@ class CBasePacket
 public:
 	enum 
 	{
-		MIN_PACKET_SIZE = 0x10,
+		PACKET_HEADER_SIZE = 0x20,
 	};
 
 							CBasePacket();
