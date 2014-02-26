@@ -15,6 +15,7 @@
 #include "SetWeatherPacket.h"
 #include "SetMusicPacket.h"
 #include "SetMapPacket.h"
+#include "SetInventoryPacket.h"
 
 #include "CompositePacket.h"
 
@@ -296,6 +297,30 @@ static PacketData GetCharacterInfo()
 	return outgoingPacket;
 }
 
+static PacketData GetInventoryInfo()
+{
+	PacketData outgoingPacket;
+
+	unsigned int itemCount = 0xC8;			//Item count can be less than 200, but we have to make sure no equipped items are using item indices over the itemCount
+	while(itemCount != 0)
+	{
+		CCompositePacket compositePacket;
+		{
+			unsigned int itemsToCopy = std::min<unsigned int>(itemCount, 32);
+			CSetInventoryPacket setInventoryPacket;
+			setInventoryPacket.SetSourceId(PLAYER_ID);
+			setInventoryPacket.SetTargetId(PLAYER_ID);
+			setInventoryPacket.SetItemCount(itemsToCopy);
+			setInventoryPacket.SetItemBase(itemCount - itemsToCopy);
+			compositePacket.AddPacket(setInventoryPacket.ToPacketData());
+			itemCount -= itemsToCopy;
+		}
+		auto compositePacketData = compositePacket.ToPacketData();
+		outgoingPacket.insert(std::end(outgoingPacket), std::begin(compositePacketData), std::end(compositePacketData));
+	}
+
+	return outgoingPacket;
+}
 void CGameServerPlayer::QueuePacket(const PacketData& packet)
 {
 	m_packetQueue.push_back(packet);
@@ -384,8 +409,7 @@ void CGameServerPlayer::PrepareInitialPackets()
 	QueuePacket(PacketData(GetMotd()));
 	QueuePacket(PacketData(std::begin(g_client0_login7), std::end(g_client0_login7)));
 	QueuePacket(PacketData(GetCharacterInfo()));
-	QueuePacket(PacketData(std::begin(g_client0_login9), std::end(g_client0_login9)));
-	QueuePacket(PacketData(std::begin(g_client0_login10), std::end(g_client0_login10)));
+	QueuePacket(PacketData(GetInventoryInfo()));
 	QueuePacket(PacketData(std::begin(g_client0_login11), std::end(g_client0_login11)));
 	QueuePacket(PacketData(std::begin(g_client0_login12), std::end(g_client0_login12)));
 	QueuePacket(PacketData(std::begin(g_client0_login13), std::end(g_client0_login13)));

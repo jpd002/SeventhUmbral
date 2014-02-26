@@ -100,6 +100,7 @@
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
     <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp" />
+    <ClCompile Include="..\daemon\SetInventoryPacket.cpp" />
     <ClCompile Include="..\daemon\SetMapPacket.cpp" />
     <ClCompile Include="..\daemon\SetMusicPacket.cpp" />
     <ClCompile Include="..\daemon\SetWeatherPacket.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="..\daemon\Log.h" />
     <ClInclude Include="..\daemon\PacketUtils.h" />
     <ClInclude Include="..\daemon\SetInitialPositionPacket.h" />
+    <ClInclude Include="..\daemon\SetInventoryPacket.h" />
     <ClInclude Include="..\daemon\SetMapPacket.h" />
     <ClInclude Include="..\daemon\SetMusicPacket.h" />
     <ClInclude Include="..\daemon\SetWeatherPacket.h" />

@@ -72,6 +72,9 @@
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\SetInventoryPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\SetInventoryPacket.h">
+      <Filter>Source Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
