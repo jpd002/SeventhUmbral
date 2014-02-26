@@ -1,6 +1,9 @@
 #include "PacketUtils.h"
 #include "../common/BLOWFISH.H"
 #include <assert.h>
+#include "Log.h"
+
+#define LOG_NAME "PacketUtils"
 
 bool CPacketUtils::HasPacket(Framework::CMemStream& stream)
 {
@@ -37,6 +40,13 @@ std::vector<uint8> CPacketUtils::ReadPacket(Framework::CMemStream& stream)
 	PACKETHEADER header;
 	stream.Read(&header, sizeof(PACKETHEADER));
 
+	if(header.packetSize < sizeof(PACKETHEADER))
+	{
+		//Invalid packet
+		CLog::GetInstance().LogError(LOG_NAME, "Packet size in header is invalid.\r\n");
+		return result;
+	}
+
 	stream.Seek(0, Framework::STREAM_SEEK_SET);
 	result.resize(header.packetSize);
 	stream.Read(&result[0], header.packetSize);
@@ -51,7 +61,12 @@ SubPacketArray CPacketUtils::SplitPacket(const PacketData& packet)
 {
 	SubPacketArray subPackets;
 
-	assert(packet.size() >= sizeof(PACKETHEADER));
+	if(packet.size() < sizeof(PACKETHEADER))
+	{
+		CLog::GetInstance().LogError(LOG_NAME, "Packet to split is smaller than PACKETHEADER.\r\n");
+		return subPackets;
+	}
+
 	const uint8* packetData = packet.data();
 
 	PACKETHEADER header = *reinterpret_cast<const PACKETHEADER*>(packetData);
@@ -63,7 +78,16 @@ SubPacketArray CPacketUtils::SplitPacket(const PacketData& packet)
 	while(currentSize != 0)
 	{
 		SUBPACKETHEADER subHeader = *reinterpret_cast<const SUBPACKETHEADER*>(packetData);
-		assert(currentSize >= subHeader.subPacketSize);
+		if(subHeader.subPacketSize == 0)
+		{
+			CLog::GetInstance().LogError(LOG_NAME, "Got zero sized subpacket. Stopping packet processing.\r\n");
+			break;
+		}
+		if(subHeader.subPacketSize > currentSize)
+		{
+			CLog::GetInstance().LogError(LOG_NAME, "Subpacket doesn't fit in packet. Stopping packet processing.\r\n");
+			break;
+		}
 		auto subPacket = PacketData(packetData, packetData + subHeader.subPacketSize);
 		subPackets.push_back(subPacket);
 		currentSize -= subHeader.subPacketSize;
