@@ -22,6 +22,7 @@ add_executable(ffxivd
 	../daemon/Main.cpp
 	../daemon/PacketUtils.cpp
 	../daemon/SetInitialPositionPacket.cpp
+	../daemon/SetInventoryPacket.cpp
 	../daemon/SetMapPacket.cpp
 	../daemon/SetMusicPacket.cpp
 	../daemon/SetWeatherPacket.cpp
