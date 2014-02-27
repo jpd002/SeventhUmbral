@@ -340,7 +340,12 @@ void CGameServerPlayer::Update()
 			}
 			const auto& nextPacket = m_packetQueue.front();
 			int sent = send(m_clientSocket, reinterpret_cast<const char*>(nextPacket.data()), nextPacket.size(), 0);
-			assert(sent == nextPacket.size());
+			if(sent != nextPacket.size())
+			{
+				CLog::GetInstance().LogError(LOG_NAME, "Failed to send packet to client. Disconnecting.\r\n");
+				m_disconnect = true;
+				return;
+			}
 			m_packetQueue.pop_front();
 			totalSent += sent;
 		}
@@ -367,6 +372,12 @@ void CGameServerPlayer::Update()
 	if(CPacketUtils::HasPacket(m_incomingStream))
 	{
 		auto incomingPacket = CPacketUtils::ReadPacket(m_incomingStream);
+		if(incomingPacket.size() == 0)
+		{
+			CLog::GetInstance().LogError(LOG_NAME, "Failed to read packet. Disconnecting.\r\n");
+			m_disconnect = true;
+			return;
+		}
 		auto subPackets = CPacketUtils::SplitPacket(incomingPacket);
 
 		for(const auto& subPacket : subPackets)
