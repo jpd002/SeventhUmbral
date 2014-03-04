@@ -1,0 +1,9 @@
+0x0005 -> Set Map
+0x000C -> Set Music
+0x000D -> Set Weather
+0x00CE -> Set Source Position
+0x00CF -> Set Destination Position
+0x0134 -> Set Actor State
+0x0137 -> Call Actor Function?
+0x0139 -> Battle Action Packet
+0x014B -> Set Inventory Packet
