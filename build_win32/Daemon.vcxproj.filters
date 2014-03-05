@@ -39,24 +39,6 @@
     <ClCompile Include="..\daemon\GameServerPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\daemon\BasePacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\daemon\SetWeatherPacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\daemon\CompositePacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\daemon\SetMusicPacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\daemon\SetMapPacket.cpp">
-      <Filter>Source Files\Packets</Filter>
-    </ClCompile>
     <ClCompile Include="..\daemon\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,7 +54,34 @@
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\daemon\SetInventoryPacket.cpp">
+    <ClCompile Include="..\daemon\packets\BasePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\BattleActionPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\CompositePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetActorPropertyPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetActorStatePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetInitialPositionPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetInventoryPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetMapPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetMusicPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\SetWeatherPacket.cpp">
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,24 +110,6 @@
     <ClInclude Include="..\daemon\GameServerPlayer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\daemon\SetInitialPositionPacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\daemon\BasePacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\daemon\SetWeatherPacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\daemon\CompositePacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\daemon\SetMusicPacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\daemon\SetMapPacket.h">
-      <Filter>Source Files\Packets</Filter>
-    </ClInclude>
     <ClInclude Include="..\daemon\SocketDef.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -140,7 +131,34 @@
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\daemon\SetInventoryPacket.h">
+    <ClInclude Include="..\daemon\packets\BasePacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\BattleActionPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\CompositePacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetActorPropertyPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetActorStatePacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetInitialPositionPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetInventoryPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetMapPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetMusicPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\SetWeatherPacket.h">
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>

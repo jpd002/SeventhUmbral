@@ -11,13 +11,15 @@
 #include "Log.h"
 #include "AppConfig.h"
 
-#include "SetInitialPositionPacket.h"
-#include "SetWeatherPacket.h"
-#include "SetMusicPacket.h"
-#include "SetMapPacket.h"
-#include "SetInventoryPacket.h"
-
-#include "CompositePacket.h"
+#include "packets/SetInitialPositionPacket.h"
+#include "packets/SetWeatherPacket.h"
+#include "packets/SetMusicPacket.h"
+#include "packets/SetMapPacket.h"
+#include "packets/SetInventoryPacket.h"
+#include "packets/SetActorStatePacket.h"
+#include "packets/SetActorPropertyPacket.h"
+#include "packets/BattleActionPacket.h"
+#include "packets/CompositePacket.h"
 
 #define LOG_NAME "GameServerPlayer"
 
@@ -150,6 +152,15 @@ static const uint8 g_chocoboRider2[] =
 	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
+static const uint8 g_endCommandForcedPacket[] =
+{
+	0x50, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9B, 0x02, 0x41, 0x29, 0x9B, 0x02, 0x00, 0xE0, 0xD2, 0xFE, 
+	0x14, 0x00, 0x31, 0x01, 0x00, 0x00, 0x00, 0x00, 0x6D, 0xEB, 0xE0, 0x50, 0x00, 0x00, 0x00, 0x00, 
+	0x41, 0x29, 0x9B, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x63, 0x6F, 0x6D, 0x6D, 0x61, 0x6E, 0x64, 
+	0x46, 0x6F, 0x72, 0x63, 0x65, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF2, 0xD4, 0x09, 0x30, 0xA9, 0x09, 0x0A, 
+};
+
 CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 : m_clientSocket(clientSocket)
 , m_disconnect(false)
@@ -279,7 +290,7 @@ static PacketData GetCharacterInfo()
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x38]) = character.GetFaceInfo();
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x40]) = character.hairStyle << 10;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x48]) = character.voice;
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = 0;						//weapon
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = 0;						//weapon
 
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x88]) = character.headGear;		//headGear
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x90]) = character.bodyGear;		//bodyGear
@@ -514,7 +525,11 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 	{
 		SendTeleportSequence(CSetMapPacket::MAP_SMALLBOAT, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_SMALLBOAT);
 	}
-
+	else if(!strcmp(chatText, "ride_chocobo"))
+	{
+		QueuePacket(PacketData(std::begin(g_chocoboRider1), std::end(g_chocoboRider1)));
+		QueuePacket(PacketData(std::begin(g_chocoboRider2), std::end(g_chocoboRider2)));
+	}
 //	printf("%s\r\n", chatText);
 }
 
@@ -547,19 +562,9 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 
 	CLog::GetInstance().LogDebug(LOG_NAME, "ProcessScriptCommand: %s Source Id = 0x%0.8X, Target Id = 0x%0.8X.", commandName, sourceId, targetId);
 
-	//printf("%s\r\n", CPacketUtils::DumpPacket(subPacket).c_str());
-
 	if(!strcmp(commandName, "commandRequest"))
 	{
 		//commandRequest (emote, changing equipment, ...)
-
-//		{
-//			static int currentFileNumber = 0;
-//			std::string fileName = std::string("dump_") + std::to_string(currentFileNumber++);
-//			FILE* output = fopen(fileName.c_str(), "wb");
-//			fprintf(output, "%s\r\n", CPacketUtils::DumpPacket(subPacket).c_str());
-//			fclose(output);
-//		}
 
 		switch(targetId)
 		{
@@ -570,7 +575,6 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 			ScriptCommand_Emote(subPacket, clientTime);
 			break;
 		case 0xA0F05EA2:
-			//Trash Item
 			ScriptCommand_TrashItem(subPacket, clientTime);
 			break;
 		default:
@@ -596,8 +600,23 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	}
 	else if(!strcmp(commandName, "commandForced"))
 	{
-		QueuePacket(PacketData(std::begin(g_chocoboRider1), std::end(g_chocoboRider1)));
-		QueuePacket(PacketData(std::begin(g_chocoboRider2), std::end(g_chocoboRider2)));
+		CCompositePacket packet;
+
+		switch(targetId)
+		{
+		case 0xA0F05209:
+			ScriptCommand_SwitchToActiveMode(packet);
+			break;
+		case 0xA0F0520A:
+			ScriptCommand_SwitchToPassiveMode(packet);
+			break;
+		default:
+			CLog::GetInstance().LogDebug(LOG_NAME, "Unknown commandForced target id (0x%0.8X).", targetId);
+			break;
+		}
+
+		packet.AddPacket(PacketData(std::begin(g_endCommandForcedPacket), std::end(g_endCommandForcedPacket)));
+		QueuePacket(packet.ToPacketData());
 	}
 	else if(!strcmp(commandName, "talkDefault"))
 	{
@@ -959,6 +978,79 @@ void CGameServerPlayer::ScriptCommand_TrashItem(const PacketData& subPacket, uin
 {
 	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6A]);
 	CLog::GetInstance().LogDebug(LOG_NAME, "Trashing Item: 0x%0.8X", itemId);
+}
+
+void CGameServerPlayer::ScriptCommand_SwitchToActiveMode(CCompositePacket& outputPacket)
+{
+	{
+		CSetActorStatePacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetState(CSetActorStatePacket::STATE_ACTIVE);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+
+	{
+		CSetActorPropertyPacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.AddSetShort(CSetActorPropertyPacket::VALUE_TP, 3000);
+		packet.AddTargetProperty("charaWork/stateAtQuicklyForAll");
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+
+	{
+		CBattleActionPacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetActionSourceId(PLAYER_ID);
+		packet.SetActionTargetId(PLAYER_ID);
+		packet.SetAnimationId(0x7C000062);
+		packet.SetDescriptionId(0x08105209);
+		packet.SetFeedbackId(1);
+		packet.SetAttackSide(0x0100);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+
+	{
+		CSetMusicPacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetMusicId(CSetMusicPacket::MUSIC_BLACKSHROUD_BATTLE);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+}
+
+void CGameServerPlayer::ScriptCommand_SwitchToPassiveMode(CCompositePacket& outputPacket)
+{
+	{
+		CSetActorStatePacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetState(CSetActorStatePacket::STATE_PASSIVE);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+
+	{
+		CBattleActionPacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetActionSourceId(PLAYER_ID);
+		packet.SetActionTargetId(PLAYER_ID);
+		packet.SetAnimationId(0x7C000062);
+		packet.SetDescriptionId(0x0810520A);
+		packet.SetFeedbackId(1);
+		packet.SetAttackSide(0x100);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
+
+	{
+		CSetMusicPacket packet;
+		packet.SetSourceId(PLAYER_ID);
+		packet.SetTargetId(PLAYER_ID);
+		packet.SetMusicId(CSetMusicPacket::MUSIC_SHROUD);
+		outputPacket.AddPacket(packet.ToPacketData());
+	}
 }
 
 void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)

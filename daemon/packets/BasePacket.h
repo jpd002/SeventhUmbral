@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PacketUtils.h"
+#include "../PacketUtils.h"
 
 class CBasePacket
 {

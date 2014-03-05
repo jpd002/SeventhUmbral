@@ -86,9 +86,7 @@
   <ItemGroup>
     <ClCompile Include="..\common\BLOWFISH.C" />
     <ClCompile Include="..\daemon\AppConfig.cpp" />
-    <ClCompile Include="..\daemon\BasePacket.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
-    <ClCompile Include="..\daemon\CompositePacket.cpp" />
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
@@ -96,20 +94,23 @@
     <ClCompile Include="..\daemon\LobbyServerPlayer.cpp" />
     <ClCompile Include="..\daemon\Log.cpp" />
     <ClCompile Include="..\daemon\Main.cpp" />
+    <ClCompile Include="..\daemon\packets\BasePacket.cpp" />
+    <ClCompile Include="..\daemon\packets\BattleActionPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\CompositePacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetActorPropertyPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetActorStatePacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetInitialPositionPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetInventoryPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetMapPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetMusicPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\SetWeatherPacket.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
-    <ClCompile Include="..\daemon\SetInitialPositionPacket.cpp" />
-    <ClCompile Include="..\daemon\SetInventoryPacket.cpp" />
-    <ClCompile Include="..\daemon\SetMapPacket.cpp" />
-    <ClCompile Include="..\daemon\SetMusicPacket.cpp" />
-    <ClCompile Include="..\daemon\SetWeatherPacket.cpp" />
     <ClCompile Include="..\daemon\SocketUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
     <ClInclude Include="..\daemon\AppConfig.h" />
-    <ClInclude Include="..\daemon\BasePacket.h" />
     <ClInclude Include="..\daemon\Character.h" />
-    <ClInclude Include="..\daemon\CompositePacket.h" />
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
     <ClInclude Include="..\daemon\GameServerPlayer.h" />
@@ -119,12 +120,17 @@
     <ClInclude Include="..\daemon\LobbyServerPlayer.h" />
     <ClInclude Include="..\daemon\LobbyServer_Login.h" />
     <ClInclude Include="..\daemon\Log.h" />
+    <ClInclude Include="..\daemon\packets\BasePacket.h" />
+    <ClInclude Include="..\daemon\packets\BattleActionPacket.h" />
+    <ClInclude Include="..\daemon\packets\CompositePacket.h" />
+    <ClInclude Include="..\daemon\packets\SetActorPropertyPacket.h" />
+    <ClInclude Include="..\daemon\packets\SetActorStatePacket.h" />
+    <ClInclude Include="..\daemon\packets\SetInitialPositionPacket.h" />
+    <ClInclude Include="..\daemon\packets\SetInventoryPacket.h" />
+    <ClInclude Include="..\daemon\packets\SetMapPacket.h" />
+    <ClInclude Include="..\daemon\packets\SetMusicPacket.h" />
+    <ClInclude Include="..\daemon\packets\SetWeatherPacket.h" />
     <ClInclude Include="..\daemon\PacketUtils.h" />
-    <ClInclude Include="..\daemon\SetInitialPositionPacket.h" />
-    <ClInclude Include="..\daemon\SetInventoryPacket.h" />
-    <ClInclude Include="..\daemon\SetMapPacket.h" />
-    <ClInclude Include="..\daemon\SetMusicPacket.h" />
-    <ClInclude Include="..\daemon\SetWeatherPacket.h" />
     <ClInclude Include="..\daemon\SocketDef.h" />
     <ClInclude Include="..\daemon\SocketUtils.h" />
   </ItemGroup>

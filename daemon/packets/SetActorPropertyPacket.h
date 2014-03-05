@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePacket.h"
+#include "BasePacket.h"
 #include "MemStream.h"
 
 class CSetActorPropertyPacket : public CBasePacket

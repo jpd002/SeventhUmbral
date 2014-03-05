@@ -5,6 +5,7 @@
 #include "Types.h"
 #include "MemStream.h"
 #include "PacketUtils.h"
+#include "packets/CompositePacket.h"
 
 class CGameServerPlayer
 {
@@ -32,6 +33,8 @@ private:
 	void						ScriptCommand_EquipItem(const PacketData&, uint32);
 	void						ScriptCommand_Emote(const PacketData&, uint32);
 	void						ScriptCommand_TrashItem(const PacketData&, uint32);
+	void						ScriptCommand_SwitchToActiveMode(CCompositePacket&);
+	void						ScriptCommand_SwitchToPassiveMode(CCompositePacket&);
 
 	void						SendTeleportSequence(uint32, uint32, float, float, float, float);
 
