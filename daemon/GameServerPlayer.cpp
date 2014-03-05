@@ -1005,10 +1005,10 @@ void CGameServerPlayer::ScriptCommand_SwitchToActiveMode(CCompositePacket& outpu
 		packet.SetTargetId(PLAYER_ID);
 		packet.SetActionSourceId(PLAYER_ID);
 		packet.SetActionTargetId(PLAYER_ID);
-		packet.SetAnimationId(0x7C000062);
-		packet.SetDescriptionId(0x08105209);
+		packet.SetAnimationId(CBattleActionPacket::ANIMATION_SHEATH_UNSHEATH);
+		packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_ENTER_BATTLE);
 		packet.SetFeedbackId(1);
-		packet.SetAttackSide(0x0100);
+		packet.SetAttackSide(CBattleActionPacket::SIDE_NORMAL);
 		outputPacket.AddPacket(packet.ToPacketData());
 	}
 
@@ -1037,10 +1037,10 @@ void CGameServerPlayer::ScriptCommand_SwitchToPassiveMode(CCompositePacket& outp
 		packet.SetTargetId(PLAYER_ID);
 		packet.SetActionSourceId(PLAYER_ID);
 		packet.SetActionTargetId(PLAYER_ID);
-		packet.SetAnimationId(0x7C000062);
-		packet.SetDescriptionId(0x0810520A);
+		packet.SetAnimationId(CBattleActionPacket::ANIMATION_SHEATH_UNSHEATH);
+		packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_LEAVE_BATTLE);
 		packet.SetFeedbackId(1);
-		packet.SetAttackSide(0x100);
+		packet.SetAttackSide(CBattleActionPacket::SIDE_NORMAL);
 		outputPacket.AddPacket(packet.ToPacketData());
 	}
 

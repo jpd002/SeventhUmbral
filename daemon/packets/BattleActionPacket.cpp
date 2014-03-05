@@ -1,27 +1,5 @@
 #include "BattleActionPacket.h"
 
-//Animation IDs
-//0x11001000 = enemy attack?
-//0x12001401 = Savage Blade?
-//0x1200102B = Skull Sunder
-//0x1200302A = Fracture
-//0x1200302B = ?
-//0x1200302C = ?
-//0x1200302D = ? (looks like a bow skill)
-//0x1200302E = ? (looks like a bow skill)
-//0x19001000 = player attack?
-//0x7C000062 = Sheath/Unsheath animations?
-
-//Description IDs
-//0x08105209 = Enter Battle Mode
-//0x0810520A = Leave Battle Mode
-//0x08105658 = Player Attack
-//0x081059DD = Enemy Attack
-//0x08106A37 = Skull Sunder
-//0x08106A3E = Fracture 
-//0x08106A3F = Overpower
-//0x08106A40 = Enhanced Provoke
-
 //Damage Types
 //0x765D = Normal attack
 //0x7662 = Partially Blocked?
@@ -29,11 +7,6 @@
 //Feedback IDs
 //0x08000604 = Normal?
 //0x0800104C = Protect?
-
-//Attack Sides
-//0x0100 = normal?
-//0x0101 = normal
-//0x0102 = right
 
 CBattleActionPacket::CBattleActionPacket()
 {
