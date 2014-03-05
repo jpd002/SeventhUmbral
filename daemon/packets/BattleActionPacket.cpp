@@ -1,13 +1,5 @@
 #include "BattleActionPacket.h"
 
-//Damage Types
-//0x765D = Normal attack
-//0x7662 = Partially Blocked?
-
-//Feedback IDs
-//0x08000604 = Normal?
-//0x0800104C = Protect?
-
 CBattleActionPacket::CBattleActionPacket()
 {
 	m_commandId = 0x139;
