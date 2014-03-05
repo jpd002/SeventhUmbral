@@ -97,6 +97,7 @@
     <ClCompile Include="..\daemon\packets\BasePacket.cpp" />
     <ClCompile Include="..\daemon\packets\BattleActionPacket.cpp" />
     <ClCompile Include="..\daemon\packets\CompositePacket.cpp" />
+    <ClCompile Include="..\daemon\packets\DisplayMessagePacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetActorPropertyPacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetActorStatePacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetInitialPositionPacket.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="..\daemon\packets\BasePacket.h" />
     <ClInclude Include="..\daemon\packets\BattleActionPacket.h" />
     <ClInclude Include="..\daemon\packets\CompositePacket.h" />
+    <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorPropertyPacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorStatePacket.h" />
     <ClInclude Include="..\daemon\packets\SetInitialPositionPacket.h" />

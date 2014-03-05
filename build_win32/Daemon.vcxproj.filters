@@ -84,6 +84,9 @@
     <ClCompile Include="..\daemon\packets\SetWeatherPacket.cpp">
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\packets\DisplayMessagePacket.cpp">
+      <Filter>Source Files\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -159,6 +162,9 @@
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\packets\SetWeatherPacket.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h">
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
