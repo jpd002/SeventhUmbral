@@ -676,10 +676,10 @@ void CGameServerPlayer::PrepareInitialPackets()
 	QueuePacket(PacketData(std::begin(g_client0_login2), std::end(g_client0_login2)));
 	QueuePacket(PacketData(std::begin(g_client0_login3), std::end(g_client0_login3)));
 	QueuePacket(PacketData(std::begin(g_client0_login4), std::end(g_client0_login4)));
-	QueuePacket(PacketData(GetMotd()));
+	QueuePacket(GetMotd());
 	QueuePacket(PacketData(std::begin(g_client0_login7), std::end(g_client0_login7)));
-	QueuePacket(PacketData(GetCharacterInfo()));
-	QueuePacket(PacketData(GetInventoryInfo()));
+	QueuePacket(GetCharacterInfo());
+	QueuePacket(GetInventoryInfo());
 	QueuePacket(PacketData(std::begin(g_client0_login11), std::end(g_client0_login11)));
 	QueuePacket(PacketData(std::begin(g_client0_login12), std::end(g_client0_login12)));
 	QueuePacket(PacketData(std::begin(g_client0_login13), std::end(g_client0_login13)));
@@ -1479,13 +1479,7 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 		QueuePacket(outgoingPacket);
 	}
 
-	QueuePacket(PacketData(std::begin(g_client0_moor14), std::end(g_client0_moor14)));
-	QueuePacket(PacketData(std::begin(g_client0_moor15), std::end(g_client0_moor15)));
-	QueuePacket(PacketData(std::begin(g_client0_moor16), std::end(g_client0_moor16)));
-	QueuePacket(PacketData(std::begin(g_client0_moor17), std::end(g_client0_moor17)));
-	QueuePacket(PacketData(std::begin(g_client0_moor18), std::end(g_client0_moor18)));
-	QueuePacket(PacketData(std::begin(g_client0_moor19), std::end(g_client0_moor19)));
-	QueuePacket(PacketData(std::begin(g_client0_moor20), std::end(g_client0_moor20)));
+	QueuePacket(GetInventoryInfo());
 	QueuePacket(PacketData(std::begin(g_client0_moor21), std::end(g_client0_moor21)));
 	//QueuePacket(PacketData(std::begin(g_client0_moor22), std::end(g_client0_moor22)));
 	
