@@ -1,3 +1,4 @@
+0x0003 -> Display Message
 0x0005 -> Set Map
 0x000C -> Set Music
 0x000D -> Set Weather
