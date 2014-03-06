@@ -5,13 +5,15 @@
 class CCompositePacket
 {
 public:
-					CCompositePacket();
-	virtual			~CCompositePacket();
+						CCompositePacket();
+	virtual				~CCompositePacket();
 
-	void			AddPacket(const PacketData&);
+	void				AddPacket(const PacketData&);
 
-	PacketData		ToPacketData() const;
+	PacketData			ToPacketData() const;
 
 private:
-	PacketData		m_contents;
+	static PacketData	CompressPacketData(const PacketData&);
+
+	PacketData			m_contents;
 };

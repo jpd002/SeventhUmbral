@@ -143,6 +143,9 @@
     <ProjectReference Include="..\..\Framework\build_win32\FrameworkMySql.vcxproj">
       <Project>{de7ec936-f8a7-4a7a-85e2-5d0439365f21}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
+      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
