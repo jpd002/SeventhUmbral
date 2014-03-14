@@ -17,6 +17,17 @@ div.info
 	background-color: lightblue;
 }
 
+div.edit
+{
+	width: 600px;
+	margin-top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	padding: 20px;
+	background-color: lightblue;
+}
+
 div.inner
 {
 	position: relative;
@@ -58,9 +69,20 @@ table.infoForm
 	width: 100%;
 }
 
+table.editForm
+{
+	width: 100%;
+}
+
 td
 {
 	padding: 3px;
+}
+
+th
+{
+	padding: 3px;
+	text-decoration: underline;
 }
 
 p

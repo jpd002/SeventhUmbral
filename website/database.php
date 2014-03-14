@@ -1,15 +1,26 @@
 <?php
 include("config.php");
 
-$db_connect = mysql_connect($db_server, $db_username, $db_password);
+mysqli_report(MYSQLI_REPORT_STRICT);
 
-if(!$db_connect)
+function CreateDatabaseConnection($server, $username, $password, $database)
 {
-	die("Error while connecting to the database");
+	try
+	{
+		$dataConnection = new mysqli($server, $username, $password);
+	}
+	catch(Exception $e)
+	{
+		die("Error while connecting to the database");
+	}
+
+	$dataConnection->select_db($database);
+	$dataConnection->query("SET NAMES 'utf8'");
+	
+	return $dataConnection;
 }
 
-mysql_select_db($db_database);
-mysql_query("SET NAMES 'utf8'");
+$g_databaseConnection = CreateDatabaseConnection($db_server, $db_username, $db_password, $db_database);
 
 function GenerateRandomSha224()
 {
@@ -17,64 +28,252 @@ function GenerateRandomSha224()
 	return hash("sha224", uniqid(mt_rand(), true));
 }
 
-function VerifyUser($username, $password)
+function VerifyUser($dataConnection, $username, $password)
 {
-	$username = mysql_real_escape_string($username);
-	
-	$query = sprintf("SELECT id, passhash, salt FROM ffxiv_users WHERE name = '%s'", $username);
-	$queryResult = mysql_query($query);
-	if(!$queryResult)
+	$statement = $dataConnection->prepare("SELECT id, passhash, salt FROM ffxiv_users WHERE name = ?");
+	if(!$statement)
 	{
-		throw new Exception("Could not verify user.");
-	}
-
-	$queryRow = mysql_fetch_assoc($queryResult);
-	
-	$id				= $queryRow["id"];
-	$storedPasshash	= $queryRow["passhash"];
-	$salt 			= $queryRow["salt"];
-
-	$saltedPassword = $password . $salt;
-	$hashedPassword = hash("sha224", $saltedPassword);
-	
-	if($hashedPassword !== $storedPasshash)
-	{
-		throw new Exception("Could not verify user.");
+		throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
 	}
 	
-	return $id;
-}
-
-function InsertUser($username, $passhash, $salt, $email)
-{
-	$username = mysql_real_escape_string($username);
-	$email = mysql_real_escape_string($email);
-	
-	$query = sprintf("INSERT INTO ffxiv_users (name, passhash, salt, email) VALUES ('%s', '%s', '%s', '%s')",
-		$username, $passhash, $salt, $email);
-	if(!mysql_query($query))
+	try
 	{
-		throw new Exception("Could not add user.");
+		$statement->bind_param('s', $username);
+		if(!$statement->execute())
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+
+		$statement->bind_result($id, $storedPasshash, $salt);
+		if(!$statement->fetch())
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+		
+		$saltedPassword = $password . $salt;
+		$hashedPassword = hash("sha224", $saltedPassword);
+		
+		if($hashedPassword !== $storedPasshash)
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+		
+		return $id;
+	}
+	finally
+	{
+		$statement->close();
 	}
 }
 
-function CreateSession($userId)
+function InsertUser($dataConnection, $username, $passhash, $salt, $email)
+{
+	$statement = $dataConnection->prepare("INSERT INTO ffxiv_users (name, passhash, salt, email) VALUES (?, ?, ?, ?)");
+	if(!$statement)
+	{
+		throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+	}
+
+	try
+	{
+		$statement->bind_param('ssss', $username, $passhash, $salt, $email);
+
+		if(!$statement->execute())
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+	}
+	finally
+	{
+		$statement->close();
+	}
+}
+
+function CreateSession($dataConnection, $userId)
 {
 	//Delete any session that might be active
 	$query = sprintf("DELETE FROM ffxiv_sessions WHERE userId = '%d'", $userId);
-	if(!mysql_query($query))
+	if(!$dataConnection->query($query))
 	{
 		throw new Exception("Failed to create session.");
 	}
 	
 	$sessionId = GenerateRandomSha224();
 	$query = sprintf("INSERT INTO ffxiv_sessions (id, userid, expiration) VALUES ('%s', %d, NOW() + INTERVAL 1 DAY)", $sessionId, $userId);
-	if(!mysql_query($query))
+	if(!$dataConnection->query($query))
 	{
 		throw new Exception("Failed to create session.");
 	}
 	
 	return $sessionId;
+}
+
+function GetUserIdFromSession($dataConnection, $sessionId)
+{
+	$statement = $dataConnection->prepare("SELECT userId FROM ffxiv_sessions WHERE id = ? AND expiration > NOW()");
+	if(!$statement)
+	{
+		throw new Exception("Could not get user id.");
+	}
+
+	try
+	{
+		$statement->bind_param('s', $sessionId);
+		if(!$statement->execute())
+		{
+			throw new Exception("Could not get user id.");
+		}
+		
+		$statement->bind_result($userId);
+		if(!$statement->fetch())
+		{
+			throw new Exception("Could not get user id.");
+		}
+		
+		return $userId;
+	}
+	finally
+	{
+		$statement->close();
+	}
+}
+
+function GetUserInfo($dataConnection, $userId)
+{
+	$statement = $dataConnection->prepare("SELECT name FROM ffxiv_users WHERE id = ?");
+	if(!$statement)
+	{
+		throw new Exception("Failed to get user information: " . $dataConnection->error);
+	}
+	
+	try
+	{
+		$statement->bind_param('i', $userId);
+		if(!$statement->execute())
+		{
+			throw new Exception("Failed to get user information: " . $dataConnection->error);
+		}
+		
+		$result = $statement->get_result();
+		if(!$result)
+		{
+			throw new Exception("Failed to get user information: " . $dataConnection->error);
+		}
+
+		$row = $result->fetch_assoc();
+		if(!$row)
+		{
+			throw new Exception("Failed to get user information: " . $dataConnection->error);
+		}
+		
+		return $row;
+	}
+	finally
+	{
+		$statement->close();
+	}
+}
+
+function GetUserCharacters($dataConnection, $userId)
+{
+	$statement = $dataConnection->prepare("SELECT id, name FROM ffxiv_characters WHERE userId = ?");
+	if(!$statement)
+	{
+		throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+	}
+	
+	try
+	{
+		$statement->bind_param('i', $userId);
+		if(!$statement->execute())
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+		
+		$result = $statement->get_result();
+		if(!$result)
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+
+		$characters = array();
+		
+		while(1)
+		{
+			$row = $result->fetch_assoc();
+			if(!$row)
+			{
+				break;
+			}
+			array_push($characters, $row);
+		}
+		
+		return $characters;
+	}
+	finally
+	{
+		$statement->close();
+	}
+}
+
+function GetCharacterInfo($dataConnection, $userId, $characterId)
+{
+	$query = sprintf("SELECT * FROM ffxiv_characters WHERE userId = '%d' AND id = '%d'", 
+		$userId, $characterId);
+	$result = $dataConnection->query($query);
+	if(!$result)
+	{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+	}
+	
+	$row = $result->fetch_assoc();
+	if(!$row)
+	{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+	}
+	
+	return $row;
+}
+
+function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
+{
+	$statement = $dataConnection->prepare("UPDATE ffxiv_characters SET
+		name = ?, tribe = ?, size = ?, skinColor = ?, hairStyle = ?, hairColor = ?, hairOption = ?,
+		eyeColor = ?, faceType = ?, faceBrow = ?, faceEye = ?, faceIris = ?, faceNose = ?, faceMouth = ?, faceJaw = ?,
+		faceCheek = ?, faceOption1 = ?, faceOption2 = ?, guardian = ?, birthMonth = ?, birthDay = ?,
+		headGear = ?, bodyGear = ?, legsGear = ?, handsGear = ?, feetGear = ?
+		WHERE id = ?");
+	if(!$statement)
+	{
+		throw new Exception("Failed to update character information: " . $dataConnection->error);
+	}
+	
+	try
+	{
+		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiii",
+			$characterInfo["name"], $characterInfo["tribe"], $characterInfo["size"],
+			$characterInfo["skinColor"], $characterInfo["hairStyle"], $characterInfo["hairColor"],
+			$characterInfo["hairOption"], $characterInfo["eyeColor"], $characterInfo["faceType"],
+			$characterInfo["faceBrow"], $characterInfo["faceEye"], $characterInfo["faceIris"],
+			$characterInfo["faceNose"], $characterInfo["faceMouth"], $characterInfo["faceJaw"],
+			$characterInfo["faceCheek"], $characterInfo["faceOption1"], $characterInfo["faceOption2"],
+			$characterInfo["guardian"], $characterInfo["birthMonth"], $characterInfo["birthDay"],
+			$characterInfo["headGear"], $characterInfo["bodyGear"], $characterInfo["legsGear"],
+			$characterInfo["handsGear"], $characterInfo["feetGear"],
+			$characterId))
+		{
+			throw new Exception("Failed to update character information: " . $dataConnection->error);
+		}
+		
+		if(!$statement->execute())
+		{
+			throw new Exception("Failed to update character information: " . $dataConnection->error);
+		}
+	}
+	finally
+	{
+		$statement->close();
+	}
 }
 
 ?>

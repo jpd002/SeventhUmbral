@@ -4,7 +4,7 @@ include("config.php");
 include("database.php");
 require_once("recaptchalib.php");
 
-function CreateUserPage_CreateUser()
+function CreateUserPage_CreateUser($databaseConnection)
 {
 	$username 		= trim($_POST["username"]);
 	$password 		= trim($_POST["password"]);
@@ -35,7 +35,7 @@ function CreateUserPage_CreateUser()
 	$saltedPassword = $password . $salt;
 	$hashedPassword = hash("sha224", $saltedPassword);
 	
-	InsertUser($username, $hashedPassword, $salt, $email);
+	InsertUser($databaseConnection, $username, $hashedPassword, $salt, $email);
 }
 
 $createUserError = "";
@@ -56,7 +56,7 @@ if(isset($_POST["createUser"]))
 		{
 			throw new Exception("CAPTCHA test failed. Try again.");
 		}
-		CreateUserPage_CreateUser();
+		CreateUserPage_CreateUser($g_databaseConnection);
 		header("Location: create_user_success.php");
 		die();
 	}

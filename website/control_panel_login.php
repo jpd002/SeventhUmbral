@@ -32,6 +32,8 @@ if(isset($_POST["login"]))
 	try
 	{
 		$sessionId = LoginPage_Login($g_databaseConnection);
+		setcookie("sessionId", $sessionId);
+		header("Location: control_panel.php");
 	}
 	catch(Exception $e)
 	{
@@ -43,17 +45,12 @@ if(isset($_POST["login"]))
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		<meta charset="UTF-8">
 		<title>Seventh Umbral Server</title>
 		<link rel="stylesheet" type="text/css" href="css/reset.css" />	
 		<link rel="stylesheet" type="text/css" href="css/global.css" />	
 	</head>
 	<body>
-		<?php
-			if(!empty($sessionId))
-			{
-				echo "<script>window.location=\"ffxiv://login_success?sessionId=" . $sessionId . "\";</script>";
-			}
-		?>
 		<?php include("header.php"); ?>
 		<div class="info">
 			<h2>Login</h2>
