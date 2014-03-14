@@ -29,6 +29,7 @@ private:
 
 	void						PrepareInitialPackets();
 
+	void						ProcessInitialHandshake(unsigned int, const PacketData&);
 	void						ProcessKeepAlive(const PacketData&);
 	void						ProcessChat(const PacketData&);
 	void						ProcessSetPlayerPosition(const PacketData&);
@@ -51,6 +52,7 @@ private:
 	Framework::CMemStream		m_incomingStream;
 	PacketQueue					m_packetQueue;
 	bool						m_disconnect;
+	bool						m_sentInitialHandshake = false;
 	bool						m_isActiveMode = false;
 	int							m_playerAutoAttackTimer = 0;
 	int							m_enemyAutoAttackTimer = 0;

@@ -10,7 +10,7 @@
 
 #define LOG_NAME		("GameServer")
 
-static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocketAddress, int clientId)
+static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocketAddress)
 {
 #ifdef WIN32
 	u_long notBlockingMode = 1;
@@ -22,42 +22,11 @@ static void ClientThreadProc(SOCKET clientSocket, const sockaddr_in& clientSocke
 
 	CLog::GetInstance().LogMessage(LOG_NAME, "Received connection from %s.", GetSocketIpAddressString(clientSocketAddress).c_str());
 
-	if(clientId == 0)
+	CGameServerPlayer player(clientSocket);
+	while(player.IsConnected())
 	{
-		CGameServerPlayer player(clientSocket);
-		while(player.IsConnected())
-		{
-			player.Update();
-			std::this_thread::sleep_for(std::chrono::milliseconds(16));
-		}
-	}
-	else
-	{
-		{
-			std::vector<uint8> outgoingPacket(std::begin(g_client1_login1), std::end(g_client1_login1));
-			int sent = send(clientSocket, reinterpret_cast<const char*>(outgoingPacket.data()), outgoingPacket.size(), 0);
-			assert(sent == outgoingPacket.size());
-		}
-
-		{
-			std::vector<uint8> outgoingPacket(std::begin(g_client1_login2), std::end(g_client1_login2));
-			int sent = send(clientSocket, reinterpret_cast<const char*>(outgoingPacket.data()), outgoingPacket.size(), 0);
-			assert(sent == outgoingPacket.size());
-		}
-
-		while(1)
-		{
-			static const unsigned int maxPacketSize = 0x10000;
-			uint8 incomingPacket[maxPacketSize];
-			int read = recv(clientSocket, reinterpret_cast<char*>(incomingPacket), maxPacketSize, 0);
-			if(read == 0)
-			{
-				//Client disconnected
-				CLog::GetInstance().LogMessage(LOG_NAME, "Client disconnected.");
-				break;
-			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		}
+		player.Update();
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
 	}
 
 	closesocket(clientSocket);
@@ -107,16 +76,13 @@ void CGameServer::ServerThreadProc()
 
 	CLog::GetInstance().LogMessage(LOG_NAME, "Game server started.");
 
-	int clientId = 0;
-
 	while(1)
 	{
 		sockaddr_in incomingAddr;
 		socklen_t incomingAddrSize = sizeof(sockaddr_in);
 		SOCKET incomingSocket = accept(listenSocket, reinterpret_cast<sockaddr*>(&incomingAddr), &incomingAddrSize);
-		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket, incomingAddr, clientId & 1));
+		std::thread clientThread(std::bind(&ClientThreadProc, incomingSocket, incomingAddr));
 		clientThread.detach();
-		clientId++;
 	}
 
 	closesocket(listenSocket);

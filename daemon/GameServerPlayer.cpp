@@ -362,7 +362,7 @@ CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 , m_alreadyMovedOutOfRoom(false)
 , m_zoneMasterCreated(false)
 {
-	PrepareInitialPackets();
+
 }
 
 CGameServerPlayer::~CGameServerPlayer()
@@ -579,6 +579,8 @@ void CGameServerPlayer::Update()
 			m_disconnect = true;
 			return;
 		}
+
+		unsigned int clientId = incomingPacket[0x02];
 		auto subPackets = CPacketUtils::SplitPacket(incomingPacket);
 
 		for(const auto& subPacket : subPackets)
@@ -586,6 +588,9 @@ void CGameServerPlayer::Update()
 			uint16 commandId = CPacketUtils::GetSubPacketCommand(subPacket);
 			switch(commandId)
 			{
+			case 0x0000:
+				ProcessInitialHandshake(clientId, subPacket);
+				break;
 			case 0x0001:
 				ProcessKeepAlive(subPacket);
 				break;
@@ -692,6 +697,28 @@ void CGameServerPlayer::PrepareInitialPackets()
 //	m_npcHp[ACTOR_ID_ENEMY_2] = ENEMY_INITIAL_HP;
 //	m_npcHp[ACTOR_ID_ENEMY_3] = ENEMY_INITIAL_HP;
 //	m_npcHp[ACTOR_ID_ENEMY_4] = ENEMY_INITIAL_HP;
+}
+
+void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const PacketData& subPacket)
+{
+	if(m_sentInitialHandshake) return;
+
+	const char* userIdString = reinterpret_cast<const char*>(subPacket.data() + 0x14);
+	unsigned int userId = atoi(userIdString);
+
+	CLog::GetInstance().LogDebug(LOG_NAME, "Initial handshake for clientId = %d and userId = 0x%0.8X", clientId, userId);
+
+	if(clientId == 1)
+	{
+		PrepareInitialPackets();
+	}
+	else if(clientId == 2)
+	{
+		QueuePacket(PacketData(std::begin(g_client1_login1), std::end(g_client1_login1)));
+		QueuePacket(PacketData(std::begin(g_client1_login2), std::end(g_client1_login2)));
+	}
+
+	m_sentInitialHandshake = true;
 }
 
 void CGameServerPlayer::ProcessKeepAlive(const PacketData& subPacket)
