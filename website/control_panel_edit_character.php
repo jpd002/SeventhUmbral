@@ -195,16 +195,24 @@ catch(Exception $e)
 					[ 'characterVoice', 		'appearancetype_voice' ],
 					[ 'characterSkinColor',		'appearancetype_skin' ],
 					[ 'characterHairStyle',		'appearancetype_hairstyle' ],
+					
 					[ 'characterHairColor',		'appearancetype_haircolor' ],
 					[ 'characterHairOption',	'appearancetype_hairoption2' ],
 					[ 'characterEyeColor', 		'appearancetype_eyecolor' ],
 					[ 'characterFaceType', 		'appearancetype_facetype' ],
+					
+					[ 'characterFaceBrow',		'appearancetype_facebrow' ],
+					[ 'characterFaceEye',		'appearancetype_faceeye' ],
+					[ 'characterFaceIris',		'appearancetype_faceiris' ],
 					[ 'characterFaceNose', 		'appearancetype_facenose' ],
+					
 					[ 'characterFaceMouth', 	'appearancetype_facemouth' ],
 					[ 'characterFaceJaw', 		'appearancetype_facejaw_special' ],
 					[ 'characterFaceCheek', 	'appearancetype_facecheek' ],
 					[ 'characterFaceOption1', 	'appearancetype_faceoption1' ],
+					
 					[ 'characterFaceOption2', 	'appearancetype_faceoption2' ],
+					
 					[ 'characterGuardian', 		'guardian' ],
 					[ 'characterBirthMonth', 	'birth_month' ],
 					[ 'characterBirthDay', 		'birth_day' ],
@@ -370,8 +378,8 @@ catch(Exception $e)
 								}
 							</script>
 							<input type="file" id="importFile" style="display: none;">
-							<button onclick="onImportButtonClick(); return;">Import</button>
-							<button onclick="exportCharacter();">Export</button>
+							<button onclick="onImportButtonClick(); return false;">Import</button>
+							<button onclick="exportCharacter(); return false;">Export</button>
 							<input type="submit" name="save" value="Save" />
 							<script>
 								document.getElementById('importFile').addEventListener('change', importCharacter, false);
