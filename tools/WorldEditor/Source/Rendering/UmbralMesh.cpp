@@ -4,8 +4,8 @@
 #include "PtrStream.h"
 #include "StdStream.h"
 #include "D3DShaderDisassembler.h"
-#include "Dx11UmbralEffect.h"
-#include "Dx11UmbralEffectProvider.h"
+#include "UmbralEffectProvider.h"
+#include "UmbralEffect.h"
 
 #define _USE_GAME_SHADERS
 
@@ -174,9 +174,9 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	const auto& nrmVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_NORMAL);
 	const auto& uv0VertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_UV0);
 	const auto& uv1VertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_UV1);
-	const auto& uv2VertexItem = bufferDesc.GetVertexItem(CDx11UmbralEffect::VERTEX_ITEM_ID_UV2);
+	const auto& uv2VertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2);
 	const auto& colorVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_COLOR);
-	const auto& tangentVertexItem = bufferDesc.GetVertexItem(CDx11UmbralEffect::VERTEX_ITEM_ID_TANGENT);
+	const auto& tangentVertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT);
 
 	{
 		const uint16* srcIndices = reinterpret_cast<const uint16*>(indexStream->GetData());
@@ -291,7 +291,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(uv3Element)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = CDx11UmbralEffect::VERTEX_ITEM_ID_UV2;
+		vertexItem.id = CUmbralEffect::VERTEX_ITEM_ID_UV2;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector2);
 		currentOffset += vertexItem.size;
@@ -309,7 +309,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(tangentElement)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = CDx11UmbralEffect::VERTEX_ITEM_ID_TANGENT;
+		vertexItem.id = CUmbralEffect::VERTEX_ITEM_ID_TANGENT;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector4);
 		currentOffset += vertexItem.size;
@@ -368,7 +368,7 @@ void CUmbralMesh::SetupEffect()
 #endif
 
 	const auto& effectProvider = CGlobalResources::GetInstance().GetEffectProvider();
-	m_effect = std::static_pointer_cast<CDx11UmbralEffectProvider>(effectProvider)->GetEffect(vertexShader, pixelShader);
+	m_effect = std::static_pointer_cast<CUmbralEffectProvider>(effectProvider)->GetEffect(vertexShader, pixelShader);
 	SetEffectProvider(effectProvider);
 	
 	const auto& pixelShaderConstantTable = pixelShader.GetConstantTable();
