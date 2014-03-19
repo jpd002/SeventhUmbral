@@ -104,9 +104,8 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 
 		SetParamValue(constantBufferPtr, m_modelBBoxOffsetOffset, modelBBoxOffset);
 		SetParamValue(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
-		//Those two parameters don't give a good result for some reason
-//		SetParamValue(constantBufferPtr, m_vertexOcclusionScaleOffset, vertexOcclusionScale);
-//		SetParamValue(constantBufferPtr, m_vertexColorBiasOffset, vertexColorBias);
+		SetParamValue(constantBufferPtr, m_vertexOcclusionScaleOffset, vertexOcclusionScale);
+		SetParamValue(constantBufferPtr, m_vertexColorBiasOffset, vertexColorBias);
 		SetParamValue<uint32>(constantBufferPtr, m_isUseInstancingOffset, 0);
 		if(m_viewITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
 		if(m_worldITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
@@ -144,32 +143,32 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		auto normalVector = GetMaterialEffectParamOrDefault(material, "ps_normalVector", m_normalVectorOffset, CVector4(0, 0, 0, 0));
 		auto depthBias = GetMaterialEffectParamOrDefault(material, "ps_depthBias", m_depthBiasOffset, 0.f);
 
-		auto ambientOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_ambentOcclusionColor", m_ambientOcclusionColorOffset, CVector3(0, 0, 0));
-		auto specularOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_specularOcclusionColor", m_specularOcclusionColorOffset, CVector3(0, 0, 0));
-		auto pointLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_pointLightOcclusionColor", m_pointLightOcclusionColorOffset, CVector3(0, 0, 0));
+		auto ambientOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_ambentOcclusionColor", m_ambientOcclusionColorOffset, CVector3(1, 1, 1));
 		auto mainLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_mainLightOcclusionColor", m_mainLightOcclusionColorOffset, CVector3(0, 0, 0));
 		auto subLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_subLightOcclusionColor", m_subLightOcclusionColorOffset, CVector3(0, 0, 0));
-		auto lightMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_lightMapOcclusionColor", m_lightMapOcclusionColorOffset, CVector3(0, 0, 0));
-		auto reflectMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_reflectMapOcclusionColor", m_reflectMapOcclusionColorOffset, CVector3(0, 0, 0));
+		auto pointLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_pointLightOcclusionColor", m_pointLightOcclusionColorOffset, CVector3(0.5f, 0.5f, 0.5f));
+		auto lightMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_lightMapOcclusionColor", m_lightMapOcclusionColorOffset, CVector3(0.3f, 0.3f, 0.3f));
+		auto reflectMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_reflectMapOcclusionColor", m_reflectMapOcclusionColorOffset, CVector3(0.3f, 0.3f, 0.3f));
+		auto specularOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_specularOcclusionColor", m_specularOcclusionColorOffset, CVector3(0, 0, 0));
 
 		float lightDiffuseMapLod = 0;
 		float reflectMapLod = 0;
 
 		CVector2 pixelClippingDistance(-10000, 10000);
 		CVector3 enableShadowFlag(1, 0, 1);
-		CColor ambientLightColor(0, 0, 0, 0);
+		CColor ambientLightColor(0.1f, 0.1f, 0.1f, 0);
 		CVector3 latitudeParam(1, 0, 1);
 
 		CVector3 dirLightDirections[2] = 
 		{
-			CVector3(0, -5, 1).Normalize(),
-			CVector3(0, 0, 0)
+			CVector3(1, -1, 0).Normalize(),
+			CVector3(1, 0, 0).Normalize(),
 		};
 
 		CColor dirLightColors[2] =
 		{
-			CColor(1, 1, 1, 0),
-			CColor(0, 0, 0, 0),
+			CColor(1.0f, 1.0f, 1.0f, 0),
+			CColor(0.0f, 0.0f, 0.0f, 0),
 		};
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};

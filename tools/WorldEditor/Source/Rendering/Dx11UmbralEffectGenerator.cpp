@@ -326,7 +326,7 @@ std::string CDx11UmbralEffectGenerator::GenerateInstructions(const CD3DShader& i
 				auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
 
 				result += string_format("%s%s = lerp(%s, %s, %s);\r\n", identationString.c_str(), 
-					dstString.c_str(), src2String.c_str(), src3String.c_str(), src1String.c_str());
+					dstString.c_str(), src3String.c_str(), src2String.c_str(), src1String.c_str());
 				if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
 				{
 					result += makeSaturationOperation(identationString, dstString);
