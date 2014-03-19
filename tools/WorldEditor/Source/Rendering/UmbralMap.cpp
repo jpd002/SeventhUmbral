@@ -15,7 +15,6 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 		}
 	}
 
-//	unsigned int nodeIdx = 0;
 	for(const auto& nodePair : layoutNodes)
 	{
 		if(auto instanceNode = std::dynamic_pointer_cast<CMapLayout::INSTANCE_OBJECT_NODE>(nodePair.second))
@@ -52,8 +51,6 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 						return true;
 					}
 				);
-
-//				nodeIdx++;
 			}
 		}
 	}
@@ -83,8 +80,6 @@ Athena::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLay
 
 	const auto& layoutNodes = mapLayout->GetLayoutNodes();
 
-	int nodeIdx = 0;
-
 	for(const auto& item : node->items)
 	{
 		auto refNodeIterator = layoutNodes.find(item.nodePtr);
@@ -93,29 +88,24 @@ Athena::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLay
 		auto refNode = refNodeIterator->second;
 		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 		{
-			//if(nodeIdx == 1)
-			{
-				auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
-				assert(modelResource);
-				if(!modelResource) continue;
+			auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
+			assert(modelResource);
+			if(!modelResource) continue;
 
-				auto modelChunk = modelResource->SelectNode<CModelChunk>();
-				assert(modelChunk);
-				if(!modelChunk) continue;
+			auto modelChunk = modelResource->SelectNode<CModelChunk>();
+			assert(modelChunk);
+			if(!modelChunk) continue;
 
-				CVector3 minPos(bgPartsBaseObjectNode->minX, bgPartsBaseObjectNode->minY, bgPartsBaseObjectNode->minZ);
-				CVector3 maxPos(bgPartsBaseObjectNode->maxX, bgPartsBaseObjectNode->maxY, bgPartsBaseObjectNode->maxZ);
+			CVector3 minPos(bgPartsBaseObjectNode->minX, bgPartsBaseObjectNode->minY, bgPartsBaseObjectNode->minZ);
+			CVector3 maxPos(bgPartsBaseObjectNode->maxX, bgPartsBaseObjectNode->maxY, bgPartsBaseObjectNode->maxZ);
 
-				CVector3 bgPartSize = (maxPos - minPos) / 2;
-				CVector3 bgPartPos = (maxPos + minPos) / 2;
+			CVector3 bgPartSize = (maxPos - minPos) / 2;
+			CVector3 bgPartPos = (maxPos + minPos) / 2;
 
-				auto model = std::make_shared<CUmbralModel>(modelChunk);
-				model->SetPosition(bgPartPos);
-				model->SetScale(bgPartSize);
-				result->AppendChild(model);
-			}
-
-			nodeIdx++;
+			auto model = std::make_shared<CUmbralModel>(modelChunk);
+			model->SetPosition(bgPartPos);
+			model->SetScale(bgPartSize);
+			result->AppendChild(model);
 		}
 	}
 

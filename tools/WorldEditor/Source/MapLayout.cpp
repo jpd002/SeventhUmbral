@@ -4,39 +4,12 @@
 #include "MapLayout.h"
 #include "ResourceManager.h"
 
-#define _TRACE_TREE
+//#define _TRACE_TREE
 
 #ifdef _TRACE_TREE
 #include <Windows.h>
 #include "string_format.h"
 #endif
-
-/*
-#ifdef _TRACE_TREE
-		OutputDebugStringA(string_format("Id: 0x%0.8X, Ptr: 0x%0.8X(0x%0.8X), Name: %s, Parent Name: %s, Some String: %s\r\n", 
-			nodeHeader[0], nodePtr, nodeAbsPtr, nodeName.c_str(), parentNodeName.c_str(), someString.c_str()).c_str());
-//		OutputDebugStringA(string_format("Ptr: 0x%0.8X, Node0: 0x%0.8X, Node1: 0x%0.8X, Node2: 0x%0.8X\r\n", 
-//			nodeAbsPtr, nodeHeader[0] + headerSize + 0x30, nodeHeader[1] + headerSize + 0x30, nodeHeader[2] + headerSize + 0x30).c_str());
-#endif
-
-/*
-	std::sort(std::begin(nodes), std::end(nodes), [](const LAYOUT_NODE& node1, const LAYOUT_NODE& node2) { return node1.ptr < node2.ptr; });
-	for(unsigned int i = 0; i < nodes.size(); i++)
-	{
-		const auto& currentNode = nodes[i];
-		unsigned int size = 0;
-		if((i + 1) != nodes.size())
-		{
-			const auto& nextNode = nodes[i + 1];
-			size = nextNode.ptr - currentNode.ptr;
-		}
-		auto parentName = nodeNames[currentNode.parentPtr];
-		OutputDebugStringA(string_format("Id: 0x%0.8X, Ptr: 0x%0.8X, Parent Ptr: 0x%0.8X, Size: 0x%0.8X, Name: %s, Parent: %s\r\n", 
-			currentNode.nodeId, currentNode.ptr, currentNode.parentPtr, size, currentNode.name.c_str(), parentName.c_str()).c_str());
-	}
-*/
-//	std::sort(std::begin(unitTreeObjects), std::end(unitTreeObjects), 
-//		[](const UNIT_TREE_OBJECT& object1, const UNIT_TREE_OBJECT& object2) { return object1.somePtr3 < object2.somePtr3; });
 
 struct UNK1
 {
@@ -133,6 +106,11 @@ void CMapLayout::Read(Framework::CStream& inputStream)
 
 		auto nodeName		= nodeNames[nodePtr];
 		auto parentNodeName = nodeNames[nodeHeader[1]];
+
+#ifdef _TRACE_TREE
+		OutputDebugStringA(string_format("Id: 0x%0.8X, Ptr: 0x%0.8X(0x%0.8X), Name: %s, Parent Name: %s\r\n", 
+			nodeHeader[0], nodePtr, nodeAbsPtr, nodeName.c_str(), parentNodeName.c_str()).c_str());
+#endif
 
 		LayoutNodePtr result;
 
