@@ -1,7 +1,12 @@
 #include "GlobalResources.h"
 #include "../ResourceManager.h"
+
+#ifdef WIN32
 #include "Dx11UmbralEffectProvider.h"
 #include "athena/win32/Dx11GraphicDevice.h"
+#elif defined(__APPLE__)
+#include "IosUmbralEffectProvider.h"
+#endif
 
 CGlobalResources::CGlobalResources()
 {
@@ -28,8 +33,12 @@ void CGlobalResources::Initialize()
 	m_skyTexture = Athena::CGraphicDevice::GetInstance().CreateCubeTextureFromFile("./data/global/skybox.dds");
 	m_proxyShadowTexture = Athena::CGraphicDevice::GetInstance().CreateTexture(Athena::TEXTURE_FORMAT_RGBA8888, 32, 32, 1);
 
+#ifdef WIN32
 	auto& graphicDevice = static_cast<Athena::CDx11GraphicDevice&>(Athena::CGraphicDevice::GetInstance());
 	m_effectProvider = std::make_shared<CDx11UmbralEffectProvider>(graphicDevice.GetDevice(), graphicDevice.GetDeviceContext());
+#elif defined(__APPLE__)
+	m_effectProvider = std::make_shared<CIosUmbralEffectProvider>();
+#endif
 }
 
 void CGlobalResources::Release()
