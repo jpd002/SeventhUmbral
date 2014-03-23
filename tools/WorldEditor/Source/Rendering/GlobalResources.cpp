@@ -30,7 +30,8 @@ void CGlobalResources::Initialize()
 		m_diffuseMapTexture = diffuseMapTexture;
 	}
 
-	m_skyTexture = Athena::CGraphicDevice::GetInstance().CreateCubeTextureFromFile("./data/global/skybox.dds");
+	auto skyTexturePath = Athena::CResourceManager::GetInstance().MakeResourcePath("global/skybox.dds");
+	m_skyTexture = Athena::CTextureLoader::CreateCubeTextureFromFile(skyTexturePath);
 	m_proxyShadowTexture = Athena::CGraphicDevice::GetInstance().CreateTexture(Athena::TEXTURE_FORMAT_RGBA8888, 32, 32, 1);
 
 #ifdef WIN32
