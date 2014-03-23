@@ -124,7 +124,6 @@
     <ClCompile Include="Source\StringChunk.cpp" />
     <ClCompile Include="Source\TextureSection.cpp" />
     <ClCompile Include="Source\TouchFreeCamera.cpp" />
-    <ClCompile Include="Source\WinMain.cpp" />
     <ClCompile Include="Source\WorldEditor.cpp" />
     <ClCompile Include="Source\WrbChunk.cpp" />
   </ItemGroup>
