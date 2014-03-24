@@ -3,7 +3,6 @@
 #include "AthenaEngine.h"
 #include "TouchFreeCamera.h"
 #include "MapLayout.h"
-#include "Rendering/UmbralMap.h"
 
 class CWorldEditor : public Athena::CApplication
 {
@@ -23,12 +22,17 @@ private:
 
 	void					CreateUi();
 	void					CreateWorld();
-	
+	void					CreateActors();
+
+	void					CreateMap();
+	void					CreateBaseAxis();
+
 	CVector2				m_mousePosition;
 
 	Athena::PackagePtr		m_package;
 
 	Athena::ViewportPtr		m_mainViewport;
+	Athena::ViewportPtr		m_overlayViewport;
 	TouchFreeCameraPtr		m_mainCamera;
 	
 	Athena::ViewportPtr		m_uiViewport;

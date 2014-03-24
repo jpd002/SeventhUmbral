@@ -7,6 +7,9 @@
 #include "ResourceDefs.h"
 #include "ResourceManager.h"
 #include "Rendering/GlobalResources.h"
+#include "Rendering/UmbralActor.h"
+#include "Rendering/UmbralMap.h"
+#include "ActorDatabase.h"
 #include "string_format.h"
 
 //0x03E70001 -> Mor'dhona
@@ -41,6 +44,7 @@ CWorldEditor::CWorldEditor()
 	CreateWorld();
 
 	Athena::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
+	Athena::CGraphicDevice::GetInstance().AddViewport(m_overlayViewport.get());
 	Athena::CGraphicDevice::GetInstance().AddViewport(m_uiViewport.get());
 }
 
@@ -105,10 +109,35 @@ void CWorldEditor::CreateWorld()
 		m_mainViewport = viewport;
 	}
 
+	{
+		auto viewport = Athena::CViewport::Create();
+		viewport->SetCamera(m_mainCamera);
+		m_overlayViewport = viewport;
+	}
+
+	CreateMap();
+	CreateActors();
+	CreateBaseAxis();
+}
+
+void CWorldEditor::CreateMap()
+{
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
+	//Create skybox
 	{
-		auto mapLayoutPath = CFileManager::GetResourcePath(0xA09B0000);
+		auto skyTexture = Athena::CTextureLoader::CreateCubeTextureFromFile("./data/global/skybox.dds");
+		auto skyBox = Athena::CCubeMesh::Create();
+		skyBox->SetIsPeggedToOrigin(true);
+		skyBox->SetScale(CVector3(50, 50, 50));
+		skyBox->GetMaterial()->SetCullingMode(Athena::CULLING_CCW);
+		skyBox->GetMaterial()->SetTexture(0, skyTexture);
+		skyBox->GetMaterial()->SetTextureCoordSource(0, Athena::TEXTURE_COORD_CUBE_POS);
+		sceneRoot->AppendChild(skyBox);
+	}
+
+	{
+		auto mapLayoutPath = CFileManager::GetResourcePath(0x29B00001);
 		auto mapLayout = std::make_shared<CMapLayout>();
 		mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
 
@@ -124,6 +153,73 @@ void CWorldEditor::CreateWorld()
 //		auto map = std::make_shared<CUmbralMap>(mapLayout);
 //		sceneRoot->AppendChild(map);
 //	}
+}
+
+void CWorldEditor::CreateActors()
+{
+	//WIP
+#if 0
+	auto sceneRoot = m_mainViewport->GetSceneRoot();
+
+	Framework::CStdStream stream("D:\\Projects\\SeventhUmbral\\data\\ffxivd_actors.xml", "rb");
+	CActorDatabase actorDatabase = CActorDatabase::CreateFromXml(stream);
+
+	for(const auto& actorDef : actorDatabase.GetActors())
+	{
+		auto actor = std::make_shared<CUmbralActor>();
+		actor->SetBaseModelId(actorDef.baseModelId);
+		actor->SetPosition(actorDef.position);
+		sceneRoot->AppendChild(actor);
+	}
+#endif
+}
+
+void CWorldEditor::CreateBaseAxis()
+{
+	auto sceneRoot = m_overlayViewport->GetSceneRoot();
+
+	static const CVector3 g_arrowScale(0.075f, 0.25f, 0.075f);
+	
+	{
+		auto baseAxisNode = Athena::CSceneNode::Create();
+		baseAxisNode->SetPosition(CVector3(289.2f, 5.00f, -563.f));
+		sceneRoot->AppendChild(baseAxisNode);
+
+		{
+			auto axisMesh = Athena::CAxisMesh::Create();
+			axisMesh->SetScale(CVector3(1, 1, 1));
+			baseAxisNode->AppendChild(axisMesh);
+		}
+
+		//X arrow
+		{
+			auto coneMesh = Athena::CConeMesh::Create();
+			coneMesh->SetPosition(CVector3(1, 0, 0));
+			coneMesh->SetRotation(CQuaternion(CVector3(0, 0, 1), M_PI / 2.f));
+			coneMesh->SetScale(g_arrowScale);
+			coneMesh->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
+			baseAxisNode->AppendChild(coneMesh);
+		}
+
+		//Y arrow
+		{
+			auto coneMesh = Athena::CConeMesh::Create();
+			coneMesh->SetPosition(CVector3(0, 1, 0));
+			coneMesh->SetScale(g_arrowScale);
+			coneMesh->GetMaterial()->SetColor(CColor(0, 1, 0, 1));
+			baseAxisNode->AppendChild(coneMesh);
+		}
+
+		//Z arrow
+		{
+			auto coneMesh = Athena::CConeMesh::Create();
+			coneMesh->SetPosition(CVector3(0, 0, 1));
+			coneMesh->SetRotation(CQuaternion(CVector3(1, 0, 0), -M_PI / 2.f));
+			coneMesh->SetScale(g_arrowScale);
+			coneMesh->GetMaterial()->SetColor(CColor(0, 0, 1, 1));
+			baseAxisNode->AppendChild(coneMesh);
+		}
+	}
 }
 
 void CWorldEditor::Update(float dt)
@@ -144,6 +240,8 @@ void CWorldEditor::Update(float dt)
 	m_mainCamera->Update(dt);
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
+	m_overlayViewport->GetSceneRoot()->Update(dt);
+	m_overlayViewport->GetSceneRoot()->UpdateTransformations();
 	m_uiViewport->GetSceneRoot()->Update(dt);
 	m_uiViewport->GetSceneRoot()->UpdateTransformations();
 }

@@ -1,0 +1,7 @@
+<Actors>
+	<Actor Name="0" BaseModel="10502" TopModel="1024" Position="0, 0, 0" />
+	<Actor Name="0" BaseModel="10002" TopModel="1024" Position="0, 0, 1" />
+	<Actor Name="0" BaseModel="10038" TopModel="1024" Position="1, 0, 1" />
+	<Actor Name="0" BaseModel="10002" TopModel="1024" Position="-1, 0, 1" />
+	<Actor Name="0" BaseModel="10007" TopModel="1024" Position="1, 0, -1" />
+</Actors>

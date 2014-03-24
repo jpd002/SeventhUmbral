@@ -165,6 +165,9 @@
     <ClCompile Include="Source\Rendering\UmbralActor.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ActorDatabase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\BaseSection.h">
@@ -310,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="Source\Rendering\UmbralActor.h">
       <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ActorDatabase.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
