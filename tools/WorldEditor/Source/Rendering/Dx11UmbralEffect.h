@@ -6,12 +6,6 @@
 class CDx11UmbralEffect : public Athena::CDx11Effect
 {
 public:
-	enum VERTEX_ITEM_ID
-	{
-		VERTEX_ITEM_ID_UV2 = Athena::VERTEX_ITEM_ID_USER_START,
-		VERTEX_ITEM_ID_TANGENT
-	};
-
 									CDx11UmbralEffect(ID3D11Device*, ID3D11DeviceContext*, const CD3DShader&, const CD3DShader&);
 	virtual							~CDx11UmbralEffect();
 

@@ -1,5 +1,6 @@
 #include "Dx11UmbralEffect.h"
 #include "Dx11UmbralEffectGenerator.h"
+#include "UmbralEffect.h"
 
 CDx11UmbralEffect::CDx11UmbralEffect(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const CD3DShader& vertexShader, const CD3DShader& pixelShader)
@@ -427,7 +428,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 		inputElements.push_back(inputElement);
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(VERTEX_ITEM_ID_UV2))
+	if(const auto& item = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
@@ -463,7 +464,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 ////////
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(VERTEX_ITEM_ID_TANGENT))
+	if(const auto& item = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
