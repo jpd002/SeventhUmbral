@@ -47,33 +47,34 @@ private:
 	//Pixel Shader Constants
 	uint32							m_pixelClippingDistanceOffset = -1;
 
+	uint32							m_modulateColorOffset = -1;
 	uint32							m_ambientColorOffset = -1;
 	uint32							m_diffuseColorOffset = -1;
 	uint32							m_specularColorOffset = -1;
 	uint32							m_shininessOffset = -1;
+	uint32							m_reflectivityOffset = -1;
+	uint32							m_normalPowerOffset = -1;
 
 	uint32							m_multiDiffuseColorOffset = -1;
 	uint32							m_multiSpecularColorOffset = -1;
 	uint32							m_multiShininessOffset = -1;
-
-	uint32							m_reflectivityOffset = -1;
 	uint32							m_multiReflectivityOffset = -1;
-	uint32							m_reflectMapInfluenceOffset = -1;
-	uint32							m_reflectMapLodOffset = -1;
-
-	uint32							m_normalPowerOffset = -1;
 	uint32							m_multiNormalPowerOffset = -1;
+
 	uint32							m_fresnelExpOffset = -1;
 	uint32							m_fresnelLightDiffBiasOffset = -1;
+	uint32							m_specularInfluenceOffset = -1;
 	uint32							m_lightDiffusePowerOffset = -1;
 	uint32							m_lightDiffuseInfluenceOffset = -1;
 	uint32							m_lightDiffuseMapLodOffset = -1;
+	uint32							m_reflectMapInfluenceOffset = -1;
+	uint32							m_reflectMapLodOffset = -1;
+
 	uint32							m_glareLdrScaleOffset = -1;
-	uint32							m_latitudeParamOffset = -1;
-	uint32							m_modulateColorOffset = -1;
 	uint32							m_refAlphaRestrainOffset = -1;
 	uint32							m_normalVectorOffset = -1;
 	uint32							m_depthBiasOffset = -1;
+	uint32							m_velvetParamOffset = -1;
 
 	uint32							m_ambientOcclusionColorOffset = -1;
 	uint32							m_specularOcclusionColorOffset = -1;
@@ -85,6 +86,7 @@ private:
 
 	uint32							m_enableShadowFlagOffset = -1;
 
+	uint32							m_latitudeParamOffset = -1;
 	uint32							m_ambientLightColorOffset = -1;
 	uint32							m_dirLightDirectionsOffset = -1;
 	uint32							m_dirLightColorsOffset = -1;

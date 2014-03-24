@@ -56,6 +56,15 @@ float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material
 }
 
 template <>
+CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
+{
+	auto effectParam = material->GetEffectParameter(paramName);
+	assert((paramOffset == -1) || !effectParam.IsNull());
+	if(effectParam.IsNull()) return defaultValue;
+	return effectParam.GetVector2();
+}
+
+template <>
 CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
@@ -134,6 +143,7 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 
 		auto fresnelExp = GetMaterialEffectParamOrDefault(material, "ps_fresnelExp", m_fresnelExpOffset, 1.f);
 		auto fresnelLightDiffBias = GetMaterialEffectParamOrDefault(material, "ps_fresnelLightDiffBias", m_fresnelLightDiffBiasOffset, 1.f);
+		auto specularInfluence = GetMaterialEffectParamOrDefault(material, "ps_specularInfluence", m_specularInfluenceOffset, 0.f);
 		auto lightDiffusePower = GetMaterialEffectParamOrDefault(material, "ps_lightDiffusePower", m_lightDiffusePowerOffset, 0.67f);
 		auto lightDiffuseInfluence = GetMaterialEffectParamOrDefault(material, "ps_lightDiffuseInfluence", m_lightDiffuseInfluenceOffset, 0.56f);
 		auto reflectMapInfluence = GetMaterialEffectParamOrDefault(material, "ps_reflectMapInfluence", m_reflectMapInfluenceOffset, 0.8f);
@@ -142,6 +152,7 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		auto refAlphaRestrain = GetMaterialEffectParamOrDefault(material, "ps_refAlphaRestrain", m_refAlphaRestrainOffset, 0.f);
 		auto normalVector = GetMaterialEffectParamOrDefault(material, "ps_normalVector", m_normalVectorOffset, CVector4(0, 0, 0, 0));
 		auto depthBias = GetMaterialEffectParamOrDefault(material, "ps_depthBias", m_depthBiasOffset, 0.f);
+		auto velvetParam = GetMaterialEffectParamOrDefault(material, "ps_velvetParam", m_velvetParamOffset, CVector2(0, 0));
 
 		auto ambientOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_ambentOcclusionColor", m_ambientOcclusionColorOffset, CVector3(1, 1, 1));
 		auto mainLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_mainLightOcclusionColor", m_mainLightOcclusionColorOffset, CVector3(0, 0, 0));
@@ -179,31 +190,35 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		memset(constantBufferPtr, 0, mappedResource.RowPitch);
 
 		SetParamValue(constantBufferPtr, m_pixelClippingDistanceOffset, pixelClippingDistance);
+
+		SetParamValue(constantBufferPtr, m_modulateColorOffset, modulateColor);
 		SetParamValue(constantBufferPtr, m_ambientColorOffset, ambientColor);
 		SetParamValue(constantBufferPtr, m_diffuseColorOffset, diffuseColor);
 		SetParamValue(constantBufferPtr, m_specularColorOffset, specularColor);
+		SetParamValue(constantBufferPtr, m_shininessOffset, shininess);
+		SetParamValue(constantBufferPtr, m_reflectivityOffset, reflectivity);
+		SetParamValue(constantBufferPtr, m_normalPowerOffset, normalPower);
+
 		SetParamValue(constantBufferPtr, m_multiDiffuseColorOffset, multiDiffuseColor);
 		SetParamValue(constantBufferPtr, m_multiSpecularColorOffset, multiSpecularColor);
-		SetParamValue(constantBufferPtr, m_shininessOffset, shininess);
 		SetParamValue(constantBufferPtr, m_multiShininessOffset, multiShininess);
-		SetParamValue(constantBufferPtr, m_reflectivityOffset, reflectivity);
 		SetParamValue(constantBufferPtr, m_multiReflectivityOffset, multiReflectivity);
-		SetParamValue(constantBufferPtr, m_reflectMapInfluenceOffset, reflectMapInfluence);
-		SetParamValue(constantBufferPtr, m_reflectMapLodOffset, reflectMapLod);
-		SetParamValue(constantBufferPtr, m_normalPowerOffset, normalPower);
 		SetParamValue(constantBufferPtr, m_multiNormalPowerOffset, multiNormalPower);
+
 		SetParamValue(constantBufferPtr, m_fresnelExpOffset, fresnelExp);
 		SetParamValue(constantBufferPtr, m_fresnelLightDiffBiasOffset, fresnelLightDiffBias);
+		SetParamValue(constantBufferPtr, m_specularInfluenceOffset, specularInfluence);
 		SetParamValue(constantBufferPtr, m_lightDiffusePowerOffset, lightDiffusePower);
 		SetParamValue(constantBufferPtr, m_lightDiffuseInfluenceOffset, lightDiffuseInfluence);
 		SetParamValue(constantBufferPtr, m_lightDiffuseMapLodOffset, lightDiffuseMapLod);
+		SetParamValue(constantBufferPtr, m_reflectMapInfluenceOffset, reflectMapInfluence);
+		SetParamValue(constantBufferPtr, m_reflectMapLodOffset, reflectMapLod);
+
 		SetParamValue(constantBufferPtr, m_glareLdrScaleOffset, glareLdrScale);
 		SetParamValue(constantBufferPtr, m_normalVectorOffset, normalVector);
 		SetParamValue(constantBufferPtr, m_depthBiasOffset, depthBias);
-		SetParamValue(constantBufferPtr, m_latitudeParamOffset, latitudeParam);
-		SetParamValue(constantBufferPtr, m_modulateColorOffset, modulateColor);
 		SetParamValue(constantBufferPtr, m_refAlphaRestrainOffset, refAlphaRestrain);
-		SetParamValue(constantBufferPtr, m_ambientLightColorOffset, ambientLightColor);
+		SetParamValue(constantBufferPtr, m_velvetParamOffset, velvetParam);
 
 		SetParamValue(constantBufferPtr, m_ambientOcclusionColorOffset, ambientOcclusionColor);
 		SetParamValue(constantBufferPtr, m_specularOcclusionColorOffset, specularOcclusionColor);
@@ -213,6 +228,8 @@ void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, con
 		SetParamValue(constantBufferPtr, m_lightMapOcclusionColorOffset, lightMapOcclusionColor);
 		SetParamValue(constantBufferPtr, m_reflectMapOcclusionColorOffset, reflectMapOcclusionColor);
 
+		SetParamValue(constantBufferPtr, m_ambientLightColorOffset, ambientLightColor);
+		SetParamValue(constantBufferPtr, m_latitudeParamOffset, latitudeParam);
 		SetParamValue(constantBufferPtr, m_enableShadowFlagOffset, enableShadowFlag);
 		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[0] = dirLightDirections[0];
 		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[1] = dirLightDirections[1];
@@ -280,31 +297,34 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 	std::map<std::string, uint32&> parameterOffsets =
 	{
 		{ "pixelClippingDistance",		m_pixelClippingDistanceOffset		},
+
+		{ "modulateColor",				m_modulateColorOffset				},
 		{ "diffuseColor",				m_diffuseColorOffset				},
 		{ "specularColor",				m_specularColorOffset				},
+		{ "shininess",					m_shininessOffset					},
+		{ "reflectivity",				m_reflectivityOffset				},
+		{ "normalPower",				m_normalPowerOffset					},
+
 		{ "multiDiffuseColor",			m_multiDiffuseColorOffset			},
 		{ "multiSpecularColor",			m_multiSpecularColorOffset			},
-		{ "shininess",					m_shininessOffset					},
 		{ "multiShininess",				m_multiShininessOffset				},
-		{ "reflectivity",				m_reflectivityOffset				},
 		{ "multiReflectivity",			m_multiReflectivityOffset			},
-		{ "reflectMapInfluence",		m_reflectMapInfluenceOffset			},
-		{ "reflectMapLod",				m_reflectMapLodOffset				},
-		{ "normalVector",				m_normalVectorOffset				},
-		{ "depthBias",					m_depthBiasOffset					},
-		{ "normalPower",				m_normalPowerOffset					},
 		{ "multiNormalPower",			m_multiNormalPowerOffset			},
+
 		{ "fresnelExp",					m_fresnelExpOffset					},
 		{ "fresnelLightDiffBias",		m_fresnelLightDiffBiasOffset		},
 		{ "lightDiffusePower",			m_lightDiffusePowerOffset			},
+		{ "specularInfluence",			m_specularInfluenceOffset			},
 		{ "lightDiffuseInfluence",		m_lightDiffuseInfluenceOffset		},
 		{ "lightDiffuseMapLod",			m_lightDiffuseMapLodOffset			},
+		{ "reflectMapInfluence",		m_reflectMapInfluenceOffset			},
+		{ "reflectMapLod",				m_reflectMapLodOffset				},
+
 		{ "glareLdrScale",				m_glareLdrScaleOffset				},
-		{ "latitudeParam",				m_latitudeParamOffset				},
-		{ "modulateColor",				m_modulateColorOffset				},
+		{ "normalVector",				m_normalVectorOffset				},
+		{ "depthBias",					m_depthBiasOffset					},
 		{ "refAlphaRestrain",			m_refAlphaRestrainOffset			},
-		{ "ambientColor",				m_ambientColorOffset				},
-		{ "ambientLightColor",			m_ambientLightColorOffset			},
+		{ "velvetParam",				m_velvetParamOffset					},
 
 		{ "ambentOcclusionColor",		m_ambientOcclusionColorOffset		},
 		{ "specularOcclusionColor",		m_specularOcclusionColorOffset		},
@@ -314,6 +334,9 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 		{ "lightMapOcclusionColor",		m_lightMapOcclusionColorOffset		},
 		{ "reflectMapOcclusionColor",	m_reflectMapOcclusionColorOffset	},
 
+		{ "ambientColor",				m_ambientColorOffset				},
+		{ "ambientLightColor",			m_ambientLightColorOffset			},
+		{ "latitudeParam",				m_latitudeParamOffset				},
 		{ "EnableShadowFlag",			m_enableShadowFlagOffset			},
 		{ "DirLightDirections",			m_dirLightDirectionsOffset			},
 		{ "DirLightColors",				m_dirLightColorsOffset				},
