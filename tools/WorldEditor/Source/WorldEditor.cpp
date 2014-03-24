@@ -148,7 +148,7 @@ void CWorldEditor::Update(float dt)
 	m_uiViewport->GetSceneRoot()->UpdateTransformations();
 }
 
-void CWorldEditor::NotifyMouseMove(unsigned int x, unsigned int y)
+void CWorldEditor::NotifyMouseMove(int x, int y)
 {
 	m_mousePosition = CVector2(x, y);
 	m_mainCamera->NotifyMouseMove(x, y);
