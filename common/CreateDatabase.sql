@@ -12,7 +12,7 @@ CREATE TABLE `ffxiv_users` (
   `email` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8$$
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
 CREATE TABLE `ffxiv_sessions` (
   `id` char(56) NOT NULL,
@@ -22,3 +22,36 @@ CREATE TABLE `ffxiv_sessions` (
   UNIQUE KEY `userid_UNIQUE` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
 
+CREATE TABLE `ffxiv_characters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `name` varchar(21) NOT NULL,
+  `tribe` smallint(6) NOT NULL,
+  `size` smallint(6) NOT NULL,
+  `voice` smallint(6) NOT NULL,
+  `skinColor` smallint(6) NOT NULL,
+  `hairStyle` smallint(6) NOT NULL,
+  `hairColor` smallint(6) NOT NULL,
+  `hairOption` smallint(6) NOT NULL,
+  `eyeColor` smallint(6) NOT NULL,
+  `faceType` smallint(6) NOT NULL,
+  `faceBrow` smallint(6) NOT NULL,
+  `faceEye` smallint(6) NOT NULL,
+  `faceIris` smallint(6) NOT NULL,
+  `faceNose` smallint(6) NOT NULL,
+  `faceMouth` smallint(6) NOT NULL,
+  `faceJaw` smallint(6) NOT NULL,
+  `faceCheek` smallint(6) NOT NULL,
+  `faceOption1` smallint(6) NOT NULL,
+  `faceOption2` smallint(6) NOT NULL,
+  `guardian` smallint(6) NOT NULL,
+  `birthMonth` smallint(6) NOT NULL,
+  `birthDay` smallint(6) NOT NULL,
+  `weapon` int(11) NOT NULL,
+  `headGear` int(11) NOT NULL,
+  `bodyGear` int(11) NOT NULL,
+  `legsGear` int(11) NOT NULL,
+  `handsGear` int(11) NOT NULL,
+  `feetGear` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
