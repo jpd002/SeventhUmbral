@@ -23,42 +23,11 @@ struct FACEINFO
 static_assert(sizeof(FACEINFO) == 4, "FACEINFO must be 4 bytes");
 
 CCharacter::CCharacter()
-: active(false)
-, tribe(0)
-, size(0)
-, voice(0)
-, skinColor(0)
-, hairStyle(0)
-, hairColor(0)
-, eyeColor(0)
-, faceType(0)
-, faceBrow(0)
-, faceEye(0)
-, faceIris(0)
-, faceNose(0)
-, faceMouth(0)
-, faceJaw(0)
-, faceCheek(0)
-, faceOption1(0)
-, faceOption2(0)
-, guardian(0)
-, birthDay(0)
-, birthMonth(0)
-, headGear(0)
-, bodyGear(0)
-, legsGear(0)
-, handsGear(0)
-, feetGear(0)
 {
 
 }
 
-CCharacter::~CCharacter()
-{
-
-}
-
-void CCharacter::Load(Framework::CStream& stream)
+CCharacter::CCharacter(Framework::CStream& stream)
 {
 	auto rootNode = std::unique_ptr<Framework::Xml::CNode>(Framework::Xml::CParser::ParseDocument(stream));
 	if(!rootNode)
@@ -99,6 +68,78 @@ void CCharacter::Load(Framework::CStream& stream)
 	legsGear = Framework::Xml::GetAttributeIntValue(characterNode, "LegsGear");
 	handsGear = Framework::Xml::GetAttributeIntValue(characterNode, "HandsGear");
 	feetGear = Framework::Xml::GetAttributeIntValue(characterNode, "FeetGear");
+}
+
+std::string GetFieldStringValue(MYSQL_ROW row, const Framework::MySql::CResult::FieldIndexMap& fieldIndices, const std::string& field)
+{
+	auto fieldIndexIterator = fieldIndices.find(field);
+	if(fieldIndexIterator == std::end(fieldIndices))
+	{
+		throw std::exception();
+	}
+	auto fieldValue = row[fieldIndexIterator->second];
+	return fieldValue;
+}
+
+int GetFieldIntValue(MYSQL_ROW row, const Framework::MySql::CResult::FieldIndexMap& fieldIndices, const std::string& field)
+{
+	auto fieldIndexIterator = fieldIndices.find(field);
+	if(fieldIndexIterator == std::end(fieldIndices))
+	{
+		throw std::exception();
+	}
+	auto fieldValue = row[fieldIndexIterator->second];
+	int result = atoi(fieldValue);
+	return result;
+}
+
+CCharacter::CCharacter(Framework::MySql::CResult& result)
+{
+	auto row = result.FetchRow();
+	if(!row) return;
+
+	auto fieldIndices = result.GetFieldIndices();
+
+	active = true;
+
+	id = GetFieldIntValue(row, fieldIndices, "id");
+
+	name = GetFieldStringValue(row, fieldIndices, "name");
+	tribe = GetFieldIntValue(row, fieldIndices, "tribe");
+	size = GetFieldIntValue(row, fieldIndices, "size");
+	voice = GetFieldIntValue(row, fieldIndices, "voice");
+	skinColor = GetFieldIntValue(row, fieldIndices, "skinColor");
+
+	hairStyle = GetFieldIntValue(row, fieldIndices, "hairStyle");
+	hairColor = GetFieldIntValue(row, fieldIndices, "hairColor");
+
+	eyeColor = GetFieldIntValue(row, fieldIndices, "eyeColor");
+
+	faceType = GetFieldIntValue(row, fieldIndices, "faceType");
+	faceBrow = GetFieldIntValue(row, fieldIndices, "faceBrow");
+	faceEye = GetFieldIntValue(row, fieldIndices, "faceEye");
+	faceIris = GetFieldIntValue(row, fieldIndices, "faceIris");
+	faceNose = GetFieldIntValue(row, fieldIndices, "faceNose");
+	faceMouth = GetFieldIntValue(row, fieldIndices, "faceMouth");
+	faceJaw = GetFieldIntValue(row, fieldIndices, "faceJaw");
+	faceCheek = GetFieldIntValue(row, fieldIndices, "faceCheek");
+	faceOption1 = GetFieldIntValue(row, fieldIndices, "faceOption1");
+	faceOption2 = GetFieldIntValue(row, fieldIndices, "faceOption2");
+
+	guardian = GetFieldIntValue(row, fieldIndices, "guardian");
+	birthMonth = GetFieldIntValue(row, fieldIndices, "birthMonth");
+	birthDay = GetFieldIntValue(row, fieldIndices, "birthDay");
+
+	headGear = GetFieldIntValue(row, fieldIndices, "headGear");
+	bodyGear = GetFieldIntValue(row, fieldIndices, "bodyGear");
+	legsGear = GetFieldIntValue(row, fieldIndices, "legsGear");
+	handsGear = GetFieldIntValue(row, fieldIndices, "handsGear");
+	feetGear = GetFieldIntValue(row, fieldIndices, "feetGear");
+}
+
+CCharacter::~CCharacter()
+{
+
 }
 
 uint32 CCharacter::GetColorInfo() const

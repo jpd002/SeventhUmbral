@@ -7,6 +7,7 @@
 #include "MemStream.h"
 #include "PacketUtils.h"
 #include "packets/CompositePacket.h"
+#include "mysql/Client.h"
 
 class CGameServerPlayer
 {
@@ -45,6 +46,7 @@ private:
 	void						ScriptCommand_SwitchToPassiveMode(CCompositePacket&);
 	void						ScriptCommand_BattleSkill(CCompositePacket&, uint32, uint32, uint32);
 
+	PacketData					GetCharacterInfo();
 	static PacketData			SpawnNpc(uint32, uint32, uint32, float, float, float, float);
 	void						SendTeleportSequence(uint32, uint32, float, float, float, float);
 
@@ -52,6 +54,8 @@ private:
 	Framework::CMemStream		m_incomingStream;
 	PacketQueue					m_packetQueue;
 	bool						m_disconnect;
+	Framework::MySql::CClient	m_dbConnection;
+	uint32						m_characterId = 0;
 	bool						m_sentInitialHandshake = false;
 	bool						m_isActiveMode = false;
 	int							m_playerAutoAttackTimer = 0;

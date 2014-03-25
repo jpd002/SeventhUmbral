@@ -8,7 +8,6 @@
 #include "../common/BLOWFISH.H"
 #include "LobbyServer_Login.h"
 #include "Character.h"
-#include "StdStreamUtils.h"
 #include "Base64.h"
 #include "GameServer.h"
 #include "string_format.h"
@@ -142,28 +141,32 @@ void CLobbyServerPlayer::ProcessSessionAcknowledgement(const PacketData& packetD
 	CLog::GetInstance().LogMessage(LOG_NAME, "SESSION_ID: %s", sessionId.c_str());
 	CLog::GetInstance().LogMessage(LOG_NAME, "CLIENT_VERSION: %s", clientVersion.c_str());
 
-	if(!m_dbConnection.IsEmpty())
+	if(m_dbConnection.IsEmpty())
 	{
-		try
+		CLog::GetInstance().LogMessage(LOG_NAME, "No database connection available. Bailing.");
+		m_disconnect = true;
+		return;
+	}
+
+	try
+	{
+		auto query = string_format("SELECT userId FROM ffxiv_sessions WHERE id = '%s' AND expiration > NOW()", sessionId.c_str());
+		auto result = m_dbConnection.Query(query.c_str());
+		if(result.GetRowCount() == 0)
 		{
-			auto query = string_format("SELECT userId FROM ffxiv_sessions WHERE id = '%s' AND expiration > NOW()", sessionId.c_str());
-			auto result = m_dbConnection.Query(query.c_str());
-			if(result.GetRowCount() == 0)
-			{
-				throw std::runtime_error("Session expired or doesn't exist.");
-			}
-			auto row = result.FetchRow();
-			assert(row != nullptr);
-			assert(result.GetFieldCount() == 1);
-			m_userId = boost::lexical_cast<uint32>(row[0]);
-			CLog::GetInstance().LogMessage(LOG_NAME, "User (id: %u) logged in.", m_userId);
+			throw std::runtime_error("Session expired or doesn't exist.");
 		}
-		catch(const std::exception& exception)
-		{
-			CLog::GetInstance().LogError(LOG_NAME, "Failed to validate user session (id: %s): %s.", sessionId.c_str(), exception.what());
-			m_disconnect = true;
-			return;
-		}
+		auto row = result.FetchRow();
+		assert(row != nullptr);
+		assert(result.GetFieldCount() == 1);
+		m_userId = boost::lexical_cast<uint32>(row[0]);
+		CLog::GetInstance().LogMessage(LOG_NAME, "User (id: %u) logged in.", m_userId);
+	}
+	catch(const std::exception& exception)
+	{
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to validate user session (id: %s): %s.", sessionId.c_str(), exception.what());
+		m_disconnect = true;
+		return;
 	}
 
 	std::vector<uint8> outgoingPacket(std::begin(g_loginAcknowledgment), std::end(g_loginAcknowledgment));
@@ -175,19 +178,31 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 {
 	CLog::GetInstance().LogMessage(LOG_NAME, "GetCharacters");
 
+	if(m_dbConnection.IsEmpty())
+	{
+		CLog::GetInstance().LogMessage(LOG_NAME, "No database connection available. Bailing.");
+		m_disconnect = true;
+		return;
+	}
+
 	PacketData outgoingPacket(std::begin(g_characterListPacket), std::end(g_characterListPacket));
 
 	CCharacter character;
-	auto configPath = CAppConfig::GetInstance().GetBasePath();
-	auto characterPath = configPath / "ffxivd_character.xml";
-	if(boost::filesystem::exists(characterPath))
+
+	try
 	{
-		auto inputStream = Framework::CreateInputStdStream(characterPath.native());
-		character.Load(inputStream);
+		auto query = string_format("SELECT * FROM ffxiv_characters WHERE userId = %d", m_userId);
+		auto result = m_dbConnection.Query(query.c_str());
+		if(result.GetRowCount() != 0)
+		{
+			character = CCharacter(result);
+		}
 	}
-	else
+	catch(const std::exception& exception)
 	{
-		CLog::GetInstance().LogMessage(LOG_NAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to fetch characters for user (id = %d): %s", m_userId, exception.what());
+		m_disconnect = true;
+		return;
 	}
 
 	PacketData characterData(std::begin(g_characterData), std::end(g_characterData));
@@ -224,7 +239,7 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 	if(character.active)
 	{
 		*reinterpret_cast<uint32*>(&outgoingPacket[0x860]) = 0x0158E7FC;
-		*reinterpret_cast<uint32*>(&outgoingPacket[0x864]) = 0x00C17909;
+		*reinterpret_cast<uint32*>(&outgoingPacket[0x864]) = character.id;
 		*reinterpret_cast<uint32*>(&outgoingPacket[0x86C]) = 0x000000F4;
 
 		//Insert character name
@@ -248,8 +263,9 @@ void CLobbyServerPlayer::ProcessSelectCharacter(const PacketData& packetData)
 	const char* gameServerAddress = CAppConfig::GetInstance().GetPreferenceString(PREF_FFXIVD_GAMESERVER_ADDRESS);
 
 	std::vector<uint8> outgoingPacket(std::begin(g_selectCharacterPacket), std::end(g_selectCharacterPacket));
-	strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), gameServerAddress);
+	*reinterpret_cast<uint32*>(outgoingPacket.data() + 0x38) = characterId;			//Character Id (normally the actor id which is different from the id passed in that packet)
 	*reinterpret_cast<uint16*>(outgoingPacket.data() + 0x86) = CGameServer::GAME_SERVER_PORT;
+	strcpy(reinterpret_cast<char*>(outgoingPacket.data() + 0x88), gameServerAddress);
 
 	CPacketUtils::EncryptPacket(outgoingPacket);
 	QueuePacket(outgoingPacket);

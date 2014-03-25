@@ -2,15 +2,16 @@
 #include <map>
 #include <thread>
 #include "GameServerPlayer.h"
+#include "DatabaseConnectionManager.h"
 #include "PacketUtils.h"
 #include "GameServer_Login.h"
 #include "GameServer_MoveOutOfRoom.h"
 #include "GameServer_Ingame.h"
 #include "Character.h"
 #include "PathUtils.h"
-#include "StdStreamUtils.h"
 #include "Log.h"
 #include "AppConfig.h"
+#include "string_format.h"
 
 #include "packets/SetInitialPositionPacket.h"
 #include "packets/SetWeatherPacket.h"
@@ -66,7 +67,7 @@ CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 , m_alreadyMovedOutOfRoom(false)
 , m_zoneMasterCreated(false)
 {
-
+	m_dbConnection = CDatabaseConnectionManager::GetInstance().CreateConnection();
 }
 
 CGameServerPlayer::~CGameServerPlayer()
@@ -100,7 +101,7 @@ static PacketData GetMotd()
 	return outputPacket.ToPacketData();
 }
 
-static PacketData GetCharacterInfo()
+PacketData CGameServerPlayer::GetCharacterInfo()
 {
 	PacketData outgoingPacket(std::begin(g_client0_login8), std::end(g_client0_login8));
 
@@ -119,16 +120,21 @@ static PacketData GetCharacterInfo()
 	}
 
 	CCharacter character;
-	auto configPath = CAppConfig::GetInstance().GetBasePath();
-	auto characterPath = configPath / "ffxivd_character.xml";
-	if(boost::filesystem::exists(characterPath))
+
+	try
 	{
-		auto inputStream = Framework::CreateInputStdStream(characterPath.native());
-		character.Load(inputStream);
+		auto query = string_format("SELECT * FROM ffxiv_characters WHERE id = %d", m_characterId);
+		auto result = m_dbConnection.Query(query.c_str());
+		if(result.GetRowCount() != 0)
+		{
+			character = CCharacter(result);
+		}
 	}
-	else
+	catch(const std::exception& exception)
 	{
-		CLog::GetInstance().LogMessage(LOG_NAME, "File '%s' doesn't exist. Not loading any character data.", characterPath.string().c_str());
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to fetch character (id = %d): %s", m_characterId, exception.what());
+		m_disconnect = true;
+		return PacketData();
 	}
 
 	const uint32 characterInfoBase = 0x368;
@@ -407,10 +413,10 @@ void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const Pac
 {
 	if(m_sentInitialHandshake) return;
 
-	const char* userIdString = reinterpret_cast<const char*>(subPacket.data() + 0x14);
-	unsigned int userId = atoi(userIdString);
+	const char* characterIdString = reinterpret_cast<const char*>(subPacket.data() + 0x14);
+	m_characterId = atoi(characterIdString);
 
-	CLog::GetInstance().LogDebug(LOG_NAME, "Initial handshake for clientId = %d and userId = 0x%0.8X", clientId, userId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Initial handshake for clientId = %d and characterId = 0x%0.8X", clientId, m_characterId);
 
 	if(clientId == 1)
 	{
