@@ -115,6 +115,7 @@
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
     <ClInclude Include="..\daemon\GameServerPlayer.h" />
+    <ClInclude Include="..\daemon\GameServer_Ingame.h" />
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />

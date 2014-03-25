@@ -167,5 +167,8 @@
     <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h">
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\daemon\GameServer_Ingame.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
