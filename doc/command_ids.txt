@@ -7,4 +7,6 @@
 0x0134 -> Set Actor State
 0x0137 -> Call Actor Function?
 0x0139 -> Battle Action Packet
+0x0149 -> Inventory stuff (unconfirmed)
+0x014A -> Inventory stuff (unconfirmed)
 0x014B -> Set Inventory Packet
