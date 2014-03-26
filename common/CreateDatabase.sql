@@ -47,11 +47,16 @@ CREATE TABLE `ffxiv_characters` (
   `guardian` smallint(6) NOT NULL,
   `birthMonth` smallint(6) NOT NULL,
   `birthDay` smallint(6) NOT NULL,
-  `weapon` int(11) NOT NULL,
+  `weapon1` int(11) NOT NULL,
   `headGear` int(11) NOT NULL,
   `bodyGear` int(11) NOT NULL,
   `legsGear` int(11) NOT NULL,
   `handsGear` int(11) NOT NULL,
   `feetGear` int(11) NOT NULL,
+  `waistGear` int(11) NOT NULL,
+  `rightEarGear` int(11) NOT NULL,
+  `leftEarGear` int(11) NOT NULL,
+  `rightFingerGear` int(11) NOT NULL,
+  `leftFingerGear` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$

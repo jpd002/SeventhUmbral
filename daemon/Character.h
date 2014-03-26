@@ -47,9 +47,16 @@ public:
 	int				birthMonth = 0;
 	int				birthDay = 0;
 
+	int				weapon1 = 0;
+
 	int				headGear = 0;
 	int				bodyGear = 0;
 	int				legsGear = 0;
 	int				handsGear = 0;
 	int				feetGear = 0;
+	int				waistGear = 0;
+	int				rightEarGear = 0;
+	int				leftEarGear = 0;
+	int				rightFingerGear = 0;
+	int				leftFingerGear = 0;
 };

@@ -219,13 +219,20 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 	*reinterpret_cast<uint32*>(&characterData[0x2D]) = character.GetFaceInfo();		//face Stuff?
 	*reinterpret_cast<uint32*>(&characterData[0x31]) = character.hairStyle << 10;	//hair model
 	*reinterpret_cast<uint32*>(&characterData[0x35]) = character.voice;				//voice
-	*reinterpret_cast<uint32*>(&characterData[0x39]) = 0;							//Weapon (0x08D01400)
-
-	*reinterpret_cast<uint32*>(&characterData[0x55]) = character.headGear;		//headGear
-	*reinterpret_cast<uint32*>(&characterData[0x59]) = character.bodyGear;		//bodyGear
-	*reinterpret_cast<uint32*>(&characterData[0x5D]) = character.legsGear;		//legsGear
-	*reinterpret_cast<uint32*>(&characterData[0x61]) = character.handsGear;		//handsGear
-	*reinterpret_cast<uint32*>(&characterData[0x65]) = character.feetGear;		//feetGear
+	*reinterpret_cast<uint32*>(&characterData[0x39]) = character.weapon1;			//weapon1
+	*reinterpret_cast<uint32*>(&characterData[0x55]) = character.headGear;			//headGear
+	*reinterpret_cast<uint32*>(&characterData[0x59]) = character.bodyGear;			//bodyGear
+	*reinterpret_cast<uint32*>(&characterData[0x5D]) = character.legsGear;			//legsGear
+	*reinterpret_cast<uint32*>(&characterData[0x61]) = character.handsGear;			//handsGear
+	*reinterpret_cast<uint32*>(&characterData[0x65]) = character.feetGear;			//feetGear
+	*reinterpret_cast<uint32*>(&characterData[0x69]) = character.waistGear;			//waistGear
+//	*reinterpret_cast<uint32*>(&characterData[0x6D]) = 0;							//???
+	*reinterpret_cast<uint32*>(&characterData[0x71]) = character.rightEarGear;		//rightEarGear
+	*reinterpret_cast<uint32*>(&characterData[0x75]) = character.leftEarGear;		//leftEarGear
+//	*reinterpret_cast<uint32*>(&characterData[0x79]) = 0;							//???
+//	*reinterpret_cast<uint32*>(&characterData[0x7D]) = 0;							//???
+	*reinterpret_cast<uint32*>(&characterData[0x81]) = character.rightFingerGear;	//rightFingerGear
+	*reinterpret_cast<uint32*>(&characterData[0x85]) = character.leftFingerGear;	//leftFingerGear
 
 	auto encodedCharacterData = Framework::ToBase64(characterData.data(), characterData.size());
 	std::replace(std::begin(encodedCharacterData), std::end(encodedCharacterData), '+', '-');

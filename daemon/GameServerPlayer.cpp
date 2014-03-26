@@ -145,19 +145,22 @@ PacketData CGameServerPlayer::GetCharacterInfo()
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x38]) = character.GetFaceInfo();
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x40]) = character.hairStyle << 10;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x48]) = character.voice;
-//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = 0xC901014;				//weapon 1
-//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x58]) = 0xE20040A;				//weapon 2
-//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x68]) = 0xDD0040B;				//weapon 3?
-
-	//0xC901014 -> Bow
-	//0xE20040A -> Quiver
-	//0xDD0040B -> Arrow;
-
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x88]) = character.headGear;		//headGear
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x90]) = character.bodyGear;		//bodyGear
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x98]) = character.legsGear;		//legsGear
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xA0]) = character.handsGear;	//handsGear
-	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xA8]) = character.feetGear;		//feetGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = character.weapon1;			//weapon 1
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x58]) = 0;							//weapon 2?
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x68]) = 0;							//weapon 3?
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x88]) = character.headGear;			//headGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x90]) = character.bodyGear;			//bodyGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x98]) = character.legsGear;			//legsGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xA0]) = character.handsGear;		//handsGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xA8]) = character.feetGear;			//feetGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xB0]) = character.waistGear;		//waistGear
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xB8]) = 0;							//???
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xC0]) = character.rightEarGear;		//rightEarGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xC8]) = character.leftEarGear;		//leftEarGear
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xD0]) = 0;							//???
+//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xD8]) = 0;							//???
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xE0]) = character.rightFingerGear;	//rightFingerGear
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0xE8]) = character.leftFingerGear;	//leftFingerGear
 
 	//Insert character name
 	for(unsigned int i = 0; i < character.name.size(); i++)

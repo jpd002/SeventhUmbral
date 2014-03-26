@@ -130,11 +130,17 @@ CCharacter::CCharacter(Framework::MySql::CResult& result)
 	birthMonth = GetFieldIntValue(row, fieldIndices, "birthMonth");
 	birthDay = GetFieldIntValue(row, fieldIndices, "birthDay");
 
+	weapon1 = GetFieldIntValue(row, fieldIndices, "weapon1");
 	headGear = GetFieldIntValue(row, fieldIndices, "headGear");
 	bodyGear = GetFieldIntValue(row, fieldIndices, "bodyGear");
 	legsGear = GetFieldIntValue(row, fieldIndices, "legsGear");
 	handsGear = GetFieldIntValue(row, fieldIndices, "handsGear");
 	feetGear = GetFieldIntValue(row, fieldIndices, "feetGear");
+	waistGear = GetFieldIntValue(row, fieldIndices, "waistGear");
+	rightEarGear = GetFieldIntValue(row, fieldIndices, "rightEarGear");
+	leftEarGear = GetFieldIntValue(row, fieldIndices, "leftEarGear");
+	rightFingerGear = GetFieldIntValue(row, fieldIndices, "rightFingerGear");
+	leftFingerGear = GetFieldIntValue(row, fieldIndices, "leftFingerGear");
 }
 
 CCharacter::~CCharacter()
