@@ -1,6 +1,8 @@
 #include "CompositePacket.h"
+#include "../Log.h"
 #include <zlib.h>
-#include <assert.h>
+
+#define LOG_NAME "CompositePacket"
 
 CCompositePacket::CCompositePacket()
 {
@@ -50,30 +52,31 @@ PacketData CCompositePacket::CompressPacketData(const PacketData& packet)
 
 	z_stream stream = {};
 	int result = deflateInit2(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, MAX_WBITS, 8, Z_DEFAULT_STRATEGY);
-	assert(result == Z_OK);
+	if(result != Z_OK)
+	{
+		CLog::GetInstance().LogError(LOG_NAME, "deflateInit2 failed.");
+		return PacketData();
+	}
 
 	stream.avail_in = static_cast<uInt>(packet.size());
 	stream.next_in = const_cast<Bytef*>(reinterpret_cast<const Bytef*>(packet.data()));
 
-	while(stream.avail_in != 0)
-	{
-		stream.avail_out = BUFFERSIZE;
-		stream.next_out = outBuffer;
-
-		int ret = deflate(&stream, Z_NO_FLUSH);
-		assert(ret != Z_STREAM_ERROR);
-
-		compressedPacket.insert(std::end(compressedPacket), outBuffer, stream.next_out);
-	}
-
+	while(1)
 	{
 		stream.avail_out = BUFFERSIZE;
 		stream.next_out = outBuffer;
 
 		int ret = deflate(&stream, Z_FINISH);
-		assert(ret == Z_STREAM_END);
+		if(ret < 0)
+		{
+			CLog::GetInstance().LogError(LOG_NAME, "deflate failed.");
+			deflateEnd(&stream);
+			return PacketData();
+		}
 
 		compressedPacket.insert(std::end(compressedPacket), outBuffer, stream.next_out);
+
+		if(ret == Z_STREAM_END) break;
 	}
 
 	deflateEnd(&stream);
