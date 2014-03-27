@@ -21,7 +21,7 @@ function LoginPage_Login($dataConnection)
 	}
 	
 	$userId = VerifyUser($dataConnection, $username, $password);
-	return CreateSession($dataConnection, $userId);
+	return RefreshOrCreateSession($dataConnection, $userId);
 }
 
 $loginError = "";

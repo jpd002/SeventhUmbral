@@ -1,4 +1,5 @@
 <?php
+
 include("config.php");
 
 mysqli_report(MYSQLI_REPORT_STRICT);
@@ -89,23 +90,126 @@ function InsertUser($dataConnection, $username, $passhash, $salt, $email)
 	}
 }
 
+function RefreshOrCreateSession($dataConnection, $userId)
+{
+	try
+	{
+		$sessionId = GetSessionFromUserId($dataConnection, $userId);
+		RefreshSession($dataConnection, $sessionId);
+	}
+	catch(Exception $e)
+	{
+		$sessionId = CreateSession($dataConnection, $userId);
+	}
+
+	return $sessionId;
+}
+
 function CreateSession($dataConnection, $userId)
 {
 	//Delete any session that might be active
-	$query = sprintf("DELETE FROM ffxiv_sessions WHERE userId = '%d'", $userId);
-	if(!$dataConnection->query($query))
 	{
-		throw new Exception("Failed to create session.");
+		$statement = $dataConnection->prepare("DELETE FROM ffxiv_sessions WHERE userId = ?");
+		if(!$statement)
+		{
+			throw new Exception("Failed to create session: " . $dataConnection->error);
+		}
+		
+		try
+		{
+			$statement->bind_param('i', $userId);
+
+			if(!$statement->execute())
+			{
+				throw new Exception("Failed to create session: " . $dataConnection->error);
+			}
+		}
+		finally
+		{
+			$statement->close();
+		}
 	}
 	
-	$sessionId = GenerateRandomSha224();
-	$query = sprintf("INSERT INTO ffxiv_sessions (id, userid, expiration) VALUES ('%s', %d, NOW() + INTERVAL 1 DAY)", $sessionId, $userId);
-	if(!$dataConnection->query($query))
+	//Create new session
 	{
-		throw new Exception("Failed to create session.");
+		$sessionId = GenerateRandomSha224();
+		
+		$statement = $dataConnection->prepare("INSERT INTO ffxiv_sessions (id, userid, expiration) VALUES (?, ?, NOW() + INTERVAL " . FFXIV_SESSION_LENGTH . " HOUR)");
+		if(!$statement)
+		{
+			throw new Exception("Failed to create session: " . $dataConnection->error);
+		}
+		
+		try
+		{
+			$statement->bind_param('si', $sessionId, $userId);
+
+			if(!$statement->execute())
+			{
+				throw new Exception("Failed to create session: " . $dataConnection->error);
+			}
+		}
+		finally
+		{
+			$statement->close();
+		}
+		
+		return $sessionId;
+	}
+}
+
+function GetSessionFromUserId($dataConnection, $userId)
+{
+	$statement = $dataConnection->prepare("SELECT id FROM ffxiv_sessions WHERE userId = ? AND expiration > NOW()");
+	if(!$statement)
+	{
+		throw new Exception("Failed to get session id: " . $dataConnection->error);
 	}
 	
-	return $sessionId;
+	try
+	{
+		$statement->bind_param('i', $userId);
+		
+		if(!$statement->execute())
+		{
+			throw new Exception("Failed to get session id: " . $dataConnection->error);
+		}
+		
+		$statement->bind_result($sessionId);
+		if(!$statement->fetch())
+		{
+			throw new Exception("Failed to get session id: " . $dataConnection->error);
+		}
+		
+		return $sessionId;
+	}
+	finally
+	{
+		$statement->close();
+	}
+}
+
+function RefreshSession($dataConnection, $sessionId)
+{
+	$statement = $dataConnection->prepare("UPDATE ffxiv_sessions SET expiration = NOW() + INTERVAL " . FFXIV_SESSION_LENGTH . " HOUR WHERE id = ?");
+	if(!$statement)
+	{
+		throw new Exception("Failed to refresh session: " . $dataConnection->error);
+	}
+	
+	try
+	{
+		$statement->bind_param('s', $sessionId);
+		
+		if(!$statement->execute())
+		{
+			throw new Exception("Failed to refresh session: " . $dataConnection->error);
+		}
+	}
+	finally
+	{
+		$statement->close();
+	}
 }
 
 function GetUserIdFromSession($dataConnection, $sessionId)
