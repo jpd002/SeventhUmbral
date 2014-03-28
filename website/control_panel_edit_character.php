@@ -68,8 +68,6 @@ $g_htmlToDbFieldMapping = array(
 	"characterLeftFingerGear" => "leftFingerGear"
 );
 
-//$g_dbToHtmlFieldMapping = array_flip($g_htmlToDbFieldMapping);
-
 function SaveCharacter($databaseConnection, $htmlFieldMapping, $characterId)
 {
 	$characterInfo = array();
@@ -131,12 +129,6 @@ catch(Exception $e)
 		<script type="application/ecmascript" src="FileSaver.js"></script>
 		<script type="application/ecmascript">
 		
-			function exportCharacter()
-			{
-				var blob = new Blob();
-				var filesaver = saveAs(blob, "video.webm");
-			}
-			
 			function byteArrayToString(byteArray)
 			{
 				var i, str = '';
@@ -191,7 +183,7 @@ catch(Exception $e)
 				return undefined;
 			}
 			
-			function onImportFileReaderLoad(evt)
+			function onImportAppearanceFileReaderLoad(evt)
 			{
 				var decodedCharacterFileArray = decodeCharacterFile(evt.target.result);
 				var decodedCharacterFileString = byteArrayToString(new Uint8Array(decodedCharacterFileArray));
@@ -219,10 +211,6 @@ catch(Exception $e)
 					[ 'characterFaceOption1', 	'appearancetype_faceoption1' ],
 					
 					[ 'characterFaceOption2', 	'appearancetype_faceoption2' ],
-					
-					[ 'characterGuardian', 		'guardian' ],
-					[ 'characterBirthMonth', 	'birth_month' ],
-					[ 'characterBirthDay', 		'birth_day' ],
 				];
 				var characterTribe = getCharacterAttributeValue(characterAttributes, "rsc_tribe");
 				var characterTribeSelect = document.getElementById('characterTribe');
@@ -239,12 +227,12 @@ catch(Exception $e)
 				}
 			}
 			
-			function importCharacter(evt)
+			function importAppearanceFromFile(evt)
 			{
 				var file = evt.target.files[0];
 				var fileReader = new FileReader();
 				fileReader.readAsArrayBuffer(file);
-				fileReader.onload = onImportFileReaderLoad;
+				fileReader.onload = onImportAppearanceFileReaderLoad;
 			}
 		
 		</script>
@@ -267,12 +255,6 @@ catch(Exception $e)
 						<td colspan="4"><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterName", 20); ?></td>
 					</tr>
 					<tr>
-						<td colspan="4">Tribe:</td>
-					</tr>
-					<tr>
-						<td colspan="4"><?php echo GenerateSelectField($g_characterInfo, $g_htmlToDbFieldMapping, $g_tribes, "characterTribe"); ?></td>
-					</tr>
-					<tr>
 						<td>Guardian:</td>
 						<td>Birth Month:</td>
 						<td>Birth Day:</td>
@@ -284,8 +266,18 @@ catch(Exception $e)
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterBirthDay"); ?></td>
 						<td></td>
 					</tr>
+				</table>
+				<br />
+				<hr />
+				<table>
 					<tr>
 						<th colspan="4">Appearance</th>
+					</tr>
+					<tr>
+						<td colspan="4">Tribe:</td>
+					</tr>
+					<tr>
+						<td colspan="4"><?php echo GenerateSelectField($g_characterInfo, $g_htmlToDbFieldMapping, $g_tribes, "characterTribe"); ?></td>
 					</tr>
 					<tr>
 						<td>Size:</td>
@@ -345,8 +337,24 @@ catch(Exception $e)
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterFaceOption2"); ?></td>
 						<td></td>
 						<td></td>
-						<td></td>
+						<td>
+							<script>
+								function onImportAppearanceButtonClick()
+								{
+									document.getElementById('importAppearance').click();
+								}
+							</script>
+							<input type="file" id="importAppearance" style="display: none;">
+							<button onclick="onImportAppearanceButtonClick(); return false;">Import Appearance</button>
+							<script>
+								document.getElementById('importAppearance').addEventListener('change', importAppearanceFromFile, false);
+							</script>
+						</td>
 					</tr>
+				</table>
+				<br />
+				<hr />
+				<table>
 					<tr>
 						<th colspan="4">Gear</th>
 					</tr>
@@ -398,23 +406,13 @@ catch(Exception $e)
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterRightFingerGear"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterLeftFingerGear"); ?></td>
 					</tr>
+				</table>
+				<br />
+				<hr />
+				<table class="infoForm">
 					<tr>
-						<td></td>
-						<td></td>
-						<td colspan="2" style="text-align: right;">
-							<script>
-								function onImportButtonClick()
-								{
-									document.getElementById('importFile').click();
-								}
-							</script>
-							<input type="file" id="importFile" style="display: none;">
-							<button onclick="onImportButtonClick(); return false;">Import</button>
-							<button onclick="exportCharacter(); return false;">Export</button>
+						<td>
 							<input type="submit" name="save" value="Save" />
-							<script>
-								document.getElementById('importFile').addEventListener('change', importCharacter, false);
-							</script>
 						</td>
 					</tr>
 				</table>
