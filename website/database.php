@@ -345,7 +345,8 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 		name = ?, tribe = ?, size = ?, skinColor = ?, hairStyle = ?, hairColor = ?, hairOption = ?,
 		eyeColor = ?, faceType = ?, faceBrow = ?, faceEye = ?, faceIris = ?, faceNose = ?, faceMouth = ?, faceJaw = ?,
 		faceCheek = ?, faceOption1 = ?, faceOption2 = ?, guardian = ?, birthMonth = ?, birthDay = ?,
-		headGear = ?, bodyGear = ?, legsGear = ?, handsGear = ?, feetGear = ?
+		weapon1 = ?, headGear = ?, bodyGear = ?, legsGear = ?, handsGear = ?, feetGear = ?, waistGear = ?,
+		rightEarGear = ?, leftEarGear = ?, rightFingerGear = ?, leftFingerGear = ?
 		WHERE id = ?");
 	if(!$statement)
 	{
@@ -354,7 +355,7 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 	
 	try
 	{
-		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiii",
+		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
 			$characterInfo["name"], $characterInfo["tribe"], $characterInfo["size"],
 			$characterInfo["skinColor"], $characterInfo["hairStyle"], $characterInfo["hairColor"],
 			$characterInfo["hairOption"], $characterInfo["eyeColor"], $characterInfo["faceType"],
@@ -362,8 +363,10 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 			$characterInfo["faceNose"], $characterInfo["faceMouth"], $characterInfo["faceJaw"],
 			$characterInfo["faceCheek"], $characterInfo["faceOption1"], $characterInfo["faceOption2"],
 			$characterInfo["guardian"], $characterInfo["birthMonth"], $characterInfo["birthDay"],
-			$characterInfo["headGear"], $characterInfo["bodyGear"], $characterInfo["legsGear"],
-			$characterInfo["handsGear"], $characterInfo["feetGear"],
+			$characterInfo["weapon1"], $characterInfo["headGear"], $characterInfo["bodyGear"], 
+			$characterInfo["legsGear"], $characterInfo["handsGear"], $characterInfo["feetGear"],
+			$characterInfo["waistGear"], $characterInfo["rightEarGear"], $characterInfo["leftEarGear"], 
+			$characterInfo["rightFingerGear"], $characterInfo["leftFingerGear"],
 			$characterId))
 		{
 			throw new Exception("Failed to update character information: " . $dataConnection->error);

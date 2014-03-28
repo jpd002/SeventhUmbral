@@ -55,11 +55,17 @@ $g_htmlToDbFieldMapping = array(
 	"characterGuardian" => "guardian",
 	"characterBirthMonth" => "birthMonth",
 	"characterBirthDay" => "birthDay",
+	"characterWeapon1" => "weapon1",
 	"characterHeadGear" => "headGear",
 	"characterBodyGear" => "bodyGear",
 	"characterLegsGear" => "legsGear",
 	"characterHandsGear" => "handsGear",
-	"characterFeetGear" => "feetGear"
+	"characterFeetGear" => "feetGear",
+	"characterWaistGear" => "waistGear",
+	"characterRightEarGear" => "rightEarGear",
+	"characterLeftEarGear" => "leftEarGear",
+	"characterRightFingerGear" => "rightFingerGear",
+	"characterLeftFingerGear" => "leftFingerGear"
 );
 
 //$g_dbToHtmlFieldMapping = array_flip($g_htmlToDbFieldMapping);
@@ -344,6 +350,18 @@ catch(Exception $e)
 						<th colspan="4">Gear</th>
 					</tr>
 					<tr>
+						<td>Weapon 1:</td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterWeapon1"); ?></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr>
 						<td>Head Gear:</td>
 						<td>Body Gear:</td>
 						<td>Legs Gear:</td>
@@ -357,15 +375,27 @@ catch(Exception $e)
 					</tr>
 					<tr>
 						<td>Feet Gear:</td>
-						<td></td>
+						<td>Waist Gear:</td>
 						<td></td>
 						<td></td>
 					</tr>
 					<tr>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterFeetGear"); ?></td>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterWaistGear"); ?></td>
 						<td></td>
 						<td></td>
-						<td></td>
+					</tr>
+					<tr>
+						<td>Right Ear Gear:</td>
+						<td>Left Ear Gear:</td>
+						<td>Right Finger Gear:</td>
+						<td>Left Finger Gear:</td>
+					</tr>
+					<tr>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterRightEarGear"); ?></td>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterLeftEarGear"); ?></td>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterRightFingerGear"); ?></td>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterLeftFingerGear"); ?></td>
 					</tr>
 					<tr>
 						<td></td>
