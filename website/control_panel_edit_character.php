@@ -80,10 +80,11 @@ function SaveCharacter($databaseConnection, $htmlFieldMapping, $characterId)
 	UpdateCharacterInfo($databaseConnection, $characterId, $characterInfo);
 }
 
-function GenerateTextField($characterInfo, $htmlFieldMapping, $htmlFieldName)
+function GenerateTextField($characterInfo, $htmlFieldMapping, $htmlFieldName, $fieldMaxLength = null)
 {
-	return sprintf("<input id=\"%s\" name=\"%s\" type=\"text\" value=\"%s\" />",
-		$htmlFieldName, $htmlFieldName, $characterInfo[$htmlFieldMapping[$htmlFieldName]]);
+	$inputMaxLength = ($fieldMaxLength === null) ? "" : sprintf("maxlength=\"%d\"", $fieldMaxLength);
+	return sprintf("<input id=\"%s\" name=\"%s\" type=\"text\" value=\"%s\" %s />",
+		$htmlFieldName, $htmlFieldName, $characterInfo[$htmlFieldMapping[$htmlFieldName]], $inputMaxLength);
 }
 
 function GenerateSelectField($characterInfo, $htmlFieldMapping, $htmlFieldOptions, $htmlFieldName)
@@ -263,7 +264,7 @@ catch(Exception $e)
 						<td colspan="4">Name:</td>
 					</tr>
 					<tr>
-						<td colspan="4"><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterName"); ?></td>
+						<td colspan="4"><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterName", 20); ?></td>
 					</tr>
 					<tr>
 						<td colspan="4">Tribe:</td>
