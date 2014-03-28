@@ -32,6 +32,21 @@ $g_tribes = array(
 	15 => "Roegadyn Hellsguard Male"
 );
 
+$g_guardians = array(
+	1 => "Halone, the Fury",
+	2 => "Menphina, the Lover",
+	3 => "Thaliak, the Scholar",
+	4 => "Nymeia, the Spinner",
+	5 => "Llymlaen, the Navigator",
+	6 => "Oschon, the Wanderer",
+	7 => "Byregot, the Builder",
+	8 => "Rhalgr, the Destroyer",
+	9 => "Azeyma, the Warden",
+	10 => "Nald'thal, the Traders",
+	11 => "Nophica, the Matron",
+	12 => "Althyk, the Keeper"
+);
+
 $g_htmlToDbFieldMapping = array(
 	"characterName" => "name",
 	"characterTribe" => "tribe",
@@ -261,7 +276,7 @@ catch(Exception $e)
 						<td></td>
 					</tr>
 					<tr>
-						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterGuardian"); ?></td>
+						<td><?php echo GenerateSelectField($g_characterInfo, $g_htmlToDbFieldMapping, $g_guardians, "characterGuardian"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterBirthMonth"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterBirthDay"); ?></td>
 						<td></td>
