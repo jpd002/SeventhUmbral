@@ -342,7 +342,7 @@ function GetCharacterInfo($dataConnection, $userId, $characterId)
 function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 {
 	$statement = $dataConnection->prepare("UPDATE ffxiv_characters SET
-		name = ?, tribe = ?, size = ?, skinColor = ?, hairStyle = ?, hairColor = ?, hairOption = ?,
+		name = ?, tribe = ?, size = ?, voice = ?, skinColor = ?, hairStyle = ?, hairColor = ?, hairOption = ?,
 		eyeColor = ?, faceType = ?, faceBrow = ?, faceEye = ?, faceIris = ?, faceNose = ?, faceMouth = ?, faceJaw = ?,
 		faceCheek = ?, faceOption1 = ?, faceOption2 = ?, guardian = ?, birthMonth = ?, birthDay = ?,
 		weapon1 = ?, headGear = ?, bodyGear = ?, legsGear = ?, handsGear = ?, feetGear = ?, waistGear = ?,
@@ -355,8 +355,8 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 	
 	try
 	{
-		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-			$characterInfo["name"], $characterInfo["tribe"], $characterInfo["size"],
+		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+			$characterInfo["name"], $characterInfo["tribe"], $characterInfo["size"], $characterInfo["voice"],
 			$characterInfo["skinColor"], $characterInfo["hairStyle"], $characterInfo["hairColor"],
 			$characterInfo["hairOption"], $characterInfo["eyeColor"], $characterInfo["faceType"],
 			$characterInfo["faceBrow"], $characterInfo["faceEye"], $characterInfo["faceIris"],
