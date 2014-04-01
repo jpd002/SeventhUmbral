@@ -141,9 +141,30 @@ catch(Exception $e)
 		<title>Seventh Umbral Server</title>
 		<link rel="stylesheet" type="text/css" href="css/reset.css" />
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
-		<script type="application/ecmascript" src="FileSaver.js"></script>
 		<script type="application/ecmascript">
 		
+			var weaponPresets = <?php echo require_once("presets_weapon.json"); ?>; 
+			var armorPresets = <?php echo require_once("presets_armor.json"); ?>;
+			
+			function loadPresetsInSelect(presets, selectName)
+			{
+				var select = document.getElementById(selectName);
+				for(var presetId in presets)
+				{
+					var el = document.createElement("option");
+					var preset = presets[presetId];
+					el.textContent = preset.name;
+					el.value = presetId;
+					select.appendChild(el);
+				}
+			}
+			
+			window.onload = function() 
+			{
+				loadPresetsInSelect(weaponPresets, "weaponPresets");
+				loadPresetsInSelect(armorPresets, "armorPresets");
+			}
+			
 			function byteArrayToString(byteArray)
 			{
 				var i, str = '';
@@ -248,6 +269,36 @@ catch(Exception $e)
 				var fileReader = new FileReader();
 				fileReader.readAsArrayBuffer(file);
 				fileReader.onload = onImportAppearanceFileReaderLoad;
+			}
+			
+			function onEquipWeaponPreset()
+			{
+				var select = document.getElementById("weaponPresets");
+				
+				var weapon1Field = document.getElementById("characterWeapon1");
+
+				var preset = weaponPresets[select.value];
+				weapon1Field.value = preset.weapon1;
+			}
+			
+			function onEquipArmorPreset()
+			{
+				var select = document.getElementById("armorPresets");
+
+				var headGearField = document.getElementById("characterHeadGear");
+				var bodyGearField = document.getElementById("characterBodyGear");
+				var legsGearField = document.getElementById("characterLegsGear");
+				var handsGearField = document.getElementById("characterHandsGear");
+				var feetGearField = document.getElementById("characterFeetGear");
+				var waistGearField = document.getElementById("characterWaistGear");
+				
+				var preset = armorPresets[select.value];
+				headGearField.value = preset.headGear;
+				bodyGearField.value = preset.bodyGear;
+				legsGearField.value = preset.legsGear;
+				handsGearField.value = preset.handsGear;
+				feetGearField.value = preset.feetGear;
+				waistGearField.value = preset.waistGear;
 			}
 		
 		</script>
@@ -420,6 +471,20 @@ catch(Exception $e)
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterLeftEarGear"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterRightFingerGear"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterLeftFingerGear"); ?></td>
+					</tr>
+					<tr>
+						<td colspan="2">Weapon Presets:</td>
+						<td colspan="2">Armor Presets:</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<select id="weaponPresets"></select>
+							<button onclick="onEquipWeaponPreset(); return false;">Equip</button>
+						</td>
+						<td colspan="2">
+							<select id="armorPresets"></select>
+							<button onclick="onEquipArmorPreset(); return false;">Equip</button>
+						</td>
 					</tr>
 				</table>
 				<br />

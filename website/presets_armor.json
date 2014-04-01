@@ -1,0 +1,29 @@
+{
+	0: {
+		"name": "Monk Artifact Equipment",
+		"headGear": 45056,
+		"bodyGear": 45056,
+		"legsGear": 45056,
+		"handsGear": 45056,
+		"feetGear": 45056,
+		"waistGear": 0
+	},
+	1: {
+		"name": "Warrior Artifact Equipment",
+		"headGear": 37888,
+		"bodyGear": 37888,
+		"legsGear": 37888,
+		"handsGear": 37888,
+		"feetGear": 37888,
+		"waistGear": 0
+	},
+	2: {
+		"name": "Paladin Artifact Equipment",
+		"headGear": 43008,
+		"bodyGear": 43008,
+		"legsGear": 43008,
+		"handsGear": 43008,
+		"feetGear": 43008,
+		"waistGear": 0
+	}
+};
