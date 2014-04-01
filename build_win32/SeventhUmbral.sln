@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Launcher", "Launcher.vcxproj", "{DF41EE7B-C688-4495-96EA-B1B5D7486A79}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "..\..\Framework\build_win32\Framework.vcxproj", "{553CE050-A97E-4E6E-AE84-057A1F0FA45D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Daemon", "Daemon.vcxproj", "{5E47C890-818C-402E-AAEF-48A40210BF1B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterEditor", "..\tools\CharacterEditor\CharacterEditor.csproj", "{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketUnpacker", "..\tools\PacketUnpacker\PacketUnpacker.csproj", "{AB3566EA-EF04-4CD3-B8E1-502BAC419588}"
 EndProject
@@ -35,10 +33,6 @@ Global
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Debug|Win32.Build.0 = Debug|Win32
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Release|Win32.ActiveCfg = Release|Win32
 		{5E47C890-818C-402E-AAEF-48A40210BF1B}.Release|Win32.Build.0 = Release|Win32
-		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Debug|Win32.Build.0 = Debug|Any CPU
-		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.ActiveCfg = Release|Any CPU
-		{BC39E14D-1A1B-4213-BB14-0EF7C75E46AF}.Release|Win32.Build.0 = Release|Any CPU
 		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Debug|Win32.Build.0 = Debug|Any CPU
 		{AB3566EA-EF04-4CD3-B8E1-502BAC419588}.Release|Win32.ActiveCfg = Release|Any CPU
