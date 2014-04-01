@@ -238,23 +238,25 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 	std::replace(std::begin(encodedCharacterData), std::end(encodedCharacterData), '+', '-');
 	std::replace(std::begin(encodedCharacterData), std::end(encodedCharacterData), '/', '_');
 
-	for(unsigned int i = 0; i < encodedCharacterData.size(); i++)
-	{
-		outgoingPacket[0x8A0 + i] = encodedCharacterData[i];
-	}
+	static const uint32 characterInfoBase = 0x860;
 
 	if(character.active)
 	{
-		*reinterpret_cast<uint32*>(&outgoingPacket[0x860]) = 0x0158E7FC;
-		*reinterpret_cast<uint32*>(&outgoingPacket[0x864]) = character.id;
-		*reinterpret_cast<uint32*>(&outgoingPacket[0x86C]) = 0x000000F4;
+		for(unsigned int i = 0; i < encodedCharacterData.size(); i++)
+		{
+			outgoingPacket[characterInfoBase + 0x40 + i] = encodedCharacterData[i];
+		}
+
+		*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x00]) = 0x0158E7FC;
+		*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x04]) = character.id;
+		*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x0C]) = 0x000000F4;
 
 		//Insert character name
 		for(unsigned int i = 0; i < character.name.size(); i++)
 		{
-			outgoingPacket[0x870 + i] = character.name[i];
+			outgoingPacket[characterInfoBase + 0x10 + i] = character.name[i];
 		}
-		outgoingPacket[0x870 + character.name.size()] = 0;
+		outgoingPacket[characterInfoBase + 0x10 + character.name.size()] = 0;
 	}
 
 	CPacketUtils::EncryptPacket(outgoingPacket);
