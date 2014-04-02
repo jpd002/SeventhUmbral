@@ -1,5 +1,32 @@
 {
 	0: {
+		"name": "Bard Artifact Equipment",
+		"headGear": 41984,
+		"bodyGear": 41984,
+		"legsGear": 41984,
+		"handsGear": 41984,
+		"feetGear": 41984,
+		"waistGear": 0
+	},
+	1: {
+		"name": "Black Mage Artifact Equipment",
+		"headGear": 40960,
+		"bodyGear": 40960,
+		"legsGear": 40960,
+		"handsGear": 40960,
+		"feetGear": 40960,
+		"waistGear": 0
+	},
+	2: {
+		"name": "Dragoon Artifact Equipment",
+		"headGear": 36864,
+		"bodyGear": 36864,
+		"legsGear": 36864,
+		"handsGear": 36864,
+		"feetGear": 36864,
+		"waistGear": 0
+	},
+	3: {
 		"name": "Monk Artifact Equipment",
 		"headGear": 45056,
 		"bodyGear": 45056,
@@ -8,7 +35,16 @@
 		"feetGear": 45056,
 		"waistGear": 0
 	},
-	1: {
+	4: {
+		"name": "Paladin Artifact Equipment",
+		"headGear": 43008,
+		"bodyGear": 43008,
+		"legsGear": 43008,
+		"handsGear": 43008,
+		"feetGear": 43008,
+		"waistGear": 0
+	},
+	5: {
 		"name": "Warrior Artifact Equipment",
 		"headGear": 37888,
 		"bodyGear": 37888,
@@ -17,13 +53,49 @@
 		"feetGear": 37888,
 		"waistGear": 0
 	},
-	2: {
-		"name": "Paladin Artifact Equipment",
-		"headGear": 43008,
-		"bodyGear": 43008,
-		"legsGear": 43008,
-		"handsGear": 43008,
-		"feetGear": 43008,
+	6: {
+		"name": "White Mage Artifact Equipment",
+		"headGear": 39936,
+		"bodyGear": 39936,
+		"legsGear": 39936,
+		"handsGear": 39936,
+		"feetGear": 39936,
 		"waistGear": 0
-	}
+	},
+	7: {
+		"name": "The Maelstrom Uniform",
+		"headGear": 46080,
+		"bodyGear": 46080,
+		"legsGear": 1024,
+		"handsGear": 46080,
+		"feetGear": 46080,
+		"waistGear": 0
+	},
+	8: {
+		"name": "The Order of the Twin Adder Uniform",
+		"headGear": 46112,
+		"bodyGear": 46081,
+		"legsGear": 1024,
+		"handsGear": 46081,
+		"feetGear": 46081,
+		"waistGear": 0
+	},
+	9: {
+		"name": "The Immortal Flames Uniform",
+		"headGear": 46144,
+		"bodyGear": 46082,
+		"legsGear": 1024,
+		"handsGear": 46082,
+		"feetGear": 46082,
+		"waistGear": 0
+	},
+	10: {
+		"name": "Nael van Darnus (Elezen Male Only)",
+		"headGear": 0,
+		"bodyGear": 933888,
+		"legsGear": 1024,
+		"handsGear": 1024,
+		"feetGear": 1024,
+		"waistGear": 0
+	},
 };
