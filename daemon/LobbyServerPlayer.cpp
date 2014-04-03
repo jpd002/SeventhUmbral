@@ -220,6 +220,7 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 	*reinterpret_cast<uint32*>(&characterData[0x31]) = character.hairStyle << 10;	//hair model
 	*reinterpret_cast<uint32*>(&characterData[0x35]) = character.voice;				//voice
 	*reinterpret_cast<uint32*>(&characterData[0x39]) = character.weapon1;			//weapon1
+	*reinterpret_cast<uint32*>(&characterData[0x3D]) = character.weapon2;			//weapon2
 	*reinterpret_cast<uint32*>(&characterData[0x55]) = character.headGear;			//headGear
 	*reinterpret_cast<uint32*>(&characterData[0x59]) = character.bodyGear;			//bodyGear
 	*reinterpret_cast<uint32*>(&characterData[0x5D]) = character.legsGear;			//legsGear

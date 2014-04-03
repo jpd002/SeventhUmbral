@@ -131,6 +131,7 @@ CCharacter::CCharacter(Framework::MySql::CResult& result)
 	birthDay = GetFieldIntValue(row, fieldIndices, "birthDay");
 
 	weapon1 = GetFieldIntValue(row, fieldIndices, "weapon1");
+	weapon2 = GetFieldIntValue(row, fieldIndices, "weapon2");
 	headGear = GetFieldIntValue(row, fieldIndices, "headGear");
 	bodyGear = GetFieldIntValue(row, fieldIndices, "bodyGear");
 	legsGear = GetFieldIntValue(row, fieldIndices, "legsGear");

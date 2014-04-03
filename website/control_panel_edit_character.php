@@ -71,6 +71,7 @@ $g_htmlToDbFieldMapping = array(
 	"characterBirthMonth" => "birthMonth",
 	"characterBirthDay" => "birthDay",
 	"characterWeapon1" => "weapon1",
+	"characterWeapon2" => "weapon2",
 	"characterHeadGear" => "headGear",
 	"characterBodyGear" => "bodyGear",
 	"characterLegsGear" => "legsGear",
@@ -276,9 +277,11 @@ catch(Exception $e)
 				var select = document.getElementById("weaponPresets");
 				
 				var weapon1Field = document.getElementById("characterWeapon1");
+				var weapon2Field = document.getElementById("characterWeapon2");
 
 				var preset = weaponPresets[select.value];
 				weapon1Field.value = preset.weapon1;
+				weapon2Field.value = preset.weapon2;
 			}
 			
 			function onEquipArmorPreset()
@@ -426,13 +429,13 @@ catch(Exception $e)
 					</tr>
 					<tr>
 						<td>Weapon 1:</td>
-						<td></td>
+						<td>Weapon 2:</td>
 						<td></td>
 						<td></td>
 					</tr>
 					<tr>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterWeapon1"); ?></td>
-						<td></td>
+						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterWeapon2"); ?></td>
 						<td></td>
 						<td></td>
 					</tr>

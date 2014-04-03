@@ -48,6 +48,7 @@ public:
 	int				birthDay = 0;
 
 	int				weapon1 = 0;
+	int				weapon2 = 0;
 
 	int				headGear = 0;
 	int				bodyGear = 0;

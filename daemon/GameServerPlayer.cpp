@@ -146,7 +146,7 @@ PacketData CGameServerPlayer::GetCharacterInfo()
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x40]) = character.hairStyle << 10;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x48]) = character.voice;
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x50]) = character.weapon1;			//weapon 1
-//	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x58]) = 0;							//weapon 2?
+	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x58]) = character.weapon2;			//weapon 2?
 //	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x68]) = 0;							//weapon 3?
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x88]) = character.headGear;			//headGear
 	*reinterpret_cast<uint32*>(&outgoingPacket[characterInfoBase + 0x90]) = character.bodyGear;			//bodyGear

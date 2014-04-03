@@ -48,6 +48,7 @@ CREATE TABLE `ffxiv_characters` (
   `birthMonth` smallint(6) NOT NULL,
   `birthDay` smallint(6) NOT NULL,
   `weapon1` int(11) NOT NULL,
+  `weapon2` int(11) NOT NULL,
   `headGear` int(11) NOT NULL,
   `bodyGear` int(11) NOT NULL,
   `legsGear` int(11) NOT NULL,

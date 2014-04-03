@@ -1,10 +1,37 @@
 {
 	0: {
 		"name": "Axe",
-		"weapon1": 147854336
+		"weapon1": 147850240,
+		"weapon2": 0,
 	},
 	1: {
-		"name": "Bow",
-		"weapon1": 210767892
-	}
+		"name": "Bow & Arrow",
+		"weapon1": 210766878,
+		"weapon2": 236979210,
+	},
+	2: {
+		"name": "Fists",
+		"weapon1": 58723358,
+		"weapon2": 59771934,
+	},
+	3: {
+		"name": "Lance",
+		"weapon1": 168826880,
+		"weapon2": 0,
+	},
+	4: {
+		"name": "Sword & Shield",
+		"weapon1": 79692880,
+		"weapon2": 32513024,
+	},
+	5: {
+		"name": "Wand (Conjurer)",
+		"weapon1": 331351052,
+		"weapon2": 0,
+	},
+	6: {
+		"name": "Wand (Thaumaturge)",
+		"weapon1": 294652958,
+		"weapon2": 0,
+	},
 };
