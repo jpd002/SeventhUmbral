@@ -9,7 +9,7 @@ class CIosUmbralEffectGenerator
 {
 public:
 	static std::string		GenerateVertexShader(const CD3DShader&);
-	static std::string		GeneratePixelShader(const CD3DShader&, const CD3DShader&);
+	static std::string		GeneratePixelShader(const CD3DShader&);
 
 private:
 	typedef std::pair<CD3DShader::SHADER_REGISTER_TYPE, uint32> RegisterId;
@@ -60,7 +60,7 @@ private:
 							CIosUmbralEffectGenerator();
 		
 	std::string				GenerateVertexShaderInternal(const CD3DShader&);
-	std::string				GeneratePixelShaderInternal(const CD3DShader&, const CD3DShader&);
+	std::string				GeneratePixelShaderInternal(const CD3DShader&);
 	
 	void					ParseTemporaries(const CD3DShader&);
 	void					ParseAddressTemporaries(const CD3DShader&);
@@ -68,13 +68,15 @@ private:
 	void					ParseOutputs(const CD3DShader&);	
 	void					ParseGlobalConstants(const CD3DShaderConstantTable&);
 	void					ParseGlobalBoolConstants(const CD3DShaderConstantTable&);
+	void					ParseGlobalSamplerConstants(const CD3DShaderConstantTable&);
 	void					ParseLocalConstants(const CD3DShader&);
 	void					ParseLocalIntConstants(const CD3DShader&);
 	
 	std::string				GenerateInstructions(const CD3DShader&) const;
 	std::string				GenerateAttributeDeclarations();
 	std::string				GenerateVaryingDeclarations();
-	std::string				GenerateUniformDeclarations();
+	std::string				GeneratePixelVaryingDeclarations();
+	std::string				GenerateUniformDeclarations(const std::string&);
 	std::string				GenerateTemporaryDeclarations();
 	std::string				GenerateLocalConstantDeclarations();
 	
@@ -89,8 +91,13 @@ private:
 	std::string				Emit_Mad(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
 	std::string				Emit_Dp3(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
 	std::string				Emit_Dp4(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
+	std::string				Emit_Lrp(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
 	std::string				Emit_Loop(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
+	std::string				Emit_Rep(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
 	std::string				Emit_If(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
+	std::string				Emit_Cmp(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
+	std::string				Emit_Texld(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
+	std::string				Emit_Texldl(CD3DShader::CTokenStream&, IDENTATION_STATE&) const;
 	
 	std::string				Emit_Unary(CD3DShader::CTokenStream&, IDENTATION_STATE&, const char*) const;
 	std::string				Emit_Binary(CD3DShader::CTokenStream&, IDENTATION_STATE&, const char*) const;

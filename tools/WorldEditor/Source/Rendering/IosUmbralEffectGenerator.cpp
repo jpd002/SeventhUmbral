@@ -20,26 +20,39 @@ CIosUmbralEffectGenerator::CIosUmbralEffectGenerator()
 	m_instructionEmitters[CD3DShader::OPCODE_RSQ]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = inversesqrt(%s);\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_DP3]		= std::bind(&CIosUmbralEffectGenerator::Emit_Dp3, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_DP4]		= std::bind(&CIosUmbralEffectGenerator::Emit_Dp4, this, std::placeholders::_1, std::placeholders::_2);
+	m_instructionEmitters[CD3DShader::OPCODE_MIN]		= std::bind(&CIosUmbralEffectGenerator::Emit_Binary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = min(%s, %s);\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_MAX]		= std::bind(&CIosUmbralEffectGenerator::Emit_Binary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = max(%s, %s);\r\n");
-	m_instructionEmitters[CD3DShader::OPCODE_SLT]		= std::bind(&CIosUmbralEffectGenerator::Emit_Binary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = bvec4tovec4(lessThan(%s, %s));\r\n");
+	m_instructionEmitters[CD3DShader::OPCODE_SLT]		= std::bind(&CIosUmbralEffectGenerator::Emit_Binary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = vec4(lessThan(%s, %s));\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_EXP]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = exp(%s);\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_LOG]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = log(%s);\r\n");
 	
 	//0x10
+	m_instructionEmitters[CD3DShader::OPCODE_LRP]		= std::bind(&CIosUmbralEffectGenerator::Emit_Lrp, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_LOOP]		= std::bind(&CIosUmbralEffectGenerator::Emit_Loop, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_ENDLOOP]	= std::bind(&CIosUmbralEffectGenerator::Emit_EndScope, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_FRC]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = fract(%s);\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_DCL]		= std::bind(&CIosUmbralEffectGenerator::Emit_Nop, this, std::placeholders::_1, std::placeholders::_2);
 	
 	//0x20
+	m_instructionEmitters[CD3DShader::OPCODE_POW]		= std::bind(&CIosUmbralEffectGenerator::Emit_Binary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = pow(%s, %s);\r\n");
+	m_instructionEmitters[CD3DShader::OPCODE_ABS]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = abs(%s);\r\n");
 	m_instructionEmitters[CD3DShader::OPCODE_NRM]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = normalize(%s);\r\n");
+	m_instructionEmitters[CD3DShader::OPCODE_REP]		= std::bind(&CIosUmbralEffectGenerator::Emit_Rep, this, std::placeholders::_1, std::placeholders::_2);
+	m_instructionEmitters[CD3DShader::OPCODE_ENDREP]	= std::bind(&CIosUmbralEffectGenerator::Emit_EndScope, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_IF]		= std::bind(&CIosUmbralEffectGenerator::Emit_If, this, std::placeholders::_1, std::placeholders::_2);
 	m_instructionEmitters[CD3DShader::OPCODE_ENDIF]		= std::bind(&CIosUmbralEffectGenerator::Emit_EndScope, this, std::placeholders::_1, std::placeholders::_2);
-	m_instructionEmitters[CD3DShader::OPCODE_MOVA]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = vec4toivec4(%s);\r\n");
+	m_instructionEmitters[CD3DShader::OPCODE_MOVA]		= std::bind(&CIosUmbralEffectGenerator::Emit_Unary, this, std::placeholders::_1, std::placeholders::_2, "%s%s = ivec4(%s);\r\n");
 	
-	//0x30	
-	m_instructionEmitters[CD3DShader::OPCODE_DEF]		= std::bind(&CIosUmbralEffectGenerator::Emit_Nop, this, std::placeholders::_1, std::placeholders::_2);
+	//0x30
 	m_instructionEmitters[CD3DShader::OPCODE_DEFI]		= std::bind(&CIosUmbralEffectGenerator::Emit_Nop, this, std::placeholders::_1, std::placeholders::_2);
+	
+	//0x40
+	m_instructionEmitters[CD3DShader::OPCODE_TEXLD]		= std::bind(&CIosUmbralEffectGenerator::Emit_Texld, this, std::placeholders::_1, std::placeholders::_2);
+	
+	//0x51
+	m_instructionEmitters[CD3DShader::OPCODE_DEF]		= std::bind(&CIosUmbralEffectGenerator::Emit_Nop, this, std::placeholders::_1, std::placeholders::_2);
+	m_instructionEmitters[CD3DShader::OPCODE_CMP]		= std::bind(&CIosUmbralEffectGenerator::Emit_Cmp, this, std::placeholders::_1, std::placeholders::_2);
+	m_instructionEmitters[CD3DShader::OPCODE_TEXLDL]	= std::bind(&CIosUmbralEffectGenerator::Emit_Texldl, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 std::string CIosUmbralEffectGenerator::GenerateVertexShader(const CD3DShader& inputVertexShader)
@@ -48,10 +61,10 @@ std::string CIosUmbralEffectGenerator::GenerateVertexShader(const CD3DShader& in
 	return generator.GenerateVertexShaderInternal(inputVertexShader);
 }
 
-std::string CIosUmbralEffectGenerator::GeneratePixelShader(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader)
+std::string CIosUmbralEffectGenerator::GeneratePixelShader(const CD3DShader& inputPixelShader)
 {
 	CIosUmbralEffectGenerator generator;
-	return generator.GeneratePixelShaderInternal(inputVertexShader, inputPixelShader);
+	return generator.GeneratePixelShaderInternal(inputPixelShader);
 }
 
 std::string CIosUmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DShader& inputVertexShader)
@@ -77,11 +90,8 @@ std::string CIosUmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DSh
 		
 	result += GenerateAttributeDeclarations();
 	result += GenerateVaryingDeclarations();
-	result += GenerateUniformDeclarations();
-	
-	result += "vec4 bvec4tovec4(bvec4 leVec) { return vec4(leVec.x, leVec.y, leVec.z, leVec.w); }\r\n";
-	result += "ivec4 vec4toivec4(vec4 leVec) { return ivec4(leVec.x, leVec.y, leVec.z, leVec.w); }\r\n";
-	
+	result += GenerateUniformDeclarations("vs");
+		
 	result += "void main()\r\n";
 	result += "{\r\n";
 	
@@ -94,9 +104,43 @@ std::string CIosUmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DSh
 	return result;
 }
 
-std::string CIosUmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader)
+std::string CIosUmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DShader& inputPixelShader)
 {
-	return "void main() { gl_FragColor = vec4(1, 1, 1, 1); }";
+	std::string result;
+	
+	auto pixelConstantTable = inputPixelShader.GetConstantTable();
+	
+	ParseTemporaries(inputPixelShader);
+	ParseAddressTemporaries(inputPixelShader);
+	ParseVertexInputs(inputPixelShader);
+	ParseOutputs(inputPixelShader);
+	ParseLocalConstants(inputPixelShader);
+	ParseLocalIntConstants(inputPixelShader);
+	ParseGlobalConstants(pixelConstantTable);
+	ParseGlobalBoolConstants(pixelConstantTable);
+	ParseGlobalSamplerConstants(pixelConstantTable);
+	
+	//Special registers
+	{
+		auto registerId = std::make_pair(CD3DShader::SHADER_REGISTER_COLOROUT, 0);
+		m_registerNames.insert(std::make_pair(registerId, "gl_FragColor"));
+	}
+
+	result += "precision mediump float;\r\n";
+
+	result += GeneratePixelVaryingDeclarations();
+	result += GenerateUniformDeclarations("ps");
+		
+	result += "void main()\r\n";
+	result += "{\r\n";
+	
+	result += GenerateTemporaryDeclarations();
+	result += GenerateLocalConstantDeclarations();
+	result += GenerateInstructions(inputPixelShader);
+	
+	result += "}\r\n";
+	
+	return result;
 }
 
 static std::string GetUsageName(uint32 usage)
@@ -187,7 +231,28 @@ std::string CIosUmbralEffectGenerator::GenerateVaryingDeclarations()
 	return result;
 }
 
-std::string CIosUmbralEffectGenerator::GenerateUniformDeclarations()
+std::string CIosUmbralEffectGenerator::GeneratePixelVaryingDeclarations()
+{
+	std::string result;
+	
+	for(const auto& registerInfoPair : m_registerInfos)
+	{
+		const auto& registerId = registerInfoPair.first;
+		const auto& registerInfo = registerInfoPair.second;
+		if(registerId.first != CD3DShader::SHADER_REGISTER_INPUT) continue;
+		
+		std::string usageName = GetUsageName(registerInfo.usage);
+		
+		auto attributeName = string_format("v_%s%d", usageName.c_str(), registerInfo.usageIndex);
+		m_registerNames.insert(std::make_pair(registerId, attributeName));
+		
+		result += string_format("varying vec4 %s;\r\n", attributeName.c_str());
+	}
+	
+	return result;
+}
+
+std::string CIosUmbralEffectGenerator::GenerateUniformDeclarations(const std::string& prefix)
 {
 	std::string result;
 
@@ -199,7 +264,7 @@ std::string CIosUmbralEffectGenerator::GenerateUniformDeclarations()
 		if(registerId.first != CD3DShader::SHADER_REGISTER_CONST) continue;
 		if(registerInfo.scope != REGISTER_INFO::SCOPE_GLOBAL) continue;
 
-		auto uniformName = registerInfo.name;
+		auto uniformName = string_format("%s_%s", prefix.c_str(), registerInfo.name.c_str());
 		if(registerInfo.subscript == 0)
 		{
 			const char* varType = registerInfo.isMatrix ? "mat4" : "vec4";
@@ -231,10 +296,24 @@ std::string CIosUmbralEffectGenerator::GenerateUniformDeclarations()
 		if(registerId.first != CD3DShader::SHADER_REGISTER_CONSTBOOL) continue;
 		if(registerInfo.scope != REGISTER_INFO::SCOPE_GLOBAL) continue;
 		
-		auto uniformName = registerInfo.name;
+		auto uniformName = string_format("%s_%s", prefix.c_str(), registerInfo.name.c_str());
 		m_registerNames.insert(std::make_pair(registerId, uniformName));
 		
 		result += string_format("uniform bool %s;\r\n", uniformName.c_str());
+	}
+
+	//Sampler uniforms
+	for(const auto& registerInfoPair : m_registerInfos)
+	{
+		const auto& registerId = registerInfoPair.first;
+		const auto& registerInfo = registerInfoPair.second;
+		if(registerId.first != CD3DShader::SHADER_REGISTER_SAMPLER) continue;
+		if(registerInfo.scope != REGISTER_INFO::SCOPE_GLOBAL) continue;
+		
+		auto uniformName = string_format("%s_textureUnit%d", prefix.c_str(), registerId.second);
+		m_registerNames.insert(std::make_pair(registerId, uniformName));
+		
+		result += string_format("uniform sampler2D %s;\r\n", uniformName.c_str());
 	}
 	
 	return result;
@@ -423,6 +502,20 @@ void CIosUmbralEffectGenerator::ParseGlobalBoolConstants(const CD3DShaderConstan
 		assert(constant.typeInfo.typeClass == CD3DShaderConstantTable::CONSTANT_CLASS_SCALAR);
 		auto registerIndex = constant.info.registerIndex;
 		auto registerId = std::make_pair(CD3DShader::SHADER_REGISTER_CONSTBOOL, registerIndex);
+		REGISTER_INFO registerInfo;
+		registerInfo.scope = REGISTER_INFO::SCOPE_GLOBAL;
+		registerInfo.name = constant.name;
+		m_registerInfos.insert(std::make_pair(registerId, registerInfo));
+	}
+}
+
+void CIosUmbralEffectGenerator::ParseGlobalSamplerConstants(const CD3DShaderConstantTable& constantTable)
+{
+	for(const auto& constant : constantTable.GetConstants())
+	{
+		if(constant.info.registerSet != CD3DShaderConstantTable::REGISTER_SET_SAMPLER) continue;
+		auto registerIndex = constant.info.registerIndex;
+		auto registerId = std::make_pair(CD3DShader::SHADER_REGISTER_SAMPLER, registerIndex);
 		REGISTER_INFO registerInfo;
 		registerInfo.scope = REGISTER_INFO::SCOPE_GLOBAL;
 		registerInfo.name = constant.name;
@@ -740,6 +833,30 @@ std::string CIosUmbralEffectGenerator::Emit_Dp4(CD3DShader::CTokenStream& tokenS
 	return result;
 }
 
+std::string CIosUmbralEffectGenerator::Emit_Lrp(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
+{
+	std::string result;
+	
+	auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+	auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+	auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+	auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+	
+	auto dstString = PrintDestinationOperand(dstParam);
+	auto src1String = PrintSourceOperand(src1Param, dstParam.parameter.writeMask);
+	auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
+	auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
+	
+	result += string_format("%s%s = mix(%s, %s, %s);\r\n", identationState.GetString().c_str(),
+							dstString.c_str(), src3String.c_str(), src2String.c_str(), src1String.c_str());
+	if(dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE)
+	{
+		result += MakeSaturationOperation(identationState.GetString(), dstString);
+	}
+	
+	return result;
+}
+
 std::string CIosUmbralEffectGenerator::Emit_Loop(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
 {
 	std::string result;
@@ -749,10 +866,27 @@ std::string CIosUmbralEffectGenerator::Emit_Loop(CD3DShader::CTokenStream& token
 	assert(src1Param.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_LOOP);
 	assert(src2Param.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_CONSTINT);
 	
-	auto counterInfoVariable = GetRegisterInfo(src2Param.parameter.GetRegisterType(), src2Param.parameter.registerNumber);
+	auto counterRegisterInfo = GetRegisterInfo(src2Param.parameter.GetRegisterType(), src2Param.parameter.registerNumber);
 	
 	result += string_format("%sfor(int loopCounter = %d; loopCounter < %d; loopCounter += %d)\r\n", identationState.GetString().c_str(),
-							counterInfoVariable.constantValue[1], counterInfoVariable.constantValue[0] + counterInfoVariable.constantValue[1], counterInfoVariable.constantValue[2]);
+							counterRegisterInfo.constantValue[1], counterRegisterInfo.constantValue[0] + counterRegisterInfo.constantValue[1], counterRegisterInfo.constantValue[2]);
+	result += string_format("%s{\r\n", identationState.GetString().c_str());
+	
+	identationState.Increase();
+	
+	return result;
+}
+
+std::string CIosUmbralEffectGenerator::Emit_Rep(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
+{
+	std::string result;
+		
+	auto srcParam = CD3DShader::ReadSourceParameter(tokenStream);
+	assert(srcParam.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_CONSTINT);
+	
+	auto counterRegisterInfo = GetRegisterInfo(srcParam.parameter.GetRegisterType(), srcParam.parameter.registerNumber);
+	
+	result += string_format("%sfor(int repCounter = 0; repCounter < %d; repCounter++)\r\n", identationState.GetString().c_str(), counterRegisterInfo.constantValue[0]);
 	result += string_format("%s{\r\n", identationState.GetString().c_str());
 	
 	identationState.Increase();
@@ -773,6 +907,111 @@ std::string CIosUmbralEffectGenerator::Emit_If(CD3DShader::CTokenStream& tokenSt
 	
 	identationState.Increase();
 	
+	return result;
+}
+
+std::string CIosUmbralEffectGenerator::Emit_Cmp(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
+{
+	std::string result;
+	
+	auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+	auto src1Param = CD3DShader::ReadSourceParameter(tokenStream);
+	auto src2Param = CD3DShader::ReadSourceParameter(tokenStream);
+	auto src3Param = CD3DShader::ReadSourceParameter(tokenStream);
+	
+	auto dstString = PrintDestinationOperand(dstParam);
+	auto src1String = PrintSourceOperand(src1Param, dstParam.parameter.writeMask);
+	auto src2String = PrintSourceOperand(src2Param, dstParam.parameter.writeMask);
+	auto src3String = PrintSourceOperand(src3Param, dstParam.parameter.writeMask);
+	
+	assert((dstParam.parameter.resultModifier & CD3DShader::RESULT_MODIFIER_SATURATE) == 0);
+	
+	unsigned int compCount = 0;
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		if(dstParam.parameter.writeMask & (1 << i))
+		{
+			compCount++;
+		}
+	}
+	
+	if(compCount == 1)
+	{
+		result += string_format("%s%s = (%s >= 0.0) ? %s : %s;\r\n", identationState.GetString().c_str(),
+								dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+	}
+	else
+	{
+		//TODO: Make this work properly. On GLES 3.0 there's a nice mix(vec, vec, bvec) overload which should
+		//work better than this without propagating NaNs everywhere
+		std::string comparer, converter;
+		switch(compCount)
+		{
+			case 2:
+				comparer = string_format("greaterThanEqual(%s, vec2(0.0))", src1String.c_str());
+				converter = "vec2";
+				break;
+			case 3:
+				comparer = string_format("greaterThanEqual(%s, vec3(0.0))", src1String.c_str());
+				converter = "vec3";
+				break;
+			case 4:
+				comparer = string_format("greaterThanEqual(%s, vec4(0.0))", src1String.c_str());
+				converter = "vec4";
+				break;
+			default:
+				assert(0);
+				break;
+		}
+		
+		result += string_format("%s%s = mix(%s, %s, %s(%s));\r\n", identationState.GetString().c_str(),
+								dstString.c_str(), src2String.c_str(), src3String.c_str(), converter.c_str(), comparer.c_str());
+	}
+	
+	return result;
+}
+
+std::string CIosUmbralEffectGenerator::Emit_Texld(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
+{
+	std::string result;
+	
+	auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+	auto locationParam = CD3DShader::ReadSourceParameter(tokenStream);
+	auto samplerParam = CD3DShader::ReadSourceParameter(tokenStream);
+	
+	assert(samplerParam.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_SAMPLER);
+	
+	auto dstString = PrintDestinationOperand(dstParam);
+	auto samplerRegisterName = GetRegisterName(CD3DShader::SHADER_REGISTER_SAMPLER, samplerParam.parameter.registerNumber);
+	auto locationVariable = PrintSourceOperand(locationParam, 0x03);
+	
+	result += string_format("%s%s = texture2D(%s, %s);\r\n", identationState.GetString().c_str(),
+							dstString.c_str(), samplerRegisterName.c_str(), locationVariable.c_str());
+	
+	return result;
+}
+
+std::string CIosUmbralEffectGenerator::Emit_Texldl(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
+{
+	//TODO: Implement that properly
+	
+	std::string result;
+	
+	auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
+	auto locationParam = CD3DShader::ReadSourceParameter(tokenStream);
+	auto samplerParam = CD3DShader::ReadSourceParameter(tokenStream);
+	
+	assert(samplerParam.parameter.GetRegisterType() == CD3DShader::SHADER_REGISTER_SAMPLER);
+	
+	auto dstString = PrintDestinationOperand(dstParam);
+	auto samplerRegisterName = GetRegisterName(CD3DShader::SHADER_REGISTER_SAMPLER, samplerParam.parameter.registerNumber);
+//	auto textureString = string_format("%s_texture", samplerVariable.name.c_str());
+//	auto locationVariable = GetVariableForRegister(locationParam.parameter.GetRegisterType(), locationParam.parameter.registerNumber);
+	
+//	result += string_format("%s%s = %s.SampleLevel(%s, %s, %s.w);\r\n", identationString.c_str(),
+//							dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.name.c_str(), locationVariable.name.c_str());
+	result += string_format("%s%s = vec4(0.4, 0.4, 0.4, 1);\r\n", identationState.GetString().c_str(), dstString.c_str());
+
 	return result;
 }
 
