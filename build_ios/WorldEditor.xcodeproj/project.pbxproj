@@ -1,0 +1,713 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		70271B2318D4FFA700777C53 /* BaseChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271ADD18D4FFA600777C53 /* BaseChunk.cpp */; };
+		70271B2418D4FFA700777C53 /* BaseSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271ADF18D4FFA600777C53 /* BaseSection.cpp */; };
+		70271B2518D4FFA700777C53 /* BoundingBoxChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE118D4FFA600777C53 /* BoundingBoxChunk.cpp */; };
+		70271B2618D4FFA700777C53 /* BoundingBoxContainerChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE318D4FFA600777C53 /* BoundingBoxContainerChunk.cpp */; };
+		70271B2718D4FFA700777C53 /* ChunkLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE518D4FFA600777C53 /* ChunkLoader.cpp */; };
+		70271B2818D4FFA700777C53 /* CompChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE718D4FFA600777C53 /* CompChunk.cpp */; };
+		70271B2918D4FFA700777C53 /* ContainerChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE918D4FFA600777C53 /* ContainerChunk.cpp */; };
+		70271B2A18D4FFA700777C53 /* FileChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AEB18D4FFA600777C53 /* FileChunk.cpp */; };
+		70271B2B18D4FFA700777C53 /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AED18D4FFA600777C53 /* FileManager.cpp */; };
+		70271B2C18D4FFA700777C53 /* GtexData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AEF18D4FFA600777C53 /* GtexData.cpp */; };
+		70271B2D18D4FFA700777C53 /* HeaderChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AF118D4FFA600777C53 /* HeaderChunk.cpp */; };
+		70271B2E18D4FFA700777C53 /* LtcdChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AF318D4FFA600777C53 /* LtcdChunk.cpp */; };
+		70271B2F18D4FFA700777C53 /* MapLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AF518D4FFA600777C53 /* MapLayout.cpp */; };
+		70271B3018D4FFA700777C53 /* MeshChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AF718D4FFA600777C53 /* MeshChunk.cpp */; };
+		70271B3118D4FFA700777C53 /* ModelChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AF918D4FFA600777C53 /* ModelChunk.cpp */; };
+		70271B3218D4FFA700777C53 /* ModelContainerChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AFB18D4FFA600777C53 /* ModelContainerChunk.cpp */; };
+		70271B3318D4FFA700777C53 /* ModelSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AFD18D4FFA600777C53 /* ModelSection.cpp */; };
+		70271B3418D4FFA700777C53 /* NameChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AFF18D4FFA600777C53 /* NameChunk.cpp */; };
+		70271B3518D4FFA700777C53 /* PhbSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0118D4FFA600777C53 /* PhbSection.cpp */; };
+		70271B3618D4FFA700777C53 /* PramChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0318D4FFA600777C53 /* PramChunk.cpp */; };
+		70271B3718D4FFA700777C53 /* PwibSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0518D4FFA600777C53 /* PwibSection.cpp */; };
+		70271B3818D4FFA700777C53 /* ResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0818D4FFA600777C53 /* ResourceManager.cpp */; };
+		70271B3918D4FFA700777C53 /* ResourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0A18D4FFA600777C53 /* ResourceNode.cpp */; };
+		70271B3A18D4FFA700777C53 /* ResourceSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0C18D4FFA600777C53 /* ResourceSection.cpp */; };
+		70271B3B18D4FFA700777C53 /* SectionLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B0E18D4FFA600777C53 /* SectionLoader.cpp */; };
+		70271B3C18D4FFA700777C53 /* ShaderChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1018D4FFA600777C53 /* ShaderChunk.cpp */; };
+		70271B3D18D4FFA700777C53 /* ShaderSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1218D4FFA600777C53 /* ShaderSection.cpp */; };
+		70271B3E18D4FFA700777C53 /* SkeletonSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1418D4FFA600777C53 /* SkeletonSection.cpp */; };
+		70271B3F18D4FFA700777C53 /* StreamChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1618D4FFA700777C53 /* StreamChunk.cpp */; };
+		70271B4018D4FFA700777C53 /* StringChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1818D4FFA700777C53 /* StringChunk.cpp */; };
+		70271B4118D4FFA700777C53 /* TextureSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1A18D4FFA700777C53 /* TextureSection.cpp */; };
+		70271B4218D4FFA700777C53 /* TouchFreeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1C18D4FFA700777C53 /* TouchFreeCamera.cpp */; };
+		70271B4418D4FFA700777C53 /* WorldEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B1F18D4FFA700777C53 /* WorldEditor.cpp */; };
+		70271B4518D4FFA700777C53 /* WrbChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B2118D4FFA700777C53 /* WrbChunk.cpp */; };
+		70271B6F18D5029600777C53 /* D3DShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6118D5029600777C53 /* D3DShader.cpp */; };
+		70271B7018D5029600777C53 /* D3DShaderConstantTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6318D5029600777C53 /* D3DShaderConstantTable.cpp */; };
+		70271B7118D5029600777C53 /* D3DShaderDisassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6518D5029600777C53 /* D3DShaderDisassembler.cpp */; };
+		70271B7218D5029600777C53 /* GlobalResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6718D5029600777C53 /* GlobalResources.cpp */; };
+		70271B7318D5029600777C53 /* UmbralMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6918D5029600777C53 /* UmbralMap.cpp */; };
+		70271B7418D5029600777C53 /* UmbralMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6B18D5029600777C53 /* UmbralMesh.cpp */; };
+		70271B7518D5029600777C53 /* UmbralModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271B6D18D5029600777C53 /* UmbralModel.cpp */; };
+		70271B9118D5058900777C53 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 70271B9018D5058900777C53 /* data */; };
+		706F717C18ECEA7500224718 /* libboost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 70271B5518D5021D00777C53 /* libboost.a */; };
+		7096E31D18E0163F0068769A /* UmbralActor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7096E31B18E0163F0068769A /* UmbralActor.cpp */; };
+		709E16FB186A721100AEA8C7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E16FA186A721100AEA8C7 /* Foundation.framework */; };
+		709E16FD186A721100AEA8C7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E16FC186A721100AEA8C7 /* CoreGraphics.framework */; };
+		709E16FF186A721100AEA8C7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E16FE186A721100AEA8C7 /* UIKit.framework */; };
+		709E1701186A721100AEA8C7 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1700186A721100AEA8C7 /* GLKit.framework */; };
+		709E1703186A721100AEA8C7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1702186A721100AEA8C7 /* OpenGLES.framework */; };
+		709E175B186A755100AEA8C7 /* libAthena.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E175A186A755100AEA8C7 /* libAthena.a */; };
+		709E175D186A779800AEA8C7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E175C186A779800AEA8C7 /* AVFoundation.framework */; };
+		709E176E186A7B3500AEA8C7 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176C186A7B3500AEA8C7 /* libFramework.a */; };
+		709E1770186A7BAC00AEA8C7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176F186A7BAC00AEA8C7 /* libz.dylib */; };
+		709E1772186A7C9100AEA8C7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1771186A7C9100AEA8C7 /* QuartzCore.framework */; };
+		70FA4DAB18D7A1FC000DED43 /* IosUmbralEffectProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */; };
+		70FA4DB118D7A383000DED43 /* UmbralEffectProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DAF18D7A383000DED43 /* UmbralEffectProvider.cpp */; };
+		70FA4DB418D7A7BF000DED43 /* IosUmbralEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */; };
+		70FA4DB818D7BE90000DED43 /* IosUmbralEffectGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		70271B4E18D5012E00777C53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B4A18D5012E00777C53 /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC07E0554694100DB518D;
+			remoteInfo = Framework;
+		};
+		70271B5418D5021D00777C53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B5018D5021D00777C53 /* boost.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7EA960EE134D72490099591E;
+			remoteInfo = boost;
+		};
+		70271B5E18D5022E00777C53 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7E7D873B13F719E500AD9F7F;
+			remoteInfo = Athena;
+		};
+		706F717D18ECEA7D00224718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B5018D5021D00777C53 /* boost.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7EA960ED134D72490099591E;
+			remoteInfo = boost;
+		};
+		706F717F18ECEA8400224718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7E7D873A13F719E500AD9F7F;
+			remoteInfo = Athena;
+		};
+		706F718118ECEA8600224718 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 70271B4A18D5012E00777C53 /* Framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC07D0554694100DB518D;
+			remoteInfo = Framework;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		70271AD918D4FF1E00777C53 /* GeneralSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettings.xcconfig; sourceTree = "<group>"; };
+		70271ADA18D4FF1E00777C53 /* GeneralSettingsDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsDebug.xcconfig; sourceTree = "<group>"; };
+		70271ADD18D4FFA600777C53 /* BaseChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseChunk.cpp; path = ../tools/WorldEditor/Source/BaseChunk.cpp; sourceTree = "<group>"; };
+		70271ADE18D4FFA600777C53 /* BaseChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseChunk.h; path = ../tools/WorldEditor/Source/BaseChunk.h; sourceTree = "<group>"; };
+		70271ADF18D4FFA600777C53 /* BaseSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseSection.cpp; path = ../tools/WorldEditor/Source/BaseSection.cpp; sourceTree = "<group>"; };
+		70271AE018D4FFA600777C53 /* BaseSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseSection.h; path = ../tools/WorldEditor/Source/BaseSection.h; sourceTree = "<group>"; };
+		70271AE118D4FFA600777C53 /* BoundingBoxChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundingBoxChunk.cpp; path = ../tools/WorldEditor/Source/BoundingBoxChunk.cpp; sourceTree = "<group>"; };
+		70271AE218D4FFA600777C53 /* BoundingBoxChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundingBoxChunk.h; path = ../tools/WorldEditor/Source/BoundingBoxChunk.h; sourceTree = "<group>"; };
+		70271AE318D4FFA600777C53 /* BoundingBoxContainerChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BoundingBoxContainerChunk.cpp; path = ../tools/WorldEditor/Source/BoundingBoxContainerChunk.cpp; sourceTree = "<group>"; };
+		70271AE418D4FFA600777C53 /* BoundingBoxContainerChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BoundingBoxContainerChunk.h; path = ../tools/WorldEditor/Source/BoundingBoxContainerChunk.h; sourceTree = "<group>"; };
+		70271AE518D4FFA600777C53 /* ChunkLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChunkLoader.cpp; path = ../tools/WorldEditor/Source/ChunkLoader.cpp; sourceTree = "<group>"; };
+		70271AE618D4FFA600777C53 /* ChunkLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChunkLoader.h; path = ../tools/WorldEditor/Source/ChunkLoader.h; sourceTree = "<group>"; };
+		70271AE718D4FFA600777C53 /* CompChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompChunk.cpp; path = ../tools/WorldEditor/Source/CompChunk.cpp; sourceTree = "<group>"; };
+		70271AE818D4FFA600777C53 /* CompChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompChunk.h; path = ../tools/WorldEditor/Source/CompChunk.h; sourceTree = "<group>"; };
+		70271AE918D4FFA600777C53 /* ContainerChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ContainerChunk.cpp; path = ../tools/WorldEditor/Source/ContainerChunk.cpp; sourceTree = "<group>"; };
+		70271AEA18D4FFA600777C53 /* ContainerChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContainerChunk.h; path = ../tools/WorldEditor/Source/ContainerChunk.h; sourceTree = "<group>"; };
+		70271AEB18D4FFA600777C53 /* FileChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileChunk.cpp; path = ../tools/WorldEditor/Source/FileChunk.cpp; sourceTree = "<group>"; };
+		70271AEC18D4FFA600777C53 /* FileChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileChunk.h; path = ../tools/WorldEditor/Source/FileChunk.h; sourceTree = "<group>"; };
+		70271AED18D4FFA600777C53 /* FileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileManager.cpp; path = ../tools/WorldEditor/Source/FileManager.cpp; sourceTree = "<group>"; };
+		70271AEE18D4FFA600777C53 /* FileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileManager.h; path = ../tools/WorldEditor/Source/FileManager.h; sourceTree = "<group>"; };
+		70271AEF18D4FFA600777C53 /* GtexData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GtexData.cpp; path = ../tools/WorldEditor/Source/GtexData.cpp; sourceTree = "<group>"; };
+		70271AF018D4FFA600777C53 /* GtexData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GtexData.h; path = ../tools/WorldEditor/Source/GtexData.h; sourceTree = "<group>"; };
+		70271AF118D4FFA600777C53 /* HeaderChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeaderChunk.cpp; path = ../tools/WorldEditor/Source/HeaderChunk.cpp; sourceTree = "<group>"; };
+		70271AF218D4FFA600777C53 /* HeaderChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeaderChunk.h; path = ../tools/WorldEditor/Source/HeaderChunk.h; sourceTree = "<group>"; };
+		70271AF318D4FFA600777C53 /* LtcdChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LtcdChunk.cpp; path = ../tools/WorldEditor/Source/LtcdChunk.cpp; sourceTree = "<group>"; };
+		70271AF418D4FFA600777C53 /* LtcdChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LtcdChunk.h; path = ../tools/WorldEditor/Source/LtcdChunk.h; sourceTree = "<group>"; };
+		70271AF518D4FFA600777C53 /* MapLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapLayout.cpp; path = ../tools/WorldEditor/Source/MapLayout.cpp; sourceTree = "<group>"; };
+		70271AF618D4FFA600777C53 /* MapLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapLayout.h; path = ../tools/WorldEditor/Source/MapLayout.h; sourceTree = "<group>"; };
+		70271AF718D4FFA600777C53 /* MeshChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshChunk.cpp; path = ../tools/WorldEditor/Source/MeshChunk.cpp; sourceTree = "<group>"; };
+		70271AF818D4FFA600777C53 /* MeshChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MeshChunk.h; path = ../tools/WorldEditor/Source/MeshChunk.h; sourceTree = "<group>"; };
+		70271AF918D4FFA600777C53 /* ModelChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelChunk.cpp; path = ../tools/WorldEditor/Source/ModelChunk.cpp; sourceTree = "<group>"; };
+		70271AFA18D4FFA600777C53 /* ModelChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelChunk.h; path = ../tools/WorldEditor/Source/ModelChunk.h; sourceTree = "<group>"; };
+		70271AFB18D4FFA600777C53 /* ModelContainerChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelContainerChunk.cpp; path = ../tools/WorldEditor/Source/ModelContainerChunk.cpp; sourceTree = "<group>"; };
+		70271AFC18D4FFA600777C53 /* ModelContainerChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelContainerChunk.h; path = ../tools/WorldEditor/Source/ModelContainerChunk.h; sourceTree = "<group>"; };
+		70271AFD18D4FFA600777C53 /* ModelSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelSection.cpp; path = ../tools/WorldEditor/Source/ModelSection.cpp; sourceTree = "<group>"; };
+		70271AFE18D4FFA600777C53 /* ModelSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelSection.h; path = ../tools/WorldEditor/Source/ModelSection.h; sourceTree = "<group>"; };
+		70271AFF18D4FFA600777C53 /* NameChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NameChunk.cpp; path = ../tools/WorldEditor/Source/NameChunk.cpp; sourceTree = "<group>"; };
+		70271B0018D4FFA600777C53 /* NameChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NameChunk.h; path = ../tools/WorldEditor/Source/NameChunk.h; sourceTree = "<group>"; };
+		70271B0118D4FFA600777C53 /* PhbSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhbSection.cpp; path = ../tools/WorldEditor/Source/PhbSection.cpp; sourceTree = "<group>"; };
+		70271B0218D4FFA600777C53 /* PhbSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhbSection.h; path = ../tools/WorldEditor/Source/PhbSection.h; sourceTree = "<group>"; };
+		70271B0318D4FFA600777C53 /* PramChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PramChunk.cpp; path = ../tools/WorldEditor/Source/PramChunk.cpp; sourceTree = "<group>"; };
+		70271B0418D4FFA600777C53 /* PramChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PramChunk.h; path = ../tools/WorldEditor/Source/PramChunk.h; sourceTree = "<group>"; };
+		70271B0518D4FFA600777C53 /* PwibSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PwibSection.cpp; path = ../tools/WorldEditor/Source/PwibSection.cpp; sourceTree = "<group>"; };
+		70271B0618D4FFA600777C53 /* PwibSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PwibSection.h; path = ../tools/WorldEditor/Source/PwibSection.h; sourceTree = "<group>"; };
+		70271B0718D4FFA600777C53 /* ResourceDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceDefs.h; path = ../tools/WorldEditor/Source/ResourceDefs.h; sourceTree = "<group>"; };
+		70271B0818D4FFA600777C53 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = ../tools/WorldEditor/Source/ResourceManager.cpp; sourceTree = "<group>"; };
+		70271B0918D4FFA600777C53 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceManager.h; path = ../tools/WorldEditor/Source/ResourceManager.h; sourceTree = "<group>"; };
+		70271B0A18D4FFA600777C53 /* ResourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceNode.cpp; path = ../tools/WorldEditor/Source/ResourceNode.cpp; sourceTree = "<group>"; };
+		70271B0B18D4FFA600777C53 /* ResourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceNode.h; path = ../tools/WorldEditor/Source/ResourceNode.h; sourceTree = "<group>"; };
+		70271B0C18D4FFA600777C53 /* ResourceSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceSection.cpp; path = ../tools/WorldEditor/Source/ResourceSection.cpp; sourceTree = "<group>"; };
+		70271B0D18D4FFA600777C53 /* ResourceSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceSection.h; path = ../tools/WorldEditor/Source/ResourceSection.h; sourceTree = "<group>"; };
+		70271B0E18D4FFA600777C53 /* SectionLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SectionLoader.cpp; path = ../tools/WorldEditor/Source/SectionLoader.cpp; sourceTree = "<group>"; };
+		70271B0F18D4FFA600777C53 /* SectionLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SectionLoader.h; path = ../tools/WorldEditor/Source/SectionLoader.h; sourceTree = "<group>"; };
+		70271B1018D4FFA600777C53 /* ShaderChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderChunk.cpp; path = ../tools/WorldEditor/Source/ShaderChunk.cpp; sourceTree = "<group>"; };
+		70271B1118D4FFA600777C53 /* ShaderChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderChunk.h; path = ../tools/WorldEditor/Source/ShaderChunk.h; sourceTree = "<group>"; };
+		70271B1218D4FFA600777C53 /* ShaderSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderSection.cpp; path = ../tools/WorldEditor/Source/ShaderSection.cpp; sourceTree = "<group>"; };
+		70271B1318D4FFA600777C53 /* ShaderSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderSection.h; path = ../tools/WorldEditor/Source/ShaderSection.h; sourceTree = "<group>"; };
+		70271B1418D4FFA600777C53 /* SkeletonSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkeletonSection.cpp; path = ../tools/WorldEditor/Source/SkeletonSection.cpp; sourceTree = "<group>"; };
+		70271B1518D4FFA700777C53 /* SkeletonSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkeletonSection.h; path = ../tools/WorldEditor/Source/SkeletonSection.h; sourceTree = "<group>"; };
+		70271B1618D4FFA700777C53 /* StreamChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StreamChunk.cpp; path = ../tools/WorldEditor/Source/StreamChunk.cpp; sourceTree = "<group>"; };
+		70271B1718D4FFA700777C53 /* StreamChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StreamChunk.h; path = ../tools/WorldEditor/Source/StreamChunk.h; sourceTree = "<group>"; };
+		70271B1818D4FFA700777C53 /* StringChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringChunk.cpp; path = ../tools/WorldEditor/Source/StringChunk.cpp; sourceTree = "<group>"; };
+		70271B1918D4FFA700777C53 /* StringChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringChunk.h; path = ../tools/WorldEditor/Source/StringChunk.h; sourceTree = "<group>"; };
+		70271B1A18D4FFA700777C53 /* TextureSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureSection.cpp; path = ../tools/WorldEditor/Source/TextureSection.cpp; sourceTree = "<group>"; };
+		70271B1B18D4FFA700777C53 /* TextureSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureSection.h; path = ../tools/WorldEditor/Source/TextureSection.h; sourceTree = "<group>"; };
+		70271B1C18D4FFA700777C53 /* TouchFreeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TouchFreeCamera.cpp; path = ../tools/WorldEditor/Source/TouchFreeCamera.cpp; sourceTree = "<group>"; };
+		70271B1D18D4FFA700777C53 /* TouchFreeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TouchFreeCamera.h; path = ../tools/WorldEditor/Source/TouchFreeCamera.h; sourceTree = "<group>"; };
+		70271B1F18D4FFA700777C53 /* WorldEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorldEditor.cpp; path = ../tools/WorldEditor/Source/WorldEditor.cpp; sourceTree = "<group>"; };
+		70271B2018D4FFA700777C53 /* WorldEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorldEditor.h; path = ../tools/WorldEditor/Source/WorldEditor.h; sourceTree = "<group>"; };
+		70271B2118D4FFA700777C53 /* WrbChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WrbChunk.cpp; path = ../tools/WorldEditor/Source/WrbChunk.cpp; sourceTree = "<group>"; };
+		70271B2218D4FFA700777C53 /* WrbChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WrbChunk.h; path = ../tools/WorldEditor/Source/WrbChunk.h; sourceTree = "<group>"; };
+		70271B4A18D5012E00777C53 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../../Framework/build_iphone/Framework.xcodeproj; sourceTree = "<group>"; };
+		70271B5018D5021D00777C53 /* boost.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = boost.xcodeproj; path = ../../boost/build_iphone/boost.xcodeproj; sourceTree = "<group>"; };
+		70271B5618D5022E00777C53 /* Athena.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Athena.xcodeproj; path = ../../Athena/build_ios/Athena.xcodeproj; sourceTree = "<group>"; };
+		70271B6118D5029600777C53 /* D3DShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = D3DShader.cpp; path = ../tools/WorldEditor/Source/Rendering/D3DShader.cpp; sourceTree = "<group>"; };
+		70271B6218D5029600777C53 /* D3DShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = D3DShader.h; path = ../tools/WorldEditor/Source/Rendering/D3DShader.h; sourceTree = "<group>"; };
+		70271B6318D5029600777C53 /* D3DShaderConstantTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = D3DShaderConstantTable.cpp; path = ../tools/WorldEditor/Source/Rendering/D3DShaderConstantTable.cpp; sourceTree = "<group>"; };
+		70271B6418D5029600777C53 /* D3DShaderConstantTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = D3DShaderConstantTable.h; path = ../tools/WorldEditor/Source/Rendering/D3DShaderConstantTable.h; sourceTree = "<group>"; };
+		70271B6518D5029600777C53 /* D3DShaderDisassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = D3DShaderDisassembler.cpp; path = ../tools/WorldEditor/Source/Rendering/D3DShaderDisassembler.cpp; sourceTree = "<group>"; };
+		70271B6618D5029600777C53 /* D3DShaderDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = D3DShaderDisassembler.h; path = ../tools/WorldEditor/Source/Rendering/D3DShaderDisassembler.h; sourceTree = "<group>"; };
+		70271B6718D5029600777C53 /* GlobalResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalResources.cpp; path = ../tools/WorldEditor/Source/Rendering/GlobalResources.cpp; sourceTree = "<group>"; };
+		70271B6818D5029600777C53 /* GlobalResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalResources.h; path = ../tools/WorldEditor/Source/Rendering/GlobalResources.h; sourceTree = "<group>"; };
+		70271B6918D5029600777C53 /* UmbralMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralMap.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralMap.cpp; sourceTree = "<group>"; };
+		70271B6A18D5029600777C53 /* UmbralMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralMap.h; path = ../tools/WorldEditor/Source/Rendering/UmbralMap.h; sourceTree = "<group>"; };
+		70271B6B18D5029600777C53 /* UmbralMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralMesh.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralMesh.cpp; sourceTree = "<group>"; };
+		70271B6C18D5029600777C53 /* UmbralMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralMesh.h; path = ../tools/WorldEditor/Source/Rendering/UmbralMesh.h; sourceTree = "<group>"; };
+		70271B6D18D5029600777C53 /* UmbralModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralModel.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralModel.cpp; sourceTree = "<group>"; };
+		70271B6E18D5029600777C53 /* UmbralModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralModel.h; path = ../tools/WorldEditor/Source/Rendering/UmbralModel.h; sourceTree = "<group>"; };
+		70271B9018D5058900777C53 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../tools/WorldEditor/data; sourceTree = "<group>"; };
+		7096E31B18E0163F0068769A /* UmbralActor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralActor.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralActor.cpp; sourceTree = "<group>"; };
+		7096E31C18E0163F0068769A /* UmbralActor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralActor.h; path = ../tools/WorldEditor/Source/Rendering/UmbralActor.h; sourceTree = "<group>"; };
+		709E16F7186A721100AEA8C7 /* WorldEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorldEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		709E16FA186A721100AEA8C7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		709E16FC186A721100AEA8C7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		709E16FE186A721100AEA8C7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		709E1700186A721100AEA8C7 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		709E1702186A721100AEA8C7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		709E1706186A721100AEA8C7 /* WorldEditor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WorldEditor-Info.plist"; sourceTree = "<group>"; };
+		709E170C186A721100AEA8C7 /* WorldEditor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WorldEditor-Prefix.pch"; sourceTree = "<group>"; };
+		709E1724186A721100AEA8C7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		709E175A186A755100AEA8C7 /* libAthena.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAthena.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Athena-cqrzgjojsxrjapdxjjvcfeijgrqv/Build/Products/Debug-iphoneos/libAthena.a"; sourceTree = "<group>"; };
+		709E175C186A779800AEA8C7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		709E176B186A7B3500AEA8C7 /* libboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost.a; path = "../../../../boost/build_iphone/build/Debug-iphoneos/libboost.a"; sourceTree = "<group>"; };
+		709E176C186A7B3500AEA8C7 /* libFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFramework.a; path = "../../../../Framework/build_iphone/build/Debug-iphoneos/libFramework.a"; sourceTree = "<group>"; };
+		709E176F186A7BAC00AEA8C7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		709E1771186A7C9100AEA8C7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffectProvider.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectProvider.cpp; sourceTree = "<group>"; };
+		70FA4DAA18D7A1FC000DED43 /* IosUmbralEffectProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffectProvider.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectProvider.h; sourceTree = "<group>"; };
+		70FA4DAF18D7A383000DED43 /* UmbralEffectProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralEffectProvider.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralEffectProvider.cpp; sourceTree = "<group>"; };
+		70FA4DB018D7A383000DED43 /* UmbralEffectProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralEffectProvider.h; path = ../tools/WorldEditor/Source/Rendering/UmbralEffectProvider.h; sourceTree = "<group>"; };
+		70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffect.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffect.cpp; sourceTree = "<group>"; };
+		70FA4DB318D7A7BF000DED43 /* IosUmbralEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffect.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffect.h; sourceTree = "<group>"; };
+		70FA4DB518D7AE58000DED43 /* UmbralEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UmbralEffect.h; path = ../tools/WorldEditor/Source/Rendering/UmbralEffect.h; sourceTree = "<group>"; };
+		70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffectGenerator.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectGenerator.cpp; sourceTree = "<group>"; };
+		70FA4DB718D7BE90000DED43 /* IosUmbralEffectGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffectGenerator.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectGenerator.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		709E16F4186A721100AEA8C7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				706F717C18ECEA7500224718 /* libboost.a in Frameworks */,
+				709E1772186A7C9100AEA8C7 /* QuartzCore.framework in Frameworks */,
+				709E1770186A7BAC00AEA8C7 /* libz.dylib in Frameworks */,
+				709E176E186A7B3500AEA8C7 /* libFramework.a in Frameworks */,
+				709E175D186A779800AEA8C7 /* AVFoundation.framework in Frameworks */,
+				709E175B186A755100AEA8C7 /* libAthena.a in Frameworks */,
+				709E1703186A721100AEA8C7 /* OpenGLES.framework in Frameworks */,
+				709E16FD186A721100AEA8C7 /* CoreGraphics.framework in Frameworks */,
+				709E16FF186A721100AEA8C7 /* UIKit.framework in Frameworks */,
+				709E1701186A721100AEA8C7 /* GLKit.framework in Frameworks */,
+				709E16FB186A721100AEA8C7 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		70271B4618D4FFB500777C53 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				70271ADF18D4FFA600777C53 /* BaseSection.cpp */,
+				70271AE018D4FFA600777C53 /* BaseSection.h */,
+				70271AE518D4FFA600777C53 /* ChunkLoader.cpp */,
+				70271AE618D4FFA600777C53 /* ChunkLoader.h */,
+				70271B4718D4FFF300777C53 /* Chunks */,
+				70271AEF18D4FFA600777C53 /* GtexData.cpp */,
+				70271AF018D4FFA600777C53 /* GtexData.h */,
+				70271B0A18D4FFA600777C53 /* ResourceNode.cpp */,
+				70271B0B18D4FFA600777C53 /* ResourceNode.h */,
+				70271B0E18D4FFA600777C53 /* SectionLoader.cpp */,
+				70271B0F18D4FFA600777C53 /* SectionLoader.h */,
+				70271B4818D4FFF900777C53 /* Sections */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		70271B4718D4FFF300777C53 /* Chunks */ = {
+			isa = PBXGroup;
+			children = (
+				70271ADD18D4FFA600777C53 /* BaseChunk.cpp */,
+				70271ADE18D4FFA600777C53 /* BaseChunk.h */,
+				70271AE118D4FFA600777C53 /* BoundingBoxChunk.cpp */,
+				70271AE218D4FFA600777C53 /* BoundingBoxChunk.h */,
+				70271AE318D4FFA600777C53 /* BoundingBoxContainerChunk.cpp */,
+				70271AE418D4FFA600777C53 /* BoundingBoxContainerChunk.h */,
+				70271AE718D4FFA600777C53 /* CompChunk.cpp */,
+				70271AE818D4FFA600777C53 /* CompChunk.h */,
+				70271AE918D4FFA600777C53 /* ContainerChunk.cpp */,
+				70271AEA18D4FFA600777C53 /* ContainerChunk.h */,
+				70271AEB18D4FFA600777C53 /* FileChunk.cpp */,
+				70271AEC18D4FFA600777C53 /* FileChunk.h */,
+				70271AF118D4FFA600777C53 /* HeaderChunk.cpp */,
+				70271AF218D4FFA600777C53 /* HeaderChunk.h */,
+				70271AF318D4FFA600777C53 /* LtcdChunk.cpp */,
+				70271AF418D4FFA600777C53 /* LtcdChunk.h */,
+				70271AF718D4FFA600777C53 /* MeshChunk.cpp */,
+				70271AF818D4FFA600777C53 /* MeshChunk.h */,
+				70271AF918D4FFA600777C53 /* ModelChunk.cpp */,
+				70271AFA18D4FFA600777C53 /* ModelChunk.h */,
+				70271AFB18D4FFA600777C53 /* ModelContainerChunk.cpp */,
+				70271AFC18D4FFA600777C53 /* ModelContainerChunk.h */,
+				70271AFF18D4FFA600777C53 /* NameChunk.cpp */,
+				70271B0018D4FFA600777C53 /* NameChunk.h */,
+				70271B0318D4FFA600777C53 /* PramChunk.cpp */,
+				70271B0418D4FFA600777C53 /* PramChunk.h */,
+				70271B1018D4FFA600777C53 /* ShaderChunk.cpp */,
+				70271B1118D4FFA600777C53 /* ShaderChunk.h */,
+				70271B1618D4FFA700777C53 /* StreamChunk.cpp */,
+				70271B1718D4FFA700777C53 /* StreamChunk.h */,
+				70271B1818D4FFA700777C53 /* StringChunk.cpp */,
+				70271B1918D4FFA700777C53 /* StringChunk.h */,
+				70271B2118D4FFA700777C53 /* WrbChunk.cpp */,
+				70271B2218D4FFA700777C53 /* WrbChunk.h */,
+			);
+			name = Chunks;
+			sourceTree = "<group>";
+		};
+		70271B4818D4FFF900777C53 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				70271AFD18D4FFA600777C53 /* ModelSection.cpp */,
+				70271AFE18D4FFA600777C53 /* ModelSection.h */,
+				70271B0118D4FFA600777C53 /* PhbSection.cpp */,
+				70271B0218D4FFA600777C53 /* PhbSection.h */,
+				70271B0518D4FFA600777C53 /* PwibSection.cpp */,
+				70271B0618D4FFA600777C53 /* PwibSection.h */,
+				70271B0C18D4FFA600777C53 /* ResourceSection.cpp */,
+				70271B0D18D4FFA600777C53 /* ResourceSection.h */,
+				70271B1218D4FFA600777C53 /* ShaderSection.cpp */,
+				70271B1318D4FFA600777C53 /* ShaderSection.h */,
+				70271B1418D4FFA600777C53 /* SkeletonSection.cpp */,
+				70271B1518D4FFA700777C53 /* SkeletonSection.h */,
+				70271B1A18D4FFA700777C53 /* TextureSection.cpp */,
+				70271B1B18D4FFA700777C53 /* TextureSection.h */,
+			);
+			name = Sections;
+			sourceTree = "<group>";
+		};
+		70271B4918D5011A00777C53 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				70271B5618D5022E00777C53 /* Athena.xcodeproj */,
+				70271B5018D5021D00777C53 /* boost.xcodeproj */,
+				70271B4A18D5012E00777C53 /* Framework.xcodeproj */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		70271B4B18D5012E00777C53 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70271B4F18D5012E00777C53 /* libFramework.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70271B5118D5021D00777C53 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70271B5518D5021D00777C53 /* libboost.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70271B5718D5022E00777C53 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				70271B5F18D5022E00777C53 /* libAthena.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		70271B6018D5027C00777C53 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				70271B6118D5029600777C53 /* D3DShader.cpp */,
+				70271B6218D5029600777C53 /* D3DShader.h */,
+				70271B6318D5029600777C53 /* D3DShaderConstantTable.cpp */,
+				70271B6418D5029600777C53 /* D3DShaderConstantTable.h */,
+				70271B6518D5029600777C53 /* D3DShaderDisassembler.cpp */,
+				70271B6618D5029600777C53 /* D3DShaderDisassembler.h */,
+				70271B6718D5029600777C53 /* GlobalResources.cpp */,
+				70271B6818D5029600777C53 /* GlobalResources.h */,
+				70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */,
+				70FA4DB318D7A7BF000DED43 /* IosUmbralEffect.h */,
+				70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */,
+				70FA4DB718D7BE90000DED43 /* IosUmbralEffectGenerator.h */,
+				70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */,
+				70FA4DAA18D7A1FC000DED43 /* IosUmbralEffectProvider.h */,
+				7096E31B18E0163F0068769A /* UmbralActor.cpp */,
+				7096E31C18E0163F0068769A /* UmbralActor.h */,
+				70FA4DB518D7AE58000DED43 /* UmbralEffect.h */,
+				70FA4DAF18D7A383000DED43 /* UmbralEffectProvider.cpp */,
+				70FA4DB018D7A383000DED43 /* UmbralEffectProvider.h */,
+				70271B6918D5029600777C53 /* UmbralMap.cpp */,
+				70271B6A18D5029600777C53 /* UmbralMap.h */,
+				70271B6B18D5029600777C53 /* UmbralMesh.cpp */,
+				70271B6C18D5029600777C53 /* UmbralMesh.h */,
+				70271B6D18D5029600777C53 /* UmbralModel.cpp */,
+				70271B6E18D5029600777C53 /* UmbralModel.h */,
+			);
+			name = Rendering;
+			sourceTree = "<group>";
+		};
+		709E16EE186A721100AEA8C7 = {
+			isa = PBXGroup;
+			children = (
+				70271B9018D5058900777C53 /* data */,
+				70271B4918D5011A00777C53 /* Dependencies */,
+				709E1704186A721100AEA8C7 /* Source */,
+				709E16F9186A721100AEA8C7 /* Frameworks */,
+				709E16F8186A721100AEA8C7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		709E16F8186A721100AEA8C7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				709E16F7186A721100AEA8C7 /* WorldEditor.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		709E16F9186A721100AEA8C7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				709E1771186A7C9100AEA8C7 /* QuartzCore.framework */,
+				709E176F186A7BAC00AEA8C7 /* libz.dylib */,
+				709E176B186A7B3500AEA8C7 /* libboost.a */,
+				709E176C186A7B3500AEA8C7 /* libFramework.a */,
+				709E175C186A779800AEA8C7 /* AVFoundation.framework */,
+				709E175A186A755100AEA8C7 /* libAthena.a */,
+				709E16FA186A721100AEA8C7 /* Foundation.framework */,
+				709E16FC186A721100AEA8C7 /* CoreGraphics.framework */,
+				709E16FE186A721100AEA8C7 /* UIKit.framework */,
+				709E1700186A721100AEA8C7 /* GLKit.framework */,
+				709E1702186A721100AEA8C7 /* OpenGLES.framework */,
+				709E1724186A721100AEA8C7 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		709E1704186A721100AEA8C7 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				70271B6018D5027C00777C53 /* Rendering */,
+				70271B4618D4FFB500777C53 /* Resources */,
+				70271AED18D4FFA600777C53 /* FileManager.cpp */,
+				70271AEE18D4FFA600777C53 /* FileManager.h */,
+				70271AF518D4FFA600777C53 /* MapLayout.cpp */,
+				70271AF618D4FFA600777C53 /* MapLayout.h */,
+				70271B0718D4FFA600777C53 /* ResourceDefs.h */,
+				70271B0818D4FFA600777C53 /* ResourceManager.cpp */,
+				70271B0918D4FFA600777C53 /* ResourceManager.h */,
+				70271B1C18D4FFA700777C53 /* TouchFreeCamera.cpp */,
+				70271B1D18D4FFA700777C53 /* TouchFreeCamera.h */,
+				70271B1F18D4FFA700777C53 /* WorldEditor.cpp */,
+				70271B2018D4FFA700777C53 /* WorldEditor.h */,
+				70271AD918D4FF1E00777C53 /* GeneralSettings.xcconfig */,
+				70271ADA18D4FF1E00777C53 /* GeneralSettingsDebug.xcconfig */,
+				709E1706186A721100AEA8C7 /* WorldEditor-Info.plist */,
+				709E170C186A721100AEA8C7 /* WorldEditor-Prefix.pch */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		709E16F6186A721100AEA8C7 /* WorldEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 709E1734186A721200AEA8C7 /* Build configuration list for PBXNativeTarget "WorldEditor" */;
+			buildPhases = (
+				709E16F3186A721100AEA8C7 /* Sources */,
+				709E16F4186A721100AEA8C7 /* Frameworks */,
+				709E16F5186A721100AEA8C7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				706F718218ECEA8600224718 /* PBXTargetDependency */,
+				706F718018ECEA8400224718 /* PBXTargetDependency */,
+				706F717E18ECEA7D00224718 /* PBXTargetDependency */,
+			);
+			name = WorldEditor;
+			productName = WorldEditor;
+			productReference = 709E16F7186A721100AEA8C7 /* WorldEditor.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		709E16EF186A721100AEA8C7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Virtual Applications";
+				TargetAttributes = {
+					709E16F6186A721100AEA8C7 = {
+						DevelopmentTeam = AGRWZ43CQ9;
+					};
+				};
+			};
+			buildConfigurationList = 709E16F2186A721100AEA8C7 /* Build configuration list for PBXProject "WorldEditor" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 709E16EE186A721100AEA8C7;
+			productRefGroup = 709E16F8186A721100AEA8C7 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 70271B5718D5022E00777C53 /* Products */;
+					ProjectRef = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+				},
+				{
+					ProductGroup = 70271B5118D5021D00777C53 /* Products */;
+					ProjectRef = 70271B5018D5021D00777C53 /* boost.xcodeproj */;
+				},
+				{
+					ProductGroup = 70271B4B18D5012E00777C53 /* Products */;
+					ProjectRef = 70271B4A18D5012E00777C53 /* Framework.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				709E16F6186A721100AEA8C7 /* WorldEditor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		70271B4F18D5012E00777C53 /* libFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework.a;
+			remoteRef = 70271B4E18D5012E00777C53 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		70271B5518D5021D00777C53 /* libboost.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libboost.a;
+			remoteRef = 70271B5418D5021D00777C53 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		70271B5F18D5022E00777C53 /* libAthena.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAthena.a;
+			remoteRef = 70271B5E18D5022E00777C53 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		709E16F5186A721100AEA8C7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70271B9118D5058900777C53 /* data in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		709E16F3186A721100AEA8C7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70271B2718D4FFA700777C53 /* ChunkLoader.cpp in Sources */,
+				70271B3B18D4FFA700777C53 /* SectionLoader.cpp in Sources */,
+				70271B3A18D4FFA700777C53 /* ResourceSection.cpp in Sources */,
+				70271B2C18D4FFA700777C53 /* GtexData.cpp in Sources */,
+				70FA4DB818D7BE90000DED43 /* IosUmbralEffectGenerator.cpp in Sources */,
+				70271B3018D4FFA700777C53 /* MeshChunk.cpp in Sources */,
+				70271B2E18D4FFA700777C53 /* LtcdChunk.cpp in Sources */,
+				70271B4518D4FFA700777C53 /* WrbChunk.cpp in Sources */,
+				70271B7018D5029600777C53 /* D3DShaderConstantTable.cpp in Sources */,
+				70271B4018D4FFA700777C53 /* StringChunk.cpp in Sources */,
+				70271B3E18D4FFA700777C53 /* SkeletonSection.cpp in Sources */,
+				70271B3418D4FFA700777C53 /* NameChunk.cpp in Sources */,
+				70271B4418D4FFA700777C53 /* WorldEditor.cpp in Sources */,
+				70271B7518D5029600777C53 /* UmbralModel.cpp in Sources */,
+				70271B3818D4FFA700777C53 /* ResourceManager.cpp in Sources */,
+				70271B7118D5029600777C53 /* D3DShaderDisassembler.cpp in Sources */,
+				70271B3918D4FFA700777C53 /* ResourceNode.cpp in Sources */,
+				70271B2518D4FFA700777C53 /* BoundingBoxChunk.cpp in Sources */,
+				70271B3F18D4FFA700777C53 /* StreamChunk.cpp in Sources */,
+				70271B3518D4FFA700777C53 /* PhbSection.cpp in Sources */,
+				70271B3218D4FFA700777C53 /* ModelContainerChunk.cpp in Sources */,
+				70271B2618D4FFA700777C53 /* BoundingBoxContainerChunk.cpp in Sources */,
+				70271B2B18D4FFA700777C53 /* FileManager.cpp in Sources */,
+				70271B3718D4FFA700777C53 /* PwibSection.cpp in Sources */,
+				70271B7218D5029600777C53 /* GlobalResources.cpp in Sources */,
+				70271B7418D5029600777C53 /* UmbralMesh.cpp in Sources */,
+				70271B4218D4FFA700777C53 /* TouchFreeCamera.cpp in Sources */,
+				70271B2418D4FFA700777C53 /* BaseSection.cpp in Sources */,
+				70271B6F18D5029600777C53 /* D3DShader.cpp in Sources */,
+				70271B3618D4FFA700777C53 /* PramChunk.cpp in Sources */,
+				70271B2918D4FFA700777C53 /* ContainerChunk.cpp in Sources */,
+				70271B2F18D4FFA700777C53 /* MapLayout.cpp in Sources */,
+				70271B2D18D4FFA700777C53 /* HeaderChunk.cpp in Sources */,
+				70FA4DB118D7A383000DED43 /* UmbralEffectProvider.cpp in Sources */,
+				70271B3118D4FFA700777C53 /* ModelChunk.cpp in Sources */,
+				70271B3318D4FFA700777C53 /* ModelSection.cpp in Sources */,
+				7096E31D18E0163F0068769A /* UmbralActor.cpp in Sources */,
+				70271B4118D4FFA700777C53 /* TextureSection.cpp in Sources */,
+				70271B7318D5029600777C53 /* UmbralMap.cpp in Sources */,
+				70271B3C18D4FFA700777C53 /* ShaderChunk.cpp in Sources */,
+				70271B2818D4FFA700777C53 /* CompChunk.cpp in Sources */,
+				70FA4DB418D7A7BF000DED43 /* IosUmbralEffect.cpp in Sources */,
+				70271B3D18D4FFA700777C53 /* ShaderSection.cpp in Sources */,
+				70271B2318D4FFA700777C53 /* BaseChunk.cpp in Sources */,
+				70FA4DAB18D7A1FC000DED43 /* IosUmbralEffectProvider.cpp in Sources */,
+				70271B2A18D4FFA700777C53 /* FileChunk.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		706F717E18ECEA7D00224718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = boost;
+			targetProxy = 706F717D18ECEA7D00224718 /* PBXContainerItemProxy */;
+		};
+		706F718018ECEA8400224718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Athena;
+			targetProxy = 706F717F18ECEA8400224718 /* PBXContainerItemProxy */;
+		};
+		706F718218ECEA8600224718 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework;
+			targetProxy = 706F718118ECEA8600224718 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		709E1732186A721200AEA8C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+			};
+			name = Debug;
+		};
+		709E1733186A721200AEA8C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+			};
+			name = Release;
+		};
+		709E1735186A721200AEA8C7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70271ADA18D4FF1E00777C53 /* GeneralSettingsDebug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "WorldEditor-Prefix.pch";
+				INFOPLIST_FILE = "WorldEditor-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		709E1736186A721200AEA8C7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70271AD918D4FF1E00777C53 /* GeneralSettings.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "WorldEditor-Prefix.pch";
+				INFOPLIST_FILE = "WorldEditor-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		709E16F2186A721100AEA8C7 /* Build configuration list for PBXProject "WorldEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				709E1732186A721200AEA8C7 /* Debug */,
+				709E1733186A721200AEA8C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		709E1734186A721200AEA8C7 /* Build configuration list for PBXNativeTarget "WorldEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				709E1735186A721200AEA8C7 /* Debug */,
+				709E1736186A721200AEA8C7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 709E16EF186A721100AEA8C7 /* Project object */;
+}
