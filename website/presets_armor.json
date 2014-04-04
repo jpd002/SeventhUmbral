@@ -90,6 +90,33 @@
 		"waistGear": 0
 	},
 	10: {
+		"name": "Alberic",
+		"headGear": 0,
+		"bodyGear": 15744,
+		"legsGear": 7238,
+		"handsGear": 11584,
+		"feetGear": 15744,
+		"waistGear": 0
+	},
+	11: {
+		"name": "Jehantel",
+		"headGear": 9604,
+		"bodyGear": 28742,
+		"legsGear": 28928,
+		"handsGear": 1024,
+		"feetGear": 9412,
+		"waistGear": 0
+	},
+	12: {
+		"name": "Miraudont",
+		"headGear": 19503,
+		"bodyGear": 14598,
+		"legsGear": 3268,
+		"handsGear": 14560,
+		"feetGear": 13475,
+		"waistGear": 248832
+	},
+	13: {
 		"name": "Nael van Darnus (Elezen Male Only)",
 		"headGear": 0,
 		"bodyGear": 933888,
@@ -97,5 +124,23 @@
 		"handsGear": 1024,
 		"feetGear": 1024,
 		"waistGear": 0
+	},
+	14: {
+		"name": "Papalymo",
+		"headGear": 20507,
+		"bodyGear": 7589,
+		"legsGear": 16641,
+		"handsGear": 3265,
+		"feetGear": 9504,
+		"waistGear": 168960
+	},
+	15: {
+		"name": "Rubh Epocan",
+		"headGear": 20576,
+		"bodyGear": 7232,
+		"legsGear": 5198,
+		"handsGear": 6209,
+		"feetGear": 6209,
+		"waistGear": 248832
 	},
 };
