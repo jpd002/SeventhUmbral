@@ -19,7 +19,7 @@ div.info
 
 div.edit
 {
-	width: 600px;
+	width: 50%;
 	margin-top: 20px;
 	margin-left: auto;
 	margin-right: auto;
@@ -70,6 +70,16 @@ table.infoForm
 }
 
 table.editForm
+{
+	width: 100%;
+}
+
+table.editForm input
+{
+	width: 100%;
+}
+
+table.editForm select
 {
 	width: 100%;
 }

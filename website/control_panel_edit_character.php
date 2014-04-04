@@ -338,7 +338,7 @@ catch(Exception $e)
 				</table>
 				<br />
 				<hr />
-				<table>
+				<table class="editForm">
 					<tr>
 						<th colspan="4">Appearance</th>
 					</tr>
@@ -423,7 +423,7 @@ catch(Exception $e)
 				</table>
 				<br />
 				<hr />
-				<table>
+				<table class="editForm">
 					<tr>
 						<th colspan="4">Gear</th>
 					</tr>
