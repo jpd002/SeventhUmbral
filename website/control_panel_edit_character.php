@@ -47,6 +47,12 @@ $g_guardians = array(
 	12 => "Althyk, the Keeper"
 );
 
+$g_allegiances = array(
+	1 => "Limsa Lominsa",
+	2 => "Gridania",
+	3 => "Ul'dah",
+);
+
 $g_htmlToDbFieldMapping = array(
 	"characterName" => "name",
 	"characterTribe" => "tribe",
@@ -70,6 +76,7 @@ $g_htmlToDbFieldMapping = array(
 	"characterGuardian" => "guardian",
 	"characterBirthMonth" => "birthMonth",
 	"characterBirthDay" => "birthDay",
+	"characterAllegiance" => "allegiance",
 	"characterWeapon1" => "weapon1",
 	"characterWeapon2" => "weapon2",
 	"characterHeadGear" => "headGear",
@@ -327,13 +334,13 @@ catch(Exception $e)
 						<td>Guardian:</td>
 						<td>Birth Month:</td>
 						<td>Birth Day:</td>
-						<td></td>
+						<td>Allegiance:</td>
 					</tr>
 					<tr>
 						<td><?php echo GenerateSelectField($g_characterInfo, $g_htmlToDbFieldMapping, $g_guardians, "characterGuardian"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterBirthMonth"); ?></td>
 						<td><?php echo GenerateTextField($g_characterInfo, $g_htmlToDbFieldMapping, "characterBirthDay"); ?></td>
-						<td></td>
+						<td><?php echo GenerateSelectField($g_characterInfo, $g_htmlToDbFieldMapping, $g_allegiances, "characterAllegiance"); ?></td>
 					</tr>
 				</table>
 				<br />

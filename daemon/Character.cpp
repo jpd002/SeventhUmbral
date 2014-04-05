@@ -129,6 +129,7 @@ CCharacter::CCharacter(Framework::MySql::CResult& result)
 	guardian = GetFieldIntValue(row, fieldIndices, "guardian");
 	birthMonth = GetFieldIntValue(row, fieldIndices, "birthMonth");
 	birthDay = GetFieldIntValue(row, fieldIndices, "birthDay");
+	allegiance = GetFieldIntValue(row, fieldIndices, "allegiance");
 
 	weapon1 = GetFieldIntValue(row, fieldIndices, "weapon1");
 	weapon2 = GetFieldIntValue(row, fieldIndices, "weapon2");

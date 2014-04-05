@@ -46,6 +46,7 @@ public:
 	int				guardian = 0;
 	int				birthMonth = 0;
 	int				birthDay = 0;
+	int				allegiance = 0;
 
 	int				weapon1 = 0;
 	int				weapon2 = 0;

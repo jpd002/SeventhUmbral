@@ -212,6 +212,7 @@ void CLobbyServerPlayer::ProcessGetCharacters(const PacketData& packetData)
 	characterData[0xC7] = character.guardian;
 	characterData[0xC8] = character.birthMonth;
 	characterData[0xC9] = character.birthDay;
+	characterData[0xE8] = character.allegiance;
 
 	*reinterpret_cast<uint32*>(&characterData[0x25]) = character.size;				//size
 

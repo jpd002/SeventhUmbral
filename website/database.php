@@ -344,7 +344,7 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 	$statement = $dataConnection->prepare("UPDATE ffxiv_characters SET
 		name = ?, tribe = ?, size = ?, voice = ?, skinColor = ?, hairStyle = ?, hairColor = ?, hairOption = ?,
 		eyeColor = ?, faceType = ?, faceBrow = ?, faceEye = ?, faceIris = ?, faceNose = ?, faceMouth = ?, faceJaw = ?,
-		faceCheek = ?, faceOption1 = ?, faceOption2 = ?, guardian = ?, birthMonth = ?, birthDay = ?,
+		faceCheek = ?, faceOption1 = ?, faceOption2 = ?, guardian = ?, birthMonth = ?, birthDay = ?, allegiance = ?,
 		weapon1 = ?, weapon2 = ?, headGear = ?, bodyGear = ?, legsGear = ?, handsGear = ?, feetGear = ?, 
 		waistGear = ?, rightEarGear = ?, leftEarGear = ?, rightFingerGear = ?, leftFingerGear = ?
 		WHERE id = ?");
@@ -355,14 +355,14 @@ function UpdateCharacterInfo($dataConnection, $characterId, $characterInfo)
 	
 	try
 	{
-		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+		if(!$statement->bind_param("siiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
 			$characterInfo["name"], $characterInfo["tribe"], $characterInfo["size"], $characterInfo["voice"],
 			$characterInfo["skinColor"], $characterInfo["hairStyle"], $characterInfo["hairColor"],
 			$characterInfo["hairOption"], $characterInfo["eyeColor"], $characterInfo["faceType"],
 			$characterInfo["faceBrow"], $characterInfo["faceEye"], $characterInfo["faceIris"],
 			$characterInfo["faceNose"], $characterInfo["faceMouth"], $characterInfo["faceJaw"],
 			$characterInfo["faceCheek"], $characterInfo["faceOption1"], $characterInfo["faceOption2"],
-			$characterInfo["guardian"], $characterInfo["birthMonth"], $characterInfo["birthDay"],
+			$characterInfo["guardian"], $characterInfo["birthMonth"], $characterInfo["birthDay"], $characterInfo["allegiance"],
 			$characterInfo["weapon1"], $characterInfo["weapon2"], $characterInfo["headGear"], $characterInfo["bodyGear"], 
 			$characterInfo["legsGear"], $characterInfo["handsGear"], $characterInfo["feetGear"],
 			$characterInfo["waistGear"], $characterInfo["rightEarGear"], $characterInfo["leftEarGear"], 
