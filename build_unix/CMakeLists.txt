@@ -9,23 +9,29 @@ include_directories(${FRAMEWORK_ROOT}/include /usr/local/include /usr/local/incl
 link_directories(../${FRAMEWORK_ROOT}/build_unix/build /usr/local/lib /usr/local/lib/mysql)
 
 add_executable(ffxivd 
+	../daemon/ActorDatabase.cpp
 	../daemon/AppConfig.cpp
-	../daemon/BasePacket.cpp
 	../daemon/Character.cpp
-	../daemon/CompositePacket.cpp
 	../daemon/DatabaseConnectionManager.cpp
 	../daemon/GameServer.cpp
 	../daemon/GameServerPlayer.cpp
+	../daemon/GlobalData.cpp
 	../daemon/LobbyServer.cpp
 	../daemon/LobbyServerPlayer.cpp
 	../daemon/Log.cpp
 	../daemon/Main.cpp
+	../daemon/packets/BasePacket.cpp
+	../daemon/packets/BattleActionPacket.cpp
+	../daemon/packets/CompositePacket.cpp
+	../daemon/packets/DisplayMessagePacket.cpp
+	../daemon/packets/SetActorPropertyPacket.cpp
+	../daemon/packets/SetActorStatePacket.cpp
+	../daemon/packets/SetInitialPositionPacket.cpp
+	../daemon/packets/SetInventoryPacket.cpp
+	../daemon/packets/SetMapPacket.cpp
+	../daemon/packets/SetMusicPacket.cpp
+	../daemon/packets/SetWeatherPacket.cpp
 	../daemon/PacketUtils.cpp
-	../daemon/SetInitialPositionPacket.cpp
-	../daemon/SetInventoryPacket.cpp
-	../daemon/SetMapPacket.cpp
-	../daemon/SetMusicPacket.cpp
-	../daemon/SetWeatherPacket.cpp
 	../daemon/SocketUtils.cpp
 	../common/BLOWFISH.C
 )

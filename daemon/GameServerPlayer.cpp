@@ -1,6 +1,7 @@
 #include <thread>
 #include <algorithm>
 #include <assert.h>
+#include <cstdlib>
 #include "GameServerPlayer.h"
 #include "DatabaseConnectionManager.h"
 #include "PacketUtils.h"
