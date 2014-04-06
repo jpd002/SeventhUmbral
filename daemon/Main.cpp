@@ -3,6 +3,7 @@
 #include "SocketDef.h"
 #include "LobbyServer.h"
 #include "GameServer.h"
+#include "GlobalData.h"
 #include "AppConfig.h"
 #include "Log.h"
 #ifdef __unix__
@@ -42,6 +43,8 @@ int main(int argc, char** argv)
 		auto configPath = CAppConfig::GetInstance().GetBasePath();
 		CLog::GetInstance().LogError("Global", "Config file not available. Make sure there is a 'config.xml' file in '%s'.", configPath.string().c_str());
 	}
+
+	CGlobalData::GetInstance().Prepare();
 
 	CLobbyServer lobbyServer;
 	lobbyServer.Start();

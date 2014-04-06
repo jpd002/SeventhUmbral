@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include <map>
 #include <thread>
+#include <algorithm>
+#include <assert.h>
 #include "GameServerPlayer.h"
 #include "DatabaseConnectionManager.h"
 #include "PacketUtils.h"
@@ -8,10 +8,9 @@
 #include "GameServer_MoveOutOfRoom.h"
 #include "GameServer_Ingame.h"
 #include "Character.h"
-#include "PathUtils.h"
 #include "Log.h"
-#include "AppConfig.h"
 #include "string_format.h"
+#include "GlobalData.h"
 
 #include "packets/SetInitialPositionPacket.h"
 #include "packets/SetWeatherPacket.h"
@@ -33,11 +32,6 @@
 
 #define ENEMY_INITIAL_HP			0x100
 
-#define ACTOR_ID_ENEMY_1			0x44D8002D
-#define ACTOR_ID_ENEMY_2			0x45100D56
-#define ACTOR_ID_ENEMY_3			0x46D8002D
-#define ACTOR_ID_ENEMY_4			0x47D8002D
-
 #define INITIAL_POSITION_GRIDANIA_INN	   58.92f,   4.00f, -1219.07f, 0.52f
 #define INITIAL_POSITION_MOR_DHONA		 -208.08f,  19.00f,  -669.79f, 0.00f
 #define INITIAL_POSITION_COERTHAS		  219.59f, 302.00f,  -246.00f, 0.00f
@@ -46,20 +40,6 @@
 #define INITIAL_POSITION_RIVENROAD		    0.00f,   0.00f,     0.00f, 0.00f
 #define INITIAL_POSITION_LARGEBOAT		    0.00f,  15.00f,     0.00f, 0.00f
 #define INITIAL_POSITION_SMALLBOAT		    0.00f,  15.00f,     0.00f, 0.00f
-
-#define STRING_ID_YOUNG_RAPTOR		(0x2F4E33)
-#define STRING_ID_ANTELOPE_DOE		(0x2F4E8D)
-#define STRING_ID_STAR_MARMOT		(0x2F5D09)
-#define STRING_ID_FOREST_FUNGUAR	(0x2F646D)
-#define STRING_ID_IFRIT				(0x2F69E5)
-#define STRING_ID_IXALI_FEARCALLER	(0x2F666B)
-
-#define APPEARANCE_ID_MARMOT		(0x2906)
-#define APPEARANCE_ID_FUNGUAR		(0x2914)
-#define APPEARANCE_ID_ANTELOPE		(0x2714)
-#define APPEARANCE_ID_IFRIT			(0x2A64)
-#define APPEARANCE_ID_TITAN			(0x2A66)
-#define APPEARANCE_ID_IXALI			(0x2A96)
 
 CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 : m_clientSocket(clientSocket)
@@ -402,14 +382,6 @@ void CGameServerPlayer::PrepareInitialPackets()
 	QueuePacket(PacketData(std::begin(g_client0_login12), std::end(g_client0_login12)));
 	QueuePacket(PacketData(std::begin(g_client0_login13), std::end(g_client0_login13)));
 	QueuePacket(PacketData(std::begin(g_client0_login14), std::end(g_client0_login14)));
-//	QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_1, APPEARANCE_ID_MARMOT, STRING_ID_STAR_MARMOT, 163.81f, 0, 154.39f, 0)));
-//	QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_2, APPEARANCE_ID_MARMOT, STRING_ID_STAR_MARMOT, 162.81f, 0, 154.39f, 0)));
-//	QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_3, APPEARANCE_ID_MARMOT, STRING_ID_STAR_MARMOT, 161.81f, 0, 154.39f, 0)));
-//	QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_4, APPEARANCE_ID_MARMOT, STRING_ID_STAR_MARMOT, 160.81f, 0, 154.39f, 0)));
-//	m_npcHp[ACTOR_ID_ENEMY_1] = ENEMY_INITIAL_HP;
-//	m_npcHp[ACTOR_ID_ENEMY_2] = ENEMY_INITIAL_HP;
-//	m_npcHp[ACTOR_ID_ENEMY_3] = ENEMY_INITIAL_HP;
-//	m_npcHp[ACTOR_ID_ENEMY_4] = ENEMY_INITIAL_HP;
 }
 
 void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const PacketData& subPacket)
@@ -1059,14 +1031,18 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 
 	//	QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
 
-		QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_1, APPEARANCE_ID_FUNGUAR,	STRING_ID_FOREST_FUNGUAR,		356.61f,  4.38f, -943.42f, 0)));
-		QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_2, APPEARANCE_ID_IFRIT,		STRING_ID_IFRIT,				374.98f,  4.98f, -930.43f, 0)));
-		QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_3, APPEARANCE_ID_MARMOT,		STRING_ID_STAR_MARMOT,			379.04f,  6.87f, -901.23f, 0)));
-		QueuePacket(PacketData(SpawnNpc(ACTOR_ID_ENEMY_4, APPEARANCE_ID_ANTELOPE,	STRING_ID_ANTELOPE_DOE,			365.38f, -0.79f, -834.23f, 0)));
-		m_npcHp[ACTOR_ID_ENEMY_1] = ENEMY_INITIAL_HP;
-		m_npcHp[ACTOR_ID_ENEMY_2] = ENEMY_INITIAL_HP;
-		m_npcHp[ACTOR_ID_ENEMY_3] = ENEMY_INITIAL_HP;
-		m_npcHp[ACTOR_ID_ENEMY_4] = ENEMY_INITIAL_HP;
+		m_npcHp.clear();
+		//Only makes sense in Black Shroud for now
+		if(levelId == CSetMapPacket::MAP_BLACKSHROUD)
+		{
+			const auto& actorDatabase = CGlobalData::GetInstance().GetActorDatabase();
+			for(const auto& actorInfo : actorDatabase.GetActors())
+			{
+				QueuePacket(PacketData(SpawnNpc(actorInfo.id, actorInfo.baseModelId, actorInfo.nameStringId, 
+					std::get<0>(actorInfo.pos), std::get<1>(actorInfo.pos), std::get<2>(actorInfo.pos), 0)));
+				m_npcHp.insert(std::make_pair(actorInfo.id, ENEMY_INITIAL_HP));
+			}
+		}
 
 		m_zoneMasterCreated = true;
 	}

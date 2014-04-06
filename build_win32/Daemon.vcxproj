@@ -85,11 +85,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\BLOWFISH.C" />
+    <ClCompile Include="..\daemon\ActorDatabase.cpp" />
     <ClCompile Include="..\daemon\AppConfig.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
+    <ClCompile Include="..\daemon\GlobalData.cpp" />
     <ClCompile Include="..\daemon\LobbyServer.cpp" />
     <ClCompile Include="..\daemon\LobbyServerPlayer.cpp" />
     <ClCompile Include="..\daemon\Log.cpp" />
@@ -110,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
+    <ClInclude Include="..\daemon\ActorDatabase.h" />
     <ClInclude Include="..\daemon\AppConfig.h" />
     <ClInclude Include="..\daemon\Character.h" />
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h" />
@@ -118,6 +121,7 @@
     <ClInclude Include="..\daemon\GameServer_Ingame.h" />
     <ClInclude Include="..\daemon\GameServer_Login.h" />
     <ClInclude Include="..\daemon\GameServer_MoveOutOfRoom.h" />
+    <ClInclude Include="..\daemon\GlobalData.h" />
     <ClInclude Include="..\daemon\LobbyServer.h" />
     <ClInclude Include="..\daemon\LobbyServerPlayer.h" />
     <ClInclude Include="..\daemon\LobbyServer_Login.h" />
