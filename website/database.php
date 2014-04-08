@@ -69,24 +69,64 @@ function VerifyUser($dataConnection, $username, $password)
 
 function InsertUser($dataConnection, $username, $passhash, $salt, $email)
 {
-	$statement = $dataConnection->prepare("INSERT INTO ffxiv_users (name, passhash, salt, email) VALUES (?, ?, ?, ?)");
-	if(!$statement)
 	{
-		throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
-	}
-
-	try
-	{
-		$statement->bind_param('ssss', $username, $passhash, $salt, $email);
-
-		if(!$statement->execute())
+		$statement = $dataConnection->prepare("INSERT INTO ffxiv_users (name, passhash, salt, email) VALUES (?, ?, ?, ?)");
+		if(!$statement)
 		{
 			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
 		}
+
+		try
+		{
+			$statement->bind_param('ssss', $username, $passhash, $salt, $email);
+
+			if(!$statement->execute())
+			{
+				throw new Exception(__FUNCTION__ . " failed.");
+			}
+		}
+		finally
+		{
+			$statement->close();
+		}
 	}
-	finally
+	
+	//Insert new character
 	{
-		$statement->close();
+		//This kinda suck, but we don't have many choices for now...
+		$statement = $dataConnection->prepare("
+			INSERT INTO ffxiv_characters
+			(
+				userId, name, tribe, size, voice, skinColor, hairStyle, hairColor, hairOption, eyeColor, faceType, faceBrow, faceEye, faceIris,
+				faceNose, faceMouth, faceJaw, faceCheek, faceOption1, faceOption2, guardian, birthMonth, birthDay, allegiance,
+				weapon1, weapon2, headGear, bodyGear, legsGear, handsGear, feetGear, waistGear, 
+				rightEarGear, leftEarGear, rightFingerGear, leftFingerGear
+			) 
+			VALUES
+			(
+				LAST_INSERT_ID(), 'Miraudont', 6, 0, 13, 66, 4, 63, 0, 59, 7, 2, 4, 0, 
+				5, 3, 0, 2, 30, 3, 7, 4, 19, 1,
+				0, 0, 19503, 14598, 3268, 14560, 13475, 0,
+				0, 0, 0, 0
+			)
+		");
+		
+		if(!$statement)
+		{
+			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+		}
+		
+		try
+		{
+			if(!$statement->execute())
+			{
+				throw new Exception(__FUNCTION__ . " failed.");
+			}
+		}
+		finally
+		{
+			$statement->close();
+		}
 	}
 }
 
