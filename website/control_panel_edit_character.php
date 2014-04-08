@@ -124,6 +124,12 @@ function GenerateSelectField($characterInfo, $htmlFieldMapping, $htmlFieldOption
 	return $htmlText;
 }
 
+if(isset($_POST["cancel"]))
+{
+	header("Location: control_panel.php");
+	exit;
+}
+
 if(isset($_POST["save"]))
 {
 	SaveCharacter($g_databaseConnection, $g_htmlToDbFieldMapping, $g_characterId);
@@ -503,6 +509,7 @@ catch(Exception $e)
 					<tr>
 						<td>
 							<input type="submit" name="save" value="Save" />
+							<input type="submit" name="cancel" value="Cancel" />
 						</td>
 					</tr>
 				</table>
