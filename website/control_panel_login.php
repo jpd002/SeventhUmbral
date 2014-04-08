@@ -74,5 +74,8 @@ if(isset($_POST["login"]))
 			</form>
 			<p class="errorMessage"><?php echo($loginError); ?></p>
 		</div>
+		<div class="infoFooter">
+			<a href="create_user.php">Create User</a>
+		</div>
 	</body>
 </html>

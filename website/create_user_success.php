@@ -18,7 +18,7 @@ include("config.php");
 				You may now use the Seventh Umbral Launcher to login and connect to this server.
 			</p>
 			<p>
-				<a href="http://seventhumbral.org">Go back to The Seventh Umbral</a>
+				<a href="control_panel_login.php">Login to the User Control Panel</a>
 			</p>
 		</div>
 	</body>

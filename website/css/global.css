@@ -17,6 +17,15 @@ div.info
 	background-color: lightblue;
 }
 
+div.infoFooter
+{
+	width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: right;
+	padding: 5px;
+}
+
 div.edit
 {
 	width: 50%;
