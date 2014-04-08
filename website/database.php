@@ -42,13 +42,13 @@ function VerifyUser($dataConnection, $username, $password)
 		$statement->bind_param('s', $username);
 		if(!$statement->execute())
 		{
-			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+			throw new Exception(__FUNCTION__ . " failed.");
 		}
 
 		$statement->bind_result($id, $storedPasshash, $salt);
 		if(!$statement->fetch())
 		{
-			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+			throw new Exception(__FUNCTION__ . " failed.");
 		}
 		
 		$saltedPassword = $password . $salt;
@@ -56,7 +56,7 @@ function VerifyUser($dataConnection, $username, $password)
 		
 		if($hashedPassword !== $storedPasshash)
 		{
-			throw new Exception(__FUNCTION__ . " failed: " . $dataConnection->error);
+			throw new Exception(__FUNCTION__ . " failed.");
 		}
 		
 		return $id;
