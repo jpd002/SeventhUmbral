@@ -317,14 +317,44 @@ catch(Exception $e)
 				waistGearField.value = preset.waistGear;
 			}
 		
+			function toggleDisplay(elementName)
+			{
+				var element = document.getElementById(elementName);
+				if(element.style.display === 'none')
+				{
+					element.style.display = '';
+				}
+				else
+				{
+					element.style.display = 'none';
+				}
+			}
+			
 		</script>
 	</head>
 	<body>
 		<?php include("header.php"); ?>
 		<?php include("control_panel_header.php"); ?>
 		<div class="edit">
-			<h2>Edit Character</h2>
+			<h2>Edit Character (<a href="#" onclick="toggleDisplay('guideDiv');">Help</a>)</h2>
+			<div id="guideDiv" style="background-color: white; display: none;">
+				<h3>General Notes</h3>
+				<p style="text-align: left">
+					All values here are editable, so change them at your own risk. Just keep in mind that
+					you can always import an appearance from a character creation data file and equip presetted
+					equipment to reset your character.
+				</p>
+				<h3>Import Appearance</h3>
+				<p style="text-align: left">
+					Use this to import a character creation data file. Those files
+					are created by the client when saving character creation data in the character creation 
+					mode, just before selecting the server on which the character will be created. They are usually
+					located in the "C:\Users\{Username}\Documents\My Games\FINAL FANTASY XIV\user\00000000" folder 
+					and have a '.CMB' extension.
+				</p>
+			</div>
 			<br />
+			
 			<form method="post" autocomplete="off">
 				<table class="editForm">
 					<tr>
