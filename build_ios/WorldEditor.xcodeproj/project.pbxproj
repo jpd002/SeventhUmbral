@@ -56,7 +56,7 @@
 		709E16FF186A721100AEA8C7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E16FE186A721100AEA8C7 /* UIKit.framework */; };
 		709E1701186A721100AEA8C7 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1700186A721100AEA8C7 /* GLKit.framework */; };
 		709E1703186A721100AEA8C7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1702186A721100AEA8C7 /* OpenGLES.framework */; };
-		709E175B186A755100AEA8C7 /* libAthena.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E175A186A755100AEA8C7 /* libAthena.a */; };
+		709E175B186A755100AEA8C7 /* libPalleon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E175A186A755100AEA8C7 /* libPalleon.a */; };
 		709E175D186A779800AEA8C7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E175C186A779800AEA8C7 /* AVFoundation.framework */; };
 		709E176E186A7B3500AEA8C7 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176C186A7B3500AEA8C7 /* libFramework.a */; };
 		709E1770186A7BAC00AEA8C7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176F186A7BAC00AEA8C7 /* libz.dylib */; };
@@ -84,10 +84,10 @@
 		};
 		70271B5E18D5022E00777C53 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+			containerPortal = 70271B5618D5022E00777C53 /* Palleon.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 7E7D873B13F719E500AD9F7F;
-			remoteInfo = Athena;
+			remoteInfo = Palleon;
 		};
 		706F717D18ECEA7D00224718 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -98,10 +98,10 @@
 		};
 		706F717F18ECEA8400224718 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+			containerPortal = 70271B5618D5022E00777C53 /* Palleon.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 7E7D873A13F719E500AD9F7F;
-			remoteInfo = Athena;
+			remoteInfo = Palleon;
 		};
 		706F718118ECEA8600224718 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -186,7 +186,7 @@
 		70271B2218D4FFA700777C53 /* WrbChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WrbChunk.h; path = ../tools/WorldEditor/Source/WrbChunk.h; sourceTree = "<group>"; };
 		70271B4A18D5012E00777C53 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../../Framework/build_iphone/Framework.xcodeproj; sourceTree = "<group>"; };
 		70271B5018D5021D00777C53 /* boost.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = boost.xcodeproj; path = ../../boost/build_iphone/boost.xcodeproj; sourceTree = "<group>"; };
-		70271B5618D5022E00777C53 /* Athena.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Athena.xcodeproj; path = ../../Athena/build_ios/Athena.xcodeproj; sourceTree = "<group>"; };
+		70271B5618D5022E00777C53 /* Palleon.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Palleon.xcodeproj; path = ../../Palleon/build_ios/Palleon.xcodeproj; sourceTree = "<group>"; };
 		70271B6118D5029600777C53 /* D3DShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = D3DShader.cpp; path = ../tools/WorldEditor/Source/Rendering/D3DShader.cpp; sourceTree = "<group>"; };
 		70271B6218D5029600777C53 /* D3DShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = D3DShader.h; path = ../tools/WorldEditor/Source/Rendering/D3DShader.h; sourceTree = "<group>"; };
 		70271B6318D5029600777C53 /* D3DShaderConstantTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = D3DShaderConstantTable.cpp; path = ../tools/WorldEditor/Source/Rendering/D3DShaderConstantTable.cpp; sourceTree = "<group>"; };
@@ -213,7 +213,7 @@
 		709E1706186A721100AEA8C7 /* WorldEditor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WorldEditor-Info.plist"; sourceTree = "<group>"; };
 		709E170C186A721100AEA8C7 /* WorldEditor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WorldEditor-Prefix.pch"; sourceTree = "<group>"; };
 		709E1724186A721100AEA8C7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		709E175A186A755100AEA8C7 /* libAthena.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAthena.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Athena-cqrzgjojsxrjapdxjjvcfeijgrqv/Build/Products/Debug-iphoneos/libAthena.a"; sourceTree = "<group>"; };
+		709E175A186A755100AEA8C7 /* libPalleon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPalleon.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Palleon-cqrzgjojsxrjapdxjjvcfeijgrqv/Build/Products/Debug-iphoneos/libPalleon.a"; sourceTree = "<group>"; };
 		709E175C186A779800AEA8C7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		709E176B186A7B3500AEA8C7 /* libboost.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost.a; path = "../../../../boost/build_iphone/build/Debug-iphoneos/libboost.a"; sourceTree = "<group>"; };
 		709E176C186A7B3500AEA8C7 /* libFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFramework.a; path = "../../../../Framework/build_iphone/build/Debug-iphoneos/libFramework.a"; sourceTree = "<group>"; };
@@ -240,7 +240,7 @@
 				709E1770186A7BAC00AEA8C7 /* libz.dylib in Frameworks */,
 				709E176E186A7B3500AEA8C7 /* libFramework.a in Frameworks */,
 				709E175D186A779800AEA8C7 /* AVFoundation.framework in Frameworks */,
-				709E175B186A755100AEA8C7 /* libAthena.a in Frameworks */,
+				709E175B186A755100AEA8C7 /* libPalleon.a in Frameworks */,
 				709E1703186A721100AEA8C7 /* OpenGLES.framework in Frameworks */,
 				709E16FD186A721100AEA8C7 /* CoreGraphics.framework in Frameworks */,
 				709E16FF186A721100AEA8C7 /* UIKit.framework in Frameworks */,
@@ -336,7 +336,7 @@
 		70271B4918D5011A00777C53 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				70271B5618D5022E00777C53 /* Athena.xcodeproj */,
+				70271B5618D5022E00777C53 /* Palleon.xcodeproj */,
 				70271B5018D5021D00777C53 /* boost.xcodeproj */,
 				70271B4A18D5012E00777C53 /* Framework.xcodeproj */,
 			);
@@ -362,7 +362,7 @@
 		70271B5718D5022E00777C53 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				70271B5F18D5022E00777C53 /* libAthena.a */,
+				70271B5F18D5022E00777C53 /* libPalleon.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -426,7 +426,7 @@
 				709E176B186A7B3500AEA8C7 /* libboost.a */,
 				709E176C186A7B3500AEA8C7 /* libFramework.a */,
 				709E175C186A779800AEA8C7 /* AVFoundation.framework */,
-				709E175A186A755100AEA8C7 /* libAthena.a */,
+				709E175A186A755100AEA8C7 /* libPalleon.a */,
 				709E16FA186A721100AEA8C7 /* Foundation.framework */,
 				709E16FC186A721100AEA8C7 /* CoreGraphics.framework */,
 				709E16FE186A721100AEA8C7 /* UIKit.framework */,
@@ -512,7 +512,7 @@
 			projectReferences = (
 				{
 					ProductGroup = 70271B5718D5022E00777C53 /* Products */;
-					ProjectRef = 70271B5618D5022E00777C53 /* Athena.xcodeproj */;
+					ProjectRef = 70271B5618D5022E00777C53 /* Palleon.xcodeproj */;
 				},
 				{
 					ProductGroup = 70271B5118D5021D00777C53 /* Products */;
@@ -545,10 +545,10 @@
 			remoteRef = 70271B5418D5021D00777C53 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		70271B5F18D5022E00777C53 /* libAthena.a */ = {
+		70271B5F18D5022E00777C53 /* libPalleon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libAthena.a;
+			path = libPalleon.a;
 			remoteRef = 70271B5E18D5022E00777C53 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -629,7 +629,7 @@
 		};
 		706F718018ECEA8400224718 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = Athena;
+			name = Palleon;
 			targetProxy = 706F717F18ECEA8400224718 /* PBXContainerItemProxy */;
 		};
 		706F718218ECEA8600224718 /* PBXTargetDependency */ = {

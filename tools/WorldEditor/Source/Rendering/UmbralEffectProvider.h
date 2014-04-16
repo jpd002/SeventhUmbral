@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 #include "D3DShader.h"
 #include <unordered_map>
 
@@ -47,18 +47,18 @@ namespace std
 	};
 }
 
-class CUmbralEffectProvider : public Athena::CEffectProvider
+class CUmbralEffectProvider : public Palleon::CEffectProvider
 {
 public:
-	Athena::EffectPtr			GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader);
+	Palleon::EffectPtr			GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader);
 
-	virtual Athena::EffectPtr	GetEffectForRenderable(Athena::CMesh*, bool) override;
+	virtual Palleon::EffectPtr	GetEffectForRenderable(Palleon::CMesh*, bool) override;
 
 protected:
-	virtual Athena::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&) = 0;
+	virtual Palleon::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&) = 0;
 	
 private:
-	typedef std::unordered_map<EFFECTINFO, Athena::EffectPtr> EffectMap;
+	typedef std::unordered_map<EFFECTINFO, Palleon::EffectPtr> EffectMap;
 
 	EffectMap					m_effects;
 };

@@ -1,15 +1,15 @@
 #pragma once
 
-#include "athena/ios/IosEffect.h"
+#include "palleon/gles/GlEsEffect.h"
 #include "D3DShader.h"
 
-class CIosUmbralEffect : public Athena::CIosEffect
+class CIosUmbralEffect : public Palleon::CGlEsEffect
 {
 public:
 									CIosUmbralEffect(const CD3DShader&, const CD3DShader&);
 	virtual							~CIosUmbralEffect();
 
-	virtual void					UpdateConstants(const Athena::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
+	virtual void					UpdateConstants(const Palleon::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
 
 private:
 	void							GetUniformLocations();

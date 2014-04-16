@@ -126,7 +126,7 @@ UmbralMeshPtr CUmbralMesh::CreateInstance() const
 	return result;
 }
 
-Athena::EffectPtr CUmbralMesh::GetEffect() const
+Palleon::EffectPtr CUmbralMesh::GetEffect() const
 {
 	return m_effect;
 }
@@ -166,16 +166,16 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	assert(!uv3Element || uv3Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 	assert(!tangentElement || tangentElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_BYTE);
 
-	m_primitiveType = Athena::PRIMITIVE_TRIANGLE_LIST;
+	m_primitiveType = Palleon::PRIMITIVE_TRIANGLE_LIST;
 	m_primitiveCount = indexCount / 3;
 	m_boundingSphere.radius = sqrt(2.f);	//Vertex position range is [-1, 1]
-	m_vertexBuffer = Athena::CGraphicDevice::GetInstance().CreateVertexBuffer(bufferDesc);
-	const auto& posVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_POSITION);
-	const auto& nrmVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_NORMAL);
-	const auto& uv0VertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_UV0);
-	const auto& uv1VertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_UV1);
+	m_vertexBuffer = Palleon::CGraphicDevice::GetInstance().CreateVertexBuffer(bufferDesc);
+	const auto& posVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_POSITION);
+	const auto& nrmVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_NORMAL);
+	const auto& uv0VertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV0);
+	const auto& uv1VertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV1);
 	const auto& uv2VertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2);
-	const auto& colorVertexItem = bufferDesc.GetVertexItem(Athena::VERTEX_ITEM_ID_COLOR);
+	const auto& colorVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_COLOR);
 	const auto& tangentVertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT);
 
 	{
@@ -234,7 +234,7 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	}
 }
 
-Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(const StreamChunkPtr& vertexStream, const StreamChunkPtr& indexStream)
+Palleon::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(const StreamChunkPtr& vertexStream, const StreamChunkPtr& indexStream)
 {
 	uint32 currentOffset = 0;
 	unsigned int currentVertexItem = 0;
@@ -248,14 +248,14 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	auto tangentElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_TANGENT);
 	assert(positionElement != nullptr);
 
-	Athena::VERTEX_BUFFER_DESCRIPTOR result;
+	Palleon::VERTEX_BUFFER_DESCRIPTOR result;
 	result.vertexCount	= vertexStream->GetVertexCount();
 	result.indexCount	= indexStream->GetVertexCount();
 
 	if(positionElement)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = Athena::VERTEX_ITEM_ID_POSITION;
+		vertexItem.id = Palleon::VERTEX_ITEM_ID_POSITION;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector3);
 		currentOffset += vertexItem.size;
@@ -264,7 +264,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(normalElement)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = Athena::VERTEX_ITEM_ID_NORMAL;
+		vertexItem.id = Palleon::VERTEX_ITEM_ID_NORMAL;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector3);
 		currentOffset += vertexItem.size;
@@ -273,7 +273,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(uv1Element)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = Athena::VERTEX_ITEM_ID_UV0;
+		vertexItem.id = Palleon::VERTEX_ITEM_ID_UV0;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector2);
 		currentOffset += vertexItem.size;
@@ -282,7 +282,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(uv2Element)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = Athena::VERTEX_ITEM_ID_UV1;
+		vertexItem.id = Palleon::VERTEX_ITEM_ID_UV1;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector2);
 		currentOffset += vertexItem.size;
@@ -300,7 +300,7 @@ Athena::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(con
 	if(colorElement)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
-		vertexItem.id = Athena::VERTEX_ITEM_ID_COLOR;
+		vertexItem.id = Palleon::VERTEX_ITEM_ID_COLOR;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(uint32);
 		currentOffset += vertexItem.size;
@@ -381,8 +381,8 @@ void CUmbralMesh::SetupEffect()
 	{
 		auto material = GetMaterial();
 
-		//material->SetAlphaBlendingMode(Athena::ALPHA_BLENDING_LERP);
-		material->SetCullingMode(Athena::CULLING_CW);
+		//material->SetAlphaBlendingMode(Palleon::ALPHA_BLENDING_LERP);
+		material->SetCullingMode(Palleon::CULLING_CW);
 
 		auto pramChunk = m_shaderSection->SelectNode<CPramChunk>();
 		assert(pramChunk);
@@ -390,7 +390,7 @@ void CUmbralMesh::SetupEffect()
 		//Copy parameters to effect parameters
 		for(const auto& param : pramChunk->GetParameters())
 		{
-			Athena::CEffectParameter effectParam;
+			Palleon::CEffectParameter effectParam;
 			switch(param.numValues)
 			{
 			case 1:
@@ -426,7 +426,7 @@ void CUmbralMesh::SetupTextures()
 	auto getTextureForSampler =
 		[&localTextureSections] (const PramChunkPtr& pramChunk, const std::string& samplerName)
 		{
-			Athena::TexturePtr texture;
+			Palleon::TexturePtr texture;
 			for(const auto& sampler : pramChunk->GetSamplers())
 			{
 				if(sampler.name == samplerName)
@@ -460,15 +460,15 @@ void CUmbralMesh::SetupTextures()
 	auto sampler5 = getTextureForSampler(pramChunk, "_sampler_05");
 	auto sampler6 = getTextureForSampler(pramChunk, "_sampler_06");
 
-	for(unsigned int i = 0; i < Athena::CMaterial::MAX_TEXTURE_SLOTS; i++)
+	for(unsigned int i = 0; i < Palleon::CMaterial::MAX_TEXTURE_SLOTS; i++)
 	{
-		GetMaterial()->SetTextureAddressModeU(i, Athena::TEXTURE_ADDRESS_REPEAT);
-		GetMaterial()->SetTextureAddressModeV(i, Athena::TEXTURE_ADDRESS_REPEAT);
+		GetMaterial()->SetTextureAddressModeU(i, Palleon::TEXTURE_ADDRESS_REPEAT);
+		GetMaterial()->SetTextureAddressModeV(i, Palleon::TEXTURE_ADDRESS_REPEAT);
 	}
 
 #ifdef _USE_GAME_SHADERS
 	auto setSampler =
-		[&] (const std::string& samplerName, const Athena::TexturePtr& texture)
+		[&] (const std::string& samplerName, const Palleon::TexturePtr& texture)
 		{
 			if(texture)
 			{

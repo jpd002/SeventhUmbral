@@ -2,7 +2,7 @@
 #include "UmbralMesh.h"
 #include "UmbralEffectProvider.h"
 
-Athena::EffectPtr CUmbralEffectProvider::GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader)
+Palleon::EffectPtr CUmbralEffectProvider::GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader)
 {
 	EFFECTINFO effectInfo;
 	effectInfo.vertexShader = vertexShader;
@@ -17,7 +17,7 @@ Athena::EffectPtr CUmbralEffectProvider::GetEffect(const CD3DShader& vertexShade
 	return effect;
 }
 
-Athena::EffectPtr CUmbralEffectProvider::GetEffectForRenderable(Athena::CMesh* mesh, bool hasShadowMap)
+Palleon::EffectPtr CUmbralEffectProvider::GetEffectForRenderable(Palleon::CMesh* mesh, bool hasShadowMap)
 {
 	assert(dynamic_cast<CUmbralMesh*>(mesh));
 	auto umbralMesh = static_cast<CUmbralMesh*>(mesh);

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 #include "TouchFreeCamera.h"
 #include "MapLayout.h"
 
-class CWorldEditor : public Athena::CApplication
+class CWorldEditor : public Palleon::CApplication
 {
 public:
 							CWorldEditor();
@@ -17,8 +17,8 @@ public:
 	virtual void			NotifyMouseUp() override;
 
 private:
-	typedef std::vector<Athena::SceneNodePtr> ModelArray;
-	typedef std::vector<Athena::TexturePtr> TextureArray;
+	typedef std::vector<Palleon::SceneNodePtr> ModelArray;
+	typedef std::vector<Palleon::TexturePtr> TextureArray;
 
 	void					CreateUi();
 	void					CreateWorld();
@@ -29,15 +29,15 @@ private:
 
 	CVector2				m_mousePosition;
 
-	Athena::PackagePtr		m_package;
+	Palleon::PackagePtr		m_package;
 
-	Athena::ViewportPtr		m_mainViewport;
-	Athena::ViewportPtr		m_overlayViewport;
+	Palleon::ViewportPtr	m_mainViewport;
+	Palleon::ViewportPtr	m_overlayViewport;
 	TouchFreeCameraPtr		m_mainCamera;
 	
-	Athena::ViewportPtr		m_uiViewport;
-	Athena::LabelPtr		m_positionLabel;
-	Athena::LabelPtr		m_metricsLabel;
+	Palleon::ViewportPtr	m_uiViewport;
+	Palleon::LabelPtr		m_positionLabel;
+	Palleon::LabelPtr		m_metricsLabel;
 
 	float					m_elapsed;
 

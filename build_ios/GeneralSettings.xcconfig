@@ -21,7 +21,7 @@ GCC_WARN_UNDECLARED_SELECTOR = YES
 GCC_SYMBOLS_PRIVATE_EXTERN = YES
 GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp
 
-HEADER_SEARCH_PATHS = ~/Projects/Framework/include ~/Libraries/boost_1_55_0 ~/Projects/Athena/include
+HEADER_SEARCH_PATHS = ~/Projects/Framework/include ~/Libraries/boost_1_55_0 ~/Projects/Palleon/include
 
 TARGETED_DEVICE_FAMILY = 1,2
 IPHONEOS_DEPLOYMENT_TARGET = 7.1

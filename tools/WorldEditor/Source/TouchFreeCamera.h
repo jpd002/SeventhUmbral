@@ -1,11 +1,11 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 
 class CTouchFreeCamera;
 typedef std::shared_ptr<CTouchFreeCamera> TouchFreeCameraPtr;
 
-class CTouchFreeCamera : public Athena::CCamera
+class CTouchFreeCamera : public Palleon::CCamera
 {
 public:
 								CTouchFreeCamera();

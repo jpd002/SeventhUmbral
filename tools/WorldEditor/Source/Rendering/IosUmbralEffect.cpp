@@ -10,10 +10,10 @@ CIosUmbralEffect::CIosUmbralEffect(const CD3DShader& vertexShader, const CD3DSha
 	auto pixelShaderText = CIosUmbralEffectGenerator::GeneratePixelShader(m_pixelShader);
 	
 	AttributeBindingArray attributeBindings;
-	attributeBindings.push_back(std::make_pair(Athena::VERTEX_ITEM_ID_POSITION, "a_position0"));
-	attributeBindings.push_back(std::make_pair(Athena::VERTEX_ITEM_ID_UV0, "a_texcoord0"));
-	attributeBindings.push_back(std::make_pair(Athena::VERTEX_ITEM_ID_NORMAL, "a_normal0"));
-	attributeBindings.push_back(std::make_pair(Athena::VERTEX_ITEM_ID_COLOR, "a_color0"));
+	attributeBindings.push_back(std::make_pair(Palleon::VERTEX_ITEM_ID_POSITION, "a_position0"));
+	attributeBindings.push_back(std::make_pair(Palleon::VERTEX_ITEM_ID_UV0, "a_texcoord0"));
+	attributeBindings.push_back(std::make_pair(Palleon::VERTEX_ITEM_ID_NORMAL, "a_normal0"));
+	attributeBindings.push_back(std::make_pair(Palleon::VERTEX_ITEM_ID_COLOR, "a_color0"));
 	attributeBindings.push_back(std::make_pair(CUmbralEffect::VERTEX_ITEM_ID_TANGENT, "a_texcoord5"));
 	
 	BuildProgram(vertexShaderText, pixelShaderText, attributeBindings);
@@ -31,7 +31,7 @@ class CMaterialParameterBase
 {
 public:
 	virtual			~CMaterialParameterBase() {}
-	virtual void	UpdateConstantValue(const Athena::MaterialPtr&) = 0;
+	virtual void	UpdateConstantValue(const Palleon::MaterialPtr&) = 0;
 };
 
 template<typename ParamType>
@@ -44,7 +44,7 @@ public:
 		
 	}
 	
-	virtual void	UpdateConstantValue(const Athena::MaterialPtr&) override;
+	virtual void	UpdateConstantValue(const Palleon::MaterialPtr&) override;
 	
 private:
 	
@@ -52,7 +52,7 @@ private:
 };
 
 template<>
-void CMaterialParameter<CVector2>::UpdateConstantValue(const Athena::MaterialPtr& material)
+void CMaterialParameter<CVector2>::UpdateConstantValue(const Palleon::MaterialPtr& material)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -117,10 +117,10 @@ void SetParamValue<CColor>(uint32 paramHandle, const CColor& value)
 }
 
 template <typename ParamType>
-ParamType GetMaterialEffectParamOrDefault(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
+ParamType GetMaterialEffectParamOrDefault(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
 
 template <>
-float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
+float GetMaterialEffectParamOrDefault<float>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -129,7 +129,7 @@ float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material
 }
 
 template <>
-CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
+CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -138,7 +138,7 @@ CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Athena::MaterialPtr& ma
 }
 
 template <>
-CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
+CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -147,7 +147,7 @@ CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& ma
 }
 
 template <>
-CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
+CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -162,7 +162,7 @@ CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Athena::MaterialPtr& ma
 	}
 }
 
-void CIosUmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix,
+void CIosUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix,
 	const CMatrix4& shadowViewProjMatrix)
 {
 	//Update vertex shader params

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 #include "../ResourceDefs.h"
 #include "D3DShader.h"
 
 class CUmbralMesh;
 typedef std::shared_ptr<CUmbralMesh> UmbralMeshPtr;
 
-class CUmbralMesh : public Athena::CMesh
+class CUmbralMesh : public Palleon::CMesh
 {
 public:
 										CUmbralMesh();
@@ -16,20 +16,20 @@ public:
 
 	UmbralMeshPtr						CreateInstance() const;
 
-	Athena::EffectPtr					GetEffect() const;
+	Palleon::EffectPtr					GetEffect() const;
 
 	void								SetLocalTexture(const ResourceNodePtr&);
 
 private:
 	typedef std::map<std::string, unsigned int> SamplerRegisterMap;
 
-	Athena::VERTEX_BUFFER_DESCRIPTOR	GenerateVertexBufferDescriptor(const StreamChunkPtr&, const StreamChunkPtr&);
+	Palleon::VERTEX_BUFFER_DESCRIPTOR	GenerateVertexBufferDescriptor(const StreamChunkPtr&, const StreamChunkPtr&);
 
 	void								SetupGeometry(const MeshChunkPtr&);
 	void								SetupEffect();
 	void								SetupTextures();
 
-	Athena::EffectPtr					m_effect;
+	Palleon::EffectPtr					m_effect;
 
 	ShaderSectionPtr					m_shaderSection;
 	ResourceNodePtr						m_localTexture;

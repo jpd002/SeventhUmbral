@@ -41,7 +41,7 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 				unitTreeObjectRenderable->UpdateTransformations();
 
 				unitTreeObjectRenderable->TraverseNodes(
-					[&] (const Athena::SceneNodePtr& node)
+					[&] (const Palleon::SceneNodePtr& node)
 					{
 						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
 						{
@@ -61,7 +61,7 @@ CUmbralMap::~CUmbralMap()
 
 }
 
-void CUmbralMap::GetMeshes(Athena::MeshArray& meshes, const Athena::CCamera* camera)
+void CUmbralMap::GetMeshes(Palleon::MeshArray& meshes, const Palleon::CCamera* camera)
 {
 	auto cameraFrustum = camera->GetFrustum();
 	for(const auto& instance : m_instances)
@@ -74,9 +74,9 @@ void CUmbralMap::GetMeshes(Athena::MeshArray& meshes, const Athena::CCamera* cam
 	}
 }
 
-Athena::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLayout, const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
+Palleon::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLayout, const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
 {
-	auto result = Athena::CSceneNode::Create();
+	auto result = Palleon::CSceneNode::Create();
 
 	const auto& layoutNodes = mapLayout->GetLayoutNodes();
 

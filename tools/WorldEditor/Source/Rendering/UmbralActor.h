@@ -1,8 +1,8 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 
-class CUmbralActor : public Athena::CSceneNode
+class CUmbralActor : public Palleon::CSceneNode
 {
 public:
 					CUmbralActor();

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 #include "../ResourceDefs.h"
 
-class CUmbralModel : public Athena::CSceneNode
+class CUmbralModel : public Palleon::CSceneNode
 {
 public:
 						CUmbralModel(const ModelChunkPtr&);

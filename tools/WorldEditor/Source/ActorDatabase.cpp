@@ -25,7 +25,7 @@ CActorDatabase CActorDatabase::CreateFromXml(Framework::CStream& stream)
 		ACTOR_DEFINITION actor;
 		actor.baseModelId = Framework::Xml::GetAttributeIntValue(actorNode, "BaseModel");
 		actor.topModelId = Framework::Xml::GetAttributeIntValue(actorNode, "TopModel");
-		actor.position = Athena::ParseVector3(positionString);
+		actor.position = Palleon::ParseVector3(positionString);
 		result.AddActor(actor);
 	}
 	return result;

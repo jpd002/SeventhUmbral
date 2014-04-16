@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Singleton.h"
-#include "AthenaEngine.h"
+#include "PalleonEngine.h"
 #include "../ResourceDefs.h"
 
 class CGlobalResources : public CSingleton<CGlobalResources>
@@ -13,21 +13,21 @@ public:
 	void						Initialize();
 	void						Release();
 
-	Athena::TexturePtr			GetTexture(const std::string&);
-	static Athena::TexturePtr	CreateTextureFromGtex(const GtexDataPtr&);
+	Palleon::TexturePtr			GetTexture(const std::string&);
+	static Palleon::TexturePtr	CreateTextureFromGtex(const GtexDataPtr&);
 
-	Athena::TexturePtr			GetDiffuseMapTexture() const;
-	Athena::TexturePtr			GetSkyTexture() const;
-	Athena::TexturePtr			GetProxyShadowTexture() const;
+	Palleon::TexturePtr			GetDiffuseMapTexture() const;
+	Palleon::TexturePtr			GetSkyTexture() const;
+	Palleon::TexturePtr			GetProxyShadowTexture() const;
 
-	Athena::EffectProviderPtr	GetEffectProvider() const;
+	Palleon::EffectProviderPtr	GetEffectProvider() const;
 
 private:
-	typedef std::map<std::string, Athena::TexturePtr> TextureMap;
+	typedef std::map<std::string, Palleon::TexturePtr> TextureMap;
 
 	TextureMap					m_textures;
-	Athena::TexturePtr			m_diffuseMapTexture;
-	Athena::TexturePtr			m_skyTexture;
-	Athena::TexturePtr			m_proxyShadowTexture;
-	Athena::EffectProviderPtr	m_effectProvider;
+	Palleon::TexturePtr			m_diffuseMapTexture;
+	Palleon::TexturePtr			m_skyTexture;
+	Palleon::TexturePtr			m_proxyShadowTexture;
+	Palleon::EffectProviderPtr	m_effectProvider;
 };
