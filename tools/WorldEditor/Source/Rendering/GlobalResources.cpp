@@ -4,8 +4,8 @@
 #ifdef WIN32
 #include "Dx11UmbralEffectProvider.h"
 #include "palleon/win32/Dx11GraphicDevice.h"
-#elif defined(__APPLE__)
-#include "IosUmbralEffectProvider.h"
+#elif defined(__APPLE__) || defined(EMSCRIPTEN)
+#include "GlEsUmbralEffectProvider.h"
 #endif
 
 CGlobalResources::CGlobalResources()
@@ -37,8 +37,8 @@ void CGlobalResources::Initialize()
 #ifdef WIN32
 	auto& graphicDevice = static_cast<Palleon::CDx11GraphicDevice&>(Palleon::CGraphicDevice::GetInstance());
 	m_effectProvider = std::make_shared<CDx11UmbralEffectProvider>(graphicDevice.GetDevice(), graphicDevice.GetDeviceContext());
-#elif defined(__APPLE__)
-	m_effectProvider = std::make_shared<CIosUmbralEffectProvider>();
+#elif defined(__APPLE__) || defined(EMSCRIPTEN)
+	m_effectProvider = std::make_shared<CGlEsUmbralEffectProvider>();
 #endif
 }
 

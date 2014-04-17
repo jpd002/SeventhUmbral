@@ -5,7 +5,7 @@
 #include "D3DShader.h"
 #include "D3DShaderConstantTable.h"
 
-class CIosUmbralEffectGenerator
+class CGlEsUmbralEffectGenerator
 {
 public:
 	static std::string		GenerateVertexShader(const CD3DShader&);
@@ -57,7 +57,7 @@ private:
 	
 	typedef std::function<std::string (CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE&)> EmitInstructionFunction;
 	
-							CIosUmbralEffectGenerator();
+							CGlEsUmbralEffectGenerator();
 		
 	std::string				GenerateVertexShaderInternal(const CD3DShader&);
 	std::string				GeneratePixelShaderInternal(const CD3DShader&);

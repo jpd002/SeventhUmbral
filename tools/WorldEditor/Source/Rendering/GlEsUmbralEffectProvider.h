@@ -1,9 +1,8 @@
 #pragma once
 
 #include "UmbralEffectProvider.h"
-#include "IosUmbralEffect.h"
 
-class CIosUmbralEffectProvider : public CUmbralEffectProvider
+class CGlEsUmbralEffectProvider : public CUmbralEffectProvider
 {
 public:
 	

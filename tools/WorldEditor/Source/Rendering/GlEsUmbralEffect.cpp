@@ -1,13 +1,13 @@
-#include "IosUmbralEffect.h"
-#include "IosUmbralEffectGenerator.h"
+#include "GlEsUmbralEffect.h"
+#include "GlEsUmbralEffectGenerator.h"
 #include "UmbralEffect.h"
 
-CIosUmbralEffect::CIosUmbralEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader)
+CGlEsUmbralEffect::CGlEsUmbralEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader)
 : m_vertexShader(vertexShader)
 , m_pixelShader(pixelShader)
 {
-	auto vertexShaderText = CIosUmbralEffectGenerator::GenerateVertexShader(m_vertexShader);
-	auto pixelShaderText = CIosUmbralEffectGenerator::GeneratePixelShader(m_pixelShader);
+	auto vertexShaderText = CGlEsUmbralEffectGenerator::GenerateVertexShader(m_vertexShader);
+	auto pixelShaderText = CGlEsUmbralEffectGenerator::GeneratePixelShader(m_pixelShader);
 	
 	AttributeBindingArray attributeBindings;
 	attributeBindings.push_back(std::make_pair(Palleon::VERTEX_ITEM_ID_POSITION, "a_position0"));
@@ -22,7 +22,7 @@ CIosUmbralEffect::CIosUmbralEffect(const CD3DShader& vertexShader, const CD3DSha
 	CHECKGLERROR();
 }
 
-CIosUmbralEffect::~CIosUmbralEffect()
+CGlEsUmbralEffect::~CGlEsUmbralEffect()
 {
 
 }
@@ -162,7 +162,7 @@ CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Palleon::MaterialPtr& m
 	}
 }
 
-void CIosUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix,
+void CGlEsUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix,
 	const CMatrix4& shadowViewProjMatrix)
 {
 	//Update vertex shader params
@@ -261,7 +261,7 @@ void CIosUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, con
 	CHECKGLERROR();
 }
 
-void CIosUmbralEffect::GetUniformLocations()
+void CGlEsUmbralEffect::GetUniformLocations()
 {
 	std::map<std::string, uint32&> uniformLocations =
 	{

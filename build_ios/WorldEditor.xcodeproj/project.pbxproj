@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		701313CC18FEC3420002D21D /* GlEsUmbralEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 701313C618FEC3420002D21D /* GlEsUmbralEffect.cpp */; };
+		701313CD18FEC3420002D21D /* GlEsUmbralEffectGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 701313C818FEC3420002D21D /* GlEsUmbralEffectGenerator.cpp */; };
+		701313CE18FEC3420002D21D /* GlEsUmbralEffectProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 701313CA18FEC3420002D21D /* GlEsUmbralEffectProvider.cpp */; };
 		70271B2318D4FFA700777C53 /* BaseChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271ADD18D4FFA600777C53 /* BaseChunk.cpp */; };
 		70271B2418D4FFA700777C53 /* BaseSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271ADF18D4FFA600777C53 /* BaseSection.cpp */; };
 		70271B2518D4FFA700777C53 /* BoundingBoxChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70271AE118D4FFA600777C53 /* BoundingBoxChunk.cpp */; };
@@ -61,10 +64,7 @@
 		709E176E186A7B3500AEA8C7 /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176C186A7B3500AEA8C7 /* libFramework.a */; };
 		709E1770186A7BAC00AEA8C7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E176F186A7BAC00AEA8C7 /* libz.dylib */; };
 		709E1772186A7C9100AEA8C7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 709E1771186A7C9100AEA8C7 /* QuartzCore.framework */; };
-		70FA4DAB18D7A1FC000DED43 /* IosUmbralEffectProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */; };
 		70FA4DB118D7A383000DED43 /* UmbralEffectProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DAF18D7A383000DED43 /* UmbralEffectProvider.cpp */; };
-		70FA4DB418D7A7BF000DED43 /* IosUmbralEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */; };
-		70FA4DB818D7BE90000DED43 /* IosUmbralEffectGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +113,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		701313C618FEC3420002D21D /* GlEsUmbralEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlEsUmbralEffect.cpp; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffect.cpp; sourceTree = "<group>"; };
+		701313C718FEC3420002D21D /* GlEsUmbralEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlEsUmbralEffect.h; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffect.h; sourceTree = "<group>"; };
+		701313C818FEC3420002D21D /* GlEsUmbralEffectGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlEsUmbralEffectGenerator.cpp; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffectGenerator.cpp; sourceTree = "<group>"; };
+		701313C918FEC3420002D21D /* GlEsUmbralEffectGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlEsUmbralEffectGenerator.h; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffectGenerator.h; sourceTree = "<group>"; };
+		701313CA18FEC3420002D21D /* GlEsUmbralEffectProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlEsUmbralEffectProvider.cpp; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffectProvider.cpp; sourceTree = "<group>"; };
+		701313CB18FEC3420002D21D /* GlEsUmbralEffectProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlEsUmbralEffectProvider.h; path = ../tools/WorldEditor/Source/Rendering/GlEsUmbralEffectProvider.h; sourceTree = "<group>"; };
 		70271AD918D4FF1E00777C53 /* GeneralSettings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettings.xcconfig; sourceTree = "<group>"; };
 		70271ADA18D4FF1E00777C53 /* GeneralSettingsDebug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = GeneralSettingsDebug.xcconfig; sourceTree = "<group>"; };
 		70271ADD18D4FFA600777C53 /* BaseChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseChunk.cpp; path = ../tools/WorldEditor/Source/BaseChunk.cpp; sourceTree = "<group>"; };
@@ -219,15 +225,9 @@
 		709E176C186A7B3500AEA8C7 /* libFramework.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFramework.a; path = "../../../../Framework/build_iphone/build/Debug-iphoneos/libFramework.a"; sourceTree = "<group>"; };
 		709E176F186A7BAC00AEA8C7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		709E1771186A7C9100AEA8C7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffectProvider.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectProvider.cpp; sourceTree = "<group>"; };
-		70FA4DAA18D7A1FC000DED43 /* IosUmbralEffectProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffectProvider.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectProvider.h; sourceTree = "<group>"; };
 		70FA4DAF18D7A383000DED43 /* UmbralEffectProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UmbralEffectProvider.cpp; path = ../tools/WorldEditor/Source/Rendering/UmbralEffectProvider.cpp; sourceTree = "<group>"; };
 		70FA4DB018D7A383000DED43 /* UmbralEffectProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UmbralEffectProvider.h; path = ../tools/WorldEditor/Source/Rendering/UmbralEffectProvider.h; sourceTree = "<group>"; };
-		70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffect.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffect.cpp; sourceTree = "<group>"; };
-		70FA4DB318D7A7BF000DED43 /* IosUmbralEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffect.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffect.h; sourceTree = "<group>"; };
 		70FA4DB518D7AE58000DED43 /* UmbralEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UmbralEffect.h; path = ../tools/WorldEditor/Source/Rendering/UmbralEffect.h; sourceTree = "<group>"; };
-		70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IosUmbralEffectGenerator.cpp; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectGenerator.cpp; sourceTree = "<group>"; };
-		70FA4DB718D7BE90000DED43 /* IosUmbralEffectGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IosUmbralEffectGenerator.h; path = ../tools/WorldEditor/Source/Rendering/IosUmbralEffectGenerator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -376,14 +376,14 @@
 				70271B6418D5029600777C53 /* D3DShaderConstantTable.h */,
 				70271B6518D5029600777C53 /* D3DShaderDisassembler.cpp */,
 				70271B6618D5029600777C53 /* D3DShaderDisassembler.h */,
+				701313C618FEC3420002D21D /* GlEsUmbralEffect.cpp */,
+				701313C718FEC3420002D21D /* GlEsUmbralEffect.h */,
+				701313C818FEC3420002D21D /* GlEsUmbralEffectGenerator.cpp */,
+				701313C918FEC3420002D21D /* GlEsUmbralEffectGenerator.h */,
+				701313CA18FEC3420002D21D /* GlEsUmbralEffectProvider.cpp */,
+				701313CB18FEC3420002D21D /* GlEsUmbralEffectProvider.h */,
 				70271B6718D5029600777C53 /* GlobalResources.cpp */,
 				70271B6818D5029600777C53 /* GlobalResources.h */,
-				70FA4DB218D7A7BF000DED43 /* IosUmbralEffect.cpp */,
-				70FA4DB318D7A7BF000DED43 /* IosUmbralEffect.h */,
-				70FA4DB618D7BE90000DED43 /* IosUmbralEffectGenerator.cpp */,
-				70FA4DB718D7BE90000DED43 /* IosUmbralEffectGenerator.h */,
-				70FA4DA918D7A1FC000DED43 /* IosUmbralEffectProvider.cpp */,
-				70FA4DAA18D7A1FC000DED43 /* IosUmbralEffectProvider.h */,
 				7096E31B18E0163F0068769A /* UmbralActor.cpp */,
 				7096E31C18E0163F0068769A /* UmbralActor.h */,
 				70FA4DB518D7AE58000DED43 /* UmbralEffect.h */,
@@ -511,16 +511,16 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 70271B5718D5022E00777C53 /* Products */;
-					ProjectRef = 70271B5618D5022E00777C53 /* Palleon.xcodeproj */;
-				},
-				{
 					ProductGroup = 70271B5118D5021D00777C53 /* Products */;
 					ProjectRef = 70271B5018D5021D00777C53 /* boost.xcodeproj */;
 				},
 				{
 					ProductGroup = 70271B4B18D5012E00777C53 /* Products */;
 					ProjectRef = 70271B4A18D5012E00777C53 /* Framework.xcodeproj */;
+				},
+				{
+					ProductGroup = 70271B5718D5022E00777C53 /* Products */;
+					ProjectRef = 70271B5618D5022E00777C53 /* Palleon.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -574,7 +574,6 @@
 				70271B3B18D4FFA700777C53 /* SectionLoader.cpp in Sources */,
 				70271B3A18D4FFA700777C53 /* ResourceSection.cpp in Sources */,
 				70271B2C18D4FFA700777C53 /* GtexData.cpp in Sources */,
-				70FA4DB818D7BE90000DED43 /* IosUmbralEffectGenerator.cpp in Sources */,
 				70271B3018D4FFA700777C53 /* MeshChunk.cpp in Sources */,
 				70271B2E18D4FFA700777C53 /* LtcdChunk.cpp in Sources */,
 				70271B4518D4FFA700777C53 /* WrbChunk.cpp in Sources */,
@@ -584,6 +583,7 @@
 				70271B3418D4FFA700777C53 /* NameChunk.cpp in Sources */,
 				70271B4418D4FFA700777C53 /* WorldEditor.cpp in Sources */,
 				70271B7518D5029600777C53 /* UmbralModel.cpp in Sources */,
+				701313CE18FEC3420002D21D /* GlEsUmbralEffectProvider.cpp in Sources */,
 				70271B3818D4FFA700777C53 /* ResourceManager.cpp in Sources */,
 				70271B7118D5029600777C53 /* D3DShaderDisassembler.cpp in Sources */,
 				70271B3918D4FFA700777C53 /* ResourceNode.cpp in Sources */,
@@ -604,17 +604,17 @@
 				70271B2F18D4FFA700777C53 /* MapLayout.cpp in Sources */,
 				70271B2D18D4FFA700777C53 /* HeaderChunk.cpp in Sources */,
 				70FA4DB118D7A383000DED43 /* UmbralEffectProvider.cpp in Sources */,
+				701313CD18FEC3420002D21D /* GlEsUmbralEffectGenerator.cpp in Sources */,
 				70271B3118D4FFA700777C53 /* ModelChunk.cpp in Sources */,
 				70271B3318D4FFA700777C53 /* ModelSection.cpp in Sources */,
 				7096E31D18E0163F0068769A /* UmbralActor.cpp in Sources */,
+				701313CC18FEC3420002D21D /* GlEsUmbralEffect.cpp in Sources */,
 				70271B4118D4FFA700777C53 /* TextureSection.cpp in Sources */,
 				70271B7318D5029600777C53 /* UmbralMap.cpp in Sources */,
 				70271B3C18D4FFA700777C53 /* ShaderChunk.cpp in Sources */,
 				70271B2818D4FFA700777C53 /* CompChunk.cpp in Sources */,
-				70FA4DB418D7A7BF000DED43 /* IosUmbralEffect.cpp in Sources */,
 				70271B3D18D4FFA700777C53 /* ShaderSection.cpp in Sources */,
 				70271B2318D4FFA700777C53 /* BaseChunk.cpp in Sources */,
-				70FA4DAB18D7A1FC000DED43 /* IosUmbralEffectProvider.cpp in Sources */,
 				70271B2A18D4FFA700777C53 /* FileChunk.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -3,11 +3,11 @@
 #include "palleon/gles/GlEsEffect.h"
 #include "D3DShader.h"
 
-class CIosUmbralEffect : public Palleon::CGlEsEffect
+class CGlEsUmbralEffect : public Palleon::CGlEsEffect
 {
 public:
-									CIosUmbralEffect(const CD3DShader&, const CD3DShader&);
-	virtual							~CIosUmbralEffect();
+									CGlEsUmbralEffect(const CD3DShader&, const CD3DShader&);
+	virtual							~CGlEsUmbralEffect();
 
 	virtual void					UpdateConstants(const Palleon::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
 
