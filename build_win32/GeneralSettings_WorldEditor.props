@@ -3,9 +3,6 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="GeneralSettings.props" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros">
-    <ATHENA_PATH>path_to\athena</ATHENA_PATH>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile />
     <Link />
@@ -14,12 +11,7 @@
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ATHENA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <BuildMacro Include="ATHENA_PATH">
-      <Value>$(ATHENA_PATH)</Value>
-    </BuildMacro>
-  </ItemGroup>
 </Project>

@@ -3,9 +3,6 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="GeneralSettings.props" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros">
-    <MYSQL_PATH>path_to\mysql-connector-c-6.1.1</MYSQL_PATH>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(MYSQL_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -18,9 +15,4 @@
       <Command>copy $(MYSQL_PATH)\lib\libmysql.dll $(OutputPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <BuildMacro Include="MYSQL_PATH">
-      <Value>$(MYSQL_PATH)</Value>
-    </BuildMacro>
-  </ItemGroup>
 </Project>
