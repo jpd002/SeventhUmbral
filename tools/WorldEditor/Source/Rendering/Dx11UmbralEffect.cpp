@@ -45,10 +45,10 @@ void SetParamValue(uint8* constantBufferPtr, uint32 paramOffset, const ParamType
 }
 
 template <typename ParamType>
-ParamType GetMaterialEffectParamOrDefault(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
+ParamType GetMaterialEffectParamOrDefault(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
 
 template <>
-float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
+float GetMaterialEffectParamOrDefault<float>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -57,7 +57,7 @@ float GetMaterialEffectParamOrDefault<float>(const Athena::MaterialPtr& material
 }
 
 template <>
-CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
+CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -66,7 +66,7 @@ CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Athena::MaterialPtr& ma
 }
 
 template <>
-CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
+CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -75,7 +75,7 @@ CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Athena::MaterialPtr& ma
 }
 
 template <>
-CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Athena::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
+CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
 {
 	auto effectParam = material->GetEffectParameter(paramName);
 	assert((paramOffset == -1) || !effectParam.IsNull());
@@ -90,7 +90,7 @@ CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Athena::MaterialPtr& ma
 	}
 }
 
-void CDx11UmbralEffect::UpdateConstants(const Athena::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix, 
+void CDx11UmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix, 
 	const CMatrix4& shadowViewProjMatrix)
 {
 	//Update vertex shader params
@@ -374,13 +374,13 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 	}
 }
 
-Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(const Athena::VERTEX_BUFFER_DESCRIPTOR& descriptor)
+Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(const Palleon::VERTEX_BUFFER_DESCRIPTOR& descriptor)
 {
 	typedef std::vector<D3D11_INPUT_ELEMENT_DESC> InputElementArray;
 
 	InputElementArray inputElements;
 
-	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_POSITION))
+	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_POSITION))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "POSITION";
@@ -392,7 +392,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 		inputElements.push_back(inputElement);
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_NORMAL))
+	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_NORMAL))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "NORMAL";
@@ -404,7 +404,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 		inputElements.push_back(inputElement);
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_UV0))
+	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV0))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
@@ -416,7 +416,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 		inputElements.push_back(inputElement);
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_UV1))
+	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV1))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
@@ -440,7 +440,7 @@ Athena::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(co
 		inputElements.push_back(inputElement);
 	}
 
-	if(const auto& item = descriptor.GetVertexItem(Athena::VERTEX_ITEM_ID_COLOR))
+	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_COLOR))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "COLOR";

@@ -1,18 +1,18 @@
 #pragma once
 
-#include "athena/win32/Dx11Effect.h"
+#include "palleon/win32/Dx11Effect.h"
 #include "D3DShader.h"
 
-class CDx11UmbralEffect : public Athena::CDx11Effect
+class CDx11UmbralEffect : public Palleon::CDx11Effect
 {
 public:
 									CDx11UmbralEffect(ID3D11Device*, ID3D11DeviceContext*, const CD3DShader&, const CD3DShader&);
 	virtual							~CDx11UmbralEffect();
 
-	virtual void					UpdateConstants(const Athena::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
+	virtual void					UpdateConstants(const Palleon::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
 
 private:
-	virtual D3D11InputLayoutPtr		CreateInputLayout(const Athena::VERTEX_BUFFER_DESCRIPTOR&) override;
+	virtual D3D11InputLayoutPtr		CreateInputLayout(const Palleon::VERTEX_BUFFER_DESCRIPTOR&) override;
 
 	void							ParseVertexShaderConstantTable(OffsetKeeper&, const CD3DShaderConstantTable&, CD3DShaderConstantTable::REGISTER_SET);
 	void							ParsePixelShaderConstantTable(OffsetKeeper&, const CD3DShaderConstantTable&, CD3DShaderConstantTable::REGISTER_SET);

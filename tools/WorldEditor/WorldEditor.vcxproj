@@ -177,11 +177,11 @@
     <ClInclude Include="Source\WrbChunk.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Athena\build_win32\Athena.vcxproj">
-      <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Framework\build_win32\Framework.vcxproj">
       <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Palleon\build_win32\Palleon.vcxproj">
+      <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
       <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
