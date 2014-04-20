@@ -111,6 +111,12 @@
     <ClCompile Include="..\dataobjects\SectionLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dataobjects\XmlFileDecoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\SheetSchema.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dataobjects\sections\BaseSection.h">
@@ -201,6 +207,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\dataobjects\SectionLoader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\XmlFileDecoder.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\ResourceDefs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\SheetSchema.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

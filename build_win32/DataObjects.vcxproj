@@ -41,6 +41,8 @@
     <ClCompile Include="..\dataobjects\sections\ShaderSection.cpp" />
     <ClCompile Include="..\dataobjects\sections\SkeletonSection.cpp" />
     <ClCompile Include="..\dataobjects\sections\TextureSection.cpp" />
+    <ClCompile Include="..\dataobjects\SheetSchema.cpp" />
+    <ClCompile Include="..\dataobjects\XmlFileDecoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dataobjects\ChunkLoader.h" />
@@ -63,6 +65,7 @@
     <ClInclude Include="..\dataobjects\chunks\WrbChunk.h" />
     <ClInclude Include="..\dataobjects\GtexData.h" />
     <ClInclude Include="..\dataobjects\MapLayout.h" />
+    <ClInclude Include="..\dataobjects\ResourceDefs.h" />
     <ClInclude Include="..\dataobjects\ResourceNode.h" />
     <ClInclude Include="..\dataobjects\SectionLoader.h" />
     <ClInclude Include="..\dataobjects\sections\BaseSection.h" />
@@ -73,6 +76,8 @@
     <ClInclude Include="..\dataobjects\sections\ShaderSection.h" />
     <ClInclude Include="..\dataobjects\sections\SkeletonSection.h" />
     <ClInclude Include="..\dataobjects\sections\TextureSection.h" />
+    <ClInclude Include="..\dataobjects\SheetSchema.h" />
+    <ClInclude Include="..\dataobjects\XmlFileDecoder.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}</ProjectGuid>

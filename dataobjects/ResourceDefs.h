@@ -24,6 +24,7 @@
 
 #include "GtexData.h"
 #include "MapLayout.h"
+#include "SheetSchema.h"
 
 #include "SectionLoader.h"
 #include "ChunkLoader.h"
