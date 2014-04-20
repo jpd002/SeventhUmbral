@@ -1,5 +1,5 @@
 #include "ContainerChunk.h"
-#include "ChunkLoader.h"
+#include "../ChunkLoader.h"
 
 CContainerChunk::CContainerChunk()
 {

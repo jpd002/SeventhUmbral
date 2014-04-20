@@ -1,6 +1,5 @@
 #include "GtexData.h"
-#include "PwibSection.h"
-#include "TextureSection.h"
+#include "sections/PwibSection.h"
 #include <assert.h>
 
 CGtexData::CGtexData()

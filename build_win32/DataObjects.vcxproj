@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dataobjects\ChunkLoader.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\BaseChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\BoundingBoxChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\BoundingBoxContainerChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\CompChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\ContainerChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\FileChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\HeaderChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\LtcdChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\MeshChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\ModelChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\ModelContainerChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\NameChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\PramChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\ShaderChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\StreamChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\StringChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\WrbChunk.cpp" />
+    <ClCompile Include="..\dataobjects\GtexData.cpp" />
+    <ClCompile Include="..\dataobjects\MapLayout.cpp" />
+    <ClCompile Include="..\dataobjects\ResourceNode.cpp" />
+    <ClCompile Include="..\dataobjects\SectionLoader.cpp" />
+    <ClCompile Include="..\dataobjects\sections\BaseSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\ModelSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\PhbSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\PwibSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\ResourceSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\ShaderSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\SkeletonSection.cpp" />
+    <ClCompile Include="..\dataobjects\sections\TextureSection.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\dataobjects\ChunkLoader.h" />
+    <ClInclude Include="..\dataobjects\chunks\BaseChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\BoundingBoxChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\BoundingBoxContainerChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\CompChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\ContainerChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\FileChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\HeaderChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\LtcdChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\MeshChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\ModelChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\ModelContainerChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\NameChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\PramChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\ShaderChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\StreamChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\StringChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\WrbChunk.h" />
+    <ClInclude Include="..\dataobjects\GtexData.h" />
+    <ClInclude Include="..\dataobjects\MapLayout.h" />
+    <ClInclude Include="..\dataobjects\ResourceNode.h" />
+    <ClInclude Include="..\dataobjects\SectionLoader.h" />
+    <ClInclude Include="..\dataobjects\sections\BaseSection.h" />
+    <ClInclude Include="..\dataobjects\sections\ModelSection.h" />
+    <ClInclude Include="..\dataobjects\sections\PhbSection.h" />
+    <ClInclude Include="..\dataobjects\sections\PwibSection.h" />
+    <ClInclude Include="..\dataobjects\sections\ResourceSection.h" />
+    <ClInclude Include="..\dataobjects\sections\ShaderSection.h" />
+    <ClInclude Include="..\dataobjects\sections\SkeletonSection.h" />
+    <ClInclude Include="..\dataobjects\sections\TextureSection.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>DataObjects</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GeneralSettings.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="GeneralSettings.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

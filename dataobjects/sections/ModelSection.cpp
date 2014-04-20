@@ -1,5 +1,5 @@
 #include "ModelSection.h"
-#include "ChunkLoader.h"
+#include "../ChunkLoader.h"
 
 CModelSection::CModelSection()
 {

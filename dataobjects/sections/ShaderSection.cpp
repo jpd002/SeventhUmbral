@@ -1,5 +1,5 @@
 #include "ShaderSection.h"
-#include "ChunkLoader.h"
+#include "../ChunkLoader.h"
 
 CShaderSection::CShaderSection()
 {

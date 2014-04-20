@@ -1,5 +1,5 @@
 #include "TextureSection.h"
-#include "GtexData.h"
+#include "../GtexData.h"
 
 CTextureSection::CTextureSection()
 {

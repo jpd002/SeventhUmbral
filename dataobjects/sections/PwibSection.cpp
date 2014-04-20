@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "PwibSection.h"
-#include "SectionLoader.h"
+#include "../SectionLoader.h"
 
 CPwibSection::CPwibSection()
 : m_dataOffset(0)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Stream.h"
-#include "ResourceNode.h"
+#include "../ResourceNode.h"
 
 class CPwibSection : public CResourceNode
 {

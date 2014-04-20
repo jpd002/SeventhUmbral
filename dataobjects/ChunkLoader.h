@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Stream.h"
-#include "BaseChunk.h"
+#include "chunks/BaseChunk.h"
 
 class CChunkLoader
 {

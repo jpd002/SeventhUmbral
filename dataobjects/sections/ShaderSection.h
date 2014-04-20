@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BaseSection.h"
-#include "BaseChunk.h"
 
 class CShaderSection : public CBaseSection
 {

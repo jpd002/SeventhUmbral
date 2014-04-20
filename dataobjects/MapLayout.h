@@ -66,8 +66,6 @@ public:
 	const LayoutNodeMap&		GetLayoutNodes() const;
 
 private:
-	void						LoadResourceItems();
-
 	ResourceItemArray			m_resourceItems;
 	LayoutNodeMap				m_layoutNodes;
 };

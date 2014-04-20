@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\chunks">
+      <UniqueIdentifier>{4670949c-f919-4c34-a22d-faba1a46230c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sections">
+      <UniqueIdentifier>{e654f67f-1b27-472c-8423-de6a25d33050}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\dataobjects\sections\BaseSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\ModelSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\PhbSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\PwibSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\ResourceSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\ShaderSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\SkeletonSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\sections\TextureSection.cpp">
+      <Filter>Source Files\sections</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\BaseChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\BoundingBoxChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\BoundingBoxContainerChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\CompChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\ContainerChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\FileChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\HeaderChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\LtcdChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\MeshChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\ModelChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\ModelContainerChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\NameChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\PramChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\ShaderChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\StreamChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\StringChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\WrbChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\ChunkLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\GtexData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\MapLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\ResourceNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\SectionLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\dataobjects\sections\BaseSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\ModelSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\PhbSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\PwibSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\ResourceSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\ShaderSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\SkeletonSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\sections\TextureSection.h">
+      <Filter>Source Files\sections</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\BaseChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\BoundingBoxChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\BoundingBoxContainerChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\CompChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\ContainerChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\FileChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\HeaderChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\LtcdChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\MeshChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\ModelChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\ModelContainerChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\NameChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\PramChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\ShaderChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\StreamChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\StringChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\WrbChunk.h">
+      <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\ChunkLoader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\GtexData.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\MapLayout.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\ResourceNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\SectionLoader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

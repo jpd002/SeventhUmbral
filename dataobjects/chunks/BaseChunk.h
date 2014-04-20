@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ResourceNode.h"
+#include "../ResourceNode.h"
 #include "StdStream.h"
 #include <memory>
 

@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <map>
 #include "MapLayout.h"
-#include "ResourceManager.h"
 
 //#define _TRACE_TREE
 
@@ -233,18 +232,5 @@ void CMapLayout::Read(Framework::CStream& inputStream)
 		result->nodeId		= nodeId;
 
 		m_layoutNodes.insert(std::make_pair(nodePtr, result));
-	}
-
-	LoadResourceItems();
-}
-
-void CMapLayout::LoadResourceItems()
-{
-	for(const auto& resourceItem : m_resourceItems)
-	{
-		if(resourceItem.type == '\0trb' || resourceItem.type == '\0txb')
-		{
-			CResourceManager::GetInstance().LoadResource(resourceItem.resourceId, resourceItem.name);
-		}
 	}
 }

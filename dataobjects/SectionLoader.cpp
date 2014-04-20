@@ -1,7 +1,7 @@
 #include "SectionLoader.h"
-#include "ResourceSection.h"
-#include "PwibSection.h"
-#include "TextureSection.h"
+#include "sections/ResourceSection.h"
+#include "sections/PwibSection.h"
+#include "sections/TextureSection.h"
 #include <vector>
 #include <assert.h>
 
