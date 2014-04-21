@@ -10,7 +10,7 @@ public:
 	struct SHEET_INFO
 	{
 		std::string		name;
-		uint32			fileId;
+		uint32			fileId = 0;
 	};
 	typedef std::vector<SHEET_INFO> SheetInfoArray;
 
@@ -22,10 +22,10 @@ public:
 							CSheetSchema(Framework::CStream&);
 	virtual					~CSheetSchema();
 
-	const SheetInfoArray&	GetSheetInfos() const;
+	const SheetInfoArray&	GetSheets() const;
 
 private:
 	void					Read(Framework::CStream&);
 
-	SheetInfoArray			m_sheetInfos;
+	SheetInfoArray			m_sheets;
 };

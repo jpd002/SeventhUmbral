@@ -41,6 +41,8 @@
     <ClCompile Include="..\dataobjects\sections\ShaderSection.cpp" />
     <ClCompile Include="..\dataobjects\sections\SkeletonSection.cpp" />
     <ClCompile Include="..\dataobjects\sections\TextureSection.cpp" />
+    <ClCompile Include="..\dataobjects\Sheet.cpp" />
+    <ClCompile Include="..\dataobjects\SheetData.cpp" />
     <ClCompile Include="..\dataobjects\SheetSchema.cpp" />
     <ClCompile Include="..\dataobjects\XmlFileDecoder.cpp" />
   </ItemGroup>
@@ -76,6 +78,8 @@
     <ClInclude Include="..\dataobjects\sections\ShaderSection.h" />
     <ClInclude Include="..\dataobjects\sections\SkeletonSection.h" />
     <ClInclude Include="..\dataobjects\sections\TextureSection.h" />
+    <ClInclude Include="..\dataobjects\Sheet.h" />
+    <ClInclude Include="..\dataobjects\SheetData.h" />
     <ClInclude Include="..\dataobjects\SheetSchema.h" />
     <ClInclude Include="..\dataobjects\XmlFileDecoder.h" />
   </ItemGroup>
