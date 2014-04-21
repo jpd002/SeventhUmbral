@@ -28,7 +28,7 @@ const CSheetData::Row& CSheetData::GetRow(uint32 rowId) const
 
 void CSheetData::Read(const CSheet& sheet, const FileProvider& fileProvider)
 {
-	auto subSheet = sheet.GetSubSheets()[1];
+	auto subSheet = sheet.GetSubSheets()[0];
 	const auto& typeParams = subSheet.typeParams;
 	for(const auto& block : subSheet.blocks)
 	{
