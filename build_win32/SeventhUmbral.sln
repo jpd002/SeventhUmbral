@@ -17,6 +17,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib-1.2.8", "..\..\zlib-1.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataObjects", "DataObjects.vcxproj", "{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Palleon", "..\..\Palleon\build_win32\Palleon.vcxproj", "{F800A366-7ACB-417C-A565-801FC00ADEA1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WorldEditor", "..\tools\WorldEditor\WorldEditor.vcxproj", "{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -51,6 +55,14 @@ Global
 		{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}.Debug|Win32.Build.0 = Debug|Win32
 		{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}.Release|Win32.ActiveCfg = Release|Win32
 		{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}.Release|Win32.Build.0 = Release|Win32
+		{F800A366-7ACB-417C-A565-801FC00ADEA1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F800A366-7ACB-417C-A565-801FC00ADEA1}.Debug|Win32.Build.0 = Debug|Win32
+		{F800A366-7ACB-417C-A565-801FC00ADEA1}.Release|Win32.ActiveCfg = Release|Win32
+		{F800A366-7ACB-417C-A565-801FC00ADEA1}.Release|Win32.Build.0 = Release|Win32
+		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Debug|Win32.ActiveCfg = Debug|Win32
+		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Debug|Win32.Build.0 = Debug|Win32
+		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Release|Win32.ActiveCfg = Release|Win32
+		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
