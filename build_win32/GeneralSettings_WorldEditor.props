@@ -12,6 +12,9 @@
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>$(ProjectDir)\Source\Pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>$(ProjectDir)\Source\Pch.h</ForcedIncludeFiles>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>
