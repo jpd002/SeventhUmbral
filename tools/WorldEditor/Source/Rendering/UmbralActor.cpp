@@ -2,8 +2,6 @@
 #include "string_format.h"
 #include "StdStream.h"
 #include "UmbralModel.h"
-#include "../SectionLoader.h"
-#include "../ResourceDefs.h"
 #include "../FileManager.h"
 
 CUmbralActor::CUmbralActor()

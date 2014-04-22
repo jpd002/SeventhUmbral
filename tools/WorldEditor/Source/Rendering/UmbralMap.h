@@ -3,7 +3,6 @@
 #include "PalleonEngine.h"
 #include "UmbralMesh.h"
 #include "UmbralModel.h"
-#include "../MapLayout.h"
 
 class CUmbralMap : public Palleon::CMeshProvider
 {

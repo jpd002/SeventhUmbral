@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ResourceDefs.h"
+#include "../../../dataobjects/ResourceDefs.h"
 #include "Singleton.h"
 #include <map>
 

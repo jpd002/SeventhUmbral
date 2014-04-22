@@ -78,27 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\ActorDatabase.cpp" />
-    <ClCompile Include="Source\BaseChunk.cpp" />
-    <ClCompile Include="Source\BaseSection.cpp" />
-    <ClCompile Include="Source\BoundingBoxChunk.cpp" />
-    <ClCompile Include="Source\BoundingBoxContainerChunk.cpp" />
-    <ClCompile Include="Source\ChunkLoader.cpp" />
-    <ClCompile Include="Source\CompChunk.cpp" />
-    <ClCompile Include="Source\ContainerChunk.cpp" />
-    <ClCompile Include="Source\FileChunk.cpp" />
     <ClCompile Include="Source\FileManager.cpp" />
-    <ClCompile Include="Source\GtexData.cpp" />
-    <ClCompile Include="Source\HeaderChunk.cpp" />
-    <ClCompile Include="Source\LtcdChunk.cpp" />
-    <ClCompile Include="Source\MapLayout.cpp" />
-    <ClCompile Include="Source\MeshChunk.cpp" />
-    <ClCompile Include="Source\ModelChunk.cpp" />
-    <ClCompile Include="Source\ModelContainerChunk.cpp" />
-    <ClCompile Include="Source\ModelSection.cpp" />
-    <ClCompile Include="Source\NameChunk.cpp" />
-    <ClCompile Include="Source\PhbSection.cpp" />
-    <ClCompile Include="Source\PramChunk.cpp" />
-    <ClCompile Include="Source\PwibSection.cpp" />
     <ClCompile Include="Source\Rendering\D3DShader.cpp" />
     <ClCompile Include="Source\Rendering\D3DShaderConstantTable.cpp" />
     <ClCompile Include="Source\Rendering\D3DShaderDisassembler.cpp" />
@@ -112,42 +92,12 @@
     <ClCompile Include="Source\Rendering\UmbralMesh.cpp" />
     <ClCompile Include="Source\Rendering\UmbralModel.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
-    <ClCompile Include="Source\ResourceNode.cpp" />
-    <ClCompile Include="Source\ResourceSection.cpp" />
-    <ClCompile Include="Source\SectionLoader.cpp" />
-    <ClCompile Include="Source\ShaderChunk.cpp" />
-    <ClCompile Include="Source\ShaderSection.cpp" />
-    <ClCompile Include="Source\SkeletonSection.cpp" />
-    <ClCompile Include="Source\StreamChunk.cpp" />
-    <ClCompile Include="Source\StringChunk.cpp" />
-    <ClCompile Include="Source\TextureSection.cpp" />
     <ClCompile Include="Source\TouchFreeCamera.cpp" />
     <ClCompile Include="Source\WorldEditor.cpp" />
-    <ClCompile Include="Source\WrbChunk.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ActorDatabase.h" />
-    <ClInclude Include="Source\BaseChunk.h" />
-    <ClInclude Include="Source\BaseSection.h" />
-    <ClInclude Include="Source\BoundingBoxChunk.h" />
-    <ClInclude Include="Source\BoundingBoxContainerChunk.h" />
-    <ClInclude Include="Source\ChunkLoader.h" />
-    <ClInclude Include="Source\CompChunk.h" />
-    <ClInclude Include="Source\ContainerChunk.h" />
-    <ClInclude Include="Source\FileChunk.h" />
     <ClInclude Include="Source\FileManager.h" />
-    <ClInclude Include="Source\GtexData.h" />
-    <ClInclude Include="Source\HeaderChunk.h" />
-    <ClInclude Include="Source\LtcdChunk.h" />
-    <ClInclude Include="Source\MapLayout.h" />
-    <ClInclude Include="Source\MeshChunk.h" />
-    <ClInclude Include="Source\ModelChunk.h" />
-    <ClInclude Include="Source\ModelContainerChunk.h" />
-    <ClInclude Include="Source\ModelSection.h" />
-    <ClInclude Include="Source\NameChunk.h" />
-    <ClInclude Include="Source\PhbSection.h" />
-    <ClInclude Include="Source\PramChunk.h" />
-    <ClInclude Include="Source\PwibSection.h" />
     <ClInclude Include="Source\Rendering\D3DShader.h" />
     <ClInclude Include="Source\Rendering\D3DShaderConstantTable.h" />
     <ClInclude Include="Source\Rendering\D3DShaderDisassembler.h" />
@@ -161,20 +111,9 @@
     <ClInclude Include="Source\Rendering\UmbralMap.h" />
     <ClInclude Include="Source\Rendering\UmbralMesh.h" />
     <ClInclude Include="Source\Rendering\UmbralModel.h" />
-    <ClInclude Include="Source\ResourceDefs.h" />
     <ClInclude Include="Source\ResourceManager.h" />
-    <ClInclude Include="Source\ResourceNode.h" />
-    <ClInclude Include="Source\ResourceSection.h" />
-    <ClInclude Include="Source\SectionLoader.h" />
-    <ClInclude Include="Source\ShaderChunk.h" />
-    <ClInclude Include="Source\ShaderSection.h" />
-    <ClInclude Include="Source\SkeletonSection.h" />
-    <ClInclude Include="Source\StreamChunk.h" />
-    <ClInclude Include="Source\StringChunk.h" />
-    <ClInclude Include="Source\TextureSection.h" />
     <ClInclude Include="Source\TouchFreeCamera.h" />
     <ClInclude Include="Source\WorldEditor.h" />
-    <ClInclude Include="Source\WrbChunk.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Framework\build_win32\Framework.vcxproj">
@@ -185,6 +124,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
       <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\build_win32\DataObjects.vcxproj">
+      <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

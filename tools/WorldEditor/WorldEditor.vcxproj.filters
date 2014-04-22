@@ -13,109 +13,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Sections">
-      <UniqueIdentifier>{e05e6e06-f0e1-4960-9cac-be71bc1dcf03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Chunks">
-      <UniqueIdentifier>{872644ee-c881-44c5-829c-f5eeef0db3c9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{8f1f8864-aea6-42c2-a2c3-ce91d92cfaa0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Other Resources">
-      <UniqueIdentifier>{136a5019-1744-4908-b462-69d9d08f5c63}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\BaseSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ResourceSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ShaderSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ContainerChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SectionLoader.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ChunkLoader.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ShaderChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FileChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ModelSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ModelChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ModelContainerChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\HeaderChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LtcdChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WrbChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\NameChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MeshChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StringChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
     <ClCompile Include="Source\WorldEditor.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SkeletonSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PhbSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PwibSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StreamChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TextureSection.cpp">
-      <Filter>Source Files\Sections</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GtexData.cpp">
-      <Filter>Source Files\Other Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MapLayout.cpp">
-      <Filter>Source Files\Other Resources</Filter>
     </ClCompile>
     <ClCompile Include="Source\FileManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ResourceNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\TouchFreeCamera.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PramChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
     </ClCompile>
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source Files</Filter>
@@ -144,15 +54,6 @@
     <ClCompile Include="Source\Rendering\UmbralModel.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BoundingBoxContainerChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BoundingBoxChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CompChunk.cpp">
-      <Filter>Source Files\Chunks</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Rendering\GlobalResources.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
@@ -170,97 +71,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\BaseSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResourceSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ShaderSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ContainerChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SectionLoader.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ChunkLoader.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ShaderChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\FileChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ModelSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ModelChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ModelContainerChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\HeaderChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LtcdChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WrbChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\NameChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MeshChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StringChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
     <ClInclude Include="Source\WorldEditor.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SkeletonSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PhbSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PwibSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResourceNode.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StreamChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\TextureSection.h">
-      <Filter>Source Files\Sections</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GtexData.h">
-      <Filter>Source Files\Other Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MapLayout.h">
-      <Filter>Source Files\Other Resources</Filter>
     </ClInclude>
     <ClInclude Include="Source\FileManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\TouchFreeCamera.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PramChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResourceDefs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ResourceManager.h">
@@ -289,15 +106,6 @@
     </ClInclude>
     <ClInclude Include="Source\Rendering\UmbralModel.h">
       <Filter>Source Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BoundingBoxContainerChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BoundingBoxChunk.h">
-      <Filter>Source Files\Chunks</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\CompChunk.h">
-      <Filter>Source Files\Chunks</Filter>
     </ClInclude>
     <ClInclude Include="Source\Rendering\GlobalResources.h">
       <Filter>Source Files\Rendering</Filter>

@@ -3,6 +3,14 @@
 
 CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 {
+	for(const auto& resourceItem : mapLayout->GetResourceItems())
+	{
+		if(resourceItem.type == '\0trb' || resourceItem.type == '\0txb')
+		{
+			CResourceManager::GetInstance().LoadResource(resourceItem.resourceId, resourceItem.name);
+		}
+	}
+
 	const auto& layoutNodes = mapLayout->GetLayoutNodes();
 
 	//Build unit tree object nodes

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PalleonEngine.h"
-#include "../ResourceDefs.h"
+#include "../../../../dataobjects/ResourceDefs.h"
 
 class CUmbralModel : public Palleon::CSceneNode
 {
@@ -14,3 +14,5 @@ public:
 private:
 	ShaderSectionPtr	FindShaderForName(const std::vector<ShaderSectionPtr>&, const std::string&);
 };
+
+typedef std::shared_ptr<CUmbralModel> UmbralModelPtr;

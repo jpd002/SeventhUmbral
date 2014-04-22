@@ -2,7 +2,7 @@
 
 #include "PalleonEngine.h"
 #include "TouchFreeCamera.h"
-#include "MapLayout.h"
+#include "../../../dataobjects/ResourceDefs.h"
 
 class CWorldEditor : public Palleon::CApplication
 {
