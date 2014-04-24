@@ -21,31 +21,39 @@ public:
 	void						SetHorizontalAngle(float);
 	void						SetVerticalAngle(float);
 
-	void						NotifyMouseMove(unsigned int, unsigned int);
-	void						NotifyMouseDown_MoveForward();
-	void						NotifyMouseDown_MoveBackward();
-	void						NotifyMouseDown_Center();
-	void						NotifyMouseUp();
+	void						BeginMoveForward();
+	void						EndMoveForward();
+
+	void						BeginMoveBackward();
+	void						EndMoveBackward();
+
+	void						BeginStrafeLeft();
+	void						EndStrafeLeft();
+
+	void						BeginStrafeRight();
+	void						EndStrafeRight();
+
+	void						BeginDrag(const CVector2&);
+	void						UpdateDrag(const CVector2&);
+	void						EndDrag();
+
+	void						CancelInputTracking();
 
 private:
-	enum COMMAND_MODE
-	{
-		COMMAND_MODE_IDLE			= 0,
-		COMMAND_MODE_DRAG_CAMERA	= 1,
-		COMMAND_MODE_MOVE_FORWARD	= 2,
-		COMMAND_MODE_MOVE_BACKWARD	= 3,
-	};
+	bool						m_isMovingForward = false;
+	bool						m_isMovingBackward = false;
+	bool						m_isStrafingLeft = false;
+	bool						m_isStrafingRight = false;
+	bool						m_isDragging = false;
 
-	COMMAND_MODE		m_commandMode;
+	float						m_cameraHAngle = 0;
+	float						m_dragHAngle = 0;
 
-	float				m_cameraHAngle;
-	float				m_dragHAngle;
+	float						m_cameraVAngle = 0;
+	float						m_dragVAngle = 0;
 
-	float				m_cameraVAngle;
-	float				m_dragVAngle;
+	CVector3					m_cameraPosition = CVector3(0, 0, 0);
 
-	CVector3			m_cameraPosition;
-
-	CVector2			m_mousePosition;
-	CVector2			m_dragPosition;
+	CVector2					m_mousePosition = CVector2(0, 0);
+	CVector2					m_dragPosition = CVector2(0, 0);
 };

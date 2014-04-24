@@ -1,16 +1,9 @@
 #include "TouchFreeCamera.h"
+#include <assert.h>
 
-#define MOVE_SPEED	(2.f)
+#define MOVE_SPEED	(10.f)
 
 CTouchFreeCamera::CTouchFreeCamera()
-: m_commandMode(COMMAND_MODE_IDLE)
-, m_cameraPosition(0, 0, 0)
-, m_cameraHAngle(0)
-, m_cameraVAngle(0)
-, m_dragHAngle(0)
-, m_dragVAngle(0)
-, m_mousePosition(0, 0)
-, m_dragPosition(0, 0)
 {
 
 }
@@ -27,7 +20,7 @@ TouchFreeCameraPtr CTouchFreeCamera::Create()
 
 void CTouchFreeCamera::Update(float dt)
 {
-	if(m_commandMode == COMMAND_MODE_DRAG_CAMERA)
+	if(m_isDragging)
 	{
 		float deltaX = m_dragPosition.x - m_mousePosition.x;
 		float deltaY = m_dragPosition.y - m_mousePosition.y;
@@ -36,21 +29,25 @@ void CTouchFreeCamera::Update(float dt)
 		m_cameraVAngle = std::min<float>(m_cameraVAngle, M_PI / 2);
 		m_cameraVAngle = std::max<float>(m_cameraVAngle, -M_PI / 2);
 	}
-	else if(m_commandMode == COMMAND_MODE_MOVE_FORWARD || m_commandMode == COMMAND_MODE_MOVE_BACKWARD)
-	{
-		CMatrix4 yawMatrix(CMatrix4::MakeAxisYRotation(m_cameraHAngle));
-		CMatrix4 pitchMatrix(CMatrix4::MakeAxisXRotation(m_cameraVAngle));
-		CMatrix4 totalMatrix = yawMatrix * pitchMatrix;
-		CVector3 forwardVector = CVector3(0, 0, 1) * totalMatrix;
-		float direction = (m_commandMode == COMMAND_MODE_MOVE_BACKWARD) ? (1.0f) : (-1.0f);
-		m_cameraPosition += (forwardVector * direction * MOVE_SPEED * dt);
-	}
 
 	CMatrix4 yawMatrix(CMatrix4::MakeAxisYRotation(m_cameraHAngle));
 	CMatrix4 pitchMatrix(CMatrix4::MakeAxisXRotation(m_cameraVAngle));
-	CMatrix4 translationMatrix(CMatrix4::MakeTranslation(-m_cameraPosition.x, -m_cameraPosition.y, -m_cameraPosition.z));
-
 	CMatrix4 rotationMatrix = yawMatrix * pitchMatrix;
+
+	if(m_isStrafingLeft || m_isStrafingRight)
+	{
+		CVector3 rightVector = CVector3(1, 0, 0) * rotationMatrix;
+		float direction = m_isStrafingLeft ? (-1.0f) : (1.0f);
+		m_cameraPosition += (rightVector * direction * MOVE_SPEED * dt);
+	}
+	if(m_isMovingForward || m_isMovingBackward)
+	{
+		CVector3 forwardVector = CVector3(0, 0, 1) * rotationMatrix;
+		float direction = m_isMovingForward ? (-1.0f) : (1.0f);
+		m_cameraPosition += (forwardVector * direction * MOVE_SPEED * dt);
+	}
+
+	CMatrix4 translationMatrix(CMatrix4::MakeTranslation(-m_cameraPosition.x, -m_cameraPosition.y, -m_cameraPosition.z));
 	CMatrix4 totalMatrix = translationMatrix * rotationMatrix;
 
 	SetViewMatrix(totalMatrix);
@@ -76,30 +73,79 @@ void CTouchFreeCamera::SetVerticalAngle(float vAngle)
 	m_cameraVAngle = vAngle;
 }
 
-void CTouchFreeCamera::NotifyMouseMove(unsigned int x, unsigned int y)
+void CTouchFreeCamera::BeginMoveForward()
 {
-	m_mousePosition = CVector2(x, y);
+	assert(!m_isMovingForward);
+	m_isMovingForward = true;
 }
 
-void CTouchFreeCamera::NotifyMouseDown_MoveForward()
+void CTouchFreeCamera::EndMoveForward()
 {
-	m_commandMode = COMMAND_MODE_MOVE_FORWARD;
+	assert(m_isMovingForward);
+	m_isMovingForward = false;
 }
 
-void CTouchFreeCamera::NotifyMouseDown_MoveBackward()
+void CTouchFreeCamera::BeginMoveBackward()
 {
-	m_commandMode = COMMAND_MODE_MOVE_BACKWARD;
+	assert(!m_isMovingBackward);
+	m_isMovingBackward = true;
 }
 
-void CTouchFreeCamera::NotifyMouseDown_Center()
+void CTouchFreeCamera::EndMoveBackward()
 {
-	m_commandMode = COMMAND_MODE_DRAG_CAMERA;
+	assert(m_isMovingBackward);
+	m_isMovingBackward = false;
+}
+
+void CTouchFreeCamera::BeginStrafeLeft()
+{
+	assert(!m_isStrafingLeft);
+	m_isStrafingLeft = true;
+}
+
+void CTouchFreeCamera::EndStrafeLeft()
+{
+	assert(m_isStrafingLeft);
+	m_isStrafingLeft = false;
+}
+
+void CTouchFreeCamera::BeginStrafeRight()
+{
+	assert(!m_isStrafingRight);
+	m_isStrafingRight = true;
+}
+
+void CTouchFreeCamera::EndStrafeRight()
+{
+	assert(m_isStrafingRight);
+	m_isStrafingRight = false;
+}
+
+void CTouchFreeCamera::BeginDrag(const CVector2& mousePosition)
+{
+	assert(!m_isDragging);
+	m_isDragging = true;
 	m_dragHAngle = m_cameraHAngle;
 	m_dragVAngle = m_cameraVAngle;
-	m_dragPosition = m_mousePosition;
+	m_dragPosition = mousePosition;
 }
 
-void CTouchFreeCamera::NotifyMouseUp()
+void CTouchFreeCamera::UpdateDrag(const CVector2& mousePosition)
 {
-	m_commandMode = COMMAND_MODE_IDLE;
+	m_mousePosition = mousePosition;
+}
+
+void CTouchFreeCamera::EndDrag()
+{
+	assert(m_isDragging);
+	m_isDragging = false;
+}
+
+void CTouchFreeCamera::CancelInputTracking()
+{
+	m_isDragging = false;
+	m_isMovingForward = false;
+	m_isMovingBackward = false;
+	m_isStrafingLeft = false;
+	m_isStrafingRight = false;
 }

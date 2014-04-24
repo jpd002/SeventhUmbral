@@ -32,8 +32,6 @@
 CWorldEditor::CWorldEditor()
 : m_elapsed(0)
 , m_mousePosition(0, 0)
-, m_forwardButtonBoundingBox(0, 0, 0, 0)
-, m_backwardButtonBoundingBox(0, 0, 0, 0)
 {
 	CGlobalResources::GetInstance().Initialize();
 	m_package = Palleon::CPackage::Create("global");
@@ -73,18 +71,6 @@ void CWorldEditor::CreateUi()
 
 			m_positionLabel = scene->FindNode<Palleon::CLabel>("PositionLabel");
 			m_metricsLabel = scene->FindNode<Palleon::CLabel>("MetricsLabel");
-
-			{
-				auto sprite = scene->FindNode<Palleon::CSprite>("BackwardSprite");
-				m_backwardButtonBoundingBox.position = sprite->GetPosition().xy();
-				m_backwardButtonBoundingBox.size = sprite->GetSize();
-			}
-
-			{
-				auto sprite = scene->FindNode<Palleon::CSprite>("ForwardSprite");
-				m_forwardButtonBoundingBox.position = sprite->GetPosition().xy();
-				m_forwardButtonBoundingBox.size = sprite->GetSize();
-			}
 
 			sceneRoot->AppendChild(scene);
 		}
@@ -247,31 +233,65 @@ void CWorldEditor::Update(float dt)
 
 void CWorldEditor::NotifyMouseMove(int x, int y)
 {
-	m_mousePosition = CVector2(x, y);
-	m_mainCamera->NotifyMouseMove(x, y);
+	m_mousePosition = CVector2(static_cast<float>(x), static_cast<float>(y));
+	m_mainCamera->UpdateDrag(m_mousePosition);
 }
 
 void CWorldEditor::NotifyMouseDown()
 {
 	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_PRESSED);
-	if(m_forwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
-	{
-		m_mainCamera->NotifyMouseDown_MoveForward();
-	}
-	else if(m_backwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
-	{
-		m_mainCamera->NotifyMouseDown_MoveBackward();
-	}
-	else
-	{
-		m_mainCamera->NotifyMouseDown_Center();
-	}
+	m_mainCamera->BeginDrag(m_mousePosition);
 }
 
 void CWorldEditor::NotifyMouseUp()
 {
 	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_RELEASED);
-	m_mainCamera->NotifyMouseUp();
+	m_mainCamera->EndDrag();
+}
+
+void CWorldEditor::NotifyKeyDown(Palleon::KEY_CODE keyCode)
+{
+	switch(keyCode)
+	{
+	case Palleon::KEY_CODE_W:
+		m_mainCamera->BeginMoveForward();
+		break;
+	case Palleon::KEY_CODE_S:
+		m_mainCamera->BeginMoveBackward();
+		break;
+	case Palleon::KEY_CODE_A:
+		m_mainCamera->BeginStrafeLeft();
+		break;
+	case Palleon::KEY_CODE_D:
+		m_mainCamera->BeginStrafeRight();
+		break;
+	}
+	
+}
+
+void CWorldEditor::NotifyKeyUp(Palleon::KEY_CODE keyCode)
+{
+	switch(keyCode)
+	{
+	case Palleon::KEY_CODE_W:
+		m_mainCamera->EndMoveForward();
+		break;
+	case Palleon::KEY_CODE_S:
+		m_mainCamera->EndMoveBackward();
+		break;
+	case Palleon::KEY_CODE_A:
+		m_mainCamera->EndStrafeLeft();
+		break;
+	case Palleon::KEY_CODE_D:
+		m_mainCamera->EndStrafeRight();
+		break;
+	}
+}
+
+void CWorldEditor::NotifyInputCancelled()
+{
+	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_RELEASED);
+	m_mainCamera->CancelInputTracking();
 }
 
 //#define _SCAN_LAYOUTS

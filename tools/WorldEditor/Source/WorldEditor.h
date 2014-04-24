@@ -16,6 +16,11 @@ public:
 	virtual void			NotifyMouseDown() override;
 	virtual void			NotifyMouseUp() override;
 
+	virtual void			NotifyKeyDown(Palleon::KEY_CODE) override;
+	virtual void			NotifyKeyUp(Palleon::KEY_CODE) override;
+
+	virtual void			NotifyInputCancelled() override;
+
 private:
 	typedef std::vector<Palleon::SceneNodePtr> ModelArray;
 	typedef std::vector<Palleon::TexturePtr> TextureArray;
@@ -40,7 +45,4 @@ private:
 	Palleon::LabelPtr		m_metricsLabel;
 
 	float					m_elapsed;
-
-	CBox2					m_forwardButtonBoundingBox;
-	CBox2					m_backwardButtonBoundingBox;
 };
