@@ -30,6 +30,7 @@ private:
 		std::string		name;
 		bool			isArray = false;
 		bool			isMatrix = false;
+		bool			isCubeSampler = false;
 		uint32			arraySize = 0;
 		uint32			subscript = 0;
 		uint32			constantValue[4];

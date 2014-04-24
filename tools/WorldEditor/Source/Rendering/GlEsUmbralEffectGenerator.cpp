@@ -313,7 +313,9 @@ std::string CGlEsUmbralEffectGenerator::GenerateUniformDeclarations(const std::s
 		auto uniformName = string_format("%s_textureUnit%d", prefix.c_str(), registerId.second);
 		m_registerNames.insert(std::make_pair(registerId, uniformName));
 		
-		result += string_format("uniform sampler2D %s;\r\n", uniformName.c_str());
+		const char* samplerType = registerInfo.isCubeSampler ? "samplerCube" : "sampler2D";
+		
+		result += string_format("uniform %s %s;\r\n", samplerType, uniformName.c_str());
 	}
 	
 	return result;
@@ -519,6 +521,7 @@ void CGlEsUmbralEffectGenerator::ParseGlobalSamplerConstants(const CD3DShaderCon
 		REGISTER_INFO registerInfo;
 		registerInfo.scope = REGISTER_INFO::SCOPE_GLOBAL;
 		registerInfo.name = constant.name;
+		registerInfo.isCubeSampler = (constant.typeInfo.type == CD3DShaderConstantTable::CONSTANT_TYPE_SAMPLERCUBE);
 		m_registerInfos.insert(std::make_pair(registerId, registerInfo));
 	}
 }
@@ -992,9 +995,7 @@ std::string CGlEsUmbralEffectGenerator::Emit_Texld(CD3DShader::CTokenStream& tok
 }
 
 std::string CGlEsUmbralEffectGenerator::Emit_Texldl(CD3DShader::CTokenStream& tokenStream, IDENTATION_STATE& identationState) const
-{
-	//TODO: Implement that properly
-	
+{	
 	std::string result;
 	
 	auto dstParam = CD3DShader::ReadDestinationParameter(tokenStream);
@@ -1005,13 +1006,11 @@ std::string CGlEsUmbralEffectGenerator::Emit_Texldl(CD3DShader::CTokenStream& to
 	
 	auto dstString = PrintDestinationOperand(dstParam);
 	auto samplerRegisterName = GetRegisterName(CD3DShader::SHADER_REGISTER_SAMPLER, samplerParam.parameter.registerNumber);
-//	auto textureString = string_format("%s_texture", samplerVariable.name.c_str());
-//	auto locationVariable = GetVariableForRegister(locationParam.parameter.GetRegisterType(), locationParam.parameter.registerNumber);
+	auto locationVariable = PrintSourceOperand(locationParam, 0x07);
 	
-//	result += string_format("%s%s = %s.SampleLevel(%s, %s, %s.w);\r\n", identationString.c_str(),
-//							dstString.c_str(), textureString.c_str(), samplerVariable.name.c_str(), locationVariable.name.c_str(), locationVariable.name.c_str());
-	result += string_format("%s%s = vec4(0.4, 0.4, 0.4, 1);\r\n", identationState.GetString().c_str(), dstString.c_str());
-
+	result += string_format("%s%s = textureCube(%s, %s);\r\n", identationState.GetString().c_str(),
+							dstString.c_str(), samplerRegisterName.c_str(), locationVariable.c_str());
+	
 	return result;
 }
 

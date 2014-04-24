@@ -33,6 +33,7 @@ private:
 	GLuint							m_textureUnit3Handle = -1;
 	GLuint							m_textureUnit4Handle = -1;
 	GLuint							m_textureUnit5Handle = -1;
+	GLuint							m_textureUnit10Handle = -1;
 	
 	//Per mesh pixel shader constants
 	GLuint							m_modulateColorHandle = -1;

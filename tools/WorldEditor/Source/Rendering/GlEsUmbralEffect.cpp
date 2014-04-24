@@ -212,6 +212,7 @@ void CGlEsUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, co
 		glUniform1i(m_textureUnit3Handle, 3);
 		glUniform1i(m_textureUnit4Handle, 4);
 		glUniform1i(m_textureUnit5Handle, 5);
+		glUniform1i(m_textureUnit10Handle, 6);
 		
 		SetParamValue(m_modulateColorHandle, modulateColor);
 		SetParamValue(m_ambientColorHandle, ambientColor);
@@ -281,6 +282,7 @@ void CGlEsUmbralEffect::GetUniformLocations()
 		{ "ps_textureUnit3",			m_textureUnit3Handle				},
 		{ "ps_textureUnit4",			m_textureUnit4Handle				},
 		{ "ps_textureUnit5",			m_textureUnit5Handle				},
+		{ "ps_textureUnit10",			m_textureUnit10Handle				},
 		
 		{ "ps_modulateColor",			m_modulateColorHandle				},
 		{ "ps_ambientColor",			m_ambientColorHandle				},
