@@ -1,0 +1,7 @@
+<Package>
+	<Texture Source="font_0.png" />
+	<FontDescriptor Source="font.fnt" />
+	<Texture Source="forward.png" />
+	<Texture Source="backward.png" />
+	<Scene Source="main_scene.xml" />
+</Package>
