@@ -1,5 +1,5 @@
 #include "UmbralMesh.h"
-#include "../ResourceManager.h"
+#include "ResourceManager.h"
 #include "GlobalResources.h"
 #include "PtrStream.h"
 #include "StdStream.h"

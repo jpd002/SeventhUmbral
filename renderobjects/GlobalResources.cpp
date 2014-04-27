@@ -1,5 +1,5 @@
 #include "GlobalResources.h"
-#include "../ResourceManager.h"
+#include "ResourceManager.h"
 
 #ifdef WIN32
 #include "Dx11UmbralEffectProvider.h"

@@ -2,7 +2,7 @@
 
 #include "Singleton.h"
 #include "PalleonEngine.h"
-#include "../../../../dataobjects/ResourceDefs.h"
+#include "../dataobjects/ResourceDefs.h"
 
 class CGlobalResources : public CSingleton<CGlobalResources>
 {

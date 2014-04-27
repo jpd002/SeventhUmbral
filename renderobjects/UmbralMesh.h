@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PalleonEngine.h"
-#include "../../../../dataobjects/ResourceDefs.h"
+#include "../dataobjects/ResourceDefs.h"
 #include "D3DShader.h"
 
 class CUmbralMesh;

@@ -2,7 +2,7 @@
 #include "string_format.h"
 #include "StdStream.h"
 #include "UmbralModel.h"
-#include "../FileManager.h"
+#include "FileManager.h"
 
 CUmbralActor::CUmbralActor()
 {

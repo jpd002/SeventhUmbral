@@ -1,5 +1,5 @@
 #include "UmbralMap.h"
-#include "../ResourceManager.h"
+#include "ResourceManager.h"
 
 CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 {
