@@ -381,11 +381,26 @@ void CUmbralMesh::SetupEffect()
 	{
 		auto material = GetMaterial();
 
-		//material->SetAlphaBlendingMode(Palleon::ALPHA_BLENDING_LERP);
-		material->SetCullingMode(Palleon::CULLING_CW);
-
 		auto pramChunk = m_shaderSection->SelectNode<CPramChunk>();
 		assert(pramChunk);
+		
+		switch(pramChunk->GetRenderMode())
+		{
+		case 0x809:
+			//Alpha blended mode
+			material->SetAlphaBlendingMode(Palleon::ALPHA_BLENDING_LERP);
+			break;
+		case 0x818:
+			//Default render mode
+			break;
+		case 0xC12:
+		case 0xC1A:
+			//Alpha tested mode (this needs to be done in the shader)
+			//material->SetAlphaBlendingMode(Palleon::ALPHA_BLENDING_LERP);
+			break;
+		}
+
+		material->SetCullingMode(Palleon::CULLING_CW);
 
 		//Copy parameters to effect parameters
 		for(const auto& param : pramChunk->GetParameters())
@@ -488,6 +503,7 @@ void CUmbralMesh::SetupTextures()
 	setSampler("_sampler_05", sampler5);
 	setSampler("_sampler_06", sampler6);
 	setSampler("lightDiffuseMap", CGlobalResources::GetInstance().GetDiffuseMapTexture());
+	setSampler("lightToneMap", CGlobalResources::GetInstance().GetLightToneMapTexture());
 	setSampler("reflectMap", CGlobalResources::GetInstance().GetSkyTexture());
 	setSampler("shadowMap0", CGlobalResources::GetInstance().GetProxyShadowTexture());
 #else
