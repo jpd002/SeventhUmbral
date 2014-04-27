@@ -34,6 +34,14 @@ void CGlobalResources::Initialize()
 	m_skyTexture = Palleon::CTextureLoader::CreateCubeTextureFromFile(skyTexturePath);
 	m_proxyShadowTexture = Palleon::CGraphicDevice::GetInstance().CreateTexture(Palleon::TEXTURE_FORMAT_RGBA8888, 32, 32, 1);
 
+	{
+		static const unsigned int lightToneMapTextureSize = 32;
+		auto lightToneMapTexture = Palleon::CGraphicDevice::GetInstance().CreateTexture(Palleon::TEXTURE_FORMAT_RGBA8888, lightToneMapTextureSize, lightToneMapTextureSize, 1);
+		std::vector<uint8> pixels(lightToneMapTextureSize * lightToneMapTextureSize * 4, 0xFF);
+		lightToneMapTexture->Update(0, pixels.data());
+		m_lightToneMapTexture = lightToneMapTexture;
+	}
+
 #ifdef WIN32
 	auto& graphicDevice = static_cast<Palleon::CDx11GraphicDevice&>(Palleon::CGraphicDevice::GetInstance());
 	m_effectProvider = std::make_shared<CDx11UmbralEffectProvider>(graphicDevice.GetDevice(), graphicDevice.GetDeviceContext());
@@ -46,6 +54,7 @@ void CGlobalResources::Release()
 {
 	m_textures.clear();
 	m_diffuseMapTexture.reset();
+	m_lightToneMapTexture.reset();
 	m_skyTexture.reset();
 	m_proxyShadowTexture.reset();
 	m_effectProvider.reset();
@@ -107,6 +116,11 @@ Palleon::TexturePtr CGlobalResources::CreateTextureFromGtex(const GtexDataPtr& t
 Palleon::TexturePtr CGlobalResources::GetDiffuseMapTexture() const
 {
 	return m_diffuseMapTexture;
+}
+
+Palleon::TexturePtr CGlobalResources::GetLightToneMapTexture() const
+{
+	return m_lightToneMapTexture;
 }
 
 Palleon::TexturePtr CGlobalResources::GetSkyTexture() const

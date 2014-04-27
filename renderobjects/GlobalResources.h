@@ -17,6 +17,7 @@ public:
 	static Palleon::TexturePtr	CreateTextureFromGtex(const GtexDataPtr&);
 
 	Palleon::TexturePtr			GetDiffuseMapTexture() const;
+	Palleon::TexturePtr			GetLightToneMapTexture() const;
 	Palleon::TexturePtr			GetSkyTexture() const;
 	Palleon::TexturePtr			GetProxyShadowTexture() const;
 
@@ -27,6 +28,7 @@ private:
 
 	TextureMap					m_textures;
 	Palleon::TexturePtr			m_diffuseMapTexture;
+	Palleon::TexturePtr			m_lightToneMapTexture;
 	Palleon::TexturePtr			m_skyTexture;
 	Palleon::TexturePtr			m_proxyShadowTexture;
 	Palleon::EffectProviderPtr	m_effectProvider;
