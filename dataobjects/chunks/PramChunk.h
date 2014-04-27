@@ -36,6 +36,7 @@ public:
 
 	virtual void			Read(Framework::CStream&) override;
 
+	int16					GetRenderMode() const;
 	const ParameterArray&	GetParameters() const;
 	const SamplerArray&		GetSamplers() const;
 
@@ -51,6 +52,7 @@ private:
 	uint32					m_numSamplers;
 	uint32					m_samplerDataStart;
 	uint32					m_samplerNameStart;
+	int16					m_renderMode;
 
 	ParameterArray			m_parameters;
 	SamplerArray			m_samplers;

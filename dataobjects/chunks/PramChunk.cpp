@@ -23,7 +23,7 @@ void CPramChunk::Read(Framework::CStream& inputStream)
 	auto basePosition = inputStream.Tell();
 
 	{
-		int16 unknown1 = inputStream.Read16();
+		m_renderMode = inputStream.Read16();		//Not sure about that
 		int16 unknown2 = inputStream.Read16();
 		uint32 unknown3 = inputStream.Read32();
 		m_numParameters = inputStream.Read32();
@@ -41,6 +41,11 @@ void CPramChunk::Read(Framework::CStream& inputStream)
 
 	ReadParameters(inputStream, basePosition, parameterDataOffsets, parameterNameOffsets);
 	ReadSamplers(inputStream, basePosition, samplerDataOffsets, samplerNameOffsets);
+}
+
+int16 CPramChunk::GetRenderMode() const
+{
+	return m_renderMode;
 }
 
 const CPramChunk::ParameterArray& CPramChunk::GetParameters() const
