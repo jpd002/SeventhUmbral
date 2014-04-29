@@ -21,6 +21,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Palleon", "..\..\Palleon\bu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WorldEditor", "..\tools\WorldEditor\WorldEditor.vcxproj", "{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderObjects", "RenderObjects.vcxproj", "{5ED74EF0-BD48-4424-B76E-87CE618CC31B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ActorViewer", "ActorViewer.vcxproj", "{7929E8F5-25F9-4D67-B528-8DE364A983E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -63,6 +67,14 @@ Global
 		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Debug|Win32.Build.0 = Debug|Win32
 		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Release|Win32.ActiveCfg = Release|Win32
 		{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}.Release|Win32.Build.0 = Release|Win32
+		{5ED74EF0-BD48-4424-B76E-87CE618CC31B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5ED74EF0-BD48-4424-B76E-87CE618CC31B}.Debug|Win32.Build.0 = Debug|Win32
+		{5ED74EF0-BD48-4424-B76E-87CE618CC31B}.Release|Win32.ActiveCfg = Release|Win32
+		{5ED74EF0-BD48-4424-B76E-87CE618CC31B}.Release|Win32.Build.0 = Release|Win32
+		{7929E8F5-25F9-4D67-B528-8DE364A983E4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7929E8F5-25F9-4D67-B528-8DE364A983E4}.Debug|Win32.Build.0 = Debug|Win32
+		{7929E8F5-25F9-4D67-B528-8DE364A983E4}.Release|Win32.ActiveCfg = Release|Win32
+		{7929E8F5-25F9-4D67-B528-8DE364A983E4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

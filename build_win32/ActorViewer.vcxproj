@@ -100,6 +100,9 @@
     <ProjectReference Include="DataObjects.vcxproj">
       <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
     </ProjectReference>
+    <ProjectReference Include="RenderObjects.vcxproj">
+      <Project>{5ed74ef0-bd48-4424-b76e-87ce618cc31b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
