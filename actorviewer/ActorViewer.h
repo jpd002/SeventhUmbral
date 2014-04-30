@@ -21,6 +21,7 @@ private:
 
 	void					CreateUi();
 	void					CreateActor();
+	void					UpdateLights();
 
 	CVector2				m_mousePosition;
 
@@ -33,7 +34,7 @@ private:
 	Palleon::LabelPtr		m_positionLabel;
 	Palleon::LabelPtr		m_metricsLabel;
 
-	float					m_elapsed;
+	float					m_elapsed = 0;
 
 	CBox2					m_forwardButtonBoundingBox;
 	CBox2					m_backwardButtonBoundingBox;

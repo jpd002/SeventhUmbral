@@ -1,16 +1,16 @@
 #include "ActorViewer.h"
 #include "string_format.h"
-#include "../tools/WorldEditor/Source/Rendering/UmbralActor.h"
+#include "../renderobjects/UmbralActor.h"
+#include "../renderobjects/GlobalResources.h"
 
 static const CVector3 g_actorPosition(0, 0, -3);
 
 CActorViewer::CActorViewer()
-: m_elapsed(0)
-, m_mousePosition(0, 0)
+: m_mousePosition(0, 0)
 , m_forwardButtonBoundingBox(0, 0, 0, 0)
 , m_backwardButtonBoundingBox(0, 0, 0, 0)
 {
-//	CGlobalResources::GetInstance().Initialize();
+	CGlobalResources::GetInstance().Initialize();
 	m_package = Palleon::CPackage::Create("global");
 
 	CreateActor();
@@ -24,7 +24,7 @@ CActorViewer::~CActorViewer()
 {
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
-//	CGlobalResources::GetInstance().Release();
+	CGlobalResources::GetInstance().Release();
 }
 
 void CActorViewer::CreateUi()
@@ -71,7 +71,8 @@ void CActorViewer::CreateActor()
 
 	{
 		auto camera = CTouchFreeCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 500.f, Palleon::HANDEDNESS_RIGHTHANDED);
+		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 0.01f, 100.f, Palleon::HANDEDNESS_RIGHTHANDED);
+		camera->SetPosition(CVector3(0, 0.5f, 0));
 		m_mainCamera = camera;
 	}
 
@@ -85,14 +86,18 @@ void CActorViewer::CreateActor()
 
 	{
 		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(10006);
+		actor->SetBaseModelId(10007);
 		actor->SetPosition(g_actorPosition);
 		sceneRoot->AppendChild(actor);
 	}
+
+	UpdateLights();
 }
 
 void CActorViewer::Update(float dt)
 {
+	UpdateLights();
+
 	{
 		auto cameraPosition = m_mainCamera->GetPosition();
 		auto positionText = string_format("Pos = (X: %0.2f, Y: %0.2f, Z: %0.2f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -106,11 +111,22 @@ void CActorViewer::Update(float dt)
 		m_metricsLabel->SetText(metricsText);
 	}
 
+	m_elapsed += dt;
+
 	m_mainCamera->Update(dt);
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
 	m_uiViewport->GetSceneRoot()->Update(dt);
 	m_uiViewport->GetSceneRoot()->UpdateTransformations();
+}
+
+void CActorViewer::UpdateLights()
+{
+	m_mainViewport->SetEffectParameter("ps_ambientLightColor", Palleon::CEffectParameter(CVector4(0, 0, 0, 0)));
+	m_mainViewport->SetEffectParameter("ps_dirLightDirection0", Palleon::CEffectParameter(CVector3(cos(m_elapsed), -1, sin(m_elapsed)).Normalize()));
+	m_mainViewport->SetEffectParameter("ps_dirLightDirection1", Palleon::CEffectParameter(CVector3(-sin(m_elapsed), -1, cos(m_elapsed)).Normalize()));
+	m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
+	m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
 }
 
 void CActorViewer::NotifyMouseMove(int x, int y)

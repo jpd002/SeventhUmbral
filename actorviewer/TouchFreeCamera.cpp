@@ -1,6 +1,6 @@
 #include "TouchFreeCamera.h"
 
-#define MOVE_SPEED	(10.f)
+#define MOVE_SPEED	(1.f)
 
 CTouchFreeCamera::CTouchFreeCamera()
 : m_commandMode(COMMAND_MODE_IDLE)
