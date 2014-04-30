@@ -1,6 +1,7 @@
 #include "Dx11UmbralEffect.h"
 #include "Dx11UmbralEffectGenerator.h"
 #include "UmbralEffect.h"
+#include "palleon/Viewport.h"
 
 CDx11UmbralEffect::CDx11UmbralEffect(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const CD3DShader& vertexShader, const CD3DShader& pixelShader)
@@ -44,66 +45,19 @@ void SetParamValue(uint8* constantBufferPtr, uint32 paramOffset, const ParamType
 	}
 }
 
-template <typename ParamType>
-ParamType GetMaterialEffectParamOrDefault(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
-
-template <>
-float GetMaterialEffectParamOrDefault<float>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetScalar();
-}
-
-template <>
-CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetVector2();
-}
-
-template <>
-CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetVector3();
-}
-
-template <>
-CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	if(effectParam.IsVector3())
-	{
-		return CVector4(effectParam.GetVector3(), 0);
-	}
-	else
-	{
-		return effectParam.GetVector4();
-	}
-}
-
-void CDx11UmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix, 
-	const CMatrix4& shadowViewProjMatrix)
+void CDx11UmbralEffect::UpdateConstants(const Palleon::DX11VIEWPORT_PARAMS& viewportParams, Palleon::CMaterial* material, const CMatrix4& worldMatrix)
 {
 	//Update vertex shader params
 	{
 		auto worldITMatrix = worldMatrix.Inverse().Transpose();
-		auto viewITMatrix = viewMatrix.Inverse().Transpose();
-		auto worldViewMatrix = worldMatrix * viewMatrix;
-		auto worldViewProjMatrix = worldViewMatrix * projMatrix;
+		auto viewITMatrix = viewportParams.viewMatrix.Inverse().Transpose();
+		auto worldViewMatrix = worldMatrix * viewportParams.viewMatrix;
+		auto worldViewProjMatrix = worldViewMatrix * viewportParams.projMatrix;
 		CVector3 modelBBoxOffset(0, 0, 0);
 		CVector3 modelBBoxScale(1, 1, 1);
 
-		auto vertexOcclusionScale = GetMaterialEffectParamOrDefault(material, "vs_vertexOcclusionScale", m_vertexOcclusionScaleOffset, 0.0f);
-		auto vertexColorBias = GetMaterialEffectParamOrDefault(material, "vs_vertexColorBias", m_vertexColorBiasOffset, CVector4(0, 0, 0, 0));
+		auto vertexOcclusionScale = material->GetEffectParamOrDefault("vs_vertexOcclusionScale", 0.0f, m_vertexOcclusionScaleOffset != -1);
+		auto vertexColorBias = material->GetEffectParamOrDefault("vs_vertexColorBias", CVector4(0, 0, 0, 0), m_vertexColorBiasOffset != -1);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 		HRESULT result = m_deviceContext->Map(m_vertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -128,59 +82,59 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, co
 
 	//Update pixel shader params
 	{
-		auto modulateColor = GetMaterialEffectParamOrDefault(material, "ps_modulateColor", m_modulateColorOffset, CVector4(1, 1, 1, 1));
-		auto ambientColor = GetMaterialEffectParamOrDefault(material, "ps_ambientColor", m_ambientColorOffset, CVector4(0, 0, 0, 0));
-		auto diffuseColor = GetMaterialEffectParamOrDefault(material, "ps_diffuseColor", m_diffuseColorOffset, CVector4(0, 0, 0, 0));
-		auto specularColor = GetMaterialEffectParamOrDefault(material, "ps_specularColor", m_specularColorOffset, CVector4(0, 0, 0, 0));
-		auto shininess = GetMaterialEffectParamOrDefault(material, "ps_shininess", m_shininessOffset, 128.f);
-		auto reflectivity = GetMaterialEffectParamOrDefault(material, "ps_reflectivity", m_reflectivityOffset, CVector3(0, 0, 0));
-		auto normalPower = GetMaterialEffectParamOrDefault(material, "ps_normalPower", m_normalPowerOffset, 1.f);
+		auto modulateColor = material->GetEffectParamOrDefault("ps_modulateColor", CVector4(1, 1, 1, 1), m_modulateColorOffset != -1);
+		auto ambientColor = material->GetEffectParamOrDefault("ps_ambientColor", CVector4(0, 0, 0, 0), m_ambientColorOffset != -1);
+		auto diffuseColor = material->GetEffectParamOrDefault("ps_diffuseColor", CVector4(0, 0, 0, 0), m_diffuseColorOffset != -1);
+		auto specularColor = material->GetEffectParamOrDefault("ps_specularColor", CVector4(0, 0, 0, 0), m_specularColorOffset != -1);
+		auto shininess = material->GetEffectParamOrDefault("ps_shininess", 128.f, m_shininessOffset != -1);
+		auto reflectivity = material->GetEffectParamOrDefault("ps_reflectivity", CVector3(0, 0, 0), m_reflectivityOffset != -1);
+		auto normalPower = material->GetEffectParamOrDefault("ps_normalPower", 1.f, m_normalPowerOffset != -1);
 
-		auto multiDiffuseColor = GetMaterialEffectParamOrDefault(material, "ps_multiDiffuseColor", m_multiDiffuseColorOffset, CVector4(0, 0, 0, 0));
-		auto multiSpecularColor = GetMaterialEffectParamOrDefault(material, "ps_multiSpecularColor", m_multiSpecularColorOffset, CVector4(0, 0, 0, 0));
-		auto multiShininess = GetMaterialEffectParamOrDefault(material, "ps_multiShininess", m_multiShininessOffset, 128.f);
-		auto multiReflectivity = GetMaterialEffectParamOrDefault(material, "ps_multiReflectivity", m_multiReflectivityOffset, CVector3(0, 0, 0));
-		auto multiNormalPower = GetMaterialEffectParamOrDefault(material, "ps_multiNormalPower", m_multiNormalPowerOffset, 1.f);
+		auto multiDiffuseColor = material->GetEffectParamOrDefault("ps_multiDiffuseColor", CVector4(0, 0, 0, 0), m_multiDiffuseColorOffset != -1);
+		auto multiSpecularColor = material->GetEffectParamOrDefault("ps_multiSpecularColor", CVector4(0, 0, 0, 0), m_multiSpecularColorOffset != -1);
+		auto multiShininess = material->GetEffectParamOrDefault("ps_multiShininess", 128.f, m_multiShininessOffset != -1);
+		auto multiReflectivity = material->GetEffectParamOrDefault("ps_multiReflectivity", CVector3(0, 0, 0), m_multiReflectivityOffset != -1);
+		auto multiNormalPower = material->GetEffectParamOrDefault("ps_multiNormalPower", 1.f, m_multiNormalPowerOffset != -1);
 
-		auto fresnelExp = GetMaterialEffectParamOrDefault(material, "ps_fresnelExp", m_fresnelExpOffset, 1.f);
-		auto fresnelLightDiffBias = GetMaterialEffectParamOrDefault(material, "ps_fresnelLightDiffBias", m_fresnelLightDiffBiasOffset, 1.f);
-		auto specularInfluence = GetMaterialEffectParamOrDefault(material, "ps_specularInfluence", m_specularInfluenceOffset, 0.f);
-		auto lightDiffusePower = GetMaterialEffectParamOrDefault(material, "ps_lightDiffusePower", m_lightDiffusePowerOffset, 0.67f);
-		auto lightDiffuseInfluence = GetMaterialEffectParamOrDefault(material, "ps_lightDiffuseInfluence", m_lightDiffuseInfluenceOffset, 0.56f);
-		auto reflectMapInfluence = GetMaterialEffectParamOrDefault(material, "ps_reflectMapInfluence", m_reflectMapInfluenceOffset, 0.8f);
+		auto fresnelExp = material->GetEffectParamOrDefault("ps_fresnelExp", 1.f, m_fresnelExpOffset != -1);
+		auto fresnelLightDiffBias = material->GetEffectParamOrDefault("ps_fresnelLightDiffBias", 1.f, m_fresnelLightDiffBiasOffset != -1);
+		auto specularInfluence = material->GetEffectParamOrDefault("ps_specularInfluence", 0.f, m_specularInfluenceOffset != -1);
+		auto lightDiffusePower = material->GetEffectParamOrDefault("ps_lightDiffusePower", 0.67f, m_lightDiffusePowerOffset != -1);
+		auto lightDiffuseInfluence = material->GetEffectParamOrDefault("ps_lightDiffuseInfluence", 0.56f, m_lightDiffuseInfluenceOffset != -1);
+		auto reflectMapInfluence = material->GetEffectParamOrDefault("ps_reflectMapInfluence", 0.8f, m_reflectMapInfluenceOffset != -1);
 
-		auto glareLdrScale = GetMaterialEffectParamOrDefault(material, "ps_glareLdrScale", m_glareLdrScaleOffset, 1.0f);
-		auto refAlphaRestrain = GetMaterialEffectParamOrDefault(material, "ps_refAlphaRestrain", m_refAlphaRestrainOffset, 0.f);
-		auto normalVector = GetMaterialEffectParamOrDefault(material, "ps_normalVector", m_normalVectorOffset, CVector4(0, 0, 0, 0));
-		auto depthBias = GetMaterialEffectParamOrDefault(material, "ps_depthBias", m_depthBiasOffset, 0.f);
-		auto velvetParam = GetMaterialEffectParamOrDefault(material, "ps_velvetParam", m_velvetParamOffset, CVector2(0, 0));
+		auto glareLdrScale = material->GetEffectParamOrDefault("ps_glareLdrScale", 1.0f, m_glareLdrScaleOffset != -1);
+		auto refAlphaRestrain = material->GetEffectParamOrDefault("ps_refAlphaRestrain", 0.f, m_refAlphaRestrainOffset != -1);
+		auto normalVector = material->GetEffectParamOrDefault("ps_normalVector", CVector4(0, 0, 0, 0), m_normalVectorOffset != -1);
+		auto depthBias = material->GetEffectParamOrDefault("ps_depthBias", 0.f, m_depthBiasOffset != -1);
+		auto velvetParam = material->GetEffectParamOrDefault("ps_velvetParam", CVector2(0, 0), m_velvetParamOffset != -1);
 
-		auto ambientOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_ambentOcclusionColor", m_ambientOcclusionColorOffset, CVector3(1, 1, 1));
-		auto mainLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_mainLightOcclusionColor", m_mainLightOcclusionColorOffset, CVector3(0, 0, 0));
-		auto subLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_subLightOcclusionColor", m_subLightOcclusionColorOffset, CVector3(0, 0, 0));
-		auto pointLightOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_pointLightOcclusionColor", m_pointLightOcclusionColorOffset, CVector3(0.5f, 0.5f, 0.5f));
-		auto lightMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_lightMapOcclusionColor", m_lightMapOcclusionColorOffset, CVector3(0.3f, 0.3f, 0.3f));
-		auto reflectMapOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_reflectMapOcclusionColor", m_reflectMapOcclusionColorOffset, CVector3(0.3f, 0.3f, 0.3f));
-		auto specularOcclusionColor = GetMaterialEffectParamOrDefault(material, "ps_specularOcclusionColor", m_specularOcclusionColorOffset, CVector3(0, 0, 0));
+		auto ambientOcclusionColor = material->GetEffectParamOrDefault("ps_ambentOcclusionColor", CVector3(1, 1, 1), m_ambientOcclusionColorOffset != -1);
+		auto mainLightOcclusionColor = material->GetEffectParamOrDefault("ps_mainLightOcclusionColor", CVector3(0, 0, 0), m_mainLightOcclusionColorOffset != -1);
+		auto subLightOcclusionColor = material->GetEffectParamOrDefault("ps_subLightOcclusionColor", CVector3(0, 0, 0), m_subLightOcclusionColorOffset != -1);
+		auto pointLightOcclusionColor = material->GetEffectParamOrDefault("ps_pointLightOcclusionColor", CVector3(0.5f, 0.5f, 0.5f), m_pointLightOcclusionColorOffset != -1);
+		auto lightMapOcclusionColor = material->GetEffectParamOrDefault("ps_lightMapOcclusionColor", CVector3(0.3f, 0.3f, 0.3f), m_lightMapOcclusionColorOffset != -1);
+		auto reflectMapOcclusionColor = material->GetEffectParamOrDefault("ps_reflectMapOcclusionColor", CVector3(0.3f, 0.3f, 0.3f), m_reflectMapOcclusionColorOffset != -1);
+		auto specularOcclusionColor = material->GetEffectParamOrDefault("ps_specularOcclusionColor", CVector3(0, 0, 0), m_specularOcclusionColorOffset != -1);
 
 		float lightDiffuseMapLod = 0;
 		float reflectMapLod = 0;
 
 		CVector2 pixelClippingDistance(-10000, 10000);
 		CVector3 enableShadowFlag(1, 0, 1);
-		CColor ambientLightColor(0.1f, 0.1f, 0.1f, 0);
 		CVector3 latitudeParam(1, 0, 1);
+		CVector4 ambientLightColor = viewportParams.viewport->GetEffectParamOrDefault("ps_ambientLightColor", CVector4(0.1f, 0.1f, 0.1f, 0));
 
 		CVector3 dirLightDirections[2] = 
 		{
-			CVector3(1, -1, 0).Normalize(),
-			CVector3(1, 0, 0).Normalize(),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection0", CVector3(0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection1", CVector3(0, 0, 0))
 		};
 
-		CColor dirLightColors[2] =
+		CVector4 dirLightColors[2] =
 		{
-			CColor(1.0f, 1.0f, 1.0f, 0),
-			CColor(0.0f, 0.0f, 0.0f, 0),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor0", CVector4(0, 0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor1", CVector4(0, 0, 0, 0))
 		};
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
@@ -234,8 +188,8 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, co
 		SetParamValue(constantBufferPtr, m_enableShadowFlagOffset, enableShadowFlag);
 		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[0] = dirLightDirections[0];
 		if(m_dirLightDirectionsOffset != -1) reinterpret_cast<CVector3*>(constantBufferPtr + m_dirLightDirectionsOffset)[1] = dirLightDirections[1];
-		if(m_dirLightColorsOffset != -1) reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[0] = dirLightColors[0];
-		if(m_dirLightColorsOffset != -1) reinterpret_cast<CColor*>(constantBufferPtr + m_dirLightColorsOffset)[1] = dirLightColors[1];
+		if(m_dirLightColorsOffset != -1) reinterpret_cast<CVector4*>(constantBufferPtr + m_dirLightColorsOffset)[0] = dirLightColors[0];
+		if(m_dirLightColorsOffset != -1) reinterpret_cast<CVector4*>(constantBufferPtr + m_dirLightColorsOffset)[1] = dirLightColors[1];
 
 		m_deviceContext->Unmap(m_pixelConstantBuffer, 0);
 	}
