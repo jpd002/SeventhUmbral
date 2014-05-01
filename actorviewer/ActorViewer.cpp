@@ -86,7 +86,7 @@ void CActorViewer::CreateActor()
 
 	{
 		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(10007);
+		actor->SetBaseModelId(10006);
 		actor->SetPosition(g_actorPosition);
 		sceneRoot->AppendChild(actor);
 	}
