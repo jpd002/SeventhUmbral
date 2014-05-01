@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PalleonEngine.h"
 #include "palleon/gles/GlEsEffect.h"
 #include "D3DShader.h"
 
@@ -9,7 +10,7 @@ public:
 									CGlEsUmbralEffect(const CD3DShader&, const CD3DShader&);
 	virtual							~CGlEsUmbralEffect();
 
-	virtual void					UpdateConstants(const Palleon::MaterialPtr&, const CMatrix4&, const CMatrix4&, const CMatrix4&, const CMatrix4&) override;
+	virtual void					UpdateConstants(const Palleon::GLESVIEWPORT_PARAMS&, Palleon::CMaterial*, const CMatrix4&) override;
 
 private:
 	void							GetUniformLocations();

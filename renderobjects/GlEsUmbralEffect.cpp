@@ -116,61 +116,14 @@ void SetParamValue<CColor>(uint32 paramHandle, const CColor& value)
 	}
 }
 
-template <typename ParamType>
-ParamType GetMaterialEffectParamOrDefault(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const ParamType& defaultValue);
-
-template <>
-float GetMaterialEffectParamOrDefault<float>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const float& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetScalar();
-}
-
-template <>
-CVector2 GetMaterialEffectParamOrDefault<CVector2>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector2& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetVector2();
-}
-
-template <>
-CVector3 GetMaterialEffectParamOrDefault<CVector3>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector3& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	return effectParam.GetVector3();
-}
-
-template <>
-CVector4 GetMaterialEffectParamOrDefault<CVector4>(const Palleon::MaterialPtr& material, const std::string& paramName, uint32 paramOffset, const CVector4& defaultValue)
-{
-	auto effectParam = material->GetEffectParameter(paramName);
-	assert((paramOffset == -1) || !effectParam.IsNull());
-	if(effectParam.IsNull()) return defaultValue;
-	if(effectParam.IsVector3())
-	{
-		return CVector4(effectParam.GetVector3(), 0);
-	}
-	else
-	{
-		return effectParam.GetVector4();
-	}
-}
-
-void CGlEsUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, const CMatrix4& worldMatrix, const CMatrix4& viewMatrix, const CMatrix4& projMatrix,
-	const CMatrix4& shadowViewProjMatrix)
+void CGlEsUmbralEffect::UpdateConstants(const Palleon::GLESVIEWPORT_PARAMS& viewportParams, Palleon::CMaterial* material, const CMatrix4& worldMatrix)
 {
 	//Update vertex shader params
 	{
 		auto worldITMatrix = worldMatrix.Inverse().Transpose();
-		auto viewITMatrix = viewMatrix.Inverse().Transpose();
-		auto worldViewMatrix = worldMatrix * viewMatrix;
-		auto worldViewProjMatrix = worldViewMatrix * projMatrix;
+		auto viewITMatrix = viewportParams.viewMatrix.Inverse().Transpose();
+		auto worldViewMatrix = worldMatrix * viewportParams.viewMatrix;
+		auto worldViewProjMatrix = worldViewMatrix * viewportParams.projMatrix;
 		CVector3 modelBBoxOffset(0, 0, 0);
 		CVector3 modelBBoxScale(1, 1, 1);
 		CVector3 fogParam(0, 10000, 1);
@@ -187,24 +140,24 @@ void CGlEsUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, co
 	
 	//Update pixel shader params
 	{
-		auto modulateColor = GetMaterialEffectParamOrDefault(material, "ps_modulateColor", m_modulateColorHandle, CVector4(1, 1, 1, 1));
-		auto ambientColor = GetMaterialEffectParamOrDefault(material, "ps_ambientColor", m_ambientColorHandle, CVector4(0, 0, 0, 0));
-		auto diffuseColor = GetMaterialEffectParamOrDefault(material, "ps_diffuseColor", m_diffuseColorHandle, CVector4(0, 0, 0, 0));
-		auto specularColor = GetMaterialEffectParamOrDefault(material, "ps_specularColor", m_specularColorHandle, CVector4(0, 0, 0, 0));
-		auto shininess = GetMaterialEffectParamOrDefault(material, "ps_shininess", m_shininessHandle, 128.f);
-		auto reflectivity = GetMaterialEffectParamOrDefault(material, "ps_reflectivity", m_reflectivityHandle, CVector3(0, 0, 0));
-		auto normalPower = GetMaterialEffectParamOrDefault(material, "ps_normalPower", m_normalPowerHandle, 1.f);
+		auto modulateColor = material->GetEffectParamOrDefault("ps_modulateColor", CVector4(1, 1, 1, 1), m_modulateColorHandle != -1);
+		auto ambientColor = material->GetEffectParamOrDefault("ps_ambientColor", CVector4(0, 0, 0, 0), m_ambientColorHandle != -1);
+		auto diffuseColor = material->GetEffectParamOrDefault("ps_diffuseColor", CVector4(0, 0, 0, 0), m_diffuseColorHandle != -1);
+		auto specularColor = material->GetEffectParamOrDefault("ps_specularColor", CVector4(0, 0, 0, 0), m_specularColorHandle != -1);
+		auto shininess = material->GetEffectParamOrDefault("ps_shininess", 128.f, m_shininessHandle != -1);
+		auto reflectivity = material->GetEffectParamOrDefault("ps_reflectivity", CVector3(0, 0, 0), m_reflectivityHandle != -1);
+		auto normalPower = material->GetEffectParamOrDefault("ps_normalPower", 1.f, m_normalPowerHandle != -1);
 
-		auto fresnelExp = GetMaterialEffectParamOrDefault(material, "ps_fresnelExp", m_fresnelExpHandle, 1.f);
-		auto fresnelLightDiffBias = GetMaterialEffectParamOrDefault(material, "ps_fresnelLightDiffBias", m_fresnelLightDiffBiasHandle, 1.f);
-		auto lightDiffusePower = GetMaterialEffectParamOrDefault(material, "ps_lightDiffusePower", m_lightDiffusePowerHandle, 0.67f);
-		auto specularInfluence = GetMaterialEffectParamOrDefault(material, "ps_specularInfluence", m_specularInfluenceHandle, 0.0f);
-		auto lightDiffuseInfluence = GetMaterialEffectParamOrDefault(material, "ps_lightDiffuseInfluence", m_lightDiffuseInfluenceHandle, 0.56f);
-		auto reflectMapInfluence = GetMaterialEffectParamOrDefault(material, "ps_reflectMapInfluence", m_reflectMapInfluenceHandle, 0.8f);
+		auto fresnelExp = material->GetEffectParamOrDefault("ps_fresnelExp", 1.f, m_fresnelExpHandle != -1);
+		auto fresnelLightDiffBias = material->GetEffectParamOrDefault("ps_fresnelLightDiffBias", 1.f, m_fresnelLightDiffBiasHandle != -1);
+		auto lightDiffusePower = material->GetEffectParamOrDefault("ps_lightDiffusePower", 0.67f, m_lightDiffusePowerHandle != -1);
+		auto specularInfluence = material->GetEffectParamOrDefault("ps_specularInfluence", 0.0f, m_specularInfluenceHandle != -1);
+		auto lightDiffuseInfluence = material->GetEffectParamOrDefault("ps_lightDiffuseInfluence", 0.56f, m_lightDiffuseInfluenceHandle != -1);
+		auto reflectMapInfluence = material->GetEffectParamOrDefault("ps_reflectMapInfluence", 0.8f, m_reflectMapInfluenceHandle != -1);
 
-		auto glareLdrScale = GetMaterialEffectParamOrDefault(material, "ps_glareLdrScale", m_glareLdrScaleHandle, 1.0f);
-		auto refAlphaRestrain = GetMaterialEffectParamOrDefault(material, "ps_refAlphaRestrain", m_refAlphaRestrainHandle, 0.0f);
-		auto velvetParam = GetMaterialEffectParamOrDefault(material, "ps_velvetParam", m_velvetParamHandle, CVector2(0, 0));
+		auto glareLdrScale = material->GetEffectParamOrDefault("ps_glareLdrScale", 1.0f, m_glareLdrScaleHandle != -1);
+		auto refAlphaRestrain = material->GetEffectParamOrDefault("ps_refAlphaRestrain", 0.0f, m_refAlphaRestrainHandle != -1);
+		auto velvetParam = material->GetEffectParamOrDefault("ps_velvetParam", CVector2(0, 0), m_velvetParamHandle != -1);
 		
 		glUniform1i(m_textureUnit0Handle, 0);
 		glUniform1i(m_textureUnit1Handle, 1);
@@ -232,26 +185,22 @@ void CGlEsUmbralEffect::UpdateConstants(const Palleon::MaterialPtr& material, co
 		SetParamValue(m_glareLdrScaleHandle, glareLdrScale);
 		SetParamValue(m_refAlphaRestrainHandle, refAlphaRestrain);
 		SetParamValue(m_velvetParamHandle, velvetParam);
-		
-		static float alpha = 0;
-		
+				
 		CVector4 latitudeParam(1, 0, 1, 0);
-		CColor ambientLightColor(0, 0, 0, 0);
+		auto ambientLightColor = viewportParams.viewport->GetEffectParamOrDefault("ps_ambientLightColor", CVector4(0, 0, 0, 0));
 		CVector4 enableShadowFlag(1, 0, 1, 0);
 		CVector4 dirLightDirections[2] =
 		{
-			CVector4(CVector3( sin(alpha), -1,  cos(alpha)).Normalize(), 0),
-			CVector4(CVector3( 0,  0,  0), 0),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection0", CVector4(0, 0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection1", CVector4(0, 0, 0, 0))
 		};
 		
-		CColor dirLightColors[2] =
+		CVector4 dirLightColors[2] =
 		{
-			CColor(1.0f, 1.0f, 1.0f, 1),
-			CColor(0, 0, 0, 0),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor0", CVector4(0, 0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor1", CVector4(0, 0, 0, 0))
 		};
-		
-		alpha += 0.01f;
-		
+				
 		SetParamValue(m_ambientLightColorHandle, ambientLightColor);
 		SetParamValue(m_latitudeParamHandle, latitudeParam);
 		SetParamValue(m_enableShadowFlagHandle, enableShadowFlag);
