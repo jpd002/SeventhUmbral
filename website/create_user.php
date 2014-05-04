@@ -4,6 +4,11 @@ include("config.php");
 include("database.php");
 require_once("recaptchalib.php");
 
+function IsUsingSSL()
+{
+	return ($_SERVER['SERVER_PORT'] == 443);
+}
+
 function CreateUserPage_CreateUser($databaseConnection)
 {
 	$username 		= trim($_POST["username"]);
@@ -99,7 +104,7 @@ if(isset($_POST["createUser"]))
 					</tr>
 					<tr>
 						<td colspan="2">
-							<?php echo recaptcha_get_html($recaptcha_publickey); ?>
+							<?php echo recaptcha_get_html($recaptcha_publickey, null, IsUsingSSL()); ?>
 						</td>
 					</tr>
 					<tr>
