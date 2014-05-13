@@ -12,6 +12,11 @@ CSetMapPacket::~CSetMapPacket()
 
 }
 
+PacketPtr CSetMapPacket::Clone()
+{
+	return std::make_shared<CSetMapPacket>(*this);
+}
+
 void CSetMapPacket::SetMapId(uint32 mapId)
 {
 	m_mapId = mapId;

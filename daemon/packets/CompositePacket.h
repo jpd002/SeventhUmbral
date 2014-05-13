@@ -8,6 +8,8 @@ public:
 						CCompositePacket();
 	virtual				~CCompositePacket();
 
+	bool				IsEmpty() const;
+
 	void				AddPacket(const PacketData&);
 
 	PacketData			ToPacketData() const;

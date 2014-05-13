@@ -19,6 +19,8 @@ public:
 							CSetActorPropertyPacket();
 	virtual					~CSetActorPropertyPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	void					AddSetShort(uint32, uint16);
 	void					AddTargetProperty(const std::string&);
 	void					Finish();

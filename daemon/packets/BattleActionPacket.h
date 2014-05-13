@@ -56,6 +56,8 @@ public:
 							CBattleActionPacket();
 	virtual					~CBattleActionPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	void					SetActionSourceId(uint32);
 	void					SetAnimationId(uint32);
 	void					SetDescriptionId(uint32);

@@ -11,6 +11,11 @@ CSetActorStatePacket::~CSetActorStatePacket()
 
 }
 
+PacketPtr CSetActorStatePacket::Clone()
+{
+	return std::make_shared<CSetActorStatePacket>(*this);
+}
+
 void CSetActorStatePacket::SetState(uint32 state)
 {
 	m_state = state;

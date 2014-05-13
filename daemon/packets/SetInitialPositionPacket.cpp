@@ -15,6 +15,11 @@ CSetInitialPositionPacket::~CSetInitialPositionPacket()
 
 }
 
+PacketPtr CSetInitialPositionPacket::Clone()
+{
+	return std::make_shared<CSetInitialPositionPacket>(*this);
+}
+
 void CSetInitialPositionPacket::SetX(float x)
 {
 	m_x = x;

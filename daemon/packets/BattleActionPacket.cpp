@@ -11,6 +11,11 @@ CBattleActionPacket::~CBattleActionPacket()
 
 }
 
+PacketPtr CBattleActionPacket::Clone()
+{
+	return std::make_shared<CBattleActionPacket>(*this);
+}
+
 void CBattleActionPacket::SetActionSourceId(uint32 actionSourceId)
 {
 	m_info.actionSourceId = actionSourceId;
@@ -54,6 +59,6 @@ void CBattleActionPacket::SetAttackSide(uint32 attackSide)
 PacketData CBattleActionPacket::ToPacketData() const
 {
 	auto result = CBasePacket::ToPacketData();
-	memcpy(result.data() + 0x20, &m_info, sizeof(BATTLE_ACTION_INFO));
+	memcpy(result.data() + PACKET_HEADER_SIZE, &m_info, sizeof(BATTLE_ACTION_INFO));
 	return result;
 }

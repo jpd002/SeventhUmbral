@@ -14,6 +14,11 @@ CCompositePacket::~CCompositePacket()
 
 }
 
+bool CCompositePacket::IsEmpty() const
+{
+	return m_contents.empty();
+}
+
 void CCompositePacket::AddPacket(const PacketData& packet)
 {
 	m_contents.insert(std::end(m_contents), std::begin(packet), std::end(packet));

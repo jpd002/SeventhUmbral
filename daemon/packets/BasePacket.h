@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
 #include "../PacketUtils.h"
+
+class CBasePacket;
+typedef std::shared_ptr<CBasePacket> PacketPtr;
 
 class CBasePacket
 {
@@ -12,6 +16,8 @@ public:
 
 							CBasePacket();
 	virtual					~CBasePacket();
+
+	virtual PacketPtr		Clone();
 
 	void					SetSourceId(uint32);
 	void					SetTargetId(uint32);

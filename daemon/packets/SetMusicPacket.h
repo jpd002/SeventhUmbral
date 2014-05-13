@@ -21,6 +21,8 @@ public:
 							CSetMusicPacket();
 	virtual					~CSetMusicPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	virtual PacketData		ToPacketData() const override;
 
 	void					SetMusicId(uint32);

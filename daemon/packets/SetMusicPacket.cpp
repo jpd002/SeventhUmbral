@@ -12,6 +12,11 @@ CSetMusicPacket::~CSetMusicPacket()
 
 }
 
+PacketPtr CSetMusicPacket::Clone()
+{
+	return std::make_shared<CSetMusicPacket>(*this);
+}
+
 void CSetMusicPacket::SetMusicId(uint32 musicId)
 {
 	m_musicId = musicId;

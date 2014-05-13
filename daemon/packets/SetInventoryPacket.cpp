@@ -13,6 +13,11 @@ CSetInventoryPacket::~CSetInventoryPacket()
 
 }
 
+PacketPtr CSetInventoryPacket::Clone()
+{
+	return std::make_shared<CSetInventoryPacket>(*this);
+}
+
 void CSetInventoryPacket::SetItemBase(unsigned int itemBase)
 {
 	m_itemBase = itemBase;

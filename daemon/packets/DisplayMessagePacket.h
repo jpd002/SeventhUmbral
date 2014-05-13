@@ -8,6 +8,8 @@ public:
 							CDisplayMessagePacket();
 	virtual					~CDisplayMessagePacket();
 
+	virtual PacketPtr		Clone() override;
+
 	void					SetMessage(const std::string&);
 
 	virtual PacketData		ToPacketData() const override;

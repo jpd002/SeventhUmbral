@@ -13,6 +13,9 @@
 #include "string_format.h"
 #include "GlobalData.h"
 
+#include "actors/PlayerActor.h"
+#include "actors/EnemyActor.h"
+
 #include "packets/SetInitialPositionPacket.h"
 #include "packets/SetWeatherPacket.h"
 #include "packets/SetMusicPacket.h"
@@ -46,7 +49,6 @@ CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 : m_clientSocket(clientSocket)
 , m_disconnect(false)
 , m_alreadyMovedOutOfRoom(false)
-, m_zoneMasterCreated(false)
 {
 	m_dbConnection = CDatabaseConnectionManager::GetInstance().CreateConnection();
 }
@@ -178,7 +180,7 @@ static PacketData GetInventoryInfo()
 	return outgoingPacket;
 }
 
-PacketData CGameServerPlayer::SpawnNpc(uint32 id, uint32 appearanceId, uint32 stringId, float x, float y, float z, float angle)
+void CGameServerPlayer::SpawnNpc(uint32 id, uint32 appearanceId, uint32 stringId, float x, float y, float z, float angle)
 {
 	PacketData outgoingPacket(std::begin(g_spawnNpc), std::end(g_spawnNpc));
 
@@ -213,12 +215,36 @@ PacketData CGameServerPlayer::SpawnNpc(uint32 id, uint32 appearanceId, uint32 st
 		packetIndex += subPacketSize;
 	}
 	assert(packetIndex == outgoingPacket.size());
-	return outgoingPacket;
+
+	{
+		auto enemyActor = std::make_unique<CEnemyActor>();
+		enemyActor->GlobalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
+		enemyActor->SetId(id);
+		enemyActor->SetHp(ENEMY_INITIAL_HP);
+		m_instance.AddActor(std::move(enemyActor));
+	}
+
+	QueuePacket(outgoingPacket);
+}
+
+void CGameServerPlayer::ResetInstance()
+{
+	auto playerActor = m_instance.RemoveActor(PLAYER_ID);
+	m_instance.ClearAllActors();
+	m_instance.AddActor(std::move(playerActor));
 }
 
 void CGameServerPlayer::QueuePacket(const PacketData& packet)
 {
 	m_packetQueue.push_back(packet);
+}
+
+void CGameServerPlayer::QueueToCurrentComposite(CActor* actor, const PacketPtr& srcPacket)
+{
+	auto packet = srcPacket->Clone();
+	packet->SetSourceId(actor->GetId());
+	packet->SetTargetId(PLAYER_ID);
+	m_currentComposite.AddPacket(packet->ToPacketData());
 }
 
 void CGameServerPlayer::Update()
@@ -263,6 +289,8 @@ void CGameServerPlayer::Update()
 			m_incomingStream.Write(incomingPacket, read);
 		}
 	}
+
+	assert(m_currentComposite.IsEmpty());
 
 	if(CPacketUtils::HasPacket(m_incomingStream))
 	{
@@ -310,62 +338,12 @@ void CGameServerPlayer::Update()
 		}
 	}
 
-	//Pseudo Simulation
-	if(m_isActiveMode && m_lockOnId != EMPTY_LOCKON_ID)
+	m_instance.Update();
+
+	if(!m_currentComposite.IsEmpty())
 	{
-		m_playerAutoAttackTimer--;
-		if(m_playerAutoAttackTimer < 0)
-		{
-			CCompositePacket outputPacket;
-
-			static const uint32 autoAttackDamage = 10;
-
-			{
-				CBattleActionPacket packet;
-				packet.SetSourceId(PLAYER_ID);
-				packet.SetTargetId(PLAYER_ID);
-				packet.SetActionSourceId(PLAYER_ID);
-				packet.SetActionTargetId(m_lockOnId);
-				packet.SetAnimationId(CBattleActionPacket::ANIMATION_PLAYER_ATTACK);
-				packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_PLAYER_ATTACK);
-				packet.SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
-				packet.SetDamage(autoAttackDamage);
-				packet.SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
-				packet.SetAttackSide(CBattleActionPacket::SIDE_FRONT);
-				outputPacket.AddPacket(packet.ToPacketData());
-			}
-
-			ProcessDamageToNpc(outputPacket, m_lockOnId, autoAttackDamage);
-
-			QueuePacket(outputPacket.ToPacketData());
-
-			m_playerAutoAttackTimer = PLAYER_AUTO_ATTACK_DELAY;
-		}
-
-		m_enemyAutoAttackTimer--;
-		if(m_enemyAutoAttackTimer < 0)
-		{
-			CCompositePacket outputPacket;
-
-			{
-				CBattleActionPacket packet;
-				packet.SetSourceId(m_lockOnId);
-				packet.SetTargetId(PLAYER_ID);
-				packet.SetActionSourceId(m_lockOnId);
-				packet.SetActionTargetId(PLAYER_ID);
-				packet.SetAnimationId(CBattleActionPacket::ANIMATION_ENEMY_ATTACK);
-				packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_ENEMY_ATTACK);
-				packet.SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
-				packet.SetDamage(0);
-				packet.SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
-				packet.SetAttackSide(CBattleActionPacket::SIDE_FRONT);
-				outputPacket.AddPacket(packet.ToPacketData());
-			}
-
-			QueuePacket(outputPacket.ToPacketData());
-
-			m_enemyAutoAttackTimer = ENEMY_AUTO_ATTACK_DELAY;
-		}
+		QueuePacket(m_currentComposite.ToPacketData());
+		m_currentComposite = CCompositePacket();
 	}
 }
 
@@ -383,6 +361,12 @@ void CGameServerPlayer::PrepareInitialPackets()
 	QueuePacket(PacketData(std::begin(g_client0_login12), std::end(g_client0_login12)));
 	QueuePacket(PacketData(std::begin(g_client0_login13), std::end(g_client0_login13)));
 	QueuePacket(PacketData(std::begin(g_client0_login14), std::end(g_client0_login14)));
+
+	ResetInstance();
+#if 0
+	//Test mob in room
+	SpawnNpc(1155006509, 10516, 3105901, 159.8f, 0, 156.4f, 0);
+#endif
 }
 
 void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const PacketData& subPacket)
@@ -396,6 +380,15 @@ void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const Pac
 
 	if(clientId == 1)
 	{
+		//Put player in instance
+		{
+			auto playerActor = std::make_unique<CPlayerActor>();
+			playerActor->SetId(PLAYER_ID);
+			playerActor->LocalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
+			playerActor->GlobalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
+			m_instance.AddActor(std::move(playerActor));
+		}
+
 		PrepareInitialPackets();
 	}
 	else if(clientId == 2)
@@ -521,7 +514,13 @@ void CGameServerPlayer::ProcessSetSelection(const PacketData& subPacket)
 
 	CLog::GetInstance().LogDebug(LOG_NAME, "Selected Id: 0x%0.8X, Lock On Id: 0x%0.8X", selectedId, lockOnId);
 
-	m_lockOnId = lockOnId;
+	auto playerActor = m_instance.GetActor<CPlayerActor>(PLAYER_ID);
+	if(playerActor == nullptr)
+	{
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to get player actor.");
+		return;
+	}
+	playerActor->SetSelection(lockOnId);
 }
 
 void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
@@ -532,6 +531,13 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	const char* commandName = reinterpret_cast<const char*>(subPacket.data()) + 0x31;
 
 	CLog::GetInstance().LogDebug(LOG_NAME, "ProcessScriptCommand: %s Source Id = 0x%0.8X, Target Id = 0x%0.8X.", commandName, sourceId, targetId);
+
+	auto playerActor = m_instance.GetActor<CPlayerActor>(PLAYER_ID);
+	if(playerActor == nullptr)
+	{
+		CLog::GetInstance().LogError(LOG_NAME, "Failed to get player actor.");
+		return;
+	}
 
 	if(!strcmp(commandName, "commandRequest"))
 	{
@@ -571,51 +577,11 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	}
 	else if(!strcmp(commandName, "commandForced"))
 	{
-		CCompositePacket packet;
-
-		switch(targetId)
-		{
-		case 0xA0F05209:
-			ScriptCommand_SwitchToActiveMode(packet);
-			break;
-		case 0xA0F0520A:
-			ScriptCommand_SwitchToPassiveMode(packet);
-			break;
-		default:
-			CLog::GetInstance().LogDebug(LOG_NAME, "Unknown commandForced target id (0x%0.8X).", targetId);
-			break;
-		}
-
-		packet.AddPacket(PacketData(std::begin(g_endCommandForcedPacket), std::end(g_endCommandForcedPacket)));
-		QueuePacket(packet.ToPacketData());
+		playerActor->ProcessCommandForced(targetId);
 	}
 	else if(!strcmp(commandName, "commandDefault"))
 	{
-		CCompositePacket packet;
-
-		static unsigned int descriptionId = 0x08106A30;
-
-		switch(targetId)
-		{
-		case 0xA0F06A36:	//Heavy Swing
-			ScriptCommand_BattleSkill(packet, CBattleActionPacket::ANIMATION_HEAVY_SWING, CBattleActionPacket::DESCRIPTION_HEAVY_SWING, 20);
-			break;
-		case 0xA0F06A37:	//Skull Sunder
-			ScriptCommand_BattleSkill(packet, CBattleActionPacket::ANIMATION_SKULL_SUNDER, CBattleActionPacket::DESCRIPTION_SKULL_SUNDER, 30);
-			break;
-		case 0xA0F06A39:	//Brutal Swing
-			ScriptCommand_BattleSkill(packet, CBattleActionPacket::ANIMATION_SAVAGE_BLADE, CBattleActionPacket::DESCRIPTION_BRUTAL_SWING, 40);
-			break;
-		case 0xA0F06A3E:	//Fracture
-			ScriptCommand_BattleSkill(packet, CBattleActionPacket::ANIMATION_FRACTURE, CBattleActionPacket::DESCRIPTION_FRACTURE, 50);
-			break;
-		default:
-			CLog::GetInstance().LogDebug(LOG_NAME, "Unknown commandDefault target id (0x%0.8X).", targetId);
-			break;
-		}
-
-		packet.AddPacket(PacketData(std::begin(g_endCommandDefaultPacket), std::end(g_endCommandDefaultPacket)));
-		QueuePacket(packet.ToPacketData());
+		playerActor->ProcessCommandDefault(targetId);
 	}
 	else if(!strcmp(commandName, "talkDefault"))
 	{
@@ -778,134 +744,6 @@ void CGameServerPlayer::ScriptCommand_TrashItem(const PacketData& subPacket, uin
 	CLog::GetInstance().LogDebug(LOG_NAME, "Trashing Item: 0x%0.8X", itemId);
 }
 
-void CGameServerPlayer::ScriptCommand_SwitchToActiveMode(CCompositePacket& outputPacket)
-{
-	{
-		CSetActorStatePacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetState(CSetActorStatePacket::STATE_ACTIVE);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	{
-		CSetActorPropertyPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.AddSetShort(CSetActorPropertyPacket::VALUE_TP, 3000);
-		packet.AddTargetProperty("charaWork/stateAtQuicklyForAll");
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	{
-		CBattleActionPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetActionSourceId(PLAYER_ID);
-		packet.SetActionTargetId(PLAYER_ID);
-		packet.SetAnimationId(CBattleActionPacket::ANIMATION_SHEATH_UNSHEATH);
-		packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_ENTER_BATTLE);
-		packet.SetFeedbackId(1);
-		packet.SetAttackSide(CBattleActionPacket::SIDE_NORMAL);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	{
-		CSetMusicPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetMusicId(CSetMusicPacket::MUSIC_BLACKSHROUD_BATTLE);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	m_isActiveMode = true;
-	m_playerAutoAttackTimer = PLAYER_AUTO_ATTACK_DELAY;
-	m_enemyAutoAttackTimer = ENEMY_AUTO_ATTACK_DELAY;
-}
-
-void CGameServerPlayer::ScriptCommand_SwitchToPassiveMode(CCompositePacket& outputPacket)
-{
-	{
-		CSetActorStatePacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetState(CSetActorStatePacket::STATE_PASSIVE);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	{
-		CBattleActionPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetActionSourceId(PLAYER_ID);
-		packet.SetActionTargetId(PLAYER_ID);
-		packet.SetAnimationId(CBattleActionPacket::ANIMATION_SHEATH_UNSHEATH);
-		packet.SetDescriptionId(CBattleActionPacket::DESCRIPTION_LEAVE_BATTLE);
-		packet.SetFeedbackId(1);
-		packet.SetAttackSide(CBattleActionPacket::SIDE_NORMAL);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	{
-		CSetMusicPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetMusicId(CSetMusicPacket::MUSIC_SHROUD);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	m_isActiveMode = false;
-}
-
-void CGameServerPlayer::ScriptCommand_BattleSkill(CCompositePacket& outputPacket, uint32 animationId, uint32 descriptionId, uint32 damage)
-{
-	{
-		CBattleActionPacket packet;
-		packet.SetSourceId(PLAYER_ID);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetActionSourceId(PLAYER_ID);
-		packet.SetActionTargetId(m_lockOnId);
-		packet.SetAnimationId(animationId);
-		packet.SetDescriptionId(descriptionId);
-		packet.SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
-		packet.SetDamage(damage);
-		packet.SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
-		packet.SetAttackSide(CBattleActionPacket::SIDE_FRONT);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	ProcessDamageToNpc(outputPacket, m_lockOnId, damage);
-
-	//Reset auto attack timer
-	m_playerAutoAttackTimer = PLAYER_AUTO_ATTACK_DELAY;
-}
-
-void CGameServerPlayer::ProcessDamageToNpc(CCompositePacket& outputPacket, uint32 npcId, uint32 damage)
-{
-	auto npcHpIterator = m_npcHp.find(npcId);
-	if(npcHpIterator == std::end(m_npcHp)) return;
-
-	npcHpIterator->second = std::max<int32>(0, npcHpIterator->second - damage);
-
-	{
-		CSetActorPropertyPacket packet;
-		packet.SetSourceId(npcId);
-		packet.SetTargetId(PLAYER_ID);
-		packet.AddSetShort(CSetActorPropertyPacket::VALUE_HP, npcHpIterator->second);
-		packet.AddTargetProperty("charaWork/stateAtQuicklyForAll");
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-
-	if(npcHpIterator->second == 0)
-	{
-		CSetActorStatePacket packet;
-		packet.SetSourceId(m_lockOnId);
-		packet.SetTargetId(PLAYER_ID);
-		packet.SetState(CSetActorStatePacket::STATE_DEAD);
-		outputPacket.AddPacket(packet.ToPacketData());
-	}
-}
-
 void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)
 {
 	uint32 someId1 = *reinterpret_cast<const uint32*>(&subPacket[0x2C]);
@@ -1032,16 +870,15 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 
 	//	QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
 
-		m_npcHp.clear();
+		ResetInstance();
 		//Only makes sense in Black Shroud for now
 		if(levelId == CSetMapPacket::MAP_BLACKSHROUD)
 		{
 			const auto& actorDatabase = CGlobalData::GetInstance().GetActorDatabase();
 			for(const auto& actorInfo : actorDatabase.GetActors())
 			{
-				QueuePacket(PacketData(SpawnNpc(actorInfo.id, actorInfo.baseModelId, actorInfo.nameStringId, 
-					std::get<0>(actorInfo.pos), std::get<1>(actorInfo.pos), std::get<2>(actorInfo.pos), 0)));
-				m_npcHp.insert(std::make_pair(actorInfo.id, ENEMY_INITIAL_HP));
+				SpawnNpc(actorInfo.id, actorInfo.baseModelId, actorInfo.nameStringId, 
+					std::get<0>(actorInfo.pos), std::get<1>(actorInfo.pos), std::get<2>(actorInfo.pos), 0);
 			}
 		}
 

@@ -12,6 +12,11 @@ CSetWeatherPacket::~CSetWeatherPacket()
 
 }
 
+PacketPtr CSetWeatherPacket::Clone()
+{
+	return std::make_shared<CSetWeatherPacket>(*this);
+}
+
 void CSetWeatherPacket::SetWeatherId(uint32 weatherId)
 {
 	m_weatherId = weatherId;

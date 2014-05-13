@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Packets">
       <UniqueIdentifier>{397c7450-e7d2-4175-b126-2c665541cb86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Actors">
+      <UniqueIdentifier>{47025df6-7b1c-4168-ac5e-6c5785cd137f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\daemon\Main.cpp">
@@ -92,6 +95,21 @@
     </ClCompile>
     <ClCompile Include="..\daemon\GlobalData.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\actors\PlayerActor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\actors\Actor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\Instance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\actors\EnemyActor.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="..\daemon\packets\FinishScriptPacket.cpp">
+      <Filter>Source Files\Packets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +199,21 @@
     </ClInclude>
     <ClInclude Include="..\daemon\GlobalData.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\actors\PlayerActor.h">
+      <Filter>Source Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\actors\Actor.h">
+      <Filter>Source Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\Instance.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\actors\EnemyActor.h">
+      <Filter>Source Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\packets\FinishScriptPacket.h">
+      <Filter>Source Files\Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

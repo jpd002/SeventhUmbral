@@ -30,6 +30,8 @@ public:
 							CSetWeatherPacket();
 	virtual					~CSetWeatherPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	virtual PacketData		ToPacketData() const override;
 
 	void					SetWeatherId(uint32);

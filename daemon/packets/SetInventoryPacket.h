@@ -8,6 +8,8 @@ public:
 							CSetInventoryPacket();
 	virtual					~CSetInventoryPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	void					SetItemBase(unsigned int);
 	void					SetItemCount(unsigned int);
 

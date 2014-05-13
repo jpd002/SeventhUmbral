@@ -18,8 +18,14 @@ public:
 		MAP_SMALLBOAT		= 0x71,
 	};
 
+	//108 - Tropical island?
+	//207 - Some kind of dungeon?
+	//208 - Some kind of tent?
+
 							CSetMapPacket();
 	virtual					~CSetMapPacket();
+
+	virtual PacketPtr		Clone() override;
 
 	virtual PacketData		ToPacketData() const override;
 

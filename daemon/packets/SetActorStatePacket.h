@@ -15,6 +15,8 @@ public:
 							CSetActorStatePacket();
 	virtual					~CSetActorStatePacket();
 
+	virtual PacketPtr		Clone() override;
+
 	void					SetState(uint32);
 
 	virtual PacketData		ToPacketData() const override;

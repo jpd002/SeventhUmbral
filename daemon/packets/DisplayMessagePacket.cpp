@@ -11,6 +11,11 @@ CDisplayMessagePacket::~CDisplayMessagePacket()
 
 }
 
+PacketPtr CDisplayMessagePacket::Clone()
+{
+	return std::make_shared<CDisplayMessagePacket>(*this);
+}
+
 void CDisplayMessagePacket::SetMessage(const std::string& message)
 {
 	m_message = message;

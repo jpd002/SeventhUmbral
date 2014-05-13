@@ -14,6 +14,11 @@ CSetActorPropertyPacket::~CSetActorPropertyPacket()
 
 }
 
+PacketPtr CSetActorPropertyPacket::Clone()
+{
+	return std::make_shared<CSetActorPropertyPacket>(*this);
+}
+
 void CSetActorPropertyPacket::AddSetShort(uint32 valueId, uint16 value)
 {
 	m_modificationStream.Write8(0x02);

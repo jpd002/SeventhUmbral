@@ -8,6 +8,8 @@ public:
 							CSetInitialPositionPacket();
 	virtual					~CSetInitialPositionPacket();
 
+	virtual PacketPtr		Clone() override;
+
 	virtual PacketData		ToPacketData() const override;
 
 	void					SetX(float);

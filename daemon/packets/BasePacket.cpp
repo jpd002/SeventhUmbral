@@ -15,6 +15,11 @@ CBasePacket::~CBasePacket()
 
 }
 
+PacketPtr CBasePacket::Clone()
+{
+	return std::make_shared<CBasePacket>(*this);
+}
+
 void CBasePacket::SetSourceId(uint32 sourceId)
 {
 	m_sourceId = sourceId;
@@ -28,6 +33,8 @@ void CBasePacket::SetTargetId(uint32 targetId)
 PacketData CBasePacket::ToPacketData() const
 {
 	assert(m_packetSize >= PACKET_HEADER_SIZE);
+	assert(m_sourceId != 0);
+	assert(m_targetId != 0);
 
 	PacketData result;
 //	result.resize(m_packetSize + 0x10);
