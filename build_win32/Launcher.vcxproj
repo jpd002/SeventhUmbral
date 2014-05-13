@@ -63,9 +63,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>$(ProjectDir)../Launcher/manifest.xml</AdditionalManifestFiles>
-    </Manifest>
+    <Manifest />
     <PostBuildEvent />
     <PostBuildEvent>
       <Message>
@@ -88,9 +86,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>$(ProjectDir)../Launcher/manifest.xml</AdditionalManifestFiles>
-    </Manifest>
+    <Manifest />
     <PostBuildEvent />
     <PostBuildEvent>
       <Message>

@@ -16,5 +16,8 @@ copy $(TDEMU_PATH)\TDEmu.dll $(OutputPath)</Command>
     <ClCompile>
       <AdditionalIncludeDirectories>$(TDEMU_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)../Launcher/manifest.xml</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
 </Project>
