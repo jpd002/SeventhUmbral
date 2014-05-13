@@ -11,7 +11,7 @@ CSetActorStatePacket::~CSetActorStatePacket()
 
 }
 
-PacketPtr CSetActorStatePacket::Clone()
+PacketPtr CSetActorStatePacket::Clone() const
 {
 	return std::make_shared<CSetActorStatePacket>(*this);
 }

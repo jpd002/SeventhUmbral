@@ -11,7 +11,7 @@ CDisplayMessagePacket::~CDisplayMessagePacket()
 
 }
 
-PacketPtr CDisplayMessagePacket::Clone()
+PacketPtr CDisplayMessagePacket::Clone() const
 {
 	return std::make_shared<CDisplayMessagePacket>(*this);
 }

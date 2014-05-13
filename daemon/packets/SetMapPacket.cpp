@@ -12,7 +12,7 @@ CSetMapPacket::~CSetMapPacket()
 
 }
 
-PacketPtr CSetMapPacket::Clone()
+PacketPtr CSetMapPacket::Clone() const
 {
 	return std::make_shared<CSetMapPacket>(*this);
 }

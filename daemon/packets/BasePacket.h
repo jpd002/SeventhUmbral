@@ -17,7 +17,7 @@ public:
 							CBasePacket();
 	virtual					~CBasePacket();
 
-	virtual PacketPtr		Clone();
+	virtual PacketPtr		Clone() const;
 
 	void					SetSourceId(uint32);
 	void					SetTargetId(uint32);

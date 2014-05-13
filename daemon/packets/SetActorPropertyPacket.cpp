@@ -14,7 +14,7 @@ CSetActorPropertyPacket::~CSetActorPropertyPacket()
 
 }
 
-PacketPtr CSetActorPropertyPacket::Clone()
+PacketPtr CSetActorPropertyPacket::Clone() const
 {
 	return std::make_shared<CSetActorPropertyPacket>(*this);
 }

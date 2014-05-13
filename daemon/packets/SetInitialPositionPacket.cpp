@@ -15,7 +15,7 @@ CSetInitialPositionPacket::~CSetInitialPositionPacket()
 
 }
 
-PacketPtr CSetInitialPositionPacket::Clone()
+PacketPtr CSetInitialPositionPacket::Clone() const
 {
 	return std::make_shared<CSetInitialPositionPacket>(*this);
 }

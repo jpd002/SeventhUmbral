@@ -15,7 +15,7 @@ CBasePacket::~CBasePacket()
 
 }
 
-PacketPtr CBasePacket::Clone()
+PacketPtr CBasePacket::Clone() const
 {
 	return std::make_shared<CBasePacket>(*this);
 }

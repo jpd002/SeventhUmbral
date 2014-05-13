@@ -11,7 +11,7 @@ CFinishScriptPacket::~CFinishScriptPacket()
 
 }
 
-PacketPtr CFinishScriptPacket::Clone()
+PacketPtr CFinishScriptPacket::Clone() const
 {
 	return std::make_shared<CFinishScriptPacket>(*this);
 }

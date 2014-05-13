@@ -12,7 +12,7 @@ CSetMusicPacket::~CSetMusicPacket()
 
 }
 
-PacketPtr CSetMusicPacket::Clone()
+PacketPtr CSetMusicPacket::Clone() const
 {
 	return std::make_shared<CSetMusicPacket>(*this);
 }

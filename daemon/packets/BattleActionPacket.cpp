@@ -11,7 +11,7 @@ CBattleActionPacket::~CBattleActionPacket()
 
 }
 
-PacketPtr CBattleActionPacket::Clone()
+PacketPtr CBattleActionPacket::Clone() const
 {
 	return std::make_shared<CBattleActionPacket>(*this);
 }

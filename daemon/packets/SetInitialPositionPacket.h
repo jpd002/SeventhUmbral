@@ -8,7 +8,7 @@ public:
 							CSetInitialPositionPacket();
 	virtual					~CSetInitialPositionPacket();
 
-	virtual PacketPtr		Clone() override;
+	virtual PacketPtr		Clone() const override;
 
 	virtual PacketData		ToPacketData() const override;
 

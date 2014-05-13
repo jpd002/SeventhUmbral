@@ -8,7 +8,7 @@ public:
 							CDisplayMessagePacket();
 	virtual					~CDisplayMessagePacket();
 
-	virtual PacketPtr		Clone() override;
+	virtual PacketPtr		Clone() const override;
 
 	void					SetMessage(const std::string&);
 

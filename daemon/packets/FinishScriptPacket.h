@@ -8,7 +8,7 @@ public:
 							CFinishScriptPacket();
 	virtual					~CFinishScriptPacket();
 
-	virtual PacketPtr		Clone() override;
+	virtual PacketPtr		Clone() const override;
 
 	void					SetScriptSourceId(uint32);
 	void					SetScriptName(const std::string&);

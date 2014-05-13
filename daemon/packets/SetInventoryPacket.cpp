@@ -13,7 +13,7 @@ CSetInventoryPacket::~CSetInventoryPacket()
 
 }
 
-PacketPtr CSetInventoryPacket::Clone()
+PacketPtr CSetInventoryPacket::Clone() const
 {
 	return std::make_shared<CSetInventoryPacket>(*this);
 }

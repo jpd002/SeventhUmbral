@@ -25,7 +25,7 @@ public:
 							CSetMapPacket();
 	virtual					~CSetMapPacket();
 
-	virtual PacketPtr		Clone() override;
+	virtual PacketPtr		Clone() const override;
 
 	virtual PacketData		ToPacketData() const override;
 

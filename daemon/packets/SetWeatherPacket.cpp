@@ -12,7 +12,7 @@ CSetWeatherPacket::~CSetWeatherPacket()
 
 }
 
-PacketPtr CSetWeatherPacket::Clone()
+PacketPtr CSetWeatherPacket::Clone() const
 {
 	return std::make_shared<CSetWeatherPacket>(*this);
 }
