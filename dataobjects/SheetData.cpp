@@ -3,20 +3,21 @@
 #include <stdexcept>
 #include "SheetData.h"
 
-CSheetData::CSheetData()
-{
-}
-
 CSheetData::~CSheetData()
 {
 
 }
 
-CSheetData CSheetData::Create(const CSheet& sheet, const FileProvider& fileProvider)
+CSheetData CSheetData::Create(const CSheet& sheet, unsigned int subSheetIndex, const FileProvider& fileProvider)
 {
 	CSheetData sheetData;
-	sheetData.Read(sheet, fileProvider);
+	sheetData.Read(sheet, subSheetIndex, fileProvider);
 	return std::move(sheetData);
+}
+
+const CSheetData::RowMap& CSheetData::GetRows() const
+{
+	return m_rows;
 }
 
 const CSheetData::Row& CSheetData::GetRow(uint32 rowId) const
@@ -26,9 +27,9 @@ const CSheetData::Row& CSheetData::GetRow(uint32 rowId) const
 	return rowIterator->second;
 }
 
-void CSheetData::Read(const CSheet& sheet, const FileProvider& fileProvider)
+void CSheetData::Read(const CSheet& sheet, unsigned int subSheetIndex, const FileProvider& fileProvider)
 {
-	auto subSheet = sheet.GetSubSheets()[0];
+	auto subSheet = sheet.GetSubSheets()[subSheetIndex];
 	const auto& typeParams = subSheet.typeParams;
 	for(const auto& block : subSheet.blocks)
 	{

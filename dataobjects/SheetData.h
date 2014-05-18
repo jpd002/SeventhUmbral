@@ -18,6 +18,7 @@ public:
 			uint32 val32 = 0;
 			uint16 val16;
 			uint8 val8;
+			float valFloat;
 		};
 	};
 
@@ -25,15 +26,16 @@ public:
 	typedef std::vector<CELL> Row;
 	typedef std::map<uint32, Row> RowMap;
 
-							CSheetData();
+							CSheetData() = default;
 	virtual					~CSheetData();
 
-	static CSheetData		Create(const CSheet&, const FileProvider&);
+	static CSheetData		Create(const CSheet&, unsigned int, const FileProvider&);
 
+	const RowMap&			GetRows() const;
 	const Row&				GetRow(uint32) const;
 
 private:
-	void					Read(const CSheet&, const FileProvider&);
+	void					Read(const CSheet&, unsigned int, const FileProvider&);
 	Row						ReadRow(const CSheet::TypeParamArray&, Framework::CStream&);
 
 	RowMap					m_rows;
