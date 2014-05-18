@@ -56,6 +56,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Manifest />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -78,12 +79,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\SheetColumnsDefinition.cpp" />
+    <ClCompile Include="Source\SheetViewer.cpp" />
+    <ClCompile Include="Source\SheetViewerDataPane.cpp" />
+    <ClCompile Include="Source\SheetViewerSchemaPane.cpp" />
     <ClCompile Include="Source\TouchFreeCamera.cpp" />
     <ClCompile Include="Source\WorldEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ActorDatabase.h" />
     <ClInclude Include="Source\Pch.h" />
+    <ClInclude Include="Source\resource.h" />
+    <ClInclude Include="Source\SheetColumnsDefinition.h" />
+    <ClInclude Include="Source\SheetViewer.h" />
+    <ClInclude Include="Source\SheetViewerDataPane.h" />
+    <ClInclude Include="Source\SheetViewerSchemaPane.h" />
     <ClInclude Include="Source\TouchFreeCamera.h" />
     <ClInclude Include="Source\WorldEditor.h" />
   </ItemGroup>
@@ -103,6 +113,12 @@
     <ProjectReference Include="..\..\build_win32\RenderObjects.vcxproj">
       <Project>{5ed74ef0-bd48-4424-b76e-87ce618cc31b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Source\Res.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Source\manifest.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

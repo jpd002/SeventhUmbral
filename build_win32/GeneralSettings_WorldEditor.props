@@ -8,7 +8,7 @@
     <Link />
     <PostBuildEvent />
     <Link>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -16,5 +16,8 @@
       <PrecompiledHeaderFile>$(ProjectDir)\Source\Pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>$(ProjectDir)\Source\Pch.h</ForcedIncludeFiles>
     </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)\Source\manifest.xml</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
 </Project>

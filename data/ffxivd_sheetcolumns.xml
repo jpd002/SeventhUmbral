@@ -1,0 +1,37 @@
+<Sheets>
+	<!-- Column Index 0 is always ID -->
+	
+	<Sheet Name="_item">
+		<Column Index="2" Name="MaxStock" />
+	</Sheet>
+	<Sheet Name="2Dmap_piece">
+		<Column Index="1" Name="Folder ID" />
+		<Column Index="5" Name="Width" />
+		<Column Index="6" Name="Height" />
+	</Sheet>
+	<Sheet Name="2Dmap_data">
+		<Column Index="13" Name="Place ID 1" />
+		<Column Index="14" Name="Place ID 2" />
+		<Column Index="15" Name="Place ID 3" />
+	</Sheet>
+	<Sheet Name="armor">
+		<Column Index="1" Name="Defense" />
+	</Sheet>
+	<Sheet Name="aetheryte">
+		<Column Index="1" Name="Place ID" />
+	</Sheet>
+	<Sheet Name="aetheryte_2Dmap">
+		<Column Index="1" Name="Map Navi ID" />
+	</Sheet>
+	<Sheet Name="itemData">
+		<Column Index="1" Name="Condition" />
+		<Column Index="11" Name="Optimal Level" />
+		<Column Index="20" Name="Repair Class ID" />
+		<Column Index="21" Name="Repair Material ID" />
+		<Column Index="23" Name="Repair Level" />
+	</Sheet>
+	<Sheet Name="mapNavi_data">
+		<Column Index="7" Name="2D Map ID" />
+		<Column Index="14" Name="Place ID" /> 
+	</Sheet>
+</Sheets>
