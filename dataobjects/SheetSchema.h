@@ -19,6 +19,7 @@ public:
 		FILE_ID	= 0x01030000
 	};
 
+							CSheetSchema() = default;
 							CSheetSchema(Framework::CStream&);
 	virtual					~CSheetSchema();
 
