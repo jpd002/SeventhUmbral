@@ -34,4 +34,39 @@
 		"weapon1": 294652958,
 		"weapon2": 0,
 	},
+	7: {
+		"name": "Ifrit's Battleaxe",
+		"weapon1": 147857408,
+		"weapon2": 0,
+	},
+	8: {
+		"name": "Ifrit's Bow",
+		"weapon1": 210768896,
+		"weapon2": 0,
+	},
+	9: {
+		"name": "Ifrit's Claws",
+		"weapon1": 62915584,
+		"weapon2": 63964160,
+	},
+	10: {
+		"name": "Ifrit's Harpoon",
+		"weapon1": 175113216,
+		"weapon2": 0,
+	},
+	11: {
+		"name": "Ifrit's Blade",
+		"weapon1": 81789952,
+		"weapon2": 0,
+	},
+	12: {
+		"name": "Ifrit's Cane",
+		"weapon1": 347086848,
+		"weapon2": 0,
+	},
+	13: {
+		"name": "Ifrit's Cudgel",
+		"weapon1": 294653952,
+		"weapon2": 0,
+	},
 };
