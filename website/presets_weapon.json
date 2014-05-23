@@ -69,4 +69,39 @@
 		"weapon1": 294653952,
 		"weapon2": 0,
 	},
+	14: {
+		"name": "Bravura",
+		"weapon1": 147856384,
+		"weapon2": 0,
+	},
+	15: {
+		"name": "Artemis Bow",
+		"weapon1": 212861952,
+		"weapon2": 0,
+	},
+	16: {
+		"name": "Sphairai",
+		"weapon1": 65012736,
+		"weapon2": 66061312,
+	},
+	17: {
+		"name": "Gae Bolg",
+		"weapon1": 173016064,
+		"weapon2": 0,
+	},
+	18: {
+		"name": "Curtana & Holy Shield",
+		"weapon1": 79702016,
+		"weapon2": 32517120,
+	},
+	19: {
+		"name": "Thyrus",
+		"weapon1": 347084800,
+		"weapon2": 0,
+	},
+	20: {
+		"name": "Stardust Rod",
+		"weapon1": 310380544,
+		"weapon2": 0,
+	},
 };
