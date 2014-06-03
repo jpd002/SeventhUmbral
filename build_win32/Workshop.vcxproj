@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{484391EC-D6E2-4741-A8F5-FE9C7BE2BF47}</ProjectGuid>
+    <ProjectGuid>{6F531B4F-FA01-4B4C-9730-5561B9E94E1B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>WorldEditor</RootNamespace>
+    <RootNamespace>Workshop</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -25,8 +25,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -34,11 +34,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\build_win32\GeneralSettings_WorldEditor.props" />
+    <Import Project="GeneralSettings_Workshop.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\build_win32\GeneralSettings_WorldEditor.props" />
+    <Import Project="GeneralSettings_Workshop.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -49,22 +49,33 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>Pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Manifest />
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+    <Manifest />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>Pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -72,38 +83,53 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <Manifest />
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ActorDatabase.cpp" />
-    <ClCompile Include="Source\Pch.cpp">
+    <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
+      <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Palleon\build_win32\PalleonEmbedClient.vcxproj">
+      <Project>{96467766-1448-43e2-9828-f05557cfc80e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
+      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
+    </ProjectReference>
+    <ProjectReference Include="DataObjects.vcxproj">
+      <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\workshop\AppearanceViewer.cpp" />
+    <ClCompile Include="..\workshop\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\TouchFreeCamera.cpp" />
-    <ClCompile Include="Source\WorldEditor.cpp" />
+    <ClCompile Include="..\workshop\SheetColumnsDefinition.cpp" />
+    <ClCompile Include="..\workshop\SheetViewer.cpp" />
+    <ClCompile Include="..\workshop\SheetViewerDataPane.cpp" />
+    <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp" />
+    <ClCompile Include="..\workshop\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\ActorDatabase.h" />
-    <ClInclude Include="Source\Pch.h" />
-    <ClInclude Include="Source\TouchFreeCamera.h" />
-    <ClInclude Include="Source\WorldEditor.h" />
+    <ClInclude Include="..\workshop\AppearanceViewer.h" />
+    <ClInclude Include="..\workshop\Pch.h" />
+    <ClInclude Include="..\workshop\resource.h" />
+    <ClInclude Include="..\workshop\SheetColumnsDefinition.h" />
+    <ClInclude Include="..\workshop\SheetViewer.h" />
+    <ClInclude Include="..\workshop\SheetViewerDataPane.h" />
+    <ClInclude Include="..\workshop\SheetViewerSchemaPane.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Framework\build_win32\Framework.vcxproj">
-      <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Palleon\build_win32\Palleon.vcxproj">
-      <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
-      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build_win32\DataObjects.vcxproj">
-      <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build_win32\RenderObjects.vcxproj">
-      <Project>{5ed74ef0-bd48-4424-b76e-87ce618cc31b}</Project>
-    </ProjectReference>
+    <ResourceCompile Include="..\workshop\Res.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="..\workshop\Workshop.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

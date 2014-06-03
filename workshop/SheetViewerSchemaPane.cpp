@@ -1,6 +1,6 @@
 #include "SheetViewerSchemaPane.h"
 #include "resource.h"
-#include "../../../renderobjects/FileManager.h"
+#include "../dataobjects/FileManager.h"
 #include "string_cast.h"
 #include "StdStreamUtils.h"
 
@@ -17,7 +17,7 @@ CSheetViewerSchemaPane::CSheetViewerSchemaPane(HWND parentWnd)
 		LVCOLUMN col = {};
 		col.pszText = _T("Name");
 		col.mask = LVCF_TEXT | LVCF_WIDTH;
-		col.cx = m_schemaListView.GetClientRect().right;
+		col.cx = m_schemaListView.GetClientRect().Right();
 		m_schemaListView.InsertColumn(0, col);
 	}
 

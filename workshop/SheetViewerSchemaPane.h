@@ -2,7 +2,7 @@
 
 #include "win32/Dialog.h"
 #include "win32/ListView.h"
-#include "../../../dataobjects/ResourceDefs.h"
+#include "../dataobjects/ResourceDefs.h"
 
 class CSheetViewerSchemaPane : public Framework::Win32::CDialog
 {

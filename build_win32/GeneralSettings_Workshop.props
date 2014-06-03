@@ -7,15 +7,15 @@
     <ClCompile />
     <Link />
     <PostBuildEvent />
+    <ClCompile />
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)\..\workshop\Workshop.manifest</AdditionalManifestFiles>
+    </Manifest>
     <Link>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)\Source\Pch.h</PrecompiledHeaderFile>
-      <ForcedIncludeFiles>$(ProjectDir)\Source\Pch.h</ForcedIncludeFiles>
     </ClCompile>
-    <Manifest />
   </ItemDefinitionGroup>
 </Project>
