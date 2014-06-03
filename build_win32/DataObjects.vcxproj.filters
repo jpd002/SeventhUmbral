@@ -123,6 +123,9 @@
     <ClCompile Include="..\dataobjects\SheetData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dataobjects\FileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dataobjects\sections\BaseSection.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="..\dataobjects\SheetData.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\FileManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

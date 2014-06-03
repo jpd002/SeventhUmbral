@@ -1,5 +1,5 @@
 #include "ResourceManager.h"
-#include "FileManager.h"
+#include "../dataobjects/FileManager.h"
 #include "StdStreamUtils.h"
 
 void CResourceManager::LoadResource(uint32 resourceId, const std::string& resourceName)

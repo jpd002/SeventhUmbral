@@ -17,7 +17,6 @@
     <ClCompile Include="..\renderobjects\Dx11UmbralEffect.cpp" />
     <ClCompile Include="..\renderobjects\Dx11UmbralEffectGenerator.cpp" />
     <ClCompile Include="..\renderobjects\Dx11UmbralEffectProvider.cpp" />
-    <ClCompile Include="..\renderobjects\FileManager.cpp" />
     <ClCompile Include="..\renderobjects\GlobalResources.cpp" />
     <ClCompile Include="..\renderobjects\ResourceManager.cpp" />
     <ClCompile Include="..\renderobjects\UmbralActor.cpp" />
@@ -33,7 +32,6 @@
     <ClInclude Include="..\renderobjects\Dx11UmbralEffect.h" />
     <ClInclude Include="..\renderobjects\Dx11UmbralEffectGenerator.h" />
     <ClInclude Include="..\renderobjects\Dx11UmbralEffectProvider.h" />
-    <ClInclude Include="..\renderobjects\FileManager.h" />
     <ClInclude Include="..\renderobjects\GlobalResources.h" />
     <ClInclude Include="..\renderobjects\ResourceManager.h" />
     <ClInclude Include="..\renderobjects\UmbralActor.h" />

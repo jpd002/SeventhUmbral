@@ -3,7 +3,8 @@
 
 boost::filesystem::path CFileManager::GetGamePath()
 {
-	boost::filesystem::path gamePath = "F:\\Games\\SquareEnix\\FINAL FANTASY XIV";
+//	boost::filesystem::path gamePath = "F:\\Games\\SquareEnix\\FINAL FANTASY XIV";
+	boost::filesystem::path gamePath = "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV";
 	return gamePath;
 }
 

@@ -33,9 +33,6 @@
     <ClCompile Include="..\renderobjects\Dx11UmbralEffectProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\renderobjects\FileManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\renderobjects\GlobalResources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\renderobjects\Dx11UmbralEffectProvider.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\renderobjects\FileManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\renderobjects\GlobalResources.h">
