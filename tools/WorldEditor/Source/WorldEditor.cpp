@@ -1,7 +1,7 @@
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
-#include "../../../renderobjects/FileManager.h"
+#include "../../../dataobjects/FileManager.h"
 #include "../../../renderobjects/ResourceManager.h"
 #include "../../../renderobjects/GlobalResources.h"
 #include "../../../renderobjects/UmbralActor.h"
