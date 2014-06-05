@@ -8,6 +8,8 @@ public:
 					CUmbralActor();
 	virtual			~CUmbralActor();
 
+	const CSphere&	GetBoundingSphere() const;
+
 	void			SetBaseModelId(uint32);
 
 private:
@@ -15,4 +17,6 @@ private:
 
 	uint32			m_baseModelId = 0;
 	uint32			m_topModelId = 0x400;
+
+	CSphere			m_boundingSphere;
 };

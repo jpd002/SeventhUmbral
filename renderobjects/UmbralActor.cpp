@@ -14,6 +14,11 @@ CUmbralActor::~CUmbralActor()
 
 }
 
+const CSphere& CUmbralActor::GetBoundingSphere() const
+{
+	return m_boundingSphere;
+}
+
 void CUmbralActor::SetBaseModelId(uint32 baseModelId)
 {
 	m_baseModelId = baseModelId;
@@ -70,6 +75,11 @@ void CUmbralActor::RebuildActorRenderables()
 	model->SetPosition(modelPos);
 	model->SetScale(modelSize);
 	AppendChild(model);
+
+	auto modelBoundingSphere = model->GetBoundingSphere();
+	modelBoundingSphere.radius *= std::max(std::max(modelSize.x, modelSize.y), modelSize.z);
+	modelBoundingSphere.position += modelPos;
+	m_boundingSphere = modelBoundingSphere;
 
 	{
 		Framework::CStdStream inputStream(texturePath.c_str(), "rb");

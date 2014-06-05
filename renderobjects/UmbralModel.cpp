@@ -18,12 +18,19 @@ CUmbralModel::CUmbralModel(const ModelChunkPtr& modelChunk)
 
 		auto mesh = std::make_shared<CUmbralMesh>(meshNode, shaderSection);
 		AppendChild(mesh);
+
+		m_boundingSphere = m_boundingSphere.Accumulate(mesh->GetBoundingSphere());
 	}
 }
 
 CUmbralModel::~CUmbralModel()
 {
 
+}
+
+const CSphere& CUmbralModel::GetBoundingSphere() const
+{
+	return m_boundingSphere;
 }
 
 void CUmbralModel::SetLocalTexture(const ResourceNodePtr& texture)
