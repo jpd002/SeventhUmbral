@@ -80,12 +80,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\actorviewer\TouchFreeCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\actorviewer\ActorViewer.h" />
     <ClInclude Include="..\actorviewer\Pch.h" />
-    <ClInclude Include="..\actorviewer\TouchFreeCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">

@@ -29,6 +29,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ActorViewer", "ActorViewer.vcxproj", "{7929E8F5-25F9-4D67-B528-8DE364A983E4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Workshop", "Workshop.vcxproj", "{6F531B4F-FA01-4B4C-9730-5561B9E94E1B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7929E8F5-25F9-4D67-B528-8DE364A983E4} = {7929E8F5-25F9-4D67-B528-8DE364A983E4}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{874EFBC0-3D03-4459-8052-37869643DDC1}"
 EndProject

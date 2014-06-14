@@ -1,29 +1,38 @@
+#include <algorithm>
+#include <boost/lexical_cast.hpp>
 #include "ActorViewer.h"
 #include "string_format.h"
-#include "../renderobjects/UmbralActor.h"
 #include "../renderobjects/GlobalResources.h"
+#include "../dataobjects/FileManager.h"
 
-static const CVector3 g_actorPosition(0, 0, -3);
+#include "Utf8.h"
+
+#define MAIN_CAMERA_FOV		(M_PI / 4.f)
+#define MAIN_CAMERA_NEAR_Z	(0.01f)
+#define MAIN_CAMERA_FAR_Z	(100.f)
 
 CActorViewer::CActorViewer()
-: m_mousePosition(0, 0)
-, m_forwardButtonBoundingBox(0, 0, 0, 0)
-, m_backwardButtonBoundingBox(0, 0, 0, 0)
 {
 	CGlobalResources::GetInstance().Initialize();
-	m_package = Palleon::CPackage::Create("global");
 
-	CreateActor();
-	CreateUi();
-
+	CreateScene();
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
-	Palleon::CGraphicDevice::GetInstance().AddViewport(m_uiViewport.get());
+	
+	if(!m_isEmbedding)
+	{
+		m_package = Palleon::CPackage::Create("global");
+		CreateUi();
+		Palleon::CGraphicDevice::GetInstance().AddViewport(m_uiViewport.get());
+	}
 }
 
 CActorViewer::~CActorViewer()
 {
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
-	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
+	if(!m_isEmbedding)
+	{
+		Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
+	}
 	CGlobalResources::GetInstance().Release();
 }
 
@@ -48,31 +57,19 @@ void CActorViewer::CreateUi()
 			m_positionLabel = scene->FindNode<Palleon::CLabel>("PositionLabel");
 			m_metricsLabel = scene->FindNode<Palleon::CLabel>("MetricsLabel");
 
-			{
-				auto sprite = scene->FindNode<Palleon::CSprite>("BackwardSprite");
-				m_backwardButtonBoundingBox.position = sprite->GetPosition().xy();
-				m_backwardButtonBoundingBox.size = sprite->GetSize();
-			}
-
-			{
-				auto sprite = scene->FindNode<Palleon::CSprite>("ForwardSprite");
-				m_forwardButtonBoundingBox.position = sprite->GetPosition().xy();
-				m_forwardButtonBoundingBox.size = sprite->GetSize();
-			}
-
 			sceneRoot->AppendChild(scene);
 		}
 	}
 }
 
-void CActorViewer::CreateActor()
+void CActorViewer::CreateScene()
 {
 	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
 
 	{
-		auto camera = CTouchFreeCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 0.01f, 100.f, Palleon::HANDEDNESS_RIGHTHANDED);
-		camera->SetPosition(CVector3(0, 0.5f, 0));
+		auto camera = Palleon::CCamera::Create();
+		camera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, 
+			MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
 		m_mainCamera = camera;
 	}
 
@@ -82,80 +79,174 @@ void CActorViewer::CreateActor()
 		m_mainViewport = viewport;
 	}
 
+	UpdateLights();
+}
+
+void CActorViewer::SetActor(uint32 baseModelId, uint32 topModelId)
+{
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
+
+	if(m_actor)
+	{
+		m_actorRotationNode->RemoveChild(m_actor);
+		m_actor.reset();
+	}
+
+	if(m_actorRotationNode)
+	{
+		sceneRoot->RemoveChild(m_actorRotationNode);
+		m_actorRotationNode.reset();
+	}
+
+	m_cameraHAngle = 0;
+	m_cameraVAngle = 0;
+	m_cameraZoomDelta = 0;
+
+	{
+		auto node = Palleon::CSceneNode::Create();
+		sceneRoot->AppendChild(node);
+		m_actorRotationNode = node;
+	}
 
 	{
 		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(10006);
-		actor->SetPosition(g_actorPosition);
-		sceneRoot->AppendChild(actor);
+		actor->SetBaseModelId(baseModelId);
+		actor->SetTopModelId(topModelId);
+		actor->RebuildActorRenderables();
+		m_actorRotationNode->AppendChild(actor);
+		m_actor = actor;
 	}
 
-	UpdateLights();
+	{
+		auto boundingSphere = m_actor->GetBoundingSphere();
+		m_actor->SetPosition(boundingSphere.position * -1.0f);
+	}
+
+	UpdateCameraLookAt();
 }
 
 void CActorViewer::Update(float dt)
 {
-	UpdateLights();
-
 	{
-		auto cameraPosition = m_mainCamera->GetPosition();
-		auto positionText = string_format("Pos = (X: %0.2f, Y: %0.2f, Z: %0.2f)", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-		m_positionLabel->SetText(positionText);
+		if(m_commandMode == COMMAND_MODE_DRAG_CAMERA)
+		{
+			float deltaX = m_dragPosition.x - m_mousePosition.x;
+			float deltaY = m_dragPosition.y - m_mousePosition.y;
+			m_cameraHAngle = m_dragHAngle + deltaX * 0.015f;
+			m_cameraVAngle = m_dragVAngle + deltaY * 0.015f;
+			m_cameraVAngle = std::min<float>(m_cameraVAngle, M_PI / 2);
+			m_cameraVAngle = std::max<float>(m_cameraVAngle, -M_PI / 2);
+		}
+
+		CMatrix4 yawMatrix(CMatrix4::MakeAxisYRotation(m_cameraHAngle));
+		CMatrix4 pitchMatrix(CMatrix4::MakeAxisXRotation(m_cameraVAngle));
+
+		CMatrix4 rotationMatrix = yawMatrix * pitchMatrix;
+		if(m_actorRotationNode)
+		{
+			m_actorRotationNode->SetRotation(rotationMatrix);
+		}
 	}
+	m_mainViewport->GetSceneRoot()->Update(dt);
+	m_mainViewport->GetSceneRoot()->UpdateTransformations();
 
+	if(!m_isEmbedding)
 	{
-		auto metricsText = string_format("Draw Calls = %d - FPS = %d", 
-			Palleon::CGraphicDevice::GetInstance().GetDrawCallCount(),
-			static_cast<int>(Palleon::CGraphicDevice::GetInstance().GetFrameRate()));
-		m_metricsLabel->SetText(metricsText);
+		{
+			auto metricsText = string_format("Draw Calls = %d - FPS = %d", 
+				Palleon::CGraphicDevice::GetInstance().GetDrawCallCount(),
+				static_cast<int>(Palleon::CGraphicDevice::GetInstance().GetFrameRate()));
+			m_metricsLabel->SetText(metricsText);
+		}
+		m_uiViewport->GetSceneRoot()->Update(dt);
+		m_uiViewport->GetSceneRoot()->UpdateTransformations();
 	}
 
 	m_elapsed += dt;
 
-	m_mainCamera->Update(dt);
-	m_mainViewport->GetSceneRoot()->Update(dt);
-	m_mainViewport->GetSceneRoot()->UpdateTransformations();
-	m_uiViewport->GetSceneRoot()->Update(dt);
-	m_uiViewport->GetSceneRoot()->UpdateTransformations();
 }
 
 void CActorViewer::UpdateLights()
 {
+//	auto lightDir0 = CVector3(cos(m_elapsed), -1, sin(m_elapsed)).Normalize();
+//	auto lightDir1 = CVector3(-sin(m_elapsed), -1, cos(m_elapsed)).Normalize();
+	auto lightDir0 = CVector3(1, -1, 0).Normalize();
+	auto lightDir1 = CVector3(0, 0, 0);
+
 	m_mainViewport->SetEffectParameter("ps_ambientLightColor", Palleon::CEffectParameter(CVector4(0, 0, 0, 0)));
-	m_mainViewport->SetEffectParameter("ps_dirLightDirection0", Palleon::CEffectParameter(CVector3(cos(m_elapsed), -1, sin(m_elapsed)).Normalize()));
-	m_mainViewport->SetEffectParameter("ps_dirLightDirection1", Palleon::CEffectParameter(CVector3(-sin(m_elapsed), -1, cos(m_elapsed)).Normalize()));
+	m_mainViewport->SetEffectParameter("ps_dirLightDirection0", Palleon::CEffectParameter(lightDir0));
+	m_mainViewport->SetEffectParameter("ps_dirLightDirection1", Palleon::CEffectParameter(lightDir1));
 	m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
 	m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
+}
+
+void CActorViewer::UpdateCameraLookAt()
+{
+	auto boundingSphere = m_actor->GetBoundingSphere();
+	float zoomLevel = boundingSphere.radius * 2;
+	float zoomLevelFactor = (m_cameraZoomDelta / 1024.f) + 1.10f;
+	m_mainCamera->LookAt(CVector3(0, 0, zoomLevel * zoomLevelFactor), CVector3(0, 0, 0),
+		CVector3(0, 1, 0), Palleon::HANDEDNESS_RIGHTHANDED);
+}
+
+void CActorViewer::NotifySizeChanged()
+{
+	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
+	m_mainCamera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, 
+		MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
+	m_uiViewport->GetCamera()->SetupOrthoCamera(screenSize.x, screenSize.y);
 }
 
 void CActorViewer::NotifyMouseMove(int x, int y)
 {
 	m_mousePosition = CVector2(x, y);
-	m_mainCamera->NotifyMouseMove(x, y);
+}
+
+void CActorViewer::NotifyMouseWheel(int delta)
+{
+	m_cameraZoomDelta -= static_cast<float>(delta);
+	m_cameraZoomDelta = std::min(m_cameraZoomDelta,  1024.f);
+	m_cameraZoomDelta = std::max(m_cameraZoomDelta, -1024.f);
+	UpdateCameraLookAt();
 }
 
 void CActorViewer::NotifyMouseDown()
 {
 	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_PRESSED);
-	if(m_forwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
-	{
-		m_mainCamera->NotifyMouseDown_MoveForward();
-	}
-	else if(m_backwardButtonBoundingBox.Intersects(CBox2(m_mousePosition.x, m_mousePosition.y, 4, 4)))
-	{
-		m_mainCamera->NotifyMouseDown_MoveBackward();
-	}
-	else
-	{
-		m_mainCamera->NotifyMouseDown_Center();
-	}
+
+	m_commandMode = COMMAND_MODE_DRAG_CAMERA;
+	m_dragHAngle = m_cameraHAngle;
+	m_dragVAngle = m_cameraVAngle;
+	m_dragPosition = m_mousePosition;
 }
 
 void CActorViewer::NotifyMouseUp()
 {
 	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_RELEASED);
-	m_mainCamera->NotifyMouseUp();
+
+	m_commandMode = COMMAND_MODE_IDLE;
+}
+
+void CActorViewer::NotifyIsEmbedding()
+{
+	m_isEmbedding = true;
+}
+
+void CActorViewer::NotifyExternalCommand(const std::string& command)
+{
+	Palleon::CEmbedRemoteCall rpc(command);
+	auto method = rpc.GetMethod();
+	if(method == "SetGamePath")
+	{
+		auto gamePath = rpc.GetParam("Path");
+		CFileManager::SetGamePath(gamePath);
+	}
+	if(method == "SetActor")
+	{
+		auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
+		auto topModelId = boost::lexical_cast<uint32>(rpc.GetParam("TopModelId"));
+		SetActor(baseModelId, topModelId);
+	}
 }
 
 Palleon::CApplication* CreateApplication()

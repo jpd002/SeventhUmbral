@@ -9,6 +9,7 @@
     <PostBuildEvent />
     <Link>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>name='PalleonEmbedProxy' type='Win32' processorArchitecture='X86' version='1.0.0.0';%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -16,5 +17,11 @@
       <PrecompiledHeaderFile>$(ProjectDir)..\actorviewer\Pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>$(ProjectDir)..\actorviewer\Pch.h</ForcedIncludeFiles>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)..\actorviewer\data\* $(OutputPath)\actorviewer\data\ /S /Y</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying data files...</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
 </Project>

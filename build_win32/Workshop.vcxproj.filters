@@ -36,6 +36,12 @@
     <ClCompile Include="..\workshop\AppearanceViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\launcher\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\AppConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -57,6 +63,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\AppearanceViewer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\launcher\Utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppConfig.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppPreferences.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

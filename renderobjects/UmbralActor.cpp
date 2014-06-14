@@ -22,7 +22,22 @@ const CSphere& CUmbralActor::GetBoundingSphere() const
 void CUmbralActor::SetBaseModelId(uint32 baseModelId)
 {
 	m_baseModelId = baseModelId;
-	RebuildActorRenderables();
+	m_renderableDirty = true;
+}
+
+void CUmbralActor::SetTopModelId(uint32 topModelId)
+{
+	m_topModelId = topModelId;
+	m_renderableDirty = true;
+}
+
+void CUmbralActor::Update(float)
+{
+	if(m_renderableDirty)
+	{
+		RebuildActorRenderables();
+		assert(m_renderableDirty == false);
+	}
 }
 
 void CUmbralActor::RebuildActorRenderables()
@@ -40,6 +55,10 @@ void CUmbralActor::RebuildActorRenderables()
 	case 2:
 		charaFolder = "bgobj";
 		charaPrefix = "b";
+		break;
+	case 4:
+		charaFolder = "wep";
+		charaPrefix = "w";
 		break;
 	default:
 		assert(0);
@@ -86,4 +105,6 @@ void CUmbralActor::RebuildActorRenderables()
 		auto textureResource = CSectionLoader::ReadSection(ResourceNodePtr(), inputStream);
 		model->SetLocalTexture(textureResource);
 	}
+
+	m_renderableDirty = false;
 }

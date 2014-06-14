@@ -105,6 +105,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\launcher\Utils.cpp" />
+    <ClCompile Include="..\workshop\AppConfig.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewer.cpp" />
     <ClCompile Include="..\workshop\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -117,7 +119,10 @@
     <ClCompile Include="..\workshop\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\launcher\Utils.h" />
+    <ClInclude Include="..\workshop\AppConfig.h" />
     <ClInclude Include="..\workshop\AppearanceViewer.h" />
+    <ClInclude Include="..\workshop\AppPreferences.h" />
     <ClInclude Include="..\workshop\Pch.h" />
     <ClInclude Include="..\workshop\resource.h" />
     <ClInclude Include="..\workshop\SheetColumnsDefinition.h" />

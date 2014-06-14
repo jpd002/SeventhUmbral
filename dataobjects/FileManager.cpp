@@ -1,11 +1,16 @@
 #include "FileManager.h"
 #include "string_format.h"
 
+boost::filesystem::path CFileManager::m_gamePath;
+
 boost::filesystem::path CFileManager::GetGamePath()
 {
-//	boost::filesystem::path gamePath = "F:\\Games\\SquareEnix\\FINAL FANTASY XIV";
-	boost::filesystem::path gamePath = "C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV";
-	return gamePath;
+	return m_gamePath;
+}
+
+void CFileManager::SetGamePath(const boost::filesystem::path& gamePath)
+{
+	m_gamePath = gamePath;
 }
 
 boost::filesystem::path CFileManager::GetResourcePath(uint32 resourceId)

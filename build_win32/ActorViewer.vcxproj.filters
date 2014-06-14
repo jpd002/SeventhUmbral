@@ -18,18 +18,12 @@
     <ClCompile Include="..\actorviewer\ActorViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\actorviewer\TouchFreeCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\actorviewer\Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\actorviewer\ActorViewer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\actorviewer\TouchFreeCamera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\actorviewer\Pch.h">
