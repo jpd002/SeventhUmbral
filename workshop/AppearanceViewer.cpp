@@ -14,6 +14,7 @@ CAppearanceViewer::CAppearanceViewer()
 	SetClassPtr();
 	CreateActorViewer();
 	m_actorListBox = Framework::Win32::CListBox(GetItem(IDC_APPEARANCEVIEWER_ACTORLIST));
+	m_modelIdEdit = Framework::Win32::CEdit(GetItem(IDC_APPEARANCEVIEWER_MODELIDEDIT));
 	ScanActors();
 }
 
@@ -122,6 +123,7 @@ long CAppearanceViewer::OnCommand(unsigned short id, unsigned short cmd, HWND)
 				auto actorInfoIndex = m_actorListBox.GetItemData(currentSelection);
 				const auto& actorInfo = m_actorInfos[actorInfoIndex];
 				SetActor(40000 + actorInfo.baseModelId, actorInfo.topModelId * 0x400);
+				m_modelIdEdit.SetText(string_format(_T("%d"), (actorInfo.baseModelId << 20) | (actorInfo.topModelId << 10)).c_str());
 			}
 			break;
 		}

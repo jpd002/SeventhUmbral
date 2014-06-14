@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "win32/Dialog.h"
 #include "win32/ListBox.h"
+#include "win32/Edit.h"
 #include "../../Palleon/include/palleon/win32/Win32EmbedControl.h"
 
 class CAppearanceViewer : public Framework::Win32::CDialog
@@ -45,4 +46,5 @@ private:
 	ActorInfoArray				m_actorInfos;
 	EmbedControlPtr				m_embedControl;
 	Framework::Win32::CListBox	m_actorListBox;
+	Framework::Win32::CEdit		m_modelIdEdit;
 };
