@@ -4,12 +4,13 @@
 #include "win32/Dialog.h"
 #include "win32/ListBox.h"
 #include "win32/Edit.h"
+#include "win32/Static.h"
 #include "../../Palleon/include/palleon/win32/Win32EmbedControl.h"
 
 class CAppearanceViewer : public Framework::Win32::CDialog
 {
 public:
-								CAppearanceViewer();
+								CAppearanceViewer(HWND);
 	virtual						~CAppearanceViewer();
 
 protected:
@@ -47,4 +48,5 @@ private:
 	EmbedControlPtr				m_embedControl;
 	Framework::Win32::CListBox	m_actorListBox;
 	Framework::Win32::CEdit		m_modelIdEdit;
+	Framework::Win32::CStatic	m_failLabel;
 };

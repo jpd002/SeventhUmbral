@@ -8,13 +8,14 @@
 #include "Base64.h"
 #include "string_format.h"
 
-CAppearanceViewer::CAppearanceViewer()
-: CDialog(MAKEINTRESOURCE(IDD_APPEARANCEVIEWER))
+CAppearanceViewer::CAppearanceViewer(HWND parentWnd)
+: CDialog(MAKEINTRESOURCE(IDD_APPEARANCEVIEWER), parentWnd)
 {
 	SetClassPtr();
 	CreateActorViewer();
 	m_actorListBox = Framework::Win32::CListBox(GetItem(IDC_APPEARANCEVIEWER_ACTORLIST));
 	m_modelIdEdit = Framework::Win32::CEdit(GetItem(IDC_APPEARANCEVIEWER_MODELIDEDIT));
+	m_failLabel = Framework::Win32::CStatic(GetItem(IDC_APPEARANCEVIEWER_FAILLABEL));
 	ScanActors();
 }
 
@@ -137,6 +138,7 @@ long CAppearanceViewer::OnCommand(unsigned short id, unsigned short cmd, HWND)
 
 void CAppearanceViewer::SetActor(uint32 baseModelId, uint32 topModelId)
 {
+	m_failLabel.Show(SW_HIDE);
 	try
 	{
 		Palleon::CEmbedRemoteCall rpc;
@@ -147,6 +149,19 @@ void CAppearanceViewer::SetActor(uint32 baseModelId, uint32 topModelId)
 	}
 	catch(...)
 	{
-		
+		auto failLabelRect = m_failLabel.GetWindowRect();
+		auto embedControlRect = m_embedControl->GetWindowRect();
+		failLabelRect.ScreenToClient(m_hWnd);
+		embedControlRect.ScreenToClient(m_hWnd);
+		int failLabelWidth = failLabelRect.Width();
+		int failLabelHeight = failLabelRect.Height();
+		int failLabelOffsetX = (embedControlRect.Width() - failLabelWidth) / 2;
+		int failLabelOffsetY = (embedControlRect.Height() - failLabelHeight) / 2;
+		failLabelRect.SetLeft(embedControlRect.Left() + failLabelOffsetX);
+		failLabelRect.SetTop(embedControlRect.Top() + failLabelOffsetY);
+		failLabelRect.SetRight(failLabelRect.Left() + failLabelWidth);
+		failLabelRect.SetBottom(failLabelRect.Top() + failLabelHeight);
+		m_failLabel.SetSizePosition(failLabelRect);
+		m_failLabel.Show(SW_SHOW);
 	}
 }

@@ -1,6 +1,5 @@
 #include <Windows.h>
-#include "SheetViewer.h"
-#include "AppearanceViewer.h"
+#include "MainWindow.h"
 #include "../launcher/Utils.h"
 #include "../dataobjects/FileManager.h"
 #include "AppConfig.h"
@@ -31,10 +30,8 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR commandLine, int)
 
 	CoInitialize(NULL);
 	{
-		CAppearanceViewer appearanceViewer;
-		appearanceViewer.DoModal();
-//		CSheetViewer sheetViewer;
-//		sheetViewer.DoModal();
+		CMainWindow mainWindow;
+		mainWindow.DoModal();
 	}
 	CoUninitialize();
 	return 0;

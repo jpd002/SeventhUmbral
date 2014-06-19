@@ -11,8 +11,8 @@ const CSheetViewer::LanguageMenuValueMap CSheetViewer::m_languageMenuValues =
 	std::make_pair(ID_SHEETVIEWER_LANGUAGE_GERMAN,		"de")
 };
 
-CSheetViewer::CSheetViewer()
-: Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER))
+CSheetViewer::CSheetViewer(HWND parentWnd)
+: Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER), parentWnd)
 {
 	SetClassPtr();
 
