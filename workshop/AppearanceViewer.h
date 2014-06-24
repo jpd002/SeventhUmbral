@@ -6,6 +6,7 @@
 #include "win32/Splitter.h"
 #include "AppearanceViewerActorListPane.h"
 #include "AppearanceViewerActorViewPane.h"
+#include "AppearanceViewerActorInfoPane.h"
 
 class CAppearanceViewer : public Framework::Win32::CDialog
 {
@@ -15,15 +16,20 @@ public:
 
 protected:
 	long						OnSize(unsigned int, unsigned int, unsigned int) override;
+	long						OnNotify(WPARAM, LPNMHDR) override;
 
 private:
 	typedef std::unique_ptr<CAppearanceViewerActorListPane> ActorListPanePtr;
 	typedef std::unique_ptr<CAppearanceViewerActorViewPane> ActorViewPanePtr;
+	typedef std::unique_ptr<CAppearanceViewerActorInfoPane> ActorInfoPanePtr;
 	typedef std::unique_ptr<Framework::Win32::CSplitter> SplitterPtr;
 
-	SplitterPtr					m_splitter;
+	void						OnActorListPaneSelChange(CAppearanceViewerActorListPane::SELCHANGE_INFO*);
+
+	SplitterPtr					m_mainSplitter;
+	SplitterPtr					m_subSplitter;
+
 	ActorListPanePtr			m_actorListPane;
 	ActorViewPanePtr			m_actorViewPane;
-
-	Framework::Win32::CEdit		m_modelIdEdit;
+	ActorInfoPanePtr			m_actorInfoPane;
 };

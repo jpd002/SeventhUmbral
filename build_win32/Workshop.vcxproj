@@ -108,6 +108,7 @@
     <ClCompile Include="..\launcher\Utils.cpp" />
     <ClCompile Include="..\workshop\AppConfig.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewer.cpp" />
+    <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewerActorListPane.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewerActorViewPane.cpp" />
     <ClCompile Include="..\workshop\MainWindow.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="..\launcher\Utils.h" />
     <ClInclude Include="..\workshop\AppConfig.h" />
     <ClInclude Include="..\workshop\AppearanceViewer.h" />
+    <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h" />
     <ClInclude Include="..\workshop\AppearanceViewerActorListPane.h" />
     <ClInclude Include="..\workshop\AppearanceViewerActorViewPane.h" />
     <ClInclude Include="..\workshop\AppPreferences.h" />

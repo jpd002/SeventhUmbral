@@ -51,6 +51,9 @@
     <ClCompile Include="..\workshop\AppearanceViewerActorViewPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -90,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\AppearanceViewerActorViewPane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

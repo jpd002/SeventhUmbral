@@ -19,8 +19,25 @@ CAppearanceViewerActorViewPane::~CAppearanceViewerActorViewPane()
 
 long CAppearanceViewerActorViewPane::OnSize(unsigned int, unsigned int, unsigned int)
 {
-	auto rect = GetClientRect();
-	m_embedControl->SetSizePosition(rect);
+	{
+		auto rect = GetClientRect();
+		m_embedControl->SetSizePosition(rect);
+	}
+	{
+		auto failLabelRect = m_failLabel.GetWindowRect();
+		auto embedControlRect = m_embedControl->GetWindowRect();
+		failLabelRect.ScreenToClient(m_hWnd);
+		embedControlRect.ScreenToClient(m_hWnd);
+		int failLabelWidth = failLabelRect.Width();
+		int failLabelHeight = failLabelRect.Height();
+		int failLabelOffsetX = (embedControlRect.Width() - failLabelWidth) / 2;
+		int failLabelOffsetY = (embedControlRect.Height() - failLabelHeight) / 2;
+		failLabelRect.SetLeft(embedControlRect.Left() + failLabelOffsetX);
+		failLabelRect.SetTop(embedControlRect.Top() + failLabelOffsetY);
+		failLabelRect.SetRight(failLabelRect.Left() + failLabelWidth);
+		failLabelRect.SetBottom(failLabelRect.Top() + failLabelHeight);
+		m_failLabel.SetSizePosition(failLabelRect);
+	}
 	return FALSE;
 }
 
@@ -37,19 +54,6 @@ void CAppearanceViewerActorViewPane::SetActor(uint32 baseModelId, uint32 topMode
 	}
 	catch(...)
 	{
-		auto failLabelRect = m_failLabel.GetWindowRect();
-		auto embedControlRect = m_embedControl->GetWindowRect();
-		failLabelRect.ScreenToClient(m_hWnd);
-		embedControlRect.ScreenToClient(m_hWnd);
-		int failLabelWidth = failLabelRect.Width();
-		int failLabelHeight = failLabelRect.Height();
-		int failLabelOffsetX = (embedControlRect.Width() - failLabelWidth) / 2;
-		int failLabelOffsetY = (embedControlRect.Height() - failLabelHeight) / 2;
-		failLabelRect.SetLeft(embedControlRect.Left() + failLabelOffsetX);
-		failLabelRect.SetTop(embedControlRect.Top() + failLabelOffsetY);
-		failLabelRect.SetRight(failLabelRect.Left() + failLabelWidth);
-		failLabelRect.SetBottom(failLabelRect.Top() + failLabelHeight);
-		m_failLabel.SetSizePosition(failLabelRect);
 		m_failLabel.Show(SW_SHOW);
 	}
 }
