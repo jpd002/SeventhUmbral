@@ -130,6 +130,7 @@ void CMainWindow::UpdateLayout()
 			displayAreaRect.ClientToScreen(m_tabs.m_hWnd);
 			displayAreaRect.ScreenToClient(m_hWnd);
 			documentIterator->second->SetSizePosition(displayAreaRect);
+			SetWindowPos(m_tabs.m_hWnd, documentIterator->second->m_hWnd, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		}
 	}
 }
