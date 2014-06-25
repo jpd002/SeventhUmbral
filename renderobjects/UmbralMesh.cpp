@@ -6,6 +6,7 @@
 #include "D3DShaderDisassembler.h"
 #include "UmbralEffectProvider.h"
 #include "UmbralEffect.h"
+#include "../dataobjects/HalfFloat.h"
 
 #define _USE_GAME_SHADERS
 
@@ -20,27 +21,12 @@ static uint16 ByteSwap16(uint16 value)
 		(((value & 0x00FF) >>  0) <<  8);
 }
 
-static float HalfToFloat(uint16 half)
-{
-	uint32 result = 0;
-	if(half & 0x8000) result |= 0x80000000;
-	uint8 exponent = ((half >> 10) & 0x1F);
-	//Flush denormal to zero
-	if(exponent == 0) return *reinterpret_cast<float*>(&result);
-	exponent -= 0xF;	//Convert to absolute exponent
-	exponent += 0x7F;	//Then to float exponent
-	uint32 mantissa = (half & 0x3FF);
-	result |= exponent << 23;
-	result |= mantissa << 13;
-	return *reinterpret_cast<float*>(&result);
-}
-
 static CVector2 ConvertVec2FromHalf(const uint8* rawData)
 {
 	const uint16* data = reinterpret_cast<const uint16*>(rawData);
 	CVector2 result;
-	result.x = HalfToFloat(ByteSwap16(data[0]));
-	result.y = HalfToFloat(ByteSwap16(data[1]));
+	result.x = CHalfFloat::ToFloat(ByteSwap16(data[0]));
+	result.y = CHalfFloat::ToFloat(ByteSwap16(data[1]));
 	return result;
 }
 
