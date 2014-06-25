@@ -17,6 +17,7 @@ CUmbralModel::CUmbralModel(const ModelChunkPtr& modelChunk)
 		auto shaderSection = FindShaderForName(shaderSections, name->GetString());
 
 		auto mesh = std::make_shared<CUmbralMesh>(meshNode, shaderSection);
+		mesh->SetName(name->GetString());
 		AppendChild(mesh);
 
 		m_boundingSphere = m_boundingSphere.Accumulate(mesh->GetBoundingSphere());
