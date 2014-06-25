@@ -67,7 +67,8 @@ CSheet::TypeParamArray CSheet::ReadTypes(Framework::Xml::CNode* sheetNode)
 		else if(!strcmp(nodeValue, "s32"))		typeParam = TYPE_PARAM_S32;
 		else if(!strcmp(nodeValue, "u32"))		typeParam = TYPE_PARAM_U32;
 		else if(!strcmp(nodeValue, "bool"))		typeParam = TYPE_PARAM_BOOL;
-		else if(!strcmp(nodeValue, "float"))	typeParam = TYPE_PARAM_FLOAT;
+		else if(!strcmp(nodeValue, "f16"))		typeParam = TYPE_PARAM_F16;
+		else if(!strcmp(nodeValue, "float"))	typeParam = TYPE_PARAM_F32;
 		else if(!strcmp(nodeValue, "str"))		typeParam = TYPE_PARAM_STRING;
 		else									assert(0);
 		result.push_back(typeParam);

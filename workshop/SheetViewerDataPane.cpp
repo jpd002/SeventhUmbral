@@ -3,6 +3,7 @@
 #include "../dataobjects/Sheet.h"
 #include "../dataobjects/SheetData.h"
 #include "../dataobjects/FileManager.h"
+#include "../dataobjects/HalfFloat.h"
 #include "string_cast.h"
 #include "StdStreamUtils.h"
 #include "Utf8.h"
@@ -135,31 +136,34 @@ void CSheetViewerDataPane::PopulateDataView(uint32 sheetId)
 			switch(typeParam)
 			{
 			case CSheet::TYPE_PARAM_U8:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint8>(cellValue.val8)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint8>(cellValue.GetValue8())));
 				break;
 			case CSheet::TYPE_PARAM_S8:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<int8>(cellValue.val8)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<int8>(cellValue.GetValue8())));
 				break;
 			case CSheet::TYPE_PARAM_U16:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint16>(cellValue.val16)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint16>(cellValue.GetValue16())));
 				break;
 			case CSheet::TYPE_PARAM_S16:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<int16>(cellValue.val16)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<int16>(cellValue.GetValue16())));
 				break;
 			case CSheet::TYPE_PARAM_U32:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint32>(cellValue.val32)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<uint32>(cellValue.GetValue32())));
 				break;
 			case CSheet::TYPE_PARAM_S32:
-				displayText = string_cast<std::tstring>(std::to_string(static_cast<int32>(cellValue.val32)));
+				displayText = string_cast<std::tstring>(std::to_string(static_cast<int32>(cellValue.GetValue32())));
 				break;
-			case CSheet::TYPE_PARAM_FLOAT:
-				displayText = string_cast<std::tstring>(std::to_string(cellValue.valFloat));
+			case CSheet::TYPE_PARAM_F16:
+				displayText = string_cast<std::tstring>(std::to_string(CHalfFloat::ToFloat(cellValue.GetValue16())));
+				break;
+			case CSheet::TYPE_PARAM_F32:
+				displayText = string_cast<std::tstring>(std::to_string(cellValue.GetValueFloat()));
 				break;
 			case CSheet::TYPE_PARAM_BOOL:
-				displayText = (cellValue.val8 == 0) ? _T("false") : _T("true");
+				displayText = (cellValue.GetValue8() == 0) ? _T("false") : _T("true");
 				break;
 			case CSheet::TYPE_PARAM_STRING:
-				displayText = string_cast<std::tstring>(Framework::Utf8::ConvertFrom(cellValue.strVal));
+				displayText = string_cast<std::tstring>(Framework::Utf8::ConvertFrom(cellValue.GetStringValue()));
 				break;
 			default:
 				assert(0);

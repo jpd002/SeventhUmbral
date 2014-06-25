@@ -8,11 +8,22 @@ CSheetData::~CSheetData()
 
 }
 
+CSheetData::CSheetData(CSheetData&& rhs)
+{
+	MoveFrom(std::move(rhs));
+}
+
 CSheetData CSheetData::Create(const CSheet& sheet, unsigned int subSheetIndex, const FileProvider& fileProvider)
 {
 	CSheetData sheetData;
 	sheetData.Read(sheet, subSheetIndex, fileProvider);
 	return std::move(sheetData);
+}
+
+CSheetData& CSheetData::operator =(CSheetData&& rhs)
+{
+	MoveFrom(std::move(rhs));
+	return (*this);
 }
 
 const CSheetData::RowMap& CSheetData::GetRows() const
@@ -25,6 +36,11 @@ const CSheetData::Row& CSheetData::GetRow(uint32 rowId) const
 	auto rowIterator = m_rows.find(rowId);
 	if(rowIterator == std::end(m_rows)) throw std::exception();
 	return rowIterator->second;
+}
+
+void CSheetData::MoveFrom(CSheetData&& rhs)
+{
+	m_rows = std::move(rhs.m_rows);
 }
 
 void CSheetData::Read(const CSheet& sheet, unsigned int subSheetIndex, const FileProvider& fileProvider)
@@ -43,7 +59,7 @@ void CSheetData::Read(const CSheet& sheet, unsigned int subSheetIndex, const Fil
 			for(unsigned int i = 0; i < numIds; i++)
 			{
 				auto row = ReadRow(typeParams, *dataFileStream.get());
-				m_rows.insert(std::make_pair(startId + i, row));
+				m_rows.insert(std::make_pair(startId + i, std::move(row)));
 			}
 		}
 	}
@@ -61,35 +77,37 @@ CSheetData::Row CSheetData::ReadRow(const CSheet::TypeParamArray& typeParams, Fr
 		case CSheet::TYPE_PARAM_S8:
 		case CSheet::TYPE_PARAM_U8:
 		case CSheet::TYPE_PARAM_BOOL:
-			cell.val8 = inputStream.Read8();
+			cell.SetValue8(inputStream.Read8());
 			break;
 		case CSheet::TYPE_PARAM_U16:
 		case CSheet::TYPE_PARAM_S16:
-			cell.val16 = inputStream.Read16();
+		case CSheet::TYPE_PARAM_F16:
+			cell.SetValue16(inputStream.Read16());
 			break;
 		case CSheet::TYPE_PARAM_S32:
 		case CSheet::TYPE_PARAM_U32:
-		case CSheet::TYPE_PARAM_FLOAT:
-			cell.val32 = inputStream.Read32();
+		case CSheet::TYPE_PARAM_F32:
+			cell.SetValue32(inputStream.Read32());
 			break;
 		case CSheet::TYPE_PARAM_STRING:
 			{
 				uint16 stringLength = inputStream.Read16();
 				uint8 unknown = inputStream.Read8();
-				std::vector<uint8> stringData(stringLength - 1);
-				inputStream.Read(stringData.data(), stringLength - 1);
-				for(auto& stringByte : stringData)
+				char* stringData = new char[stringLength - 1];
+				inputStream.Read(stringData, stringLength - 1);
+				for(unsigned int i = 0; i < stringLength - 1; i++)
 				{
-					stringByte ^= 0x73;
+					stringData[i] ^= 0x73;
 				}
-				cell.strVal = reinterpret_cast<const char*>(stringData.data());
+				assert(stringData[stringLength - 2] == 0);
+				cell.AcquireStringValue(stringData);
 			}
 			break;
 		default:
 			assert(0);
 			break;
 		}
-		result.push_back(cell);
+		result.push_back(std::move(cell));
 	}
-	return result;
+	return std::move(result);
 }
