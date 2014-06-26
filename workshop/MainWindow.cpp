@@ -27,12 +27,8 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	case ID_MAINMENU_INSPECT_DATASHEETS:
 		ShowDataSheetViewer();
 		break;
+	case ID_FILE_QUIT:
 	case IDCANCEL:
-		for(const auto& documentPair : m_documents)
-		{
-			documentPair.second->Destroy();
-		}
-		m_documents.clear();
 		Destroy();
 		break;
 	}
@@ -60,6 +56,16 @@ long CMainWindow::OnSize(unsigned int, unsigned int, unsigned int)
 {
 	UpdateLayout();
 	return FALSE;
+}
+
+void CMainWindow::Destroy()
+{
+	for(const auto& documentPair : m_documents)
+	{
+		documentPair.second->Destroy();
+	}
+	m_documents.clear();
+	CWindow::Destroy();
 }
 
 void CMainWindow::ShowApperanceViewer()

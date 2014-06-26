@@ -19,6 +19,7 @@ private:
 	typedef std::unique_ptr<Framework::Win32::CWindow> DocumentPtr;
 	typedef std::map<uint32, DocumentPtr> DocumentMap;
 
+	void						Destroy();
 	void						ShowDataSheetViewer();
 	void						ShowApperanceViewer();
 
