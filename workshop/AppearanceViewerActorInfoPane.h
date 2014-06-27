@@ -9,6 +9,8 @@ public:
 								CAppearanceViewerActorInfoPane(HWND);
 	virtual						~CAppearanceViewerActorInfoPane();
 
+	void						SetModelId(uint32);
+
 private:
 	Framework::Win32::CEdit		m_modelIdEdit;
 };

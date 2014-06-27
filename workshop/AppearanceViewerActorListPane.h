@@ -2,6 +2,7 @@
 
 #include "win32/Dialog.h"
 #include "win32/ListBox.h"
+#include "../dataobjects/SheetData.h"
 
 class CAppearanceViewerActorListPane : public Framework::Win32::CDialog
 {
@@ -48,9 +49,10 @@ private:
 	void							OnActorListItemChanged();
 
 	void							ScanActors();
-	std::vector<uint32>				ScanSubActors(const boost::filesystem::path&);
-	std::vector<uint32>				ScanSubActorTextures(const boost::filesystem::path&);
+	std::vector<uint32>				ScanSubActors(const boost::filesystem::path&) const;
+	std::vector<uint32>				ScanActorVariations(uint32, uint32) const;
 
 	ActorInfoArray					m_actorInfos;
 	Framework::Win32::CListBox		m_actorListBox;
+	CSheetData						m_varWepSheetData;
 };

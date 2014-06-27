@@ -51,4 +51,9 @@ long CAppearanceViewer::OnNotify(WPARAM, LPNMHDR nmhdr)
 void CAppearanceViewer::OnActorListPaneSelChange(CAppearanceViewerActorListPane::SELCHANGE_INFO* selChangeInfo)
 {
 	m_actorViewPane->SetActor(selChangeInfo->baseModelId, selChangeInfo->topModelId);
+	uint32 modelFolder = selChangeInfo->baseModelId % 10000;
+	uint32 subModelId = selChangeInfo->topModelId >> 10;
+	uint32 variation = selChangeInfo->topModelId & 0x3FF;
+	uint32 modelId = (modelFolder << 20) | (subModelId << 10) | variation;
+	m_actorInfoPane->SetModelId(modelId);
 }
