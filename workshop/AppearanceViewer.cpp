@@ -12,14 +12,16 @@ CAppearanceViewer::CAppearanceViewer(HWND parentWnd)
 	m_actorListPane = std::make_unique<CAppearanceViewerActorListPane>(m_mainSplitter->m_hWnd);
 	m_actorViewPane = std::make_unique<CAppearanceViewerActorViewPane>(m_subSplitter->m_hWnd);
 	m_actorInfoPane = std::make_unique<CAppearanceViewerActorInfoPane>(m_subSplitter->m_hWnd);
-	m_mainSplitter->SetEdgePosition(0.25);
-	m_subSplitter->SetEdgePosition(0.90);
 
 	m_mainSplitter->SetChild(0, m_actorListPane->m_hWnd);
 	m_mainSplitter->SetChild(1, m_subSplitter->m_hWnd);
+	m_mainSplitter->SetEdgePosition(0.25);
 
 	m_subSplitter->SetChild(0, m_actorViewPane->m_hWnd);
 	m_subSplitter->SetChild(1, m_actorInfoPane->m_hWnd);
+	m_subSplitter->SetFixed(true);
+	m_subSplitter->SetMasterChild(1);
+	m_subSplitter->SetEdgePosition(0.90);
 }
 
 CAppearanceViewer::~CAppearanceViewer()
