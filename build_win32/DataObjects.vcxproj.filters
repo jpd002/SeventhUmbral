@@ -129,6 +129,9 @@
     <ClCompile Include="..\dataobjects\HalfFloat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dataobjects\chunks\PgrpChunk.cpp">
+      <Filter>Source Files\chunks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\dataobjects\sections\BaseSection.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="..\dataobjects\HalfFloat.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\chunks\PgrpChunk.h">
+      <Filter>Source Files\chunks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

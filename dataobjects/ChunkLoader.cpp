@@ -45,6 +45,9 @@ ChunkPtr CChunkLoader::Load(const ResourceNodePtr& parent, Framework::CStream& i
 	case 'MARP':
 		result = std::make_shared<CPramChunk>();
 		break;
+	case 'PRGP':
+		result = std::make_shared<CPgrpChunk>();
+		break;
 	case 'BBAA':
 		if(auto boundingBoxContainerChunk = std::dynamic_pointer_cast<CBoundingBoxContainerChunk>(parent))
 		{

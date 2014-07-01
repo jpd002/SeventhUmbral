@@ -24,6 +24,7 @@
     <ClCompile Include="..\dataobjects\chunks\ModelChunk.cpp" />
     <ClCompile Include="..\dataobjects\chunks\ModelContainerChunk.cpp" />
     <ClCompile Include="..\dataobjects\chunks\NameChunk.cpp" />
+    <ClCompile Include="..\dataobjects\chunks\PgrpChunk.cpp" />
     <ClCompile Include="..\dataobjects\chunks\PramChunk.cpp" />
     <ClCompile Include="..\dataobjects\chunks\ShaderChunk.cpp" />
     <ClCompile Include="..\dataobjects\chunks\StreamChunk.cpp" />
@@ -62,6 +63,7 @@
     <ClInclude Include="..\dataobjects\chunks\ModelChunk.h" />
     <ClInclude Include="..\dataobjects\chunks\ModelContainerChunk.h" />
     <ClInclude Include="..\dataobjects\chunks\NameChunk.h" />
+    <ClInclude Include="..\dataobjects\chunks\PgrpChunk.h" />
     <ClInclude Include="..\dataobjects\chunks\PramChunk.h" />
     <ClInclude Include="..\dataobjects\chunks\ShaderChunk.h" />
     <ClInclude Include="..\dataobjects\chunks\StreamChunk.h" />

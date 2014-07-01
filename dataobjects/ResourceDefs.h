@@ -17,6 +17,7 @@
 #include "chunks/NameChunk.h"
 #include "chunks/NameChunk.h"
 #include "chunks/PramChunk.h"
+#include "chunks/PgrpChunk.h"
 #include "chunks/StringChunk.h"
 #include "chunks/StreamChunk.h"
 #include "chunks/ShaderChunk.h"
