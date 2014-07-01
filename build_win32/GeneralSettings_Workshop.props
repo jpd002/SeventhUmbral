@@ -17,5 +17,10 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <CustomBuildStep>
+      <Command>copy “$(WindowsSdkDir)redist\d3d\x86\D3DCompiler_47.DLL” “$(TargetDir)</Command>
+	  <Outputs>$(TargetDir)D3DCompiler_47.DLL</Outputs>
+      <Message>Copying D3DCompiler...</Message>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
 </Project>
