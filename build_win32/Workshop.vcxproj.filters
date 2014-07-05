@@ -98,6 +98,9 @@
     <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\workshop\AppDef.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\workshop\Res.rc">

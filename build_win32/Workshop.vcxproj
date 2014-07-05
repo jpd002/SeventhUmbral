@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="..\launcher\Utils.h" />
     <ClInclude Include="..\workshop\AppConfig.h" />
+    <ClInclude Include="..\workshop\AppDef.h" />
     <ClInclude Include="..\workshop\AppearanceViewer.h" />
     <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h" />
     <ClInclude Include="..\workshop\AppearanceViewerActorListPane.h" />

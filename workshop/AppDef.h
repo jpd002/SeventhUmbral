@@ -3,5 +3,5 @@
 //Don't put tabs here since it will screw up the installer package
 
 #define APP_NAME _T("Seventh Umbral Workshop")
-#define APP_VERSION (1)
-#define APP_VERSIONSTR _T("0.01")
+#define APP_VERSION (2)
+#define APP_VERSIONSTR _T("0.02")
