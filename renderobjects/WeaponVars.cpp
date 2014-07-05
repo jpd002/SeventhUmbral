@@ -58,6 +58,13 @@ CWeaponVars::WEAPONVAR CWeaponVars::GetVarForId(uint32 varId) const
 		matInfo.shininess = CHalfFloat::ToFloat(row[(19 * i) + 13].GetValue16());
 		matInfo.multiShininess = CHalfFloat::ToFloat(row[(19 * i) + 14].GetValue16());
 	}
+	for(unsigned int i = 0; i < PGRP_COUNT; i++)
+	{
+		if(row[171 + i].GetValue8() != 0)
+		{
+			result.polyGroupState |= (1 << i);
+		}
+	}
 	result.textureId = row[203].GetValue8();
 	return result;
 }

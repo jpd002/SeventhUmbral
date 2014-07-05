@@ -75,9 +75,11 @@ CUmbralMesh::CUmbralMesh()
 }
 
 CUmbralMesh::CUmbralMesh(const MeshChunkPtr& meshChunk, const ShaderSectionPtr& shaderSection)
-: m_shaderSection(shaderSection)
+: m_meshChunk(meshChunk)
+, m_shaderSection(shaderSection)
 {
-	SetupGeometry(meshChunk);
+	SetupGeometry();
+	SetupPolyGroups();
 	SetupEffect();
 	SetupTextures();
 }
@@ -104,6 +106,7 @@ UmbralMeshPtr CUmbralMesh::CreateInstance() const
 	result->m_isPeggedToOrigin		= m_isPeggedToOrigin;
 
 	//CUmbralMesh members
+	result->m_meshChunk				= m_meshChunk;
 	result->m_shaderSection			= m_shaderSection;
 	result->m_localTexture			= m_localTexture;
 	result->m_effect				= m_effect;
@@ -123,14 +126,29 @@ void CUmbralMesh::SetLocalTexture(const ResourceNodePtr& texture)
 	SetupTextures();
 }
 
-void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
+void CUmbralMesh::SetActivePolyGroups(uint32 activePolyGroups)
 {
-	auto streamChunks = meshChunk->SelectNodes<CStreamChunk>();
+	m_activePolyGroups = activePolyGroups;
+	m_indexRebuildNeeded = true;
+}
+
+void CUmbralMesh::Update(float dt)
+{
+	CMesh::Update(dt);
+	if(m_indexRebuildNeeded)
+	{
+		RebuildIndices();
+		assert(m_indexRebuildNeeded == false);
+	}
+}
+
+void CUmbralMesh::SetupGeometry()
+{
+	auto streamChunks = m_meshChunk->SelectNodes<CStreamChunk>();
 	assert(streamChunks.size() == 2);
 	auto indexStream = streamChunks[0];
 	auto vertexStream = streamChunks[1];
 
-	uint32 indexCount = indexStream->GetVertexCount();
 	uint32 vertexCount = vertexStream->GetVertexCount();
 
 	auto bufferDesc = GenerateVertexBufferDescriptor(vertexStream, indexStream);
@@ -153,7 +171,6 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	assert(!tangentElement || tangentElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_BYTE);
 
 	m_primitiveType = Palleon::PRIMITIVE_TRIANGLE_LIST;
-	m_primitiveCount = indexCount / 3;
 	m_boundingSphere.radius = sqrt(2.f);	//Vertex position range is [-1, 1]
 	m_vertexBuffer = Palleon::CGraphicDevice::GetInstance().CreateVertexBuffer(bufferDesc);
 	const auto& posVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_POSITION);
@@ -163,16 +180,6 @@ void CUmbralMesh::SetupGeometry(const MeshChunkPtr& meshChunk)
 	const auto& uv2VertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2);
 	const auto& colorVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_COLOR);
 	const auto& tangentVertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT);
-
-	{
-		const uint16* srcIndices = reinterpret_cast<const uint16*>(indexStream->GetData());
-		uint16* dstIndices = m_vertexBuffer->LockIndices();
-		for(unsigned int i = 0; i < indexCount; i++)
-		{
-			dstIndices[i] = ByteSwap16(srcIndices[i]);
-		}
-		m_vertexBuffer->UnlockIndices();
-	}
 
 	{
 		const uint8* srcVertices = vertexStream->GetData();
@@ -302,6 +309,55 @@ Palleon::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(co
 	}
 
 	return result;
+}
+
+void CUmbralMesh::SetupPolyGroups()
+{
+	auto streamChunks = m_meshChunk->SelectNodes<CStreamChunk>();
+	assert(streamChunks.size() == 2);
+	auto groupChunks = m_meshChunk->SelectNodes<CPgrpChunk>();
+
+	auto indexStream = streamChunks[0];
+	uint32 indexCount = indexStream->GetVertexCount();
+	assert((indexCount % 3) == 0);
+	uint32 triangleCount = indexCount / 3;
+
+	std::vector<bool> triangleUsed;
+	triangleUsed.resize(triangleCount, false);
+
+	assert(m_polyGroups.size() == 0);
+	for(const auto& group : groupChunks)
+	{
+		auto groupName = group->GetName();
+		assert(groupName.length() >= 2);
+
+		//There's some poly group names with "Happy" that can be conflicting with
+		//the name pattern we're looking for
+		if(groupName.find("Happy") == 0) continue;
+
+		auto groupNameSuffix = groupName.substr(groupName.length() - 2, 2);
+		if(groupNameSuffix[0] != '_') continue;
+		unsigned int groupIndex = groupNameSuffix[1] - 'a';
+		assert(m_polyGroups.find(groupIndex) == std::end(m_polyGroups));
+		m_polyGroups[groupIndex] = group->GetTriangles();
+
+		for(const auto& triangleIndex : group->GetTriangles())
+		{
+			triangleUsed[triangleIndex] = true;
+		}
+	}
+
+	assert(m_basePolyGroup.size() == 0);
+	m_basePolyGroup.reserve(triangleCount);
+	for(unsigned int i = 0; i < triangleCount; i++)
+	{
+		if(!triangleUsed[i])
+		{
+			m_basePolyGroup.push_back(i);
+		}
+	}
+
+	m_indexRebuildNeeded = true;
 }
 
 void CUmbralMesh::SetupEffect()
@@ -495,4 +551,50 @@ void CUmbralMesh::SetupTextures()
 #else
 	GetMaterial()->SetTexture(0, sampler0);
 #endif
+}
+
+void CUmbralMesh::RebuildIndices()
+{
+	auto streamChunks = m_meshChunk->SelectNodes<CStreamChunk>();
+	assert(streamChunks.size() == 2);
+	auto indexStream = streamChunks[0];
+
+	unsigned int primitiveCount = 0;
+	unsigned int triangleCount = indexStream->GetVertexCount() / 3;
+
+	std::vector<bool> triangleUsed;
+	triangleUsed.resize(triangleCount, false);
+
+	for(auto polyIndex : m_basePolyGroup)
+	{
+		triangleUsed[polyIndex] = true;
+	}
+
+	for(const auto& polyGroupPair : m_polyGroups)
+	{
+		uint32 polyGroupIndex = polyGroupPair.first;
+		if((m_activePolyGroups & (1 << polyGroupIndex))) continue;
+		for(auto polyIndex : polyGroupPair.second)
+		{
+			triangleUsed[polyIndex] = true;
+		}
+	}
+
+	const uint16* srcIndices = reinterpret_cast<const uint16*>(indexStream->GetData());
+	uint16* dstIndices = m_vertexBuffer->LockIndices();
+	for(unsigned int i = 0; i < triangleCount; i++)
+	{
+		if(triangleUsed[i])
+		{
+			for(unsigned int j = 0; j < 3; j++)
+			{
+				(*dstIndices++) = ByteSwap16(srcIndices[(i * 3) + j]);
+			}
+			primitiveCount++;
+		}
+	}
+	m_vertexBuffer->UnlockIndices();
+
+	m_primitiveCount = primitiveCount;
+	m_indexRebuildNeeded = false;
 }

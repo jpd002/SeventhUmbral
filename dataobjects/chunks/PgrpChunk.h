@@ -5,7 +5,7 @@
 class CPgrpChunk : public CBaseChunk
 {
 public:
-	typedef std::vector<unsigned int> TriangleArray;
+	typedef std::vector<uint16> TriangleArray;
 
 							CPgrpChunk();
 	virtual					~CPgrpChunk();

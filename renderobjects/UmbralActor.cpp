@@ -33,8 +33,9 @@ void CUmbralActor::SetTopModelId(uint32 topModelId)
 	m_renderableDirty = true;
 }
 
-void CUmbralActor::Update(float)
+void CUmbralActor::Update(float dt)
 {
+	CSceneNode::Update(dt);
 	if(m_renderableDirty)
 	{
 		RebuildActorRenderables();
@@ -157,6 +158,14 @@ void CUmbralActor::RebuildActorRenderables()
 				{
 					materialId = 1;
 				}
+				if(meshName.find("_c") != std::string::npos)
+				{
+					materialId = 2;
+				}
+				if(meshName.find("_d") != std::string::npos)
+				{
+					assert(0);
+				}
 				const auto& varWepMaterial = var.materials[materialId];
 				auto material = mesh->GetMaterial();
 				ReplaceMaterialParam(material, "ps_diffuseColor", varWepMaterial.diffuseColor);
@@ -167,6 +176,7 @@ void CUmbralActor::RebuildActorRenderables()
 				ReplaceMaterialParam(material, "ps_multiReflectivity", varWepMaterial.multiSpecularColor);
 				ReplaceMaterialParam(material, "ps_shininess", varWepMaterial.shininess);
 				ReplaceMaterialParam(material, "ps_multiShininess", varWepMaterial.multiShininess);
+				mesh->SetActivePolyGroups(var.polyGroupState);
 			}
 		}
 	}

@@ -10,6 +10,7 @@ public:
 	enum
 	{
 		MATERIAL_COUNT = 9,
+		PGRP_COUNT = 8,
 	};
 
 	struct MATERIALINFO
@@ -25,6 +26,7 @@ public:
 	struct WEAPONVAR
 	{
 		MATERIALINFO	materials[MATERIAL_COUNT];
+		uint32			polyGroupState = 0;
 		uint32			textureId = 0;
 	};
 
