@@ -9,7 +9,7 @@
 class CSheetViewer : public Framework::Win32::CDialog
 {
 public:
-										CSheetViewer(HWND);
+										CSheetViewer(HWND, uint32);
 	virtual								~CSheetViewer();
 
 protected:

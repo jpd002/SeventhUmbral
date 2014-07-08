@@ -11,13 +11,13 @@ const CSheetViewer::LanguageMenuValueMap CSheetViewer::m_languageMenuValues =
 	std::make_pair(ID_SHEETVIEWER_LANGUAGE_GERMAN,		"de")
 };
 
-CSheetViewer::CSheetViewer(HWND parentWnd)
+CSheetViewer::CSheetViewer(HWND parentWnd, uint32 schemaId)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER), parentWnd)
 {
 	SetClassPtr();
 
 	m_splitter = std::make_unique<Framework::Win32::CHorizontalSplitter>(m_hWnd, GetClientRect());
-	m_schemaPane = std::make_unique<CSheetViewerSchemaPane>(m_splitter->m_hWnd);
+	m_schemaPane = std::make_unique<CSheetViewerSchemaPane>(m_splitter->m_hWnd, schemaId);
 	m_dataPane = std::make_unique<CSheetViewerDataPane>(m_splitter->m_hWnd);
 
 	m_splitter->SetEdgePosition(0.25);

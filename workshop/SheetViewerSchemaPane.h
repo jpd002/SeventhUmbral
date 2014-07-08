@@ -18,7 +18,7 @@ public:
 		uint32			sheetId;
 	};
 
-									CSheetViewerSchemaPane(HWND);
+									CSheetViewerSchemaPane(HWND, uint32);
 	virtual							~CSheetViewerSchemaPane();
 
 protected:

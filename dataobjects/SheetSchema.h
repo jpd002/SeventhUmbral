@@ -16,7 +16,8 @@ public:
 
 	enum
 	{
-		FILE_ID	= 0x01030000
+		GAME_SCHEMA_FILE_ID	= 0x01030000,
+		VAR_SCHEMA_FILE_ID	= 0x03A70000
 	};
 
 							CSheetSchema() = default;

@@ -1,3 +1,4 @@
+#include "AppDef.h"
 #include "MainWindow.h"
 #include "resource.h"
 #include "SheetViewer.h"
@@ -24,8 +25,11 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	case ID_MAINMENU_INSPECT_WEAPONS:
 		ShowApperanceViewer();
 		break;
-	case ID_MAINMENU_INSPECT_DATASHEETS:
-		ShowDataSheetViewer();
+	case ID_MAINMENU_INSPECT_GAMEDATASHEETS:
+		ShowGameDataSheetViewer();
+		break;
+	case ID_MAINMENU_INSPECT_VARDATASHEETS:
+		ShowVarDataSheetViewer();
 		break;
 	case ID_FILE_QUIT:
 	case IDCANCEL:
@@ -74,9 +78,15 @@ void CMainWindow::ShowApperanceViewer()
 	InsertDocument(std::move(appearanceViewer));
 }
 
-void CMainWindow::ShowDataSheetViewer()
+void CMainWindow::ShowGameDataSheetViewer()
 {
-	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd);
+	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, CSheetSchema::GAME_SCHEMA_FILE_ID);
+	InsertDocument(std::move(sheetViewer));
+}
+
+void CMainWindow::ShowVarDataSheetViewer()
+{
+	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, CSheetSchema::VAR_SCHEMA_FILE_ID);
 	InsertDocument(std::move(sheetViewer));
 }
 

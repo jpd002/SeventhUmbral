@@ -4,7 +4,7 @@
 #include "string_cast.h"
 #include "StdStreamUtils.h"
 
-CSheetViewerSchemaPane::CSheetViewerSchemaPane(HWND parentWnd)
+CSheetViewerSchemaPane::CSheetViewerSchemaPane(HWND parentWnd, uint32 schemaId)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER_SCHEMAPANE), parentWnd)
 {
 	SetClassPtr();
@@ -22,7 +22,7 @@ CSheetViewerSchemaPane::CSheetViewerSchemaPane(HWND parentWnd)
 	}
 
 	{
-		auto schemaFilePath = CFileManager::GetResourcePath(CSheetSchema::FILE_ID);
+		auto schemaFilePath = CFileManager::GetResourcePath(schemaId);
 		auto schemaStream = Framework::CreateInputStdStream(schemaFilePath.native());
 		m_schema = CSheetSchema(schemaStream);
 	}

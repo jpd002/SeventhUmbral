@@ -20,7 +20,8 @@ private:
 	typedef std::map<uint32, DocumentPtr> DocumentMap;
 
 	void						Destroy();
-	void						ShowDataSheetViewer();
+	void						ShowGameDataSheetViewer();
+	void						ShowVarDataSheetViewer();
 	void						ShowApperanceViewer();
 
 	void						InsertDocument(DocumentPtr&&);
