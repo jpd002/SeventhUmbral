@@ -20,6 +20,9 @@ private:
 
 	void							CreateActorViewer();
 
+	void							EmbedControl_OnErrorRaised(Palleon::CWin32EmbedControl*);
+
 	EmbedControlPtr					m_embedControl;
 	Framework::Win32::CStatic		m_failLabel;
+	Framework::Win32::CStatic		m_renderPlaceholderStatic;
 };
