@@ -19,7 +19,7 @@ public:
 	virtual void			NotifyMouseUp() override;
 
 	virtual void			NotifyIsEmbedding() override;
-	virtual void			NotifyExternalCommand(const std::string&) override;
+	virtual std::string		NotifyExternalCommand(const std::string&) override;
 
 private:
 	enum COMMAND_MODE

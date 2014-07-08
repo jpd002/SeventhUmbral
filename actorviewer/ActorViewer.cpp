@@ -232,7 +232,7 @@ void CActorViewer::NotifyIsEmbedding()
 	m_isEmbedding = true;
 }
 
-void CActorViewer::NotifyExternalCommand(const std::string& command)
+std::string CActorViewer::NotifyExternalCommand(const std::string& command)
 {
 	Palleon::CEmbedRemoteCall rpc(command);
 	auto method = rpc.GetMethod();
@@ -240,13 +240,23 @@ void CActorViewer::NotifyExternalCommand(const std::string& command)
 	{
 		auto gamePath = rpc.GetParam("Path");
 		CFileManager::SetGamePath(gamePath);
+		return std::string("success");
 	}
 	if(method == "SetActor")
 	{
-		auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
-		auto topModelId = boost::lexical_cast<uint32>(rpc.GetParam("TopModelId"));
-		SetActor(baseModelId, topModelId);
+		try
+		{
+			auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
+			auto topModelId = boost::lexical_cast<uint32>(rpc.GetParam("TopModelId"));
+			SetActor(baseModelId, topModelId);
+			return std::string("success");
+		}
+		catch(...)
+		{
+			return std::string("failed");
+		}
 	}
+	return std::string("failed");
 }
 
 Palleon::CApplication* CreateApplication()
