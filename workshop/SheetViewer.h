@@ -5,12 +5,15 @@
 #include "win32/Splitter.h"
 #include "SheetViewerSchemaPane.h"
 #include "SheetViewerDataPane.h"
+#include "Document.h"
 
-class CSheetViewer : public Framework::Win32::CDialog
+class CSheetViewer : public Framework::Win32::CDialog, public IDocument
 {
 public:
 										CSheetViewer(HWND, uint32);
 	virtual								~CSheetViewer();
+
+	virtual std::string					GetName() const override;
 
 protected:
 	long								OnCommand(unsigned short, unsigned short, HWND) override;
@@ -28,6 +31,7 @@ private:
 
 	static const LanguageMenuValueMap	m_languageMenuValues;
 
+	uint32								m_schemaId = 0;
 	SplitterPtr							m_splitter;
 	SchemaPanePtr						m_schemaPane;
 	DataPanePtr							m_dataPane;

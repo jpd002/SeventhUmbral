@@ -107,6 +107,9 @@
     <ClInclude Include="..\workshop\AboutWindow.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\workshop\Document.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\workshop\Res.rc">

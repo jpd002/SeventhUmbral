@@ -1,9 +1,11 @@
+#include "string_cast.h"
 #include "MainWindow.h"
 #include "resource.h"
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
 #include "AboutWindow.h"
 #include "AppConfig.h"
+#include "Document.h"
 
 #define PREF_MAINWINDOW_RECT_LEFT		"workshop.mainwindow.rect.left"
 #define PREF_MAINWINDOW_RECT_TOP		"workshop.mainwindow.rect.top"
@@ -140,15 +142,20 @@ void CMainWindow::ShowAbout()
 	aboutWindow.DoModal(m_hWnd);
 }
 
-void CMainWindow::InsertDocument(DocumentPtr&& document)
+void CMainWindow::InsertDocument(DocumentPtr&& documentWindow)
 {
 	int currentSelection = m_tabs.GetSelection();
 	if(currentSelection != -1)
 	{
 		UnselectTab(currentSelection);
 	}
-	m_documents.insert(std::make_pair(m_nextDocumentId, std::move(document)));
-	unsigned int tabIndex = m_tabs.InsertTab(_T("New Document"));
+	std::string documentName = "New Document";
+	if(auto document = dynamic_cast<IDocument*>(documentWindow.get()))
+	{
+		documentName = document->GetName();
+	}
+	m_documents.insert(std::make_pair(m_nextDocumentId, std::move(documentWindow)));
+	unsigned int tabIndex = m_tabs.InsertTab(string_cast<std::tstring>(documentName).c_str());
 	m_tabs.SetTabData(tabIndex, m_nextDocumentId);
 	m_tabs.SetSelection(tabIndex);
 	SelectTab(tabIndex);

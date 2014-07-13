@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "win32/HorizontalSplitter.h"
 #include "win32/MenuItem.h"
+#include "string_format.h"
 
 const CSheetViewer::LanguageMenuValueMap CSheetViewer::m_languageMenuValues =
 {
@@ -13,6 +14,7 @@ const CSheetViewer::LanguageMenuValueMap CSheetViewer::m_languageMenuValues =
 
 CSheetViewer::CSheetViewer(HWND parentWnd, uint32 schemaId)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER), parentWnd)
+, m_schemaId(schemaId)
 {
 	SetClassPtr();
 
@@ -30,6 +32,12 @@ CSheetViewer::CSheetViewer(HWND parentWnd, uint32 schemaId)
 CSheetViewer::~CSheetViewer()
 {
 
+}
+
+std::string CSheetViewer::GetName() const
+{
+	const char* schemaName = (m_schemaId == CSheetSchema::GAME_SCHEMA_FILE_ID) ? "Game Data" : "Equipment Variations";
+	return string_format("Data Sheets - %s", schemaName);
 }
 
 long CSheetViewer::OnCommand(unsigned short cmd, unsigned short, HWND)

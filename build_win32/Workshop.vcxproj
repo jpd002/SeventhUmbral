@@ -133,6 +133,7 @@
     <ClInclude Include="..\workshop\AppearanceViewerActorListPane.h" />
     <ClInclude Include="..\workshop\AppearanceViewerActorViewPane.h" />
     <ClInclude Include="..\workshop\AppPreferences.h" />
+    <ClInclude Include="..\workshop\Document.h" />
     <ClInclude Include="..\workshop\MainWindow.h" />
     <ClInclude Include="..\workshop\Pch.h" />
     <ClInclude Include="..\workshop\resource.h" />

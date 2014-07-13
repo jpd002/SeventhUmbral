@@ -29,6 +29,11 @@ CAppearanceViewer::~CAppearanceViewer()
 
 }
 
+std::string CAppearanceViewer::GetName() const
+{
+	return "Weapons";
+}
+
 long CAppearanceViewer::OnSize(unsigned int, unsigned int, unsigned int)
 {
 	auto rect = GetClientRect();

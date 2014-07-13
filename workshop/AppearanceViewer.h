@@ -7,12 +7,15 @@
 #include "AppearanceViewerActorListPane.h"
 #include "AppearanceViewerActorViewPane.h"
 #include "AppearanceViewerActorInfoPane.h"
+#include "Document.h"
 
-class CAppearanceViewer : public Framework::Win32::CDialog
+class CAppearanceViewer : public Framework::Win32::CDialog, public IDocument
 {
 public:
 								CAppearanceViewer(HWND);
 	virtual						~CAppearanceViewer();
+
+	virtual std::string			GetName() const override;
 
 protected:
 	long						OnSize(unsigned int, unsigned int, unsigned int) override;
