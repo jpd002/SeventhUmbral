@@ -34,11 +34,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\build_win32\GeneralSettings_WorldEditor.props" />
+    <Import Project="GeneralSettings_WorldEditor.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\build_win32\GeneralSettings_WorldEditor.props" />
+    <Import Project="GeneralSettings_WorldEditor.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -74,36 +74,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ActorDatabase.cpp" />
-    <ClCompile Include="Source\Pch.cpp">
+    <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
+      <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Palleon\build_win32\Palleon.vcxproj">
+      <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
+      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
+    </ProjectReference>
+    <ProjectReference Include="DataObjects.vcxproj">
+      <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
+    </ProjectReference>
+    <ProjectReference Include="RenderObjects.vcxproj">
+      <Project>{5ed74ef0-bd48-4424-b76e-87ce618cc31b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\worldeditor\ActorDatabase.cpp" />
+    <ClCompile Include="..\worldeditor\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\TouchFreeCamera.cpp" />
-    <ClCompile Include="Source\WorldEditor.cpp" />
+    <ClCompile Include="..\worldeditor\TouchFreeCamera.cpp" />
+    <ClCompile Include="..\worldeditor\WorldEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\ActorDatabase.h" />
-    <ClInclude Include="Source\Pch.h" />
-    <ClInclude Include="Source\TouchFreeCamera.h" />
-    <ClInclude Include="Source\WorldEditor.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Framework\build_win32\Framework.vcxproj">
-      <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Palleon\build_win32\Palleon.vcxproj">
-      <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
-      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build_win32\DataObjects.vcxproj">
-      <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\build_win32\RenderObjects.vcxproj">
-      <Project>{5ed74ef0-bd48-4424-b76e-87ce618cc31b}</Project>
-    </ProjectReference>
+    <ClInclude Include="..\worldeditor\ActorDatabase.h" />
+    <ClInclude Include="..\worldeditor\Pch.h" />
+    <ClInclude Include="..\worldeditor\TouchFreeCamera.h" />
+    <ClInclude Include="..\worldeditor\WorldEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

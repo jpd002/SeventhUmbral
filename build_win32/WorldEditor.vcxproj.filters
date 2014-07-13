@@ -15,30 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\WorldEditor.cpp">
+    <ClCompile Include="..\worldeditor\ActorDatabase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TouchFreeCamera.cpp">
+    <ClCompile Include="..\worldeditor\Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ActorDatabase.cpp">
+    <ClCompile Include="..\worldeditor\TouchFreeCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Pch.cpp">
+    <ClCompile Include="..\worldeditor\WorldEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\WorldEditor.h">
+    <ClInclude Include="..\worldeditor\ActorDatabase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TouchFreeCamera.h">
+    <ClInclude Include="..\worldeditor\Pch.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ActorDatabase.h">
+    <ClInclude Include="..\worldeditor\TouchFreeCamera.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Pch.h">
+    <ClInclude Include="..\worldeditor\WorldEditor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

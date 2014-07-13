@@ -8,6 +8,6 @@
 #include <functional>
 
 #include "PalleonEngine.h"
-#include "../../../dataobjects/ResourceDefs.h"
+#include "../dataobjects/ResourceDefs.h"
 
 #endif

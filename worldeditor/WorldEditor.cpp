@@ -1,12 +1,12 @@
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
-#include "../../../dataobjects/FileManager.h"
-#include "../../../renderobjects/ResourceManager.h"
-#include "../../../renderobjects/GlobalResources.h"
-#include "../../../renderobjects/UmbralActor.h"
-#include "../../../renderobjects/UmbralMap.h"
-#include "../../../renderobjects/UmbralModel.h"
+#include "../dataobjects/FileManager.h"
+#include "../renderobjects/ResourceManager.h"
+#include "../renderobjects/GlobalResources.h"
+#include "../renderobjects/UmbralActor.h"
+#include "../renderobjects/UmbralMap.h"
+#include "../renderobjects/UmbralModel.h"
 #include "ActorDatabase.h"
 #include "string_format.h"
 
@@ -28,6 +28,10 @@
 //0x8B380001 -> Airship
 //0x92050003 -> Some island
 //0x92050004 -> Some beach
+
+#define MAIN_CAMERA_FOV		(M_PI / 4.f)
+#define MAIN_CAMERA_NEAR_Z	(1.0f)
+#define MAIN_CAMERA_FAR_Z	(500.f)
 
 CWorldEditor::CWorldEditor()
 : m_elapsed(0)
@@ -83,7 +87,7 @@ void CWorldEditor::CreateWorld()
 
 	{
 		auto camera = CTouchFreeCamera::Create();
-		camera->SetPerspectiveProjection(M_PI / 4.f, screenSize.x / screenSize.y, 1.f, 500.f, Palleon::HANDEDNESS_RIGHTHANDED);
+		camera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
 		m_mainCamera = camera;
 	}
 
@@ -231,6 +235,13 @@ void CWorldEditor::Update(float dt)
 	m_uiViewport->GetSceneRoot()->UpdateTransformations();
 }
 
+void CWorldEditor::NotifySizeChanged()
+{
+	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
+	m_mainCamera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, 
+		MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
+}
+
 void CWorldEditor::NotifyMouseMove(int x, int y)
 {
 	m_mousePosition = CVector2(static_cast<float>(x), static_cast<float>(y));
@@ -292,6 +303,23 @@ void CWorldEditor::NotifyInputCancelled()
 {
 	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_RELEASED);
 	m_mainCamera->CancelInputTracking();
+}
+
+std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
+{
+	Palleon::CEmbedRemoteCall rpc(command);
+	auto method = rpc.GetMethod();
+	if(method == "SetGamePath")
+	{
+		auto gamePath = rpc.GetParam("Path");
+		CFileManager::SetGamePath(gamePath);
+		return std::string("success");
+	}
+	if(method == "SetActor")
+	{
+		return "success";
+	}
+	return std::string("failed");
 }
 
 //#define _SCAN_LAYOUTS

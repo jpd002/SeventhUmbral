@@ -9,13 +9,20 @@
     <PostBuildEvent />
     <Link>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalManifestDependencies>name='PalleonEmbedProxy' type='Win32' processorArchitecture='X86' version='1.0.0.0';%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)\Source\Pch.h</PrecompiledHeaderFile>
-      <ForcedIncludeFiles>$(ProjectDir)\Source\Pch.h</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>$(ProjectDir)..\worldeditor\Pch.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>$(ProjectDir)..\worldeditor\Pch.h</ForcedIncludeFiles>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)..\worldeditor\data\* $(OutputPath)\worldeditor\data\ /S /Y</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying data files...</Message>
+    </PostBuildEvent>
     <Manifest />
   </ItemDefinitionGroup>
 </Project>

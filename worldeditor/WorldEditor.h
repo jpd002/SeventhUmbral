@@ -2,7 +2,7 @@
 
 #include "PalleonEngine.h"
 #include "TouchFreeCamera.h"
-#include "../../../dataobjects/ResourceDefs.h"
+#include "../dataobjects/ResourceDefs.h"
 
 class CWorldEditor : public Palleon::CApplication
 {
@@ -12,6 +12,8 @@ public:
 
 	virtual void			Update(float) override;
 
+	virtual void			NotifySizeChanged() override;
+
 	virtual void			NotifyMouseMove(int, int) override;
 	virtual void			NotifyMouseDown() override;
 	virtual void			NotifyMouseUp() override;
@@ -20,6 +22,8 @@ public:
 	virtual void			NotifyKeyUp(Palleon::KEY_CODE) override;
 
 	virtual void			NotifyInputCancelled() override;
+
+	virtual std::string		NotifyExternalCommand(const std::string&) override;
 
 private:
 	typedef std::vector<Palleon::SceneNodePtr> ModelArray;
