@@ -54,6 +54,9 @@
     <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\workshop\AboutWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\AppDef.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AboutWindow.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

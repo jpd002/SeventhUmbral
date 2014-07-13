@@ -23,6 +23,7 @@ private:
 	void						ShowGameDataSheetViewer();
 	void						ShowVarDataSheetViewer();
 	void						ShowApperanceViewer();
+	void						ShowAbout();
 
 	void						InsertDocument(DocumentPtr&&);
 	void						UpdateLayout();

@@ -1,8 +1,8 @@
-#include "AppDef.h"
 #include "MainWindow.h"
 #include "resource.h"
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
+#include "AboutWindow.h"
 
 CMainWindow::CMainWindow()
 : CDialog(MAKEINTRESOURCE(IDD_MAINWINDOW))
@@ -30,6 +30,9 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 		break;
 	case ID_MAINMENU_INSPECT_VARDATASHEETS:
 		ShowVarDataSheetViewer();
+		break;
+	case ID_HELP_ABOUT:
+		ShowAbout();
 		break;
 	case ID_FILE_QUIT:
 	case IDCANCEL:
@@ -88,6 +91,12 @@ void CMainWindow::ShowVarDataSheetViewer()
 {
 	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, CSheetSchema::VAR_SCHEMA_FILE_ID);
 	InsertDocument(std::move(sheetViewer));
+}
+
+void CMainWindow::ShowAbout()
+{
+	CAboutWindow aboutWindow;
+	aboutWindow.DoModal(m_hWnd);
 }
 
 void CMainWindow::InsertDocument(DocumentPtr&& document)
