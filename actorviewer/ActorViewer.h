@@ -2,11 +2,12 @@
 
 #include "PalleonEngine.h"
 #include "../renderobjects/UmbralActor.h"
+#include "DebugOverlay.h"
 
 class CActorViewer : public Palleon::CApplication
 {
 public:
-							CActorViewer();
+							CActorViewer(bool);
 	virtual					~CActorViewer();
 
 	virtual void			Update(float) override;
@@ -18,7 +19,6 @@ public:
 	virtual void			NotifyMouseDown() override;
 	virtual void			NotifyMouseUp() override;
 
-	virtual void			NotifyIsEmbedding() override;
 	virtual std::string		NotifyExternalCommand(const std::string&) override;
 
 private:
@@ -37,16 +37,12 @@ private:
 	void					UpdateLights();
 	void					UpdateCameraLookAt();
 
-	Palleon::PackagePtr		m_package;
-
 	Palleon::ViewportPtr	m_mainViewport;
 	Palleon::CameraPtr		m_mainCamera;
 	Palleon::SceneNodePtr	m_actorRotationNode;
 	UmbralActorPtr			m_actor;
 
-	Palleon::ViewportPtr	m_uiViewport;
-	Palleon::LabelPtr		m_positionLabel;
-	Palleon::LabelPtr		m_metricsLabel;
+	DebugOverlayPtr			m_debugOverlay;
 
 	float					m_elapsed = 0;
 
@@ -64,6 +60,4 @@ private:
 
 	CVector2				m_mousePosition = CVector2(0, 0);
 	CVector2				m_dragPosition = CVector2(0, 0);
-
-	bool					m_isEmbedding = false;
 };

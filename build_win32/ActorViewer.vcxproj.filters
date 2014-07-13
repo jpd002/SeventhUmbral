@@ -21,12 +21,18 @@
     <ClCompile Include="..\actorviewer\Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\actorviewer\DebugOverlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\actorviewer\ActorViewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\actorviewer\Pch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\actorviewer\DebugOverlay.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

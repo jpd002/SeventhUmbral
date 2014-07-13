@@ -1,65 +1,31 @@
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include "ActorViewer.h"
-#include "string_format.h"
 #include "../renderobjects/GlobalResources.h"
 #include "../dataobjects/FileManager.h"
-
-#include "Utf8.h"
 
 #define MAIN_CAMERA_FOV		(M_PI / 4.f)
 #define MAIN_CAMERA_NEAR_Z	(0.01f)
 #define MAIN_CAMERA_FAR_Z	(100.f)
 
-CActorViewer::CActorViewer()
+CActorViewer::CActorViewer(bool isEmbedding)
 {
 	CGlobalResources::GetInstance().Initialize();
 
 	CreateScene();
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
-	
-	if(!m_isEmbedding)
+
+	if(!isEmbedding)
 	{
-		m_package = Palleon::CPackage::Create("global");
-		CreateUi();
-		Palleon::CGraphicDevice::GetInstance().AddViewport(m_uiViewport.get());
+		m_debugOverlay = std::make_shared<CDebugOverlay>();
 	}
 }
 
 CActorViewer::~CActorViewer()
 {
+	m_debugOverlay.reset();
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
-	if(!m_isEmbedding)
-	{
-		Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_uiViewport.get());
-	}
 	CGlobalResources::GetInstance().Release();
-}
-
-void CActorViewer::CreateUi()
-{
-	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
-
-	m_uiViewport = Palleon::CViewport::Create();
-
-	{
-		Palleon::CameraPtr camera = Palleon::CCamera::Create();
-		camera->SetupOrthoCamera(screenSize.x, screenSize.y);
-		m_uiViewport->SetCamera(camera);
-	}
-
-	{
-		auto sceneRoot = m_uiViewport->GetSceneRoot();
-
-		{
-			auto scene = Palleon::CScene::Create(Palleon::CResourceManager::GetInstance().GetResource<Palleon::CSceneDescriptor>("main_scene.xml"));
-
-			m_positionLabel = scene->FindNode<Palleon::CLabel>("PositionLabel");
-			m_metricsLabel = scene->FindNode<Palleon::CLabel>("MetricsLabel");
-
-			sceneRoot->AppendChild(scene);
-		}
-	}
 }
 
 void CActorViewer::CreateScene()
@@ -150,16 +116,9 @@ void CActorViewer::Update(float dt)
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
 
-	if(!m_isEmbedding)
+	if(m_debugOverlay)
 	{
-		{
-			auto metricsText = string_format("Draw Calls = %d - FPS = %d", 
-				Palleon::CGraphicDevice::GetInstance().GetDrawCallCount(),
-				static_cast<int>(Palleon::CGraphicDevice::GetInstance().GetFrameRate()));
-			m_metricsLabel->SetText(metricsText);
-		}
-		m_uiViewport->GetSceneRoot()->Update(dt);
-		m_uiViewport->GetSceneRoot()->UpdateTransformations();
+		m_debugOverlay->Update(dt);
 	}
 
 	m_elapsed += dt;
@@ -182,11 +141,14 @@ void CActorViewer::UpdateLights()
 
 void CActorViewer::UpdateCameraLookAt()
 {
-	auto boundingSphere = m_actor->GetBoundingSphere();
-	float zoomLevel = boundingSphere.radius * 2;
-	float zoomLevelFactor = (m_cameraZoomDelta / 1024.f) + 1.10f;
-	m_mainCamera->LookAt(CVector3(0, 0, zoomLevel * zoomLevelFactor), CVector3(0, 0, 0),
-		CVector3(0, 1, 0), Palleon::HANDEDNESS_RIGHTHANDED);
+	if(m_actor)
+	{
+		auto boundingSphere = m_actor->GetBoundingSphere();
+		float zoomLevel = boundingSphere.radius * 2;
+		float zoomLevelFactor = (m_cameraZoomDelta / 1024.f) + 1.10f;
+		m_mainCamera->LookAt(CVector3(0, 0, zoomLevel * zoomLevelFactor), CVector3(0, 0, 0),
+			CVector3(0, 1, 0), Palleon::HANDEDNESS_RIGHTHANDED);
+	}
 }
 
 void CActorViewer::NotifySizeChanged()
@@ -194,7 +156,10 @@ void CActorViewer::NotifySizeChanged()
 	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
 	m_mainCamera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, 
 		MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
-	m_uiViewport->GetCamera()->SetupOrthoCamera(screenSize.x, screenSize.y);
+	if(m_debugOverlay)
+	{
+		m_debugOverlay->NotifySizeChanged();
+	}
 }
 
 void CActorViewer::NotifyMouseMove(int x, int y)
@@ -212,8 +177,6 @@ void CActorViewer::NotifyMouseWheel(int delta)
 
 void CActorViewer::NotifyMouseDown()
 {
-	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_PRESSED);
-
 	m_commandMode = COMMAND_MODE_DRAG_CAMERA;
 	m_dragHAngle = m_cameraHAngle;
 	m_dragVAngle = m_cameraVAngle;
@@ -222,14 +185,7 @@ void CActorViewer::NotifyMouseDown()
 
 void CActorViewer::NotifyMouseUp()
 {
-	Palleon::CInputManager::SendInputEventToTree(m_uiViewport->GetSceneRoot(), m_mousePosition, Palleon::INPUT_EVENT_RELEASED);
-
 	m_commandMode = COMMAND_MODE_IDLE;
-}
-
-void CActorViewer::NotifyIsEmbedding()
-{
-	m_isEmbedding = true;
 }
 
 std::string CActorViewer::NotifyExternalCommand(const std::string& command)
@@ -259,7 +215,7 @@ std::string CActorViewer::NotifyExternalCommand(const std::string& command)
 	return std::string("failed");
 }
 
-Palleon::CApplication* CreateApplication()
+Palleon::CApplication* CreateApplication(bool isEmbedding)
 {
-	return new CActorViewer();
+	return new CActorViewer(isEmbedding);
 }
