@@ -338,7 +338,7 @@ void AnalyseDirectory(const boost::filesystem::path& directoryPath)
 
 #endif
 
-Palleon::CApplication* CreateApplication()
+Palleon::CApplication* CreateApplication(bool)
 {
 #ifdef _SCAN_LAYOUTS
 	AnalyseDirectory(CFileManager::GetGamePath());
