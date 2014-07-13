@@ -31,7 +31,7 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR commandLine, int)
 	CoInitialize(NULL);
 	{
 		CMainWindow mainWindow;
-		mainWindow.DoModal();
+		Framework::Win32::CWindow::DlgMsgLoop(mainWindow);
 	}
 	CoUninitialize();
 	return 0;

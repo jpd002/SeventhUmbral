@@ -3,14 +3,27 @@
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
 #include "AboutWindow.h"
+#include "AppConfig.h"
+
+#define PREF_MAINWINDOW_RECT_LEFT		"workshop.mainwindow.rect.left"
+#define PREF_MAINWINDOW_RECT_TOP		"workshop.mainwindow.rect.top"
+#define PREF_MAINWINDOW_RECT_RIGHT		"workshop.mainwindow.rect.right"
+#define PREF_MAINWINDOW_RECT_BOTTOM		"workshop.mainwindow.rect.bottom"
+#define PREF_MAINWINDOW_MAXIMIZED		"workshop.mainwindow.maximized"
 
 CMainWindow::CMainWindow()
 : CDialog(MAKEINTRESOURCE(IDD_MAINWINDOW))
 {
+	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_MAINWINDOW_RECT_LEFT, 0);
+	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_MAINWINDOW_RECT_TOP, 0);
+	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_MAINWINDOW_RECT_RIGHT, 0);
+	CAppConfig::GetInstance().RegisterPreferenceInteger(PREF_MAINWINDOW_RECT_BOTTOM, 0);
+	CAppConfig::GetInstance().RegisterPreferenceBoolean(PREF_MAINWINDOW_MAXIMIZED, true);
+
 	SetClassPtr();
 	m_tabs = Framework::Win32::CTab(GetItem(IDC_MAINWINDOW_TABS));
 
-	UpdateLayout();
+	LoadWindowRect();
 }
 
 CMainWindow::~CMainWindow()
@@ -65,6 +78,33 @@ long CMainWindow::OnSize(unsigned int, unsigned int, unsigned int)
 	return FALSE;
 }
 
+void CMainWindow::LoadWindowRect()
+{
+	Framework::Win32::CRect windowRect(0, 0, 0, 0);
+	windowRect.SetLeft(CAppConfig::GetInstance().GetPreferenceInteger(PREF_MAINWINDOW_RECT_LEFT));
+	windowRect.SetTop(CAppConfig::GetInstance().GetPreferenceInteger(PREF_MAINWINDOW_RECT_TOP));
+	windowRect.SetRight(CAppConfig::GetInstance().GetPreferenceInteger(PREF_MAINWINDOW_RECT_RIGHT));
+	windowRect.SetBottom(CAppConfig::GetInstance().GetPreferenceInteger(PREF_MAINWINDOW_RECT_BOTTOM));
+	bool maximized = CAppConfig::GetInstance().GetPreferenceBoolean(PREF_MAINWINDOW_MAXIMIZED);
+	if(windowRect.Width() != 0 && windowRect.Height() != 0)
+	{
+		SetSizePosition(windowRect);
+	}
+	Show(maximized ? SW_SHOWMAXIMIZED : SW_SHOW);
+}
+
+void CMainWindow::SaveWindowRect()
+{
+	WINDOWPLACEMENT windowPlacement = {};
+	windowPlacement.length = sizeof(WINDOWPLACEMENT);
+	GetWindowPlacement(m_hWnd, &windowPlacement);
+	CAppConfig::GetInstance().SetPreferenceInteger(PREF_MAINWINDOW_RECT_LEFT, windowPlacement.rcNormalPosition.left);
+	CAppConfig::GetInstance().SetPreferenceInteger(PREF_MAINWINDOW_RECT_TOP, windowPlacement.rcNormalPosition.top);
+	CAppConfig::GetInstance().SetPreferenceInteger(PREF_MAINWINDOW_RECT_RIGHT, windowPlacement.rcNormalPosition.right);
+	CAppConfig::GetInstance().SetPreferenceInteger(PREF_MAINWINDOW_RECT_BOTTOM, windowPlacement.rcNormalPosition.bottom);
+	CAppConfig::GetInstance().SetPreferenceBoolean(PREF_MAINWINDOW_MAXIMIZED, windowPlacement.showCmd == SW_SHOWMAXIMIZED);
+}
+
 void CMainWindow::Destroy()
 {
 	for(const auto& documentPair : m_documents)
@@ -72,6 +112,7 @@ void CMainWindow::Destroy()
 		documentPair.second->Destroy();
 	}
 	m_documents.clear();
+	SaveWindowRect();
 	CWindow::Destroy();
 }
 
