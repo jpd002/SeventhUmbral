@@ -64,9 +64,11 @@ Section "Seventh Umbral Workshop (required)"
   ; Put file there
   File "..\build_win32\Win32\Release\Workshop.exe"
   File "..\build_win32\Win32\Release\ActorViewer.exe"
+  File "..\build_win32\Win32\Release\WorldEditor.exe"
   File "..\build_win32\Win32\Release\PalleonEmbedProxy.dll"
   File "..\build_win32\Win32\Release\D3DCompiler_47.dll"
   File /r "..\build_win32\Win32\Release\actorviewer"
+  File /r "..\build_win32\Win32\Release\worldeditor"
   File "changelog.html"
   
   ; Write the installation path into the registry
@@ -110,6 +112,7 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   RMDir /r "$INSTDIR\actorviewer"
+  RMDir /r "$INSTDIR\worldeditor"
   Delete "$INSTDIR\*"
 
   ; Remove shortcuts, if any
