@@ -3,11 +3,12 @@
 #include "PalleonEngine.h"
 #include "TouchFreeCamera.h"
 #include "../dataobjects/ResourceDefs.h"
+#include "DebugOverlay.h"
 
 class CWorldEditor : public Palleon::CApplication
 {
 public:
-							CWorldEditor();
+							CWorldEditor(bool);
 	virtual					~CWorldEditor();
 
 	virtual void			Update(float) override;
@@ -29,7 +30,6 @@ private:
 	typedef std::vector<Palleon::SceneNodePtr> ModelArray;
 	typedef std::vector<Palleon::TexturePtr> TextureArray;
 
-	void					CreateUi();
 	void					CreateWorld();
 	void					CreateActors();
 
@@ -38,15 +38,11 @@ private:
 
 	CVector2				m_mousePosition;
 
-	Palleon::PackagePtr		m_package;
-
 	Palleon::ViewportPtr	m_mainViewport;
 	Palleon::ViewportPtr	m_overlayViewport;
 	TouchFreeCameraPtr		m_mainCamera;
 	
-	Palleon::ViewportPtr	m_uiViewport;
-	Palleon::LabelPtr		m_positionLabel;
-	Palleon::LabelPtr		m_metricsLabel;
-
 	float					m_elapsed;
+
+	DebugOverlayPtr			m_debugOverlay;
 };
