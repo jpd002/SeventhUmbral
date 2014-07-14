@@ -23,6 +23,8 @@ public:
 	void								SetLocalTexture(const ResourceNodePtr&);
 	void								SetActivePolyGroups(uint32);
 
+	void								RebuildIndices();
+
 private:
 	typedef std::map<std::string, unsigned int> SamplerRegisterMap;
 	typedef CPgrpChunk::TriangleArray TriangleIndexArray;
@@ -34,8 +36,6 @@ private:
 	void								SetupPolyGroups();
 	void								SetupEffect();
 	void								SetupTextures();
-
-	void								RebuildIndices();
 
 	Palleon::EffectPtr					m_effect;
 

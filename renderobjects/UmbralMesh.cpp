@@ -91,6 +91,9 @@ CUmbralMesh::~CUmbralMesh()
 
 UmbralMeshPtr CUmbralMesh::CreateInstance() const
 {
+	//This won't work well if indices weren't rebuilt
+	assert(m_indexRebuildNeeded == false);
+
 	auto result = std::make_shared<CUmbralMesh>();
 
 	//CSceneNode members
@@ -111,6 +114,8 @@ UmbralMeshPtr CUmbralMesh::CreateInstance() const
 	result->m_localTexture			= m_localTexture;
 	result->m_effect				= m_effect;
 	result->m_samplerRegisters		= m_samplerRegisters;
+	result->m_activePolyGroups		= m_activePolyGroups;
+	result->m_indexRebuildNeeded	= m_indexRebuildNeeded;
 
 	return result;
 }
