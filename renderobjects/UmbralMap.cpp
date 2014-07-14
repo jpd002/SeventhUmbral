@@ -13,13 +13,24 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 
 	const auto& layoutNodes = mapLayout->GetLayoutNodes();
 
+	//Build bg parts
+	for(const auto& nodePair : layoutNodes)
+	{
+		if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(nodePair.second))
+		{
+			auto bgPartObject = CreateBgPartObject(mapLayout, bgPartObjectNode);
+			assert(bgPartObject);
+			m_bgPartObjects.insert(std::make_pair(nodePair.first, bgPartObject));
+		}
+	}
+
 	//Build unit tree object nodes
 	for(const auto& nodePair : layoutNodes)
 	{
 		if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(nodePair.second))
 		{
-			auto unitTreeObjectRenderable = CreateUnitTreeObject(mapLayout, unitTreeObjectNode);
-			m_unitTreeObjectRenderables.insert(std::make_pair(nodePair.first, unitTreeObjectRenderable));
+			auto unitTreeObject = CreateUnitTreeObject(mapLayout, unitTreeObjectNode);
+			m_unitTreeObjects.insert(std::make_pair(nodePair.first, unitTreeObject));
 		}
 	}
 
@@ -36,19 +47,16 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 			auto refNode = refNodeIterator->second;
 			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
 			{
-				auto unitTreeObjectRenderableIterator = m_unitTreeObjectRenderables.find(refNodeIterator->first);
-				assert(unitTreeObjectRenderableIterator != std::end(m_unitTreeObjectRenderables));
-				if(unitTreeObjectRenderableIterator == std::end(m_unitTreeObjectRenderables))
-				{
-					continue;
-				}
+				auto unitTreeObjectIterator = m_unitTreeObjects.find(refNodeIterator->first);
+				assert(unitTreeObjectIterator != std::end(m_unitTreeObjects));
+				if(unitTreeObjectIterator == std::end(m_unitTreeObjects)) continue;
 
-				auto unitTreeObjectRenderable = unitTreeObjectRenderableIterator->second;
-				unitTreeObjectRenderable->SetPosition(instancePosition);
-				unitTreeObjectRenderable->SetRotation(instanceRotY);
-				unitTreeObjectRenderable->UpdateTransformations();
+				auto unitTreeObject = unitTreeObjectIterator->second;
+				unitTreeObject->SetPosition(instancePosition);
+				unitTreeObject->SetRotation(instanceRotY);
+				unitTreeObject->UpdateTransformations();
 
-				unitTreeObjectRenderable->TraverseNodes(
+				unitTreeObject->TraverseNodes(
 					[&] (const Palleon::SceneNodePtr& node)
 					{
 						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
@@ -59,6 +67,43 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 						return true;
 					}
 				);
+			}
+			else if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
+			{
+				auto bgPartObjectIterator = m_bgPartObjects.find(refNodeIterator->first);
+				assert(bgPartObjectIterator != std::end(m_bgPartObjects));
+				if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
+
+				auto bgPartObject = bgPartObjectIterator->second;
+				auto prevParent = bgPartObject->GetParent();
+				if(prevParent)
+				{
+					prevParent->RemoveChild(bgPartObject);
+				}
+
+				auto tempNode = Palleon::CSceneNode::Create();
+				tempNode->AppendChild(bgPartObject);
+				tempNode->SetPosition(instancePosition);
+				tempNode->SetRotation(instanceRotY);
+				tempNode->UpdateTransformations();
+
+				bgPartObject->TraverseNodes(
+					[&] (const Palleon::SceneNodePtr& node)
+					{
+						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
+						{
+							auto instance = mesh->CreateInstance();
+							m_instances.push_back(instance);
+						}
+						return true;
+					}
+				);
+
+				tempNode->RemoveAllChildren();
+				if(prevParent)
+				{
+					prevParent->AppendChild(bgPartObject);
+				}
 			}
 		}
 	}
@@ -82,6 +127,42 @@ void CUmbralMap::GetMeshes(Palleon::MeshArray& meshes, const Palleon::CCamera* c
 	}
 }
 
+UmbralModelPtr CUmbralMap::CreateBgPartObject(const MapLayoutPtr& mapLayout, const std::shared_ptr<CMapLayout::BGPARTS_BASE_OBJECT_NODE>& node)
+{
+	UmbralModelPtr result;
+
+	auto modelResource = CResourceManager::GetInstance().GetResource(node->resourceName);
+	assert(modelResource);
+	if(!modelResource) return result;
+
+	auto modelChunk = modelResource->SelectNode<CModelChunk>();
+	assert(modelChunk);
+	if(!modelChunk) return result;
+
+	CVector3 minPos(node->minX, node->minY, node->minZ);
+	CVector3 maxPos(node->maxX, node->maxY, node->maxZ);
+
+	CVector3 bgPartSize = (maxPos - minPos) / 2;
+	CVector3 bgPartPos = (maxPos + minPos) / 2;
+
+	result = std::make_shared<CUmbralModel>(modelChunk);
+	result->SetPosition(bgPartPos);
+	result->SetScale(bgPartSize);
+				
+	result->TraverseNodes(
+		[&] (const Palleon::SceneNodePtr& node)
+		{
+			if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
+			{
+				mesh->RebuildIndices();
+			}
+			return true;
+		}
+	);
+
+	return result;
+}
+
 Palleon::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLayout, const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
 {
 	auto result = Palleon::CSceneNode::Create();
@@ -96,24 +177,9 @@ Palleon::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLa
 		auto refNode = refNodeIterator->second;
 		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 		{
-			auto modelResource = CResourceManager::GetInstance().GetResource(bgPartsBaseObjectNode->resourceName);
-			assert(modelResource);
-			if(!modelResource) continue;
-
-			auto modelChunk = modelResource->SelectNode<CModelChunk>();
-			assert(modelChunk);
-			if(!modelChunk) continue;
-
-			CVector3 minPos(bgPartsBaseObjectNode->minX, bgPartsBaseObjectNode->minY, bgPartsBaseObjectNode->minZ);
-			CVector3 maxPos(bgPartsBaseObjectNode->maxX, bgPartsBaseObjectNode->maxY, bgPartsBaseObjectNode->maxZ);
-
-			CVector3 bgPartSize = (maxPos - minPos) / 2;
-			CVector3 bgPartPos = (maxPos + minPos) / 2;
-
-			auto model = std::make_shared<CUmbralModel>(modelChunk);
-			model->SetPosition(bgPartPos);
-			model->SetScale(bgPartSize);
-			result->AppendChild(model);
+			auto bgPartObjectIterator = m_bgPartObjects.find(item.nodePtr);
+			if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
+			result->AppendChild(bgPartObjectIterator->second);
 		}
 	}
 
