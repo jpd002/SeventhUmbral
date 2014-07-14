@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
+#include "WorldViewer.h"
 #include "AboutWindow.h"
 #include "AppConfig.h"
 #include "Document.h"
@@ -39,6 +40,9 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	{
 	case ID_MAINMENU_INSPECT_WEAPONS:
 		ShowApperanceViewer();
+		break;
+	case ID_MAINMENU_INSPECT_WORLD:
+		ShowWorldViewer();
 		break;
 	case ID_MAINMENU_INSPECT_GAMEDATASHEETS:
 		ShowGameDataSheetViewer();
@@ -122,6 +126,12 @@ void CMainWindow::ShowApperanceViewer()
 {
 	auto appearanceViewer = std::make_unique<CAppearanceViewer>(m_hWnd);
 	InsertDocument(std::move(appearanceViewer));
+}
+
+void CMainWindow::ShowWorldViewer()
+{
+	auto worldViewer = std::make_unique<CWorldViewer>(m_hWnd);
+	InsertDocument(std::move(worldViewer));
 }
 
 void CMainWindow::ShowGameDataSheetViewer()

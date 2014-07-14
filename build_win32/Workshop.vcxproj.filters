@@ -57,6 +57,9 @@
     <ClCompile Include="..\workshop\AboutWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\workshop\WorldViewer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\Document.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\WorldViewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

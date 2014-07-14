@@ -22,9 +22,10 @@ private:
 	void						LoadWindowRect();
 	void						SaveWindowRect();
 	void						Destroy();
+	void						ShowApperanceViewer();
+	void						ShowWorldViewer();
 	void						ShowGameDataSheetViewer();
 	void						ShowVarDataSheetViewer();
-	void						ShowApperanceViewer();
 	void						ShowAbout();
 
 	void						InsertDocument(DocumentPtr&&);
