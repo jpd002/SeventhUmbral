@@ -60,6 +60,9 @@
     <ClCompile Include="..\workshop\WorldViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\workshop\WelcomePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -116,6 +119,9 @@
     <ClInclude Include="..\workshop\WorldViewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\workshop\WelcomePage.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\workshop\Res.rc">
@@ -126,5 +132,8 @@
     <Manifest Include="..\workshop\Workshop.manifest">
       <Filter>Source Files</Filter>
     </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\workshop\welcomepage_contents.html" />
   </ItemGroup>
 </Project>

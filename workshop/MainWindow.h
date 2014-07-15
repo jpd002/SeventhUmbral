@@ -22,6 +22,7 @@ private:
 	void						LoadWindowRect();
 	void						SaveWindowRect();
 	void						Destroy();
+	void						ShowWelcomePage();
 	void						ShowApperanceViewer();
 	void						ShowWorldViewer();
 	void						ShowGameDataSheetViewer();

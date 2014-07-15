@@ -1,6 +1,7 @@
 #include "string_cast.h"
 #include "MainWindow.h"
 #include "resource.h"
+#include "WelcomePage.h"
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
 #include "WorldViewer.h"
@@ -25,6 +26,8 @@ CMainWindow::CMainWindow()
 
 	SetClassPtr();
 	m_tabs = Framework::Win32::CTab(GetItem(IDC_MAINWINDOW_TABS));
+
+	ShowWelcomePage();
 
 	LoadWindowRect();
 }
@@ -120,6 +123,12 @@ void CMainWindow::Destroy()
 	m_documents.clear();
 	SaveWindowRect();
 	CWindow::Destroy();
+}
+
+void CMainWindow::ShowWelcomePage()
+{
+	auto welcomePage = std::make_unique<CWelcomePage>(m_hWnd);
+	InsertDocument(std::move(welcomePage));
 }
 
 void CMainWindow::ShowApperanceViewer()

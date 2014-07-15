@@ -121,6 +121,7 @@
     <ClCompile Include="..\workshop\SheetViewer.cpp" />
     <ClCompile Include="..\workshop\SheetViewerDataPane.cpp" />
     <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp" />
+    <ClCompile Include="..\workshop\WelcomePage.cpp" />
     <ClCompile Include="..\workshop\WinMain.cpp" />
     <ClCompile Include="..\workshop\WorldViewer.cpp" />
   </ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="..\workshop\SheetViewer.h" />
     <ClInclude Include="..\workshop\SheetViewerDataPane.h" />
     <ClInclude Include="..\workshop\SheetViewerSchemaPane.h" />
+    <ClInclude Include="..\workshop\WelcomePage.h" />
     <ClInclude Include="..\workshop\WorldViewer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="..\workshop\Workshop.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\workshop\welcomepage_contents.html" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
