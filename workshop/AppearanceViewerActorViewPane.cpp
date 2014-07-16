@@ -9,7 +9,6 @@ CAppearanceViewerActorViewPane::CAppearanceViewerActorViewPane(HWND parentWnd)
 {
 	SetClassPtr();
 	m_failLabel = Framework::Win32::CStatic(GetItem(IDC_APPEARANCEVIEWER_FAILLABEL));
-	m_renderPlaceholderStatic = Framework::Win32::CStatic(GetItem(IDC_APPEARANCEVIEWER_RENDER_PLACEHOLDER));
 	CreateActorViewer();
 }
 
@@ -20,15 +19,14 @@ CAppearanceViewerActorViewPane::~CAppearanceViewerActorViewPane()
 
 long CAppearanceViewerActorViewPane::OnSize(unsigned int, unsigned int, unsigned int)
 {
-	auto rect = GetClientRect();
 	if(m_embedControl)
 	{
+		auto rect = GetClientRect();
 		m_embedControl->SetSizePosition(rect);
 	}
-	m_renderPlaceholderStatic.SetSizePosition(rect);
 	{
 		auto failLabelRect = m_failLabel.GetWindowRect();
-		auto embedControlRect = m_renderPlaceholderStatic.GetWindowRect();
+		auto embedControlRect = GetWindowRect();
 		failLabelRect.ScreenToClient(m_hWnd);
 		embedControlRect.ScreenToClient(m_hWnd);
 		int failLabelWidth = failLabelRect.Width();
@@ -74,8 +72,7 @@ void CAppearanceViewerActorViewPane::CreateActorViewer()
 {
 	assert(!m_embedControl);
 
-	auto placeholderRect = m_renderPlaceholderStatic.GetWindowRect();
-	placeholderRect.ScreenToClient(m_hWnd);
+	auto rect = GetClientRect();
 
 	TCHAR moduleFileName[_MAX_PATH];
 	GetModuleFileName(NULL, moduleFileName, _MAX_PATH);
@@ -83,7 +80,7 @@ void CAppearanceViewerActorViewPane::CreateActorViewer()
 	actorViewerDataPath.remove_leaf();
 	actorViewerDataPath /= "actorviewer";
 
-	m_embedControl = std::make_shared<Palleon::CWin32EmbedControl>(m_hWnd, placeholderRect,
+	m_embedControl = std::make_shared<Palleon::CWin32EmbedControl>(m_hWnd, rect,
 		_T("ActorViewer.exe"), actorViewerDataPath.native().c_str());
 	m_embedControl->ErrorRaised.connect([&] (Palleon::CWin32EmbedControl* sender) { EmbedControl_OnErrorRaised(sender); });
 	{

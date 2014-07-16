@@ -26,5 +26,4 @@ private:
 
 	EmbedControlPtr					m_embedControl;
 	Framework::Win32::CStatic		m_failLabel;
-	Framework::Win32::CStatic		m_renderPlaceholderStatic;
 };
