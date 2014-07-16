@@ -6,11 +6,15 @@
 class CFileManager
 {
 public:
-	static boost::filesystem::path	GetGamePath();
-	static void						SetGamePath(const boost::filesystem::path&);
+	static boost::filesystem::path		GetGamePath();
+	static void							SetGamePath(const boost::filesystem::path&);
 
-	static boost::filesystem::path	GetResourcePath(uint32);
+	static boost::filesystem::path		GetServerDataPath();
+	static void							SetServerDataPath(const boost::filesystem::path&);
+
+	static boost::filesystem::path		GetResourcePath(uint32);
 
 private:
-	static boost::filesystem::path	m_gamePath;
+	static boost::filesystem::path		m_gamePath;
+	static boost::filesystem::path		m_serverDataPath;
 };

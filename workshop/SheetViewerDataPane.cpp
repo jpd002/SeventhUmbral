@@ -12,9 +12,15 @@
 CSheetViewerDataPane::CSheetViewerDataPane(HWND parentWnd)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_SHEETVIEWER_DATAPANE), parentWnd)
 {
+	try
 	{
-		auto definitionStream = Framework::CStdStream("C:\\Projects\\SeventhUmbral\\data\\ffxivd_sheetcolumns.xml", "rb");
+		auto definitionFilePath = CFileManager::GetServerDataPath() / "ffxivd_sheetcolumns.xml";
+		auto definitionStream = Framework::CreateInputStdStream(definitionFilePath.native());
 		m_sheetColumnsDefinitions = CSheetColumnsDefinition::CreateFromXml(definitionStream);
+	}
+	catch(...)
+	{
+		//Failed to read definition file
 	}
 
 	SetClassPtr();

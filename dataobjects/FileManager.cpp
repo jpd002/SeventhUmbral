@@ -2,6 +2,7 @@
 #include "string_format.h"
 
 boost::filesystem::path CFileManager::m_gamePath;
+boost::filesystem::path CFileManager::m_serverDataPath;
 
 boost::filesystem::path CFileManager::GetGamePath()
 {
@@ -11,6 +12,16 @@ boost::filesystem::path CFileManager::GetGamePath()
 void CFileManager::SetGamePath(const boost::filesystem::path& gamePath)
 {
 	m_gamePath = gamePath;
+}
+
+boost::filesystem::path CFileManager::GetServerDataPath()
+{
+	return m_serverDataPath;
+}
+
+void CFileManager::SetServerDataPath(const boost::filesystem::path& serverDataPath)
+{
+	m_serverDataPath = serverDataPath;
 }
 
 boost::filesystem::path CFileManager::GetResourcePath(uint32 resourceId)
