@@ -44,6 +44,11 @@ long CAppearanceViewerActorViewPane::OnSize(unsigned int, unsigned int, unsigned
 	return FALSE;
 }
 
+void CAppearanceViewerActorViewPane::SetActive(bool active)
+{
+	m_embedControl->SetRunning(active);
+}
+
 void CAppearanceViewerActorViewPane::SetActor(uint32 baseModelId, uint32 topModelId)
 {
 	m_failLabel.Show(SW_HIDE);

@@ -22,6 +22,11 @@ std::string CWorldViewer::GetName() const
 	return "World";
 }
 
+void CWorldViewer::SetActive(bool active)
+{
+	m_embedControl->SetRunning(active);
+}
+
 long CWorldViewer::OnSize(unsigned int, unsigned int, unsigned int)
 {
 	auto rect = GetClientRect();

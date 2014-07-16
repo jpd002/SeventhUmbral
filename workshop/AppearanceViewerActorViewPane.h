@@ -10,6 +10,8 @@ public:
 									CAppearanceViewerActorViewPane(HWND);
 	virtual							~CAppearanceViewerActorViewPane();
 
+	void							SetActive(bool);
+
 	void							SetActor(uint32, uint32);
 
 protected:

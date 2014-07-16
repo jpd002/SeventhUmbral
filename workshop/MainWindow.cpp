@@ -189,7 +189,12 @@ void CMainWindow::SelectTab(int selection)
 	assert(documentIterator != std::end(m_documents));
 	if(documentIterator != std::end(m_documents))
 	{
-		documentIterator->second->Show(SW_SHOW);
+		const auto& documentWindow = documentIterator->second;
+		if(auto document = dynamic_cast<IDocument*>(documentWindow.get()))
+		{
+			document->SetActive(true);
+		}
+		documentWindow->Show(SW_SHOW);
 		UpdateLayout();
 	}
 }
@@ -202,7 +207,12 @@ void CMainWindow::UnselectTab(int selection)
 	assert(documentIterator != std::end(m_documents));
 	if(documentIterator != std::end(m_documents))
 	{
-		documentIterator->second->Show(SW_HIDE);
+		const auto& documentWindow = documentIterator->second;
+		documentWindow->Show(SW_HIDE);
+		if(auto document = dynamic_cast<IDocument*>(documentWindow.get()))
+		{
+			document->SetActive(false);
+		}
 	}
 }
 

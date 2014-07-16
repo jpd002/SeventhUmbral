@@ -14,6 +14,8 @@ public:
 
 	virtual std::string			GetName() const override;
 
+	virtual void				SetActive(bool) override;
+
 protected:
 	long						OnSize(unsigned int, unsigned int, unsigned int) override;
 

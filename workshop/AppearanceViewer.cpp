@@ -34,6 +34,11 @@ std::string CAppearanceViewer::GetName() const
 	return "Weapons";
 }
 
+void CAppearanceViewer::SetActive(bool active)
+{
+	m_actorViewPane->SetActive(active);
+}
+
 long CAppearanceViewer::OnSize(unsigned int, unsigned int, unsigned int)
 {
 	auto rect = GetClientRect();
