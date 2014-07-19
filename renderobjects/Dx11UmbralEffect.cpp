@@ -334,6 +334,8 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 
 	InputElementArray inputElements;
 
+	const auto& placeholderItem = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_PLACEHOLDER);
+
 	if(const auto& item = descriptor.GetVertexItem(Palleon::VERTEX_ITEM_ID_POSITION))
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
@@ -381,6 +383,17 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
 	}
+	else
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 1;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
 
 	if(const auto& item = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2))
 	{
@@ -389,6 +402,40 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		inputElement.SemanticIndex			= 2;
 		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
 		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+	else
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 2;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
+	if(const auto& item = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV3))
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 3;
+		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
+		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+	else
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "TEXCOORD";
+		inputElement.SemanticIndex			= 3;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
@@ -404,18 +451,17 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
-
-////////
-//TEMPORARY FOR SEVENTH UMBRAL
+	}
+	else
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "COLOR";
-		inputElement.SemanticIndex			= 1;
+		inputElement.SemanticIndex			= 0;
 		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
-		inputElement.AlignedByteOffset		= item->offset;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
-//TEMPORARY FOR SEVENTH UMBRAL
-////////
 	}
 
 	if(const auto& item = descriptor.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT))
@@ -430,13 +476,24 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		inputElements.push_back(inputElement);
 	}
 
-	//Used for instancing or skinning, pointing to unrelated data for now
+	//Other unused vertex elements, pointing to placeholder data for now
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElement = {};
+		inputElement.SemanticName			= "COLOR";
+		inputElement.SemanticIndex			= 1;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
+		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
+		inputElement.InstanceDataStepRate	= 0;
+		inputElements.push_back(inputElement);
+	}
+
 	{
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "BLENDINDICES";
 		inputElement.SemanticIndex			= 0;
 		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
-		inputElement.AlignedByteOffset		= 0;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
@@ -446,8 +503,8 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
 		inputElement.SemanticIndex			= 6;
-		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
-		inputElement.AlignedByteOffset		= 0;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);
@@ -457,8 +514,8 @@ Palleon::CDx11Effect::D3D11InputLayoutPtr CDx11UmbralEffect::CreateInputLayout(c
 		D3D11_INPUT_ELEMENT_DESC inputElement = {};
 		inputElement.SemanticName			= "TEXCOORD";
 		inputElement.SemanticIndex			= 7;
-		inputElement.Format					= DXGI_FORMAT_R32G32_FLOAT;
-		inputElement.AlignedByteOffset		= 0;
+		inputElement.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;
+		inputElement.AlignedByteOffset		= placeholderItem->offset;
 		inputElement.InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		inputElement.InstanceDataStepRate	= 0;
 		inputElements.push_back(inputElement);

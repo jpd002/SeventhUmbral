@@ -163,6 +163,7 @@ void CUmbralMesh::SetupGeometry()
 	auto uv1Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV1);
 	auto uv2Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV2);
 	auto uv3Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV3);
+	auto uv4Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV4);
 	auto colorElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_COLOR);
 	auto tangentElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_TANGENT);
 	assert(positionElement != nullptr);
@@ -173,6 +174,7 @@ void CUmbralMesh::SetupGeometry()
 	assert(!uv1Element || uv1Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 	assert(!uv2Element || uv2Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 	assert(!uv3Element || uv3Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
+	assert(!uv4Element || uv4Element->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_HALF);
 	assert(!tangentElement || tangentElement->dataFormat == CStreamChunk::ELEMENT_DATA_FORMAT_BYTE);
 
 	m_primitiveType = Palleon::PRIMITIVE_TRIANGLE_LIST;
@@ -183,8 +185,12 @@ void CUmbralMesh::SetupGeometry()
 	const auto& uv0VertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV0);
 	const auto& uv1VertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_UV1);
 	const auto& uv2VertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV2);
+	const auto& uv3VertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_UV3);
 	const auto& colorVertexItem = bufferDesc.GetVertexItem(Palleon::VERTEX_ITEM_ID_COLOR);
 	const auto& tangentVertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_TANGENT);
+	const auto& placeholderVertexItem = bufferDesc.GetVertexItem(CUmbralEffect::VERTEX_ITEM_ID_PLACEHOLDER);
+
+	uint32 placeholderValue = Palleon::CGraphicDevice::ConvertColorToUInt32(CColor(0, 0, 0, 1));
 
 	{
 		const uint8* srcVertices = vertexStream->GetData();
@@ -213,6 +219,11 @@ void CUmbralMesh::SetupGeometry()
 				auto uv3 = ConvertVec2FromHalf(srcVertices + uv3Element->offsetInVertex);
 				*reinterpret_cast<CVector2*>(dstVertices + uv2VertexItem->offset) = uv3;
 			}
+			if(uv4Element)
+			{
+				auto uv4 = ConvertVec2FromHalf(srcVertices + uv4Element->offsetInVertex);
+				*reinterpret_cast<CVector2*>(dstVertices + uv3VertexItem->offset) = uv4;
+			}
 			if(colorElement)
 			{
 				*reinterpret_cast<uint8*>(dstVertices + colorVertexItem->offset + 0) = *(srcVertices + colorElement->offsetInVertex + 0);
@@ -225,6 +236,7 @@ void CUmbralMesh::SetupGeometry()
 				auto tangent = ConvertVec4FromUint8(srcVertices + tangentElement->offsetInVertex);
 				*reinterpret_cast<CVector4*>(dstVertices + tangentVertexItem->offset) = tangent;
 			}
+			*reinterpret_cast<uint32*>(dstVertices + placeholderVertexItem->offset) = placeholderValue;
 			srcVertices += vertexStream->GetVertexSize();
 			dstVertices += bufferDesc.GetVertexSize();
 		}
@@ -242,6 +254,7 @@ Palleon::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(co
 	auto uv1Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV1);
 	auto uv2Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV2);
 	auto uv3Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV3);
+	auto uv4Element = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_UV4);
 	auto colorElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_COLOR);
 	auto tangentElement = vertexStream->FindElement(CStreamChunk::ELEMENT_DATA_TYPE_TANGENT);
 	assert(positionElement != nullptr);
@@ -295,6 +308,15 @@ Palleon::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(co
 		currentOffset += vertexItem.size;
 	}
 
+	if(uv4Element)
+	{
+		auto& vertexItem = result.vertexItems[currentVertexItem++];
+		vertexItem.id = CUmbralEffect::VERTEX_ITEM_ID_UV3;
+		vertexItem.offset = currentOffset;
+		vertexItem.size = sizeof(CVector2);
+		currentOffset += vertexItem.size;
+	}
+
 	if(colorElement)
 	{
 		auto& vertexItem = result.vertexItems[currentVertexItem++];
@@ -310,6 +332,15 @@ Palleon::VERTEX_BUFFER_DESCRIPTOR CUmbralMesh::GenerateVertexBufferDescriptor(co
 		vertexItem.id = CUmbralEffect::VERTEX_ITEM_ID_TANGENT;
 		vertexItem.offset = currentOffset;
 		vertexItem.size = sizeof(CVector4);
+		currentOffset += vertexItem.size;
+	}
+
+	//Add placeholder element (for missing elements)
+	{
+		auto& vertexItem = result.vertexItems[currentVertexItem++];
+		vertexItem.id = CUmbralEffect::VERTEX_ITEM_ID_PLACEHOLDER;
+		vertexItem.offset = currentOffset;
+		vertexItem.size = sizeof(uint32);
 		currentOffset += vertexItem.size;
 	}
 
