@@ -5,6 +5,7 @@
 #include "win32/Splitter.h"
 #include "SheetViewerSchemaPane.h"
 #include "SheetViewerDataPane.h"
+#include "SheetViewerToolbarPane.h"
 #include "Document.h"
 
 class CSheetViewer : public Framework::Win32::CDialog, public IDocument
@@ -16,23 +17,25 @@ public:
 	virtual std::string					GetName() const override;
 
 protected:
-	long								OnCommand(unsigned short, unsigned short, HWND) override;
 	long								OnNotify(WPARAM, LPNMHDR) override;
 	long								OnSize(unsigned int, unsigned int, unsigned int) override;
 
 private:
-	typedef std::unordered_map<uint32, const char*> LanguageMenuValueMap;
+	typedef std::unordered_map<CSheetViewerToolbarPane::LANGUAGE, const char*> LanguageMenuValueMap;
 	typedef std::unique_ptr<Framework::Win32::CSplitter> SplitterPtr;
 	typedef std::unique_ptr<CSheetViewerSchemaPane> SchemaPanePtr;
 	typedef std::unique_ptr<CSheetViewerDataPane> DataPanePtr;
+	typedef std::unique_ptr<CSheetViewerToolbarPane> ToolbarPanePtr;
 
-	void								SetLanguage(uint32);
+	void								SetLanguage(CSheetViewerToolbarPane::LANGUAGE);
 	void								OnSchemaPaneSelChange(CSheetViewerSchemaPane::SELCHANGE_INFO*);
 
 	static const LanguageMenuValueMap	m_languageMenuValues;
 
 	uint32								m_schemaId = 0;
 	SplitterPtr							m_splitter;
+	SplitterPtr							m_subSplitter;
 	SchemaPanePtr						m_schemaPane;
 	DataPanePtr							m_dataPane;
+	ToolbarPanePtr						m_toolbarPane;
 };
