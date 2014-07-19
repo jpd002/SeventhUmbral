@@ -24,16 +24,6 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 		}
 	}
 
-	//Build unit tree object nodes
-	for(const auto& nodePair : layoutNodes)
-	{
-		if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(nodePair.second))
-		{
-			auto unitTreeObject = CreateUnitTreeObject(mapLayout, unitTreeObjectNode);
-			m_unitTreeObjects.insert(std::make_pair(nodePair.first, unitTreeObject));
-		}
-	}
-
 	for(const auto& nodePair : layoutNodes)
 	{
 		if(auto instanceNode = std::dynamic_pointer_cast<CMapLayout::INSTANCE_OBJECT_NODE>(nodePair.second))
@@ -47,26 +37,37 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 			auto refNode = refNodeIterator->second;
 			if(auto unitTreeObjectNode = std::dynamic_pointer_cast<CMapLayout::UNIT_TREE_OBJECT_NODE>(refNode))
 			{
-				auto unitTreeObjectIterator = m_unitTreeObjects.find(refNodeIterator->first);
-				assert(unitTreeObjectIterator != std::end(m_unitTreeObjects));
-				if(unitTreeObjectIterator == std::end(m_unitTreeObjects)) continue;
+				for(const auto& item : unitTreeObjectNode->items)
+				{
+					auto refNodeIterator = layoutNodes.find(item.nodePtr);
+					assert(refNodeIterator != std::end(layoutNodes));
+					if(refNodeIterator == std::end(layoutNodes)) continue;
 
-				auto unitTreeObject = unitTreeObjectIterator->second;
-				unitTreeObject->SetPosition(instancePosition);
-				unitTreeObject->SetRotation(instanceRotY);
-				unitTreeObject->UpdateTransformations();
-
-				unitTreeObject->TraverseNodes(
-					[&] (const Palleon::SceneNodePtr& node)
+					auto refNode = refNodeIterator->second;
+					if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 					{
-						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
-						{
-							auto instance = mesh->CreateInstance();
-							m_instances.push_back(instance);
-						}
-						return true;
+						auto bgPartObjectIterator = m_bgPartObjects.find(item.nodePtr);
+						assert(bgPartObjectIterator != std::end(m_bgPartObjects));
+						if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
+
+						auto tempNode = Palleon::CSceneNode::Create();
+						tempNode->AppendChild(bgPartObjectIterator->second);
+						tempNode->SetPosition(instancePosition);
+						tempNode->SetRotation(instanceRotY);
+						tempNode->UpdateTransformations();
+						tempNode->TraverseNodes(
+							[&] (const Palleon::SceneNodePtr& node)
+							{
+								if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
+								{
+									auto instance = mesh->CreateInstance();
+									m_instances.push_back(instance);
+								}
+								return true;
+							}
+						);
 					}
-				);
+				}
 			}
 			else if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 			{
@@ -74,20 +75,13 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 				assert(bgPartObjectIterator != std::end(m_bgPartObjects));
 				if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
 
-				auto bgPartObject = bgPartObjectIterator->second;
-				auto prevParent = bgPartObject->GetParent();
-				if(prevParent)
-				{
-					prevParent->RemoveChild(bgPartObject);
-				}
-
 				auto tempNode = Palleon::CSceneNode::Create();
-				tempNode->AppendChild(bgPartObject);
+				tempNode->AppendChild(bgPartObjectIterator->second);
 				tempNode->SetPosition(instancePosition);
 				tempNode->SetRotation(instanceRotY);
 				tempNode->UpdateTransformations();
 
-				bgPartObject->TraverseNodes(
+				tempNode->TraverseNodes(
 					[&] (const Palleon::SceneNodePtr& node)
 					{
 						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
@@ -98,12 +92,6 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 						return true;
 					}
 				);
-
-				tempNode->RemoveAllChildren();
-				if(prevParent)
-				{
-					prevParent->AppendChild(bgPartObject);
-				}
 			}
 		}
 	}
@@ -159,29 +147,6 @@ UmbralModelPtr CUmbralMap::CreateBgPartObject(const MapLayoutPtr& mapLayout, con
 			return true;
 		}
 	);
-
-	return result;
-}
-
-Palleon::SceneNodePtr CUmbralMap::CreateUnitTreeObject(const MapLayoutPtr& mapLayout, const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>& node)
-{
-	auto result = Palleon::CSceneNode::Create();
-
-	const auto& layoutNodes = mapLayout->GetLayoutNodes();
-
-	for(const auto& item : node->items)
-	{
-		auto refNodeIterator = layoutNodes.find(item.nodePtr);
-		if(refNodeIterator == std::end(layoutNodes)) continue;
-
-		auto refNode = refNodeIterator->second;
-		if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
-		{
-			auto bgPartObjectIterator = m_bgPartObjects.find(item.nodePtr);
-			if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
-			result->AppendChild(bgPartObjectIterator->second);
-		}
-	}
 
 	return result;
 }

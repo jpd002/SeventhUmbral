@@ -14,17 +14,11 @@ public:
 
 private:
 	typedef std::map<uint32, UmbralModelPtr> BgPartObjectMap;
-	typedef std::map<uint32, Palleon::SceneNodePtr> UnitTreeObjectMap;
-
 	typedef std::list<UmbralMeshPtr> MeshList;
 
 	UmbralModelPtr			CreateBgPartObject(const MapLayoutPtr&, const std::shared_ptr<CMapLayout::BGPARTS_BASE_OBJECT_NODE>&);
-	Palleon::SceneNodePtr	CreateUnitTreeObject(const MapLayoutPtr&, const std::shared_ptr<CMapLayout::UNIT_TREE_OBJECT_NODE>&);
 
 	BgPartObjectMap			m_bgPartObjects;
-	UnitTreeObjectMap		m_unitTreeObjects;
-
-	//Stuff we render
 	MeshList				m_instances;
 };
 
