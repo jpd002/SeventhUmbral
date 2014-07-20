@@ -1,16 +1,15 @@
-#include "SheetViewer.h"
+﻿#include "SheetViewer.h"
 #include "resource.h"
 #include "win32/HorizontalSplitter.h"
-#include "win32/VerticalSplitter.h"
 #include "win32/MenuItem.h"
 #include "string_format.h"
 
-const CSheetViewer::LanguageMenuValueMap CSheetViewer::m_languageMenuValues =
+const CSheetViewer::LanguageToolBarItemMap CSheetViewer::m_languageToolBarItems =
 {
-	std::make_pair(CSheetViewerToolbarPane::LANGUAGE_JAPANESE,	"jp"),
-	std::make_pair(CSheetViewerToolbarPane::LANGUAGE_ENGLISH,	"en"),
-	std::make_pair(CSheetViewerToolbarPane::LANGUAGE_FRENCH,	"fr"),
-	std::make_pair(CSheetViewerToolbarPane::LANGUAGE_GERMAN,	"de")
+	std::make_pair(LANGUAGE_JAPANESE,	LANGUAGE_TOOLBAR_ITEM(_T("JP"), _T("日本語"), "jp")),
+	std::make_pair(LANGUAGE_ENGLISH,	LANGUAGE_TOOLBAR_ITEM(_T("EN"), _T("English"), "en")),
+	std::make_pair(LANGUAGE_FRENCH,		LANGUAGE_TOOLBAR_ITEM(_T("FR"), _T("Français"), "fr")),
+	std::make_pair(LANGUAGE_GERMAN,		LANGUAGE_TOOLBAR_ITEM(_T("DE"), _T("Deutsch"), "de"))
 };
 
 CSheetViewer::CSheetViewer(HWND parentWnd, uint32 schemaId)
@@ -19,24 +18,26 @@ CSheetViewer::CSheetViewer(HWND parentWnd, uint32 schemaId)
 {
 	SetClassPtr();
 
-	m_splitter = std::make_unique<Framework::Win32::CVerticalSplitter>(m_hWnd, GetClientRect());
+	m_toolbar = Framework::Win32::CToolBar(m_hWnd);
+	m_splitter = std::make_unique<Framework::Win32::CHorizontalSplitter>(m_hWnd, GetClientRect());
+	m_schemaPane = std::make_unique<CSheetViewerSchemaPane>(m_splitter->m_hWnd, schemaId);
+	m_dataPane = std::make_unique<CSheetViewerDataPane>(m_splitter->m_hWnd);
 
-	m_subSplitter = std::make_unique<Framework::Win32::CHorizontalSplitter>(m_splitter->m_hWnd, GetClientRect());
-	m_toolbarPane = std::make_unique<CSheetViewerToolbarPane>(m_splitter->m_hWnd);
+	for(const auto& toolbarItemPair : m_languageToolBarItems)
+	{
+		const auto& toolbarItem(toolbarItemPair.second);
+		m_toolbar.InsertTextButton(toolbarItem.buttonText, toolbarItemPair.first);
+		m_toolbar.SetButtonToolTipText(toolbarItemPair.first, toolbarItem.toolTipText);
+	}
 
-	m_schemaPane = std::make_unique<CSheetViewerSchemaPane>(m_subSplitter->m_hWnd, schemaId);
-	m_dataPane = std::make_unique<CSheetViewerDataPane>(m_subSplitter->m_hWnd);
+	m_toolbar.SetButtonChecked(m_selectedLanguage, true);
+	m_toolbar.Resize();
 
-	m_splitter->SetEdgePosition(0.05f);
-	m_splitter->SetFixed(true);
-	m_splitter->SetChild(0, m_toolbarPane->m_hWnd);
-	m_splitter->SetChild(1, m_subSplitter->m_hWnd);
+	m_splitter->SetEdgePosition(0.25f);
+	m_splitter->SetChild(0, m_schemaPane->m_hWnd);
+	m_splitter->SetChild(1, m_dataPane->m_hWnd);
 
-	m_subSplitter->SetEdgePosition(0.25f);
-	m_subSplitter->SetChild(0, m_schemaPane->m_hWnd);
-	m_subSplitter->SetChild(1, m_dataPane->m_hWnd);
-
-	SetLanguage(m_toolbarPane->GetSelectedLanguage());
+	SetLanguage(m_selectedLanguage);
 }
 
 CSheetViewer::~CSheetViewer()
@@ -50,7 +51,7 @@ std::string CSheetViewer::GetName() const
 	return string_format("Data Sheets - %s", schemaName);
 }
 
-long CSheetViewer::OnNotify(WPARAM, LPNMHDR nmhdr)
+long CSheetViewer::OnNotify(WPARAM wparam, LPNMHDR nmhdr)
 {
 	if(CWindow::IsNotifySource(m_schemaPane.get(), nmhdr))
 	{
@@ -61,36 +62,48 @@ long CSheetViewer::OnNotify(WPARAM, LPNMHDR nmhdr)
 			break;
 		}
 	}
-	else if(CWindow::IsNotifySource(m_toolbarPane.get(), nmhdr))
-	{
-		switch(nmhdr->code)
-		{
-		case CSheetViewerToolbarPane::NOTIFY_LANGUAGE_CHANGE:
-			{
-				auto languageChangeInfo = reinterpret_cast<CSheetViewerToolbarPane::LANGUAGE_CHANGE_INFO*>(nmhdr);
-				SetLanguage(languageChangeInfo->language);
-			}
-			break;
-		}
-	}
+	m_toolbar.ProcessNotify(wparam, nmhdr);
 	return FALSE;
+}
+
+long CSheetViewer::OnCommand(unsigned short id, unsigned short, HWND)
+{
+	switch(id)
+	{
+	case LANGUAGE_JAPANESE:
+	case LANGUAGE_ENGLISH:
+	case LANGUAGE_FRENCH:
+	case LANGUAGE_GERMAN:
+		{
+			m_toolbar.SetButtonChecked(m_selectedLanguage, false);
+			m_selectedLanguage = static_cast<LANGUAGE>(id);
+			m_toolbar.SetButtonChecked(m_selectedLanguage, true);
+			SetLanguage(m_selectedLanguage);
+		}
+		break;
+	}
+	return TRUE;
 }
 
 long CSheetViewer::OnSize(unsigned int, unsigned int, unsigned int)
 {
+	m_toolbar.Resize();
 	auto clientRect = GetClientRect();
+	auto toolbarClientRect = m_toolbar.GetWindowRect();
+	clientRect.SetTop(toolbarClientRect.Height());
 	m_splitter->SetSizePosition(clientRect);
 	return FALSE;
 }
 
-void CSheetViewer::SetLanguage(CSheetViewerToolbarPane::LANGUAGE language)
+void CSheetViewer::SetLanguage(LANGUAGE language)
 {
-	auto menuItemValueIterator = m_languageMenuValues.find(language);
-	if(menuItemValueIterator == std::end(m_languageMenuValues))
+	auto languageToolBarItemIterator = m_languageToolBarItems.find(language);
+	if(languageToolBarItemIterator == std::end(m_languageToolBarItems))
 	{
-		menuItemValueIterator = m_languageMenuValues.begin();
+		languageToolBarItemIterator = m_languageToolBarItems.begin();
 	}
-	m_dataPane->SetLanguage(menuItemValueIterator->second);
+	const auto& languageToolBarItem = languageToolBarItemIterator->second;
+	m_dataPane->SetLanguage(languageToolBarItem.languageCode);
 }
 
 void CSheetViewer::OnSchemaPaneSelChange(CSheetViewerSchemaPane::SELCHANGE_INFO* selChangeInfo)

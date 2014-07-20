@@ -63,9 +63,6 @@
     <ClCompile Include="..\workshop\WelcomePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\workshop\SheetViewerToolbarPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -123,9 +120,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\WelcomePage.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\SheetViewerToolbarPane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

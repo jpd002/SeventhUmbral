@@ -121,7 +121,6 @@
     <ClCompile Include="..\workshop\SheetViewer.cpp" />
     <ClCompile Include="..\workshop\SheetViewerDataPane.cpp" />
     <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp" />
-    <ClCompile Include="..\workshop\SheetViewerToolbarPane.cpp" />
     <ClCompile Include="..\workshop\WelcomePage.cpp" />
     <ClCompile Include="..\workshop\WinMain.cpp" />
     <ClCompile Include="..\workshop\WorldViewer.cpp" />
@@ -144,7 +143,6 @@
     <ClInclude Include="..\workshop\SheetViewer.h" />
     <ClInclude Include="..\workshop\SheetViewerDataPane.h" />
     <ClInclude Include="..\workshop\SheetViewerSchemaPane.h" />
-    <ClInclude Include="..\workshop\SheetViewerToolbarPane.h" />
     <ClInclude Include="..\workshop\WelcomePage.h" />
     <ClInclude Include="..\workshop\WorldViewer.h" />
   </ItemGroup>
