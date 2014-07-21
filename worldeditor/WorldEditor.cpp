@@ -1,3 +1,4 @@
+#include <boost/lexical_cast.hpp>
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
@@ -48,7 +49,7 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 	{
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
 		//CFileManager::SetGamePath("F:\\FFXIV_10_Copy");
-		CreateMap();
+		CreateMap(0xA09B0002);
 	}
 }
 
@@ -94,7 +95,7 @@ void CWorldEditor::CreateWorld()
 	}
 }
 
-void CWorldEditor::CreateMap()
+void CWorldEditor::CreateMap(uint32 mapId)
 {
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
@@ -111,7 +112,7 @@ void CWorldEditor::CreateMap()
 	}
 
 	{
-		auto mapLayoutPath = CFileManager::GetResourcePath(0xA09B0000);
+		auto mapLayoutPath = CFileManager::GetResourcePath(mapId);
 		auto mapLayout = std::make_shared<CMapLayout>();
 		auto mapStream = Framework::CreateInputStdStream(mapLayoutPath.native());
 		mapLayout->Read(mapStream);
@@ -290,11 +291,20 @@ std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
 		CFileManager::SetGamePath(gamePath);
 		return std::string("success");
 	}
-	if(method == "SetActor")
+	if(method == "SetMap")
 	{
-		CreateMap();
-		CreateActors();
-		CreateBaseAxis();
+		try
+		{
+			auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
+			CreateMap(mapId);
+//			CreateActors();
+//			CreateBaseAxis();
+			return "success";
+		}
+		catch(...)
+		{
+			return "failed";
+		}
 		return "success";
 	}
 	return std::string("failed");

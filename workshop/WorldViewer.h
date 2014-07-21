@@ -9,7 +9,7 @@
 class CWorldViewer : public Framework::Win32::CDialog, public IDocument
 {
 public:
-								CWorldViewer(HWND);
+								CWorldViewer(HWND, uint32);
 	virtual						~CWorldViewer();
 
 	virtual std::string			GetName() const override;
@@ -25,4 +25,5 @@ private:
 	void						CreateViewer();
 
 	EmbedControlPtr				m_embedControl;
+	uint32						m_mapId = 0;
 };

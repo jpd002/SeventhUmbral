@@ -24,9 +24,8 @@ private:
 	void						Destroy();
 	void						ShowWelcomePage();
 	void						ShowApperanceViewer();
-	void						ShowWorldViewer();
-	void						ShowGameDataSheetViewer();
-	void						ShowVarDataSheetViewer();
+	void						ShowWorldViewer(uint32);
+	void						ShowSheetViewer(uint32);
 	void						ShowAbout();
 
 	void						InsertDocument(DocumentPtr&&);

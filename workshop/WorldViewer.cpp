@@ -5,8 +5,9 @@
 #include "palleon\EmbedRemoteCall.h"
 
 
-CWorldViewer::CWorldViewer(HWND parentWnd)
+CWorldViewer::CWorldViewer(HWND parentWnd, uint32 mapId)
 : CDialog(MAKEINTRESOURCE(IDD_WORLDVIEWER), parentWnd)
+, m_mapId(mapId)
 {
 	SetClassPtr();
 	CreateViewer();
@@ -19,7 +20,20 @@ CWorldViewer::~CWorldViewer()
 
 std::string CWorldViewer::GetName() const
 {
-	return "World";
+	switch(m_mapId)
+	{
+	case 0xA09B0000:
+		return "World - Gridania Inn Room";
+		break;
+	case 0xA09B0001:
+		return "World - Limsa Lominsa Inn Room";
+		break;
+	case 0xA09B0002:
+		return "World - Ul'dah Inn Room";
+		break;
+	default:
+		return "World";
+	}
 }
 
 void CWorldViewer::SetActive(bool active)
@@ -57,7 +71,8 @@ void CWorldViewer::CreateViewer()
 	}
 	{
 		Palleon::CEmbedRemoteCall rpc;
-		rpc.SetMethod("SetActor");
-		m_embedControl->ExecuteCommand(rpc.ToString());
+		rpc.SetMethod("SetMap");
+		rpc.SetParam("MapId", std::to_string(m_mapId));
+		auto result = m_embedControl->ExecuteCommand(rpc.ToString());
 	}
 }

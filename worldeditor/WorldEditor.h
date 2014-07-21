@@ -33,7 +33,7 @@ private:
 	void					CreateWorld();
 	void					CreateActors();
 
-	void					CreateMap();
+	void					CreateMap(uint32);
 	void					CreateBaseAxis();
 
 	CVector2				m_mousePosition;

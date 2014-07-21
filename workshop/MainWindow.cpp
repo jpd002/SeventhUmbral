@@ -44,14 +44,20 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	case ID_MAINMENU_INSPECT_WEAPONS:
 		ShowApperanceViewer();
 		break;
-	case ID_MAINMENU_INSPECT_WORLD:
-		ShowWorldViewer();
+	case ID_MAINMENU_INSPECT_WORLD_GRIDANIAINN:
+		ShowWorldViewer(0xA09B0000);
+		break;
+	case ID_MAINMENU_INSPECT_WORLD_LIMSALOMINSAINN:
+		ShowWorldViewer(0xA09B0001);
+		break;
+	case ID_MAINMENU_INSPECT_WORLD_ULDAHINN:
+		ShowWorldViewer(0xA09B0002);
 		break;
 	case ID_MAINMENU_INSPECT_GAMEDATASHEETS:
-		ShowGameDataSheetViewer();
+		ShowSheetViewer(CSheetSchema::GAME_SCHEMA_FILE_ID);
 		break;
 	case ID_MAINMENU_INSPECT_VARDATASHEETS:
-		ShowVarDataSheetViewer();
+		ShowSheetViewer(CSheetSchema::VAR_SCHEMA_FILE_ID);
 		break;
 	case ID_HELP_ABOUT:
 		ShowAbout();
@@ -137,21 +143,15 @@ void CMainWindow::ShowApperanceViewer()
 	InsertDocument(std::move(appearanceViewer));
 }
 
-void CMainWindow::ShowWorldViewer()
+void CMainWindow::ShowWorldViewer(uint32 mapId)
 {
-	auto worldViewer = std::make_unique<CWorldViewer>(m_hWnd);
+	auto worldViewer = std::make_unique<CWorldViewer>(m_hWnd, mapId);
 	InsertDocument(std::move(worldViewer));
 }
 
-void CMainWindow::ShowGameDataSheetViewer()
+void CMainWindow::ShowSheetViewer(uint32 sheetSchemaId)
 {
-	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, CSheetSchema::GAME_SCHEMA_FILE_ID);
-	InsertDocument(std::move(sheetViewer));
-}
-
-void CMainWindow::ShowVarDataSheetViewer()
-{
-	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, CSheetSchema::VAR_SCHEMA_FILE_ID);
+	auto sheetViewer = std::make_unique<CSheetViewer>(m_hWnd, sheetSchemaId);
 	InsertDocument(std::move(sheetViewer));
 }
 
