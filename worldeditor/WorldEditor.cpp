@@ -241,16 +241,16 @@ void CWorldEditor::NotifyKeyDown(Palleon::KEY_CODE keyCode)
 {
 	switch(keyCode)
 	{
-	case Palleon::KEY_CODE_W:
+	case Palleon::KEY_CODE_ARROW_UP:
 		m_mainCamera->BeginMoveForward();
 		break;
-	case Palleon::KEY_CODE_S:
+	case Palleon::KEY_CODE_ARROW_DOWN:
 		m_mainCamera->BeginMoveBackward();
 		break;
-	case Palleon::KEY_CODE_A:
+	case Palleon::KEY_CODE_ARROW_LEFT:
 		m_mainCamera->BeginStrafeLeft();
 		break;
-	case Palleon::KEY_CODE_D:
+	case Palleon::KEY_CODE_ARROW_RIGHT:
 		m_mainCamera->BeginStrafeRight();
 		break;
 	}
@@ -261,16 +261,16 @@ void CWorldEditor::NotifyKeyUp(Palleon::KEY_CODE keyCode)
 {
 	switch(keyCode)
 	{
-	case Palleon::KEY_CODE_W:
+	case Palleon::KEY_CODE_ARROW_UP:
 		m_mainCamera->EndMoveForward();
 		break;
-	case Palleon::KEY_CODE_S:
+	case Palleon::KEY_CODE_ARROW_DOWN:
 		m_mainCamera->EndMoveBackward();
 		break;
-	case Palleon::KEY_CODE_A:
+	case Palleon::KEY_CODE_ARROW_LEFT:
 		m_mainCamera->EndStrafeLeft();
 		break;
-	case Palleon::KEY_CODE_D:
+	case Palleon::KEY_CODE_ARROW_RIGHT:
 		m_mainCamera->EndStrafeRight();
 		break;
 	}
