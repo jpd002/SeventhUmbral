@@ -30,11 +30,30 @@ CMainWindow::CMainWindow()
 	ShowWelcomePage();
 
 	LoadWindowRect();
+
+	m_accelerators = LoadAccelerators(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MAINWINDOW_ACCELERATORS));
 }
 
 CMainWindow::~CMainWindow()
 {
 
+}
+
+void CMainWindow::DoMessageLoop()
+{
+	while(IsWindow())
+	{
+		MSG m;
+		GetMessage(&m, NULL, NULL, NULL);
+		if(!TranslateAccelerator(m_hWnd, m_accelerators, &m))
+		{
+			if(!IsDialogMessage(m_hWnd, &m))
+			{
+				TranslateMessage(&m);
+				DispatchMessage(&m);
+			}
+		}
+	}
 }
 
 long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
@@ -62,6 +81,19 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	case ID_HELP_ABOUT:
 		ShowAbout();
 		break;
+	case ID_TABCONTEXT_CLOSETAB:
+		if(m_tabs.GetItemCount())
+		{
+			if(m_tabContextMenuSelection == -1)
+			{
+				CloseTab(m_tabs.GetSelection());
+			}
+			else
+			{
+				CloseTab(m_tabContextMenuSelection);
+			}
+		}
+		break;
 	case ID_FILE_QUIT:
 	case IDCANCEL:
 		Destroy();
@@ -76,6 +108,9 @@ long CMainWindow::OnNotify(WPARAM param, NMHDR* hdr)
 	{
 		switch(hdr->code)
 		{
+		case NM_RCLICK:
+			OnTabRightClick();
+			break;
 		case TCN_SELCHANGING:
 			UnselectTab(m_tabs.GetSelection());
 			break;
@@ -214,6 +249,43 @@ void CMainWindow::UnselectTab(int selection)
 			document->SetActive(false);
 		}
 	}
+}
+
+void CMainWindow::CloseTab(int tabIndex)
+{
+	if(m_tabs.GetSelection() == tabIndex)
+	{
+		UnselectTab(tabIndex);
+	}
+	uint32 documentId = m_tabs.GetTabData(tabIndex);
+	auto documentIterator = m_documents.find(documentId);
+	assert(documentIterator != std::end(m_documents));
+	if(documentIterator != std::end(m_documents))
+	{
+		documentIterator->second->Destroy();
+		m_documents.erase(documentIterator);
+	}
+	m_tabs.DeleteTab(tabIndex);
+	if(m_tabs.GetItemCount() > 0)
+	{
+		m_tabs.SetSelection(0);
+		SelectTab(0);
+	}
+}
+
+void CMainWindow::OnTabRightClick()
+{
+	POINT cursorScreenPos = {};
+	GetCursorPos(&cursorScreenPos);
+
+	POINT cursorClientPos = cursorScreenPos;
+	ScreenToClient(m_tabs.m_hWnd, &cursorClientPos);
+	m_tabContextMenuSelection = m_tabs.HitTest(cursorClientPos.x, cursorClientPos.y);
+	if(m_tabContextMenuSelection == -1) return;
+
+	HMENU contextMenuRoot = LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_TABCONTEXT));
+	HMENU contextMenu = GetSubMenu(contextMenuRoot, 0);
+	TrackPopupMenu(contextMenu, 0, cursorScreenPos.x, cursorScreenPos.y, 0, m_hWnd, nullptr);
 }
 
 void CMainWindow::UpdateLayout()

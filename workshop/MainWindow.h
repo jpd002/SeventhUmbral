@@ -10,6 +10,8 @@ public:
 								CMainWindow();
 	virtual						~CMainWindow();
 
+	void						DoMessageLoop();
+
 protected:
 	long						OnCommand(unsigned short, unsigned short, HWND) override;
 	long						OnNotify(WPARAM, NMHDR*) override;
@@ -30,10 +32,16 @@ private:
 
 	void						InsertDocument(DocumentPtr&&);
 	void						UpdateLayout();
+
 	void						SelectTab(int);
 	void						UnselectTab(int);
+
+	void						OnTabRightClick();
+	void						CloseTab(int);
 
 	Framework::Win32::CTab		m_tabs;
 	DocumentMap					m_documents;
 	uint32						m_nextDocumentId = 1;
+	int							m_tabContextMenuSelection = -1;
+	HACCEL						m_accelerators = 0;
 };
