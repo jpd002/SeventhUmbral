@@ -11,6 +11,8 @@ public:
 
 	static CConfig::PathType	GetBasePath();
 
+	void						PrepareGameLocation();
+
 private:
 	static CConfig::PathType	BuildConfigPath();
 };
