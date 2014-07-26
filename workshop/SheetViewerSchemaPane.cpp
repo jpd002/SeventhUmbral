@@ -21,10 +21,15 @@ CSheetViewerSchemaPane::CSheetViewerSchemaPane(HWND parentWnd, uint32 schemaId)
 		m_schemaListView.InsertColumn(0, col);
 	}
 
+	try
 	{
 		auto schemaFilePath = CFileManager::GetResourcePath(schemaId);
 		auto schemaStream = Framework::CreateInputStdStream(schemaFilePath.native());
 		m_schema = CSheetSchema(schemaStream);
+	}
+	catch(...)
+	{
+
 	}
 
 	PopulateSchemaView();

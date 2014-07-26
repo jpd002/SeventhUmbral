@@ -9,20 +9,28 @@
 CAppearanceViewerActorListPane::CAppearanceViewerActorListPane(HWND parentWnd)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_APPEARANCEVIEWER_ACTORLISTPANE), parentWnd)
 {
-	auto sheetFilePath = CFileManager::GetResourcePath(VARWEP_SHEET_ID);
-	auto sheetStream = Framework::CreateInputStdStream(sheetFilePath.native());
-	auto varEquipSheet = CSheet::Create(sheetStream);
-	m_varWepSheetData = CSheetData::Create(varEquipSheet, 0,
-		[](uint32 fileId)
-		{
-			auto filePath = CFileManager::GetResourcePath(fileId);
-			return new Framework::CStdStream(Framework::CreateInputStdStream(filePath.native()));
-		}
-	);
-
 	SetClassPtr();
 	m_actorListBox = Framework::Win32::CListBox(GetItem(IDC_APPEARANCEVIEWER_ACTORLIST));
-	ScanActors();
+
+	try
+	{
+		auto sheetFilePath = CFileManager::GetResourcePath(VARWEP_SHEET_ID);
+		auto sheetStream = Framework::CreateInputStdStream(sheetFilePath.native());
+		auto varEquipSheet = CSheet::Create(sheetStream);
+		m_varWepSheetData = CSheetData::Create(varEquipSheet, 0,
+			[](uint32 fileId)
+			{
+				auto filePath = CFileManager::GetResourcePath(fileId);
+				return new Framework::CStdStream(Framework::CreateInputStdStream(filePath.native()));
+			}
+		);
+	
+		ScanActors();
+	}
+	catch(...)
+	{
+
+	}
 }
 
 CAppearanceViewerActorListPane::~CAppearanceViewerActorListPane()
