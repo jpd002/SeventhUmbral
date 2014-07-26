@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include "string_format.h"
 #include "PatchProcess.h"
+#include "../common/GameInstallInfo.h"
 
 void PrepareGameLocation()
 {
@@ -17,7 +18,7 @@ void PrepareGameLocation()
 	//Already setup, don't go any further
 	if(!currentGameLocation.empty()) return;
 
-	auto detectedGameLocation = Utils::GetGameLocationFromInstallInfo();
+	auto detectedGameLocation = CGameInstallInfo::GetInstallPath();
 	if(!detectedGameLocation.empty())
 	{
 		int pressedButton = 0;

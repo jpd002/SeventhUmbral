@@ -57,6 +57,9 @@
     <ClCompile Include="..\launcher\PatchProcess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\GameInstallInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\launcher\PatchProcess.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\GameInstallInfo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

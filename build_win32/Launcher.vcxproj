@@ -98,6 +98,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="..\common\GameInstallInfo.cpp" />
     <ClCompile Include="..\Launcher\AppConfig.cpp" />
     <ClCompile Include="..\launcher\DownloaderService.cpp" />
     <ClCompile Include="..\launcher\GameSettingsWindow.cpp" />
@@ -125,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
+    <ClInclude Include="..\common\GameInstallInfo.h" />
     <ClInclude Include="..\Launcher\AppConfig.h" />
     <ClInclude Include="..\launcher\AppDef.h" />
     <ClInclude Include="..\launcher\AppPreferences.h" />

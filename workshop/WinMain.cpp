@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include "MainWindow.h"
-#include "../launcher/Utils.h"
+#include "../common/GameInstallInfo.h"
 #include "../dataobjects/FileManager.h"
 #include "AppConfig.h"
 #include "AppPreferences.h"
@@ -15,7 +15,7 @@ void PrepareGameLocation()
 	//Already setup, don't go any further
 	if(!currentGameLocation.empty()) return;
 
-	auto detectedGameLocation = Utils::GetGameLocationFromInstallInfo();
+	auto detectedGameLocation = CGameInstallInfo::GetInstallPath();
 	CAppConfig::GetInstance().SetPreferenceString(PREF_WORKSHOP_GAME_LOCATION, Framework::Utf8::ConvertTo(detectedGameLocation).c_str());
 
 	CAppConfig::GetInstance().Save();
