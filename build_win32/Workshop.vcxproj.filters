@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\AppearanceViewer">
+      <UniqueIdentifier>{3728a2d1-dc10-40fb-9e6a-401e970eca41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SheetViewer">
+      <UniqueIdentifier>{542f2d1b-a693-41e5-9024-5836c3d7679a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\workshop\WinMain.cpp">
@@ -24,31 +30,10 @@
     <ClCompile Include="..\workshop\SheetColumnsDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\workshop\SheetViewer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\SheetViewerDataPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\AppearanceViewer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\workshop\AppConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\workshop\MainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\AppearanceViewerActorListPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\AppearanceViewerActorViewPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\workshop\AboutWindow.cpp">
@@ -59,6 +44,33 @@
     </ClCompile>
     <ClCompile Include="..\workshop\WelcomePage.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\GameInstallInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\SettingsPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\AppearanceViewer.cpp">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\AppearanceViewerActorListPane.cpp">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\AppearanceViewerActorViewPane.cpp">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp">
+      <Filter>Source Files\SheetViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\SheetViewerDataPane.cpp">
+      <Filter>Source Files\SheetViewer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\SheetViewer.cpp">
+      <Filter>Source Files\SheetViewer</Filter>
     </ClCompile>
     <ClCompile Include="..\common\GameInstallInfo.cpp">
       <Filter>Source Files</Filter>
@@ -74,18 +86,6 @@
     <ClInclude Include="..\workshop\SheetColumnsDefinition.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\workshop\SheetViewer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\SheetViewerDataPane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\SheetViewerSchemaPane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\AppearanceViewer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\workshop\AppConfig.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -93,15 +93,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\MainWindow.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\AppearanceViewerActorListPane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\AppearanceViewerActorViewPane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\AppDef.h">
@@ -118,6 +109,33 @@
     </ClInclude>
     <ClInclude Include="..\workshop\WelcomePage.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\GameInstallInfo.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\SettingsPage.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppearanceViewer.h">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppearanceViewerActorInfoPane.h">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppearanceViewerActorListPane.h">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\AppearanceViewerActorViewPane.h">
+      <Filter>Source Files\AppearanceViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\SheetViewerSchemaPane.h">
+      <Filter>Source Files\SheetViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\SheetViewerDataPane.h">
+      <Filter>Source Files\SheetViewer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\SheetViewer.h">
+      <Filter>Source Files\SheetViewer</Filter>
     </ClInclude>
     <ClInclude Include="..\common\GameInstallInfo.h">
       <Filter>Source Files</Filter>

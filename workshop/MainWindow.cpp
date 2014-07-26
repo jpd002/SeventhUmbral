@@ -2,6 +2,7 @@
 #include "MainWindow.h"
 #include "resource.h"
 #include "WelcomePage.h"
+#include "SettingsPage.h"
 #include "SheetViewer.h"
 #include "AppearanceViewer.h"
 #include "WorldViewer.h"
@@ -78,7 +79,10 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	case ID_MAINMENU_INSPECT_VARDATASHEETS:
 		ShowSheetViewer(CSheetSchema::VAR_SCHEMA_FILE_ID);
 		break;
-	case ID_HELP_ABOUT:
+	case ID_MAINMENU_SETTINGS_GENERALSETTINGS:
+		InsertDocument(std::move(std::make_unique<CSettingsPage>(m_hWnd)));
+		break;
+	case ID_MAINMENU_HELP_ABOUT:
 		ShowAbout();
 		break;
 	case ID_TABCONTEXT_CLOSETAB:
