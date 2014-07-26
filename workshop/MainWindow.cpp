@@ -99,7 +99,17 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 		}
 		break;
 	case ID_FILE_QUIT:
-	case IDCANCEL:
+		Destroy();
+		break;
+	}
+	return FALSE;
+}
+
+long CMainWindow::OnSysCommand(unsigned int cmd, LPARAM)
+{
+	switch(cmd)
+	{
+	case SC_CLOSE:
 		Destroy();
 		break;
 	}
