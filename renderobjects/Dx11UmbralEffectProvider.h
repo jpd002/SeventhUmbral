@@ -10,7 +10,7 @@ public:
 	virtual						~CDx11UmbralEffectProvider();
 
 protected:
-	virtual Palleon::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&) override;
+	virtual Palleon::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&, bool) override;
 
 private:
 	ID3D11Device*				m_device;

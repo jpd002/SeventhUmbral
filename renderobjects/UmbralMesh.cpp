@@ -444,17 +444,8 @@ void CUmbralMesh::SetupEffect()
 		shaderCode += string_format("%s %s\r\n", mnemonic.c_str(), operands.c_str());
 	}
 #endif
-
-	const auto& effectProvider = CGlobalResources::GetInstance().GetEffectProvider();
-	m_effect = std::static_pointer_cast<CUmbralEffectProvider>(effectProvider)->GetEffect(vertexShader, pixelShader);
-	SetEffectProvider(effectProvider);
 	
-	const auto& pixelShaderConstantTable = pixelShader.GetConstantTable();
-	for(const auto& constant : pixelShaderConstantTable.GetConstants())
-	{
-		if(constant.info.registerSet != CD3DShaderConstantTable::REGISTER_SET_SAMPLER) continue;
-		m_samplerRegisters.insert(std::make_pair(constant.name, constant.info.registerIndex));
-	}
+	bool hasAlphaTest = false;
 
 	{
 		auto material = GetMaterial();
@@ -474,7 +465,7 @@ void CUmbralMesh::SetupEffect()
 		case 0xC12:
 		case 0xC1A:
 			//Alpha tested mode (this needs to be done in the shader)
-			//material->SetAlphaBlendingMode(Palleon::ALPHA_BLENDING_LERP);
+			hasAlphaTest = true;
 			break;
 		}
 
@@ -505,6 +496,17 @@ void CUmbralMesh::SetupEffect()
 			auto paramName = param.isPixelShaderParam ? ("ps_" + param.name) : ("vs_" + param.name);
 			material->SetEffectParameter(paramName, effectParam);
 		}
+	}
+
+	const auto& effectProvider = CGlobalResources::GetInstance().GetEffectProvider();
+	m_effect = std::static_pointer_cast<CUmbralEffectProvider>(effectProvider)->GetEffect(vertexShader, pixelShader, hasAlphaTest);
+	SetEffectProvider(effectProvider);
+	
+	const auto& pixelShaderConstantTable = pixelShader.GetConstantTable();
+	for(const auto& constant : pixelShaderConstantTable.GetConstants())
+	{
+		if(constant.info.registerSet != CD3DShaderConstantTable::REGISTER_SET_SAMPLER) continue;
+		m_samplerRegisters.insert(std::make_pair(constant.name, constant.info.registerIndex));
 	}
 
 #endif

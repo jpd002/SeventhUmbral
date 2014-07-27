@@ -8,12 +8,14 @@ struct EFFECTINFO
 {
 	CD3DShader		vertexShader;
 	CD3DShader		pixelShader;
+	bool			hasAlphaTest = false;
 
 	bool operator ==(const EFFECTINFO& rhs) const
 	{
 		return 
 			(vertexShader == rhs.vertexShader) && 
-			(pixelShader == rhs.pixelShader);
+			(pixelShader == rhs.pixelShader) &&
+			(hasAlphaTest == rhs.hasAlphaTest);
 	}
 };
 
@@ -27,6 +29,7 @@ namespace std
 			uLong crc = crc32(0L, Z_NULL, 0);
 			crc = HashShader(crc, effectInfo.vertexShader);
 			crc = HashShader(crc, effectInfo.pixelShader);
+			crc = crc32(crc, reinterpret_cast<const Bytef*>(&effectInfo.hasAlphaTest), sizeof(bool));
 			return crc;
 		}
 
@@ -50,12 +53,12 @@ namespace std
 class CUmbralEffectProvider : public Palleon::CEffectProvider
 {
 public:
-	Palleon::EffectPtr			GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader);
+	Palleon::EffectPtr			GetEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader, bool);
 
 	virtual Palleon::EffectPtr	GetEffectForRenderable(Palleon::CMesh*, bool) override;
 
 protected:
-	virtual Palleon::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&) = 0;
+	virtual Palleon::EffectPtr	CreateEffect(const CD3DShader&, const CD3DShader&, bool) = 0;
 	
 private:
 	typedef std::unordered_map<EFFECTINFO, Palleon::EffectPtr> EffectMap;

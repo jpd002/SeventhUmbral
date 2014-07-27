@@ -10,10 +10,10 @@ std::string CDx11UmbralEffectGenerator::GenerateVertexShader(const CD3DShader& i
 	return generator.GenerateVertexShaderInternal(inputShader);
 }
 
-std::string CDx11UmbralEffectGenerator::GeneratePixelShader(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader)
+std::string CDx11UmbralEffectGenerator::GeneratePixelShader(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader, bool hasAlphaTest)
 {
 	CDx11UmbralEffectGenerator generator;
-	return generator.GeneratePixelShaderInternal(inputVertexShader, inputPixelShader);
+	return generator.GeneratePixelShaderInternal(inputVertexShader, inputPixelShader, hasAlphaTest);
 }
 
 std::string CDx11UmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DShader& inputVertexShader)
@@ -91,7 +91,7 @@ std::string CDx11UmbralEffectGenerator::GenerateVertexShaderInternal(const CD3DS
 	return result;
 }
 
-std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader)
+std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DShader& inputVertexShader, const CD3DShader& inputPixelShader, bool hasAlphaTest)
 {
 	assert(inputVertexShader.GetType() == CD3DShader::SHADER_TYPE_VERTEX);
 	assert(inputPixelShader.GetType() == CD3DShader::SHADER_TYPE_PIXEL);
@@ -153,6 +153,11 @@ std::string CDx11UmbralEffectGenerator::GeneratePixelShaderInternal(const CD3DSh
 	}
 
 	result += GenerateInstructions(inputPixelShader);
+
+	if(hasAlphaTest)
+	{
+		result += "\tif(output.oC0.a < 0.5f) discard;\r\n";
+	}
 
 	result += "\treturn output;\r\n";
 	result += "}\r\n";

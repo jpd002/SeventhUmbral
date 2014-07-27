@@ -4,13 +4,14 @@
 #include "palleon/Viewport.h"
 
 CDx11UmbralEffect::CDx11UmbralEffect(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
-	const CD3DShader& vertexShader, const CD3DShader& pixelShader)
+	const CD3DShader& vertexShader, const CD3DShader& pixelShader, bool hasAlphaTest)
 : CDx11Effect(device, deviceContext)
 , m_vertexShader(vertexShader)
 , m_pixelShader(pixelShader)
+, m_hasAlphaTest(hasAlphaTest)
 {
 	auto vertexShaderText = CDx11UmbralEffectGenerator::GenerateVertexShader(m_vertexShader);
-	auto pixelShaderText = CDx11UmbralEffectGenerator::GeneratePixelShader(m_vertexShader, m_pixelShader);
+	auto pixelShaderText = CDx11UmbralEffectGenerator::GeneratePixelShader(m_vertexShader, m_pixelShader, hasAlphaTest);
 
 	CompileVertexShader(vertexShaderText);
 	CompilePixelShader(pixelShaderText);

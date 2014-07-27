@@ -14,7 +14,7 @@ CDx11UmbralEffectProvider::~CDx11UmbralEffectProvider()
 
 }
 
-Palleon::EffectPtr CDx11UmbralEffectProvider::CreateEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader)
+Palleon::EffectPtr CDx11UmbralEffectProvider::CreateEffect(const CD3DShader& vertexShader, const CD3DShader& pixelShader, bool hasAlphaTest)
 {
-	return std::make_shared<CDx11UmbralEffect>(m_device, m_deviceContext, vertexShader, pixelShader);
+	return std::make_shared<CDx11UmbralEffect>(m_device, m_deviceContext, vertexShader, pixelShader, hasAlphaTest);
 }

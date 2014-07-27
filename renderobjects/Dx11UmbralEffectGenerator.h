@@ -9,7 +9,7 @@ class CDx11UmbralEffectGenerator
 {
 public:
 	static std::string		GenerateVertexShader(const CD3DShader&);
-	static std::string		GeneratePixelShader(const CD3DShader&, const CD3DShader&);
+	static std::string		GeneratePixelShader(const CD3DShader&, const CD3DShader&, bool);
 
 private:
 	struct VARIABLE_INFO
@@ -35,7 +35,7 @@ private:
 	typedef std::pair<std::string, RegisterIndexMap> StructureDef;
 
 	std::string				GenerateVertexShaderInternal(const CD3DShader&);
-	std::string				GeneratePixelShaderInternal(const CD3DShader&, const CD3DShader&);
+	std::string				GeneratePixelShaderInternal(const CD3DShader&, const CD3DShader&, bool);
 
 	std::string				GenerateInstructions(const CD3DShader&) const;
 

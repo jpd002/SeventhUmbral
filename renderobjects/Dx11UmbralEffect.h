@@ -6,7 +6,7 @@
 class CDx11UmbralEffect : public Palleon::CDx11Effect
 {
 public:
-									CDx11UmbralEffect(ID3D11Device*, ID3D11DeviceContext*, const CD3DShader&, const CD3DShader&);
+									CDx11UmbralEffect(ID3D11Device*, ID3D11DeviceContext*, const CD3DShader&, const CD3DShader&, bool);
 	virtual							~CDx11UmbralEffect();
 
 	virtual void					UpdateConstants(const Palleon::DX11VIEWPORT_PARAMS&, Palleon::CMaterial*, const CMatrix4&) override;
@@ -19,6 +19,7 @@ private:
 
 	CD3DShader						m_vertexShader;
 	CD3DShader						m_pixelShader;
+	bool							m_hasAlphaTest = false;
 
 	//Vertex Shader Constants
 	uint32							m_modelBBoxOffsetOffset = -1;
