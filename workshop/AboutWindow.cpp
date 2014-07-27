@@ -1,6 +1,7 @@
 #include "AboutWindow.h"
 #include "AppDef.h"
 #include <shobjidl.h>
+#include "resource.h"
 
 CAboutWindow::CAboutWindow()
 {
@@ -22,9 +23,9 @@ void CAboutWindow::DoModal(HWND parentWnd)
 	tdc.dwCommonButtons		= TDCBF_OK_BUTTON;
 	tdc.nDefaultButton		= IDOK;
 	tdc.pszMainInstruction	= APP_NAME;
-	tdc.dwFlags				= TDF_ENABLE_HYPERLINKS;
+	tdc.dwFlags				= TDF_ENABLE_HYPERLINKS | TDF_USE_HICON_MAIN;
 	tdc.pszContent			= message;
-	tdc.pszMainIcon			= TD_INFORMATION_ICON;
+	tdc.hMainIcon			= LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_MAIN));
 	tdc.pfCallback			= &TaskDialogCallback;
 	tdc.hwndParent			= parentWnd;
 	TaskDialogIndirect(&tdc, NULL, NULL, NULL);
