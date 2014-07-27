@@ -154,4 +154,9 @@
   <ItemGroup>
     <None Include="..\workshop\welcomepage_contents.html" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\workshop\icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

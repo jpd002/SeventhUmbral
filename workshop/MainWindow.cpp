@@ -28,6 +28,19 @@ CMainWindow::CMainWindow()
 	SetClassPtr();
 	m_tabs = Framework::Win32::CTab(GetItem(IDC_MAINWINDOW_TABS));
 
+	{
+		int smallIconSizeX = GetSystemMetrics(SM_CXSMICON);
+		int smallIconSizeY = GetSystemMetrics(SM_CYSMICON);
+		int bigIconSizeX = GetSystemMetrics(SM_CXICON);
+		int bigIconSizeY = GetSystemMetrics(SM_CYICON);
+
+		HICON smallIcon = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, smallIconSizeX, smallIconSizeY, 0));
+		HICON bigIcon = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_MAIN), IMAGE_ICON, bigIconSizeX, bigIconSizeY, 0));
+
+		SetIcon(ICON_SMALL, smallIcon);
+		SetIcon(ICON_BIG, bigIcon);
+	}
+
 	ShowWelcomePage();
 
 	LoadWindowRect();
