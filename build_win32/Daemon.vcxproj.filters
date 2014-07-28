@@ -215,5 +215,8 @@
     <ClInclude Include="..\daemon\packets\FinishScriptPacket.h">
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\daemon\packets\ItemBlock.h">
+      <Filter>Source Files\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BasePacket.h"
+#include "ItemBlock.h"
 
 class CSetInventoryPacket : public CBasePacket
 {
@@ -10,12 +11,21 @@ public:
 
 	virtual PacketPtr		Clone() const override;
 
-	void					SetItemBase(unsigned int);
 	void					SetItemCount(unsigned int);
+
+	void					SetItemIndex(unsigned int, uint32);
+	void					SetItemId(unsigned int, uint32);
+	void					SetItemDefinitionId(unsigned int, uint32);
 
 	virtual PacketData		ToPacketData() const override;
 
 private:
-	unsigned int			m_itemBase = 0;
+	enum
+	{
+		ITEM_DEF_SIZE = sizeof(ITEMBLOCK),
+		MAX_ITEMS = 0x20,
+	};
+
 	unsigned int			m_itemCount = 0;
+	ITEMBLOCK				m_items[MAX_ITEMS];
 };

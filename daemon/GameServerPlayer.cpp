@@ -3,12 +3,10 @@
 #include <assert.h>
 #include <cstdlib>
 #include "GameServerPlayer.h"
-#include "DatabaseConnectionManager.h"
 #include "PacketUtils.h"
 #include "GameServer_Login.h"
 #include "GameServer_MoveOutOfRoom.h"
 #include "GameServer_Ingame.h"
-#include "Character.h"
 #include "Log.h"
 #include "string_format.h"
 #include "GlobalData.h"
@@ -50,7 +48,7 @@ CGameServerPlayer::CGameServerPlayer(SOCKET clientSocket)
 , m_disconnect(false)
 , m_alreadyMovedOutOfRoom(false)
 {
-	m_dbConnection = CDatabaseConnectionManager::GetInstance().CreateConnection();
+
 }
 
 CGameServerPlayer::~CGameServerPlayer()
@@ -102,23 +100,8 @@ PacketData CGameServerPlayer::GetCharacterInfo()
 		memcpy(outgoingPacket.data() + setInitialPositionBase, setInitialPositionPacket.data(), setInitialPositionPacket.size());
 	}
 
-	CCharacter character;
-
-	try
-	{
-		auto query = string_format("SELECT * FROM ffxiv_characters WHERE id = %d", m_characterId);
-		auto result = m_dbConnection.Query(query.c_str());
-		if(result.GetRowCount() != 0)
-		{
-			character = CCharacter(result);
-		}
-	}
-	catch(const std::exception& exception)
-	{
-		CLog::GetInstance().LogError(LOG_NAME, "Failed to fetch character (id = %d): %s", m_characterId, exception.what());
-		m_disconnect = true;
-		return PacketData();
-	}
+	auto playerActor = m_instance.GetActor<CPlayerActor>(PLAYER_ID);
+	const auto& character = playerActor->GetCharacter();
 
 	const uint32 characterInfoBase = 0x368;
 
@@ -155,21 +138,32 @@ PacketData CGameServerPlayer::GetCharacterInfo()
 	return outgoingPacket;
 }
 
-static PacketData GetInventoryInfo()
+PacketData CGameServerPlayer::GetInventoryInfo()
 {
+	auto playerActor = m_instance.GetActor<CPlayerActor>(PLAYER_ID);
+	const auto& inventory = playerActor->GetInventory();
+
 	PacketData outgoingPacket;
 
-	unsigned int itemCount = 0xC8;			//Item count can be less than 200, but we have to make sure no equipped items are using item indices over the itemCount
+	unsigned int itemCount = inventory.size();		//Item count can be less than 200, but we have to make sure no equipped items are using item indices over the itemCount
+	assert(itemCount <= 200);
 	while(itemCount != 0)
 	{
 		CCompositePacket compositePacket;
 		{
 			unsigned int itemsToCopy = std::min<unsigned int>(itemCount, 32);
+			unsigned int itemBase = itemCount - itemsToCopy;
 			CSetInventoryPacket setInventoryPacket;
 			setInventoryPacket.SetSourceId(PLAYER_ID);
 			setInventoryPacket.SetTargetId(PLAYER_ID);
 			setInventoryPacket.SetItemCount(itemsToCopy);
-			setInventoryPacket.SetItemBase(itemCount - itemsToCopy);
+			for(unsigned int i = 0; i < itemsToCopy; i++)
+			{
+				const auto& inventoryItem = inventory[i + itemBase];
+				setInventoryPacket.SetItemIndex(i, i + itemBase + 1);
+				setInventoryPacket.SetItemId(i, inventoryItem.itemId);
+				setInventoryPacket.SetItemDefinitionId(i, inventoryItem.itemDefId);
+			}
 			compositePacket.AddPacket(setInventoryPacket.ToPacketData());
 			itemCount -= itemsToCopy;
 		}
@@ -374,15 +368,15 @@ void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const Pac
 	if(m_sentInitialHandshake) return;
 
 	const char* characterIdString = reinterpret_cast<const char*>(subPacket.data() + 0x14);
-	m_characterId = atoi(characterIdString);
+	uint32 characterId = atoi(characterIdString);
 
-	CLog::GetInstance().LogDebug(LOG_NAME, "Initial handshake for clientId = %d and characterId = 0x%0.8X", clientId, m_characterId);
+	CLog::GetInstance().LogDebug(LOG_NAME, "Initial handshake for clientId = %d and characterId = 0x%0.8X", clientId, characterId);
 
 	if(clientId == 1)
 	{
 		//Put player in instance
 		{
-			auto playerActor = std::make_unique<CPlayerActor>();
+			auto playerActor = std::make_unique<CPlayerActor>(characterId);
 			playerActor->SetId(PLAYER_ID);
 			playerActor->LocalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
 			playerActor->GlobalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
@@ -542,22 +536,7 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 	if(!strcmp(commandName, "commandRequest"))
 	{
 		//commandRequest (emote, changing equipment, ...)
-
-		switch(targetId)
-		{
-		case 0xA0F02EE9:
-			ScriptCommand_EquipItem(subPacket, clientTime);
-			break;
-		case 0xA0F05E26:
-			ScriptCommand_Emote(subPacket, clientTime);
-			break;
-		case 0xA0F05EA2:
-			ScriptCommand_TrashItem(subPacket, clientTime);
-			break;
-		default:
-			CLog::GetInstance().LogDebug(LOG_NAME, "Unknown target id (0x%0.8X).", targetId);
-			break;
-		}
+		playerActor->ProcessCommandRequest(targetId, subPacket);
 	}
 	else if(!strcmp(commandName, "commandContent"))
 	{
@@ -641,107 +620,6 @@ void CGameServerPlayer::ProcessScriptCommand(const PacketData& subPacket)
 		//Anything else will probably crash, so just bail
 		m_disconnect = true;
 	}
-}
-
-void CGameServerPlayer::ScriptCommand_EquipItem(const PacketData& subPacket, uint32 clientTime)
-{
-	CLog::GetInstance().LogDebug(LOG_NAME, "EquipItem");
-
-//	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6E]);
-
-//	CLog::GetInstance().LogDebug(LOG_NAME, "Equipping Item: 0x%0.8X", itemId);
-	
-//	CCompositePacket packet;
-//	packet.AddPacket(PacketData(std::begin(unknownPacket1), std::end(unknownPacket1)));
-//	packet.AddPacket(PacketData(std::begin(changeAppearancePacket), std::end(changeAppearancePacket)));
-//	packet.AddPacket(PacketData(std::begin(unknownPacket), std::end(unknownPacket)));
-//	QueuePacket(packet.ToPacketData());
-}
-
-void CGameServerPlayer::ScriptCommand_Emote(const PacketData& subPacket, uint32 clientTime)
-{
-	uint8 emoteId = subPacket[0x55];
-
-	CLog::GetInstance().LogDebug(LOG_NAME, "Executing Emote 0x%0.2X", emoteId);
-
-	uint8 commandRequestPacket[0x40] =
-	{
-		0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x01, 0x00, 0x52, 0xE2, 0xA4, 0xEE, 0x3B, 0x01, 0x00, 0x00,
-		0x30, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9b, 0x02, 0x41, 0x29, 0x9b, 0x02, 0x00, 0xe0, 0xd2, 0xfe,
-		0x14, 0x00, 0xe1, 0x00, 0x00, 0x00, 0x00, 0x00, 0xd1, 0xee, 0xe0, 0x50, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0xb0, 0x00, 0x05, 0x41, 0x29, 0x9b, 0x02, 0x6e, 0x52, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	};
-
-	//In: 0x6F, Out: (0x0500B000, 0x526E) -> Dance
-	//In: 0x??, Out: (0x5000C000, 0x????) -> Angry Pointing
-	//In: 0x??, Out: (0x5000D000, 0x????) -> Snooze
-	//In: 0x??, Out: (0x5000E000, 0x????) -> Frustrated
-	//In: 0x??, Out: (0x5000F000, 0x????) -> Military Sign
-	//In: 0x??, Out: (0x50011000, 0x????) -> Shrug
-	//In: 0x??, Out: (0x50012000, 0x????) -> Success Baby
-	//In: 0x77, Out: (0x05013000, 0x52BE) -> Kneel
-	//In: 0x??, Out: (0x50014000, 0x????) -> Chuckle
-	//In: 0x??, Out: (0x50015000, 0x????) -> Laugh
-	//In: 0x??, Out: (0x50016000, 0x????) -> Look
-	//In: 0x??, Out: (0x50018000, 0x????) -> No
-	//In: 0x??, Out: (0x50019000, 0x????) -> Never
-					
-	uint32 animationId = 0x0500B000;
-	uint32 descriptionId = 0x526E;
-
-	//Wrong emotes
-	//gcsalute		-> grovel
-	//grovel		-> serpent salute
-	//blowkiss		-> disappointed
-	//pray			-> firedance
-	//airquote		-> pray
-	//pose			-> blowkiss
-	//happy			-> maelstorm salute
-	//disappointed	-> pose
-
-	if(emoteId >= 0x64 && emoteId < 0xA0)
-	{
-		animationId = 0x05000000 + ((emoteId - 0x64) << 12);
-	}
-/*
-	switch(emoteId)
-	{
-	case 0x6A:		//Cheer
-		animationId = 0x05006000;
-		break;
-	case 0x6F:		//Dance
-		animationId = 0x0500B000;
-		break;
-	case 0x71:		//Doze
-		animationId = 0x0500D000;
-		break;
-	case 0x75:		//Huh
-		animationId = 0x05011000;
-		break;
-	case 0x78:		//Chuckle
-		animationId = 0x05014000;
-		break;
-	case 0x79:		//Laugh
-		animationId = 0x05015000;
-		break;
-	}
-*/
-
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x28]) = clientTime;
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x30]) = animationId;
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x38]) = descriptionId;
-
-//	printf("Anim Id = 0x%0.8X, Desc Id = 0x%0.8X\r\n", animationId, descriptionId);
-//	animationId += 0x1000;
-//	descriptionId += 1;
-
-	QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
-}
-
-void CGameServerPlayer::ScriptCommand_TrashItem(const PacketData& subPacket, uint32 clientTime)
-{
-	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6A]);
-	CLog::GetInstance().LogDebug(LOG_NAME, "Trashing Item: 0x%0.8X", itemId);
 }
 
 void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)

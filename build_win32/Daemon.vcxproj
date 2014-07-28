@@ -140,6 +140,7 @@
     <ClInclude Include="..\daemon\packets\CompositePacket.h" />
     <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h" />
     <ClInclude Include="..\daemon\packets\FinishScriptPacket.h" />
+    <ClInclude Include="..\daemon\packets\ItemBlock.h" />
     <ClInclude Include="..\daemon\packets\SetActorPropertyPacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorStatePacket.h" />
     <ClInclude Include="..\daemon\packets\SetInitialPositionPacket.h" />
