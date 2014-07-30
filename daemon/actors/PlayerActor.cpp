@@ -3,14 +3,19 @@
 #include "string_format.h"
 
 #include "../Log.h"
+#include "../GlobalData.h"
 #include "../Instance.h"
 #include "../DatabaseConnectionManager.h"
 #include "../GameServer_Ingame.h"
 #include "../packets/BattleActionPacket.h"
+#include "../packets/ChangeEquipmentSlotPacket.h"
 #include "../packets/FinishScriptPacket.h"
 #include "../packets/SetMusicPacket.h"
+#include "../packets/SetActorAppearancePacket.h"
 #include "../packets/SetActorStatePacket.h"
 #include "../packets/SetActorPropertyPacket.h"
+#include "../packets/SetTempInventoryPacket.h"
+#include "../packets/UnknownInventoryPacket.h"
 #include "../packets/CommandRequestReplyPacket.h"
 
 #define LOG_NAME "PlayerActor"
@@ -198,17 +203,118 @@ void CPlayerActor::ProcessCommandDefault(uint32 targetId)
 
 void CPlayerActor::EquipItem(const PacketData& commandPacket)
 {
-	CLog::GetInstance().LogDebug(LOG_NAME, "EquipItem");
+	uint32 itemId = Framework::CEndian::FromMSBF32(*reinterpret_cast<const uint32*>(&commandPacket[0x6E]));
+	CLog::GetInstance().LogDebug(LOG_NAME, "Equipping item 0x%0.8X.", itemId);
 
-//	uint32 itemId = *reinterpret_cast<const uint32*>(&subPacket[0x6E]);
+	//itemId will be 0 if player wants to unequip an item
+	if(itemId == 0)
+	{
+		CLog::GetInstance().LogDebug(LOG_NAME, "Unequip: %s.", CPacketUtils::DumpPacket(commandPacket).c_str());
+	}
 
-//	CLog::GetInstance().LogDebug(LOG_NAME, "Equipping Item: 0x%0.8X", itemId);
-	
-//	CCompositePacket packet;
-//	packet.AddPacket(PacketData(std::begin(unknownPacket1), std::end(unknownPacket1)));
-//	packet.AddPacket(PacketData(std::begin(changeAppearancePacket), std::end(changeAppearancePacket)));
-//	packet.AddPacket(PacketData(std::begin(unknownPacket), std::end(unknownPacket)));
-//	QueuePacket(packet.ToPacketData());
+	auto inventoryItemIterator = std::find_if(std::begin(m_inventory), std::end(m_inventory), 
+		[itemId](const INVENTORY_ITEM& item) { return item.itemId == itemId; });
+
+	if(inventoryItemIterator == std::end(m_inventory)) return;
+	const auto& inventoryItem = *inventoryItemIterator;
+	size_t itemIndex = inventoryItemIterator - std::begin(m_inventory);
+
+	auto itemAppearance = CGlobalData::GetInstance().GetWeaponAppearanceDatabase().GetAppearanceForItemId(inventoryItem.itemDefId);
+	if(itemAppearance)
+	{
+		auto weapon1AttrIterator = itemAppearance->attributes.find("Weapon1");
+		auto weapon2AttrIterator = itemAppearance->attributes.find("Weapon2");
+		if(weapon1AttrIterator != std::end(itemAppearance->attributes))
+		{
+			m_character.weapon1 = weapon1AttrIterator->second;
+		}
+		if(weapon2AttrIterator != std::end(itemAppearance->attributes))
+		{
+			m_character.weapon2 = weapon2AttrIterator->second;
+		}
+	}
+
+	{
+		auto packet = std::make_shared<CSetActorAppearancePacket>();
+		packet->SetAppearanceItem(0x00, CCharacter::GetModelFromTribe(m_character.tribe));
+		packet->SetAppearanceItem(0x01, m_character.size);
+		packet->SetAppearanceItem(0x02, m_character.GetColorInfo());
+		packet->SetAppearanceItem(0x03, m_character.GetFaceInfo());
+		packet->SetAppearanceItem(0x04, m_character.hairStyle << 10);
+		packet->SetAppearanceItem(0x05, m_character.voice);
+		packet->SetAppearanceItem(0x06, m_character.weapon1);
+		packet->SetAppearanceItem(0x07, m_character.weapon2);
+		packet->SetAppearanceItem(0x08, 0);
+		packet->SetAppearanceItem(0x09, 0);
+		packet->SetAppearanceItem(0x0A, 0);
+		packet->SetAppearanceItem(0x0B, 0);
+		packet->SetAppearanceItem(0x0C, 0);
+		packet->SetAppearanceItem(0x0D, m_character.headGear);
+		packet->SetAppearanceItem(0x0E, m_character.bodyGear);
+		packet->SetAppearanceItem(0x0F, m_character.legsGear);
+		packet->SetAppearanceItem(0x10, m_character.handsGear);
+		packet->SetAppearanceItem(0x11, m_character.feetGear);
+		packet->SetAppearanceItem(0x12, m_character.waistGear);
+		packet->SetAppearanceItem(0x13, 0);
+		packet->SetAppearanceItem(0x14, m_character.rightEarGear);
+		packet->SetAppearanceItem(0x15, m_character.leftEarGear);
+		packet->SetAppearanceItem(0x16, 0);
+		packet->SetAppearanceItem(0x17, 0);
+		packet->SetAppearanceItem(0x18, m_character.rightFingerGear);
+		packet->SetAppearanceItem(0x19, m_character.leftFingerGear);
+		packet->SetAppearanceItem(0x1A, 0);
+		packet->SetAppearanceItem(0x1B, 0);
+		GlobalPacketReady(this, packet);
+	}
+
+	{
+		{
+			auto packet = std::make_shared<CUnknownInventoryPacket_016D>();
+			LocalPacketReady(this, packet);
+		}
+
+		{
+			auto packet = std::make_shared<CUnknownInventoryPacket_0146>();
+			packet->SetActorId(m_id);
+			packet->SetUnknown0(200);		//Inventory size?
+			LocalPacketReady(this, packet);
+		}
+
+		{
+			auto packet = std::make_shared<CSetTempInventoryPacket>();
+			packet->SetItemCount(1);
+			packet->SetItemIndex(0, itemIndex + 1);
+			packet->SetItemId(0, inventoryItem.itemId);
+			packet->SetItemDefinitionId(0, inventoryItem.itemDefId);
+			LocalPacketReady(this, packet);
+		}
+
+		{
+			auto packet = std::make_shared<CUnknownInventoryPacket_0146>();
+			packet->SetActorId(m_id);
+			packet->SetUnknown0(0x23);
+			packet->SetUnknown1(0xFE);
+			LocalPacketReady(this, packet);
+		}
+
+		{
+			auto packet = std::make_shared<CChangeEquipmentSlotPacket>();
+			packet->SetSlotId(CChangeEquipmentSlotPacket::SLOT_MAINHAND);
+			packet->SetItemIndex(itemIndex + 1);
+			LocalPacketReady(this, packet);
+		}
+
+		for(unsigned int i = 0; i < 2; i++)
+		{
+			auto packet = std::make_shared<CUnknownInventoryPacket_0147>();
+			LocalPacketReady(this, packet);
+		}
+
+		{
+			auto packet = std::make_shared<CUnknownInventoryPacket_016E>();
+			LocalPacketReady(this, packet);
+		}
+	}
 }
 
 void CPlayerActor::TrashItem(const PacketData& commandPacket)
