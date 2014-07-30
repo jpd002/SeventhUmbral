@@ -26,7 +26,7 @@ private:
 	void						SaveWindowRect();
 	void						Destroy();
 	void						ShowWelcomePage();
-	void						ShowApperanceViewer();
+	void						ShowAppearanceViewer();
 	void						ShowWorldViewer(uint32);
 	void						ShowSheetViewer(uint32);
 	void						ShowAbout();

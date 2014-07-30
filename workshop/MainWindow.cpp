@@ -75,7 +75,7 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 	switch(id)
 	{
 	case ID_MAINMENU_INSPECT_WEAPONS:
-		ShowApperanceViewer();
+		ShowAppearanceViewer();
 		break;
 	case ID_MAINMENU_INSPECT_WORLD_GRIDANIAINN:
 		ShowWorldViewer(0xA09B0000);
@@ -199,7 +199,7 @@ void CMainWindow::ShowWelcomePage()
 	InsertDocument(std::move(welcomePage));
 }
 
-void CMainWindow::ShowApperanceViewer()
+void CMainWindow::ShowAppearanceViewer()
 {
 	auto appearanceViewer = std::make_unique<CAppearanceViewer>(m_hWnd);
 	InsertDocument(std::move(appearanceViewer));
