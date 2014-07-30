@@ -10,6 +10,7 @@ class CInstance;
 class CActor
 {
 public:
+	typedef boost::signals2::signal<void (const PacketData&)> RawPacketReadySignal;
 	typedef boost::signals2::signal<void (CActor*, const PacketPtr&)> LocalPacketReadySignal;
 	typedef boost::signals2::signal<void (CActor*, const PacketPtr&)> GlobalPacketReadySignal;
 
@@ -28,6 +29,7 @@ public:
 
 	virtual void				TakeDamage(CActor*, uint32);
 
+	RawPacketReadySignal		RawPacketReady;
 	LocalPacketReadySignal		LocalPacketReady;
 	GlobalPacketReadySignal		GlobalPacketReady;
 

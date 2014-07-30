@@ -378,6 +378,7 @@ void CGameServerPlayer::ProcessInitialHandshake(unsigned int clientId, const Pac
 		{
 			auto playerActor = std::make_unique<CPlayerActor>(characterId);
 			playerActor->SetId(PLAYER_ID);
+			playerActor->RawPacketReady.connect([&] (const PacketData& packet) { m_currentComposite.AddPacket(packet); });
 			playerActor->LocalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
 			playerActor->GlobalPacketReady.connect([&] (CActor* actor, const PacketPtr& packet) { QueueToCurrentComposite(actor, packet); });
 			m_instance.AddActor(std::move(playerActor));
