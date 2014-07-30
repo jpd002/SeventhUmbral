@@ -111,6 +111,9 @@
     <ClCompile Include="..\daemon\packets\FinishScriptPacket.cpp">
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\AppearanceDatabase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\daemon\packets\CommandRequestReplyPacket.cpp">
       <Filter>Source Files\Packets</Filter>
     </ClCompile>
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="..\daemon\packets\ItemBlock.h">
       <Filter>Source Files\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\AppearanceDatabase.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\packets\CommandRequestReplyPacket.h">
       <Filter>Source Files\Packets</Filter>

@@ -8,11 +8,17 @@
 void CGlobalData::Prepare()
 {
 	LoadActorDatabase();
+	LoadWeaponAppearanceDatabase();
 }
 
 const CActorDatabase& CGlobalData::GetActorDatabase() const
 {
 	return m_actorDatabase;
+}
+
+const CAppearanceDatabase& CGlobalData::GetWeaponAppearanceDatabase() const
+{
+	return m_weaponAppearanceDatabase;
 }
 
 void CGlobalData::LoadActorDatabase()
@@ -27,5 +33,20 @@ void CGlobalData::LoadActorDatabase()
 	else
 	{
 		CLog::GetInstance().LogMessage(LOG_NAME, "File '%s' doesn't exist. Not loading any actor data.", actorDatabasePath.string().c_str());
+	}
+}
+
+void CGlobalData::LoadWeaponAppearanceDatabase()
+{
+	auto configPath = CAppConfig::GetInstance().GetBasePath();
+	auto weaponAppearanceDatabasePath = configPath / "ffxivd_weapon_appearances.xml";
+	if(boost::filesystem::exists(weaponAppearanceDatabasePath))
+	{
+		auto inputStream = Framework::CreateInputStdStream(weaponAppearanceDatabasePath.native());
+		m_weaponAppearanceDatabase = CAppearanceDatabase::CreateFromXml(inputStream);
+	}
+	else
+	{
+		CLog::GetInstance().LogMessage(LOG_NAME, "File '%s' doesn't exist. Not loading any weapon appearance data.", weaponAppearanceDatabasePath.string().c_str());
 	}
 }

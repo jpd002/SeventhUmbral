@@ -90,6 +90,7 @@
     <ClCompile Include="..\daemon\actors\EnemyActor.cpp" />
     <ClCompile Include="..\daemon\actors\PlayerActor.cpp" />
     <ClCompile Include="..\daemon\AppConfig.cpp" />
+    <ClCompile Include="..\daemon\AppearanceDatabase.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="..\daemon\PacketUtils.h" />
     <ClInclude Include="..\daemon\SocketDef.h" />
     <ClInclude Include="..\daemon\SocketUtils.h" />
+    <ClInclude Include="..\daemon\AppearanceDatabase.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
