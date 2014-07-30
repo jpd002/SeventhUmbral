@@ -102,6 +102,7 @@
     <ClCompile Include="..\daemon\Main.cpp" />
     <ClCompile Include="..\daemon\packets\BasePacket.cpp" />
     <ClCompile Include="..\daemon\packets\BattleActionPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\CommandRequestReplyPacket.cpp" />
     <ClCompile Include="..\daemon\packets\CompositePacket.cpp" />
     <ClCompile Include="..\daemon\packets\DisplayMessagePacket.cpp" />
     <ClCompile Include="..\daemon\packets\FinishScriptPacket.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\daemon\Log.h" />
     <ClInclude Include="..\daemon\packets\BasePacket.h" />
     <ClInclude Include="..\daemon\packets\BattleActionPacket.h" />
+    <ClInclude Include="..\daemon\packets\CommandRequestReplyPacket.h" />
     <ClInclude Include="..\daemon\packets\CompositePacket.h" />
     <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h" />
     <ClInclude Include="..\daemon\packets\FinishScriptPacket.h" />

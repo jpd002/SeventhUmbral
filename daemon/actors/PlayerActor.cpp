@@ -11,6 +11,7 @@
 #include "../packets/SetMusicPacket.h"
 #include "../packets/SetActorStatePacket.h"
 #include "../packets/SetActorPropertyPacket.h"
+#include "../packets/CommandRequestReplyPacket.h"
 
 #define LOG_NAME "PlayerActor"
 
@@ -218,18 +219,9 @@ void CPlayerActor::TrashItem(const PacketData& commandPacket)
 
 void CPlayerActor::DoEmote(const PacketData& commandPacket)
 {
-#if 0
-	uint8 emoteId = subPacket[0x55];
+	uint8 emoteId = commandPacket[0x55];
 
 	CLog::GetInstance().LogDebug(LOG_NAME, "Executing Emote 0x%0.2X", emoteId);
-
-	uint8 commandRequestPacket[0x40] =
-	{
-		0x01, 0x00, 0x00, 0x00, 0x40, 0x00, 0x01, 0x00, 0x52, 0xE2, 0xA4, 0xEE, 0x3B, 0x01, 0x00, 0x00,
-		0x30, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9b, 0x02, 0x41, 0x29, 0x9b, 0x02, 0x00, 0xe0, 0xd2, 0xfe,
-		0x14, 0x00, 0xe1, 0x00, 0x00, 0x00, 0x00, 0x00, 0xd1, 0xee, 0xe0, 0x50, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0xb0, 0x00, 0x05, 0x41, 0x29, 0x9b, 0x02, 0x6e, 0x52, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	};
 
 	//In: 0x6F, Out: (0x0500B000, 0x526E) -> Dance
 	//In: 0x??, Out: (0x5000C000, 0x????) -> Angry Pointing
@@ -286,15 +278,17 @@ void CPlayerActor::DoEmote(const PacketData& commandPacket)
 	}
 */
 
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x28]) = clientTime;
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x30]) = animationId;
-	*reinterpret_cast<uint32*>(&commandRequestPacket[0x38]) = descriptionId;
+	{
+		auto packet = std::make_shared<CCommandRequestReplyPacket>();
+		packet->SetAnimationId(animationId);
+		packet->SetActorId(m_id);
+		packet->SetDescriptionId(descriptionId);
+		GlobalPacketReady(this, packet);
+	}
 
 //	printf("Anim Id = 0x%0.8X, Desc Id = 0x%0.8X\r\n", animationId, descriptionId);
 //	animationId += 0x1000;
 //	descriptionId += 1;
-	QueuePacket(PacketData(std::begin(commandRequestPacket), std::end(commandRequestPacket)));
-#endif
 }
 
 void CPlayerActor::SwitchToActiveMode()
