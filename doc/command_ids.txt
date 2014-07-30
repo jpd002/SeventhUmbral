@@ -4,9 +4,17 @@
 0x000D -> Set Weather
 0x00CE -> Set Source Position
 0x00CF -> Set Destination Position
+0x00D6 -> Change Apperance
+0x00E1 -> Command Request Callback? (for emotes?)
+0x0131 -> Finish actor function call?
 0x0134 -> Set Actor State
 0x0137 -> Call Actor Function?
 0x0139 -> Battle Action Packet
+0x0146 -> Inventory stuff (?)
+0x0147 -> Inventory stuff (?)
 0x0149 -> Inventory stuff (unconfirmed)
 0x014A -> Inventory stuff (unconfirmed)
 0x014B -> Set Inventory Packet
+0x014E -> Set Equipped Item Ids
+0x016D -> Inventory stuff (?)
+0x016E -> Inventory stuff (?)
