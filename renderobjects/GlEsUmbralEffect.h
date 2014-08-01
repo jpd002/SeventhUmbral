@@ -60,6 +60,9 @@ private:
 	GLuint							m_ambientLightColorHandle = -1;
 	GLuint							m_dirLightDirectionsHandle = -1;
 	GLuint							m_dirLightColorsHandle = -1;
+	GLuint							m_pointLightPositionsHandle = -1;
+	GLuint							m_pointLightColorsHandle = -1;
+	GLuint							m_pointLightParamsHandle = -1;
 	GLuint							m_latitudeParamHandle = -1;
 	GLuint							m_enableShadowFlagHandle = -1;
 };

@@ -200,12 +200,36 @@ void CGlEsUmbralEffect::UpdateConstants(const Palleon::GLESVIEWPORT_PARAMS& view
 			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor0", CVector4(0, 0, 0, 0)),
 			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor1", CVector4(0, 0, 0, 0))
 		};
+		CVector4 pointLightPositions[4] =
+		{
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0)
+		};
+		CVector4 pointLightColors[4] =
+		{
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0)
+		};
+		CVector4 pointLightParams[4] =
+		{
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0),
+			CVector4(0, 0, 0, 0)
+		};
 				
 		SetParamValue(m_ambientLightColorHandle, ambientLightColor);
 		SetParamValue(m_latitudeParamHandle, latitudeParam);
 		SetParamValue(m_enableShadowFlagHandle, enableShadowFlag);
 		glUniform4fv(m_dirLightDirectionsHandle, 2, reinterpret_cast<const float*>(&dirLightDirections));
 		glUniform4fv(m_dirLightColorsHandle, 2, reinterpret_cast<const float*>(&dirLightColors));
+		glUniform4fv(m_pointLightPositionsHandle, 4, reinterpret_cast<const float*>(&pointLightPositions));
+		glUniform4fv(m_pointLightColorsHandle, 4, reinterpret_cast<const float*>(&pointLightColors));
+		glUniform4fv(m_pointLightParamsHandle, 4, reinterpret_cast<const float*>(&pointLightParams));
 	}
 	
 	CHECKGLERROR();
@@ -255,6 +279,10 @@ void CGlEsUmbralEffect::GetUniformLocations()
 		{ "ps_ambientLightColor",		m_ambientLightColorHandle			},
 		{ "ps_DirLightDirections",		m_dirLightDirectionsHandle			},
 		{ "ps_DirLightColors",			m_dirLightColorsHandle				},
+		{ "ps_PointLightPositions",		m_pointLightPositionsHandle			},
+		{ "ps_PointLightColors",		m_pointLightColorsHandle			},
+		{ "ps_PointLightParams",		m_pointLightParamsHandle			},
+		
 		{ "ps_latitudeParam",			m_latitudeParamHandle				},
 		{ "ps_EnableShadowFlag",		m_enableShadowFlagHandle			},
 	};
