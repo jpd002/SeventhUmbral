@@ -28,6 +28,7 @@ public:
 		{
 			Reset();
 			CopyFrom(rhs);
+			return (*this);
 		}
 
 		uint8 GetValue8() const
