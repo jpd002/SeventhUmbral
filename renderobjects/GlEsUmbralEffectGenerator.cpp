@@ -938,38 +938,34 @@ std::string CGlEsUmbralEffectGenerator::Emit_Cmp(CD3DShader::CTokenStream& token
 		}
 	}
 	
-	if(compCount == 1)
+	//TODO: Make this work properly. On GLES 3.0 there's a nice mix(vec, vec, bvec) overload which should
+	//work better than this without propagating NaNs everywhere
+	std::string comparer, converter;
+	switch(compCount)
 	{
-		result += string_format("%s%s = (%s >= 0.0) ? %s : %s;\r\n", identationState.GetString().c_str(),
-								dstString.c_str(), src1String.c_str(), src2String.c_str(), src3String.c_str());
+		case 1:
+			comparer = string_format("(%s >= 0.0)", src1String.c_str());
+			converter = "float";
+			break;
+		case 2:
+			comparer = string_format("greaterThanEqual(%s, vec2(0.0))", src1String.c_str());
+			converter = "vec2";
+			break;
+		case 3:
+			comparer = string_format("greaterThanEqual(%s, vec3(0.0))", src1String.c_str());
+			converter = "vec3";
+			break;
+		case 4:
+			comparer = string_format("greaterThanEqual(%s, vec4(0.0))", src1String.c_str());
+			converter = "vec4";
+			break;
+		default:
+			assert(0);
+			break;
 	}
-	else
-	{
-		//TODO: Make this work properly. On GLES 3.0 there's a nice mix(vec, vec, bvec) overload which should
-		//work better than this without propagating NaNs everywhere
-		std::string comparer, converter;
-		switch(compCount)
-		{
-			case 2:
-				comparer = string_format("greaterThanEqual(%s, vec2(0.0))", src1String.c_str());
-				converter = "vec2";
-				break;
-			case 3:
-				comparer = string_format("greaterThanEqual(%s, vec3(0.0))", src1String.c_str());
-				converter = "vec3";
-				break;
-			case 4:
-				comparer = string_format("greaterThanEqual(%s, vec4(0.0))", src1String.c_str());
-				converter = "vec4";
-				break;
-			default:
-				assert(0);
-				break;
-		}
 		
-		result += string_format("%s%s = mix(%s, %s, %s(%s));\r\n", identationState.GetString().c_str(),
-								dstString.c_str(), src2String.c_str(), src3String.c_str(), converter.c_str(), comparer.c_str());
-	}
+	result += string_format("%s%s = mix(%s, %s, %s(%s));\r\n", identationState.GetString().c_str(),
+							dstString.c_str(), src3String.c_str(), src2String.c_str(), converter.c_str(), comparer.c_str());
 	
 	return result;
 }
