@@ -27,6 +27,7 @@
 #define ITEMDEFID_WEATHERED_HORA			4020001
 #define ITEMDEFID_WEATHERED_SCEPTER			5020001
 #define ITEMDEFID_WEATHERED_CANE			5030101
+
 #define ITEMDEFID_WEATHERED_ALEMBIC			6070001
 #define ITEMDEFID_WEATHERED_DOMINGHAMMER	6030001
 #define ITEMDEFID_WEATHERED_CROSSPEINHAMMER	6020001
@@ -38,6 +39,29 @@
 #define ITEMDEFID_WEATHERED_HEADKNIFE		6050003
 #define ITEMDEFID_WEATHERED_PICKAXE			7010005
 #define ITEMDEFID_RUSTY_NEEDLE				6060006
+
+CPlayerActor::WeaponJobMap CPlayerActor::m_weaponJobs =
+{
+	std::make_pair(ITEMDEFID_WEATHERED_SHORTBOW, 7),
+	std::make_pair(ITEMDEFID_WEATHERED_WARAXE, 4),
+	std::make_pair(ITEMDEFID_WEATHERED_GLADIUS, 3),
+	std::make_pair(ITEMDEFID_WEATHERED_SPEAR, 8),
+	std::make_pair(ITEMDEFID_WEATHERED_HORA, 2),
+	std::make_pair(ITEMDEFID_WEATHERED_SCEPTER, 22),
+	std::make_pair(ITEMDEFID_WEATHERED_CANE, 23),
+
+	std::make_pair(ITEMDEFID_WEATHERED_ALEMBIC, 35),
+	std::make_pair(ITEMDEFID_WEATHERED_DOMINGHAMMER, 31),
+	std::make_pair(ITEMDEFID_WEATHERED_CROSSPEINHAMMER, 30),
+	std::make_pair(ITEMDEFID_WEATHERED_HATCHET, 40),
+	std::make_pair(ITEMDEFID_WEATHERED_SAW, 29),
+	std::make_pair(ITEMDEFID_WEATHERED_SKILLET, 36),
+	std::make_pair(ITEMDEFID_WEATHERED_FISHINGROD, 41),
+	std::make_pair(ITEMDEFID_WEATHERED_CHASERHAMMER, 32),
+	std::make_pair(ITEMDEFID_WEATHERED_HEADKNIFE, 33),
+	std::make_pair(ITEMDEFID_WEATHERED_PICKAXE, 39),
+	std::make_pair(ITEMDEFID_RUSTY_NEEDLE, 34),
+};
 
 #define AUTO_ATTACK_DELAY	5.0f
 
@@ -234,6 +258,13 @@ void CPlayerActor::EquipItem(const PacketData& commandPacket)
 		}
 	}
 
+	uint8 newJob = 3;	//Default is Gladiator
+	auto weaponJobIterator = m_weaponJobs.find(inventoryItem.itemDefId);
+	if(weaponJobIterator != std::end(m_weaponJobs))
+	{
+		newJob = weaponJobIterator->second;
+	}
+
 	{
 		auto packet = std::make_shared<CSetActorAppearancePacket>();
 		packet->SetAppearanceItem(0x00, CCharacter::GetModelFromTribe(m_character.tribe));
@@ -314,6 +345,23 @@ void CPlayerActor::EquipItem(const PacketData& commandPacket)
 			auto packet = std::make_shared<CUnknownInventoryPacket_016E>();
 			LocalPacketReady(this, packet);
 		}
+	}
+
+	//Update job and level
+	{
+		auto packet = std::make_shared<CSetActorPropertyPacket>();
+		packet->AddSetByte(CSetActorPropertyPacket::VALUE_JOB, newJob);
+		packet->AddSetByte(CSetActorPropertyPacket::VALUE_LEVEL, 0x01);
+		packet->AddTargetProperty("charaWork/stateForAll");
+		GlobalPacketReady(this, packet);
+	}
+
+	//This seems to update the UI for level and job
+	{
+		auto packet = std::make_shared<CSetActorPropertyPacket>();
+		packet->AddSetWord(0xE98BFFBF, 0);
+		packet->AddTargetProperty("charaWork/battleStateForSelf");
+		GlobalPacketReady(this, packet);
 	}
 }
 

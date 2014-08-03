@@ -13,7 +13,8 @@ public:
 		VALUE_MAXMP		= 0x3C95D5C5,
 		VALUE_HP		= 0x4232BCAA,
 		VALUE_MAXHP		= 0x7BCDFB69,
-		VALUE_LEVEL		= 0x96063588
+		VALUE_LEVEL		= 0x96063588,
+		VALUE_JOB		= 0x7532CE24
 	};
 
 							CSetActorPropertyPacket();
@@ -21,7 +22,9 @@ public:
 
 	virtual PacketPtr		Clone() const override;
 
+	void					AddSetByte(uint32, uint8);
 	void					AddSetShort(uint32, uint16);
+	void					AddSetWord(uint32, uint32);
 	void					AddTargetProperty(const std::string&);
 	void					Finish();
 

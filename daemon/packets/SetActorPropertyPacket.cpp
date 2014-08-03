@@ -19,11 +19,25 @@ PacketPtr CSetActorPropertyPacket::Clone() const
 	return std::make_shared<CSetActorPropertyPacket>(*this);
 }
 
+void CSetActorPropertyPacket::AddSetByte(uint32 valueId, uint8 value)
+{
+	m_modificationStream.Write8(0x01);
+	m_modificationStream.Write32(valueId);
+	m_modificationStream.Write8(value);
+}
+
 void CSetActorPropertyPacket::AddSetShort(uint32 valueId, uint16 value)
 {
 	m_modificationStream.Write8(0x02);
 	m_modificationStream.Write32(valueId);
 	m_modificationStream.Write16(value);
+}
+
+void CSetActorPropertyPacket::AddSetWord(uint32 valueId, uint32 value)
+{
+	m_modificationStream.Write8(0x04);
+	m_modificationStream.Write32(valueId);
+	m_modificationStream.Write32(value);
 }
 
 void CSetActorPropertyPacket::AddTargetProperty(const std::string& name)

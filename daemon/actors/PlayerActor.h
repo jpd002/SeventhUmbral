@@ -35,6 +35,8 @@ public:
 	void						ProcessCommandDefault(uint32);
 
 private:
+	typedef std::map<uint32, uint8> WeaponJobMap;
+
 	enum
 	{
 		EMPTY_LOCKON_ID = 0xE0000000,
@@ -58,4 +60,5 @@ private:
 	CCharacter					m_character;
 	Inventory					m_inventory;
 	uint32						m_characterId = 0;
+	static WeaponJobMap			m_weaponJobs;
 };
