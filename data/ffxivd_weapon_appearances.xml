@@ -6,4 +6,15 @@
 	<Appearance ItemId="4020001" Weapon1="60818432" Weapon2="61867008" />
 	<Appearance ItemId="5020001" Weapon1="294650980" Weapon2="0" />
 	<Appearance ItemId="5030101" Weapon1="347079700" Weapon2="0" />
+	<Appearance ItemId="6070001" Weapon1="800064522" Weapon2="0" />
+	<Appearance ItemId="6030001" Weapon1="737149962" Weapon2="0" />
+	<Appearance ItemId="6020001" Weapon1="721421315" Weapon2="0" />
+	<Appearance ItemId="7020002" Weapon1="878707732" Weapon2="0" />
+	<Appearance ItemId="6010001" Weapon1="705692682" Weapon2="0" />
+	<Appearance ItemId="6080001" Weapon1="815793192" Weapon2="0" />
+	<Appearance ItemId="7030002" Weapon1="894436372" Weapon2="0" />
+	<Appearance ItemId="6040001" Weapon1="780141571" Weapon2="0" />
+	<Appearance ItemId="6050003" Weapon1="768607252" Weapon2="0" />
+	<Appearance ItemId="7010005" Weapon1="862979092" Weapon2="0" />
+	<Appearance ItemId="6060006" Weapon1="785384448" Weapon2="0" />
 </Appearances>
