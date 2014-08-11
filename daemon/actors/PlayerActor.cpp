@@ -40,27 +40,67 @@
 #define ITEMDEFID_WEATHERED_PICKAXE			7010005
 #define ITEMDEFID_RUSTY_NEEDLE				6060006
 
-CPlayerActor::WeaponJobMap CPlayerActor::m_weaponJobs =
-{
-	std::make_pair(ITEMDEFID_WEATHERED_SHORTBOW, 7),
-	std::make_pair(ITEMDEFID_WEATHERED_WARAXE, 4),
-	std::make_pair(ITEMDEFID_WEATHERED_GLADIUS, 3),
-	std::make_pair(ITEMDEFID_WEATHERED_SPEAR, 8),
-	std::make_pair(ITEMDEFID_WEATHERED_HORA, 2),
-	std::make_pair(ITEMDEFID_WEATHERED_SCEPTER, 22),
-	std::make_pair(ITEMDEFID_WEATHERED_CANE, 23),
+#define JOBID_ARCHER		(7)
+#define JOBID_MARAUDER		(4)
+#define JOBID_GLADIATOR		(3)
+#define JOBID_LANCER		(8)
+#define JOBID_PUGILIST		(2)
+#define JOBID_THAUMATURGE	(22)
+#define JOBID_CONJURER		(23)
 
-	std::make_pair(ITEMDEFID_WEATHERED_ALEMBIC, 35),
-	std::make_pair(ITEMDEFID_WEATHERED_DOMINGHAMMER, 31),
-	std::make_pair(ITEMDEFID_WEATHERED_CROSSPEINHAMMER, 30),
-	std::make_pair(ITEMDEFID_WEATHERED_HATCHET, 40),
-	std::make_pair(ITEMDEFID_WEATHERED_SAW, 29),
-	std::make_pair(ITEMDEFID_WEATHERED_SKILLET, 36),
-	std::make_pair(ITEMDEFID_WEATHERED_FISHINGROD, 41),
-	std::make_pair(ITEMDEFID_WEATHERED_CHASERHAMMER, 32),
-	std::make_pair(ITEMDEFID_WEATHERED_HEADKNIFE, 33),
-	std::make_pair(ITEMDEFID_WEATHERED_PICKAXE, 39),
-	std::make_pair(ITEMDEFID_RUSTY_NEEDLE, 34),
+#define JOBID_ALCHEMIST		(35)
+#define JOBID_ARMORER		(31)
+#define JOBID_BLACKSMITH	(30)
+#define JOBID_BOTANIST		(40)
+#define JOBID_CARPENTER		(29)
+#define JOBID_CULINARIAN	(36)
+#define JOBID_FISHER		(41)
+#define JOBID_GOLDSMITH		(32)
+#define JOBID_LEATHERWORKER	(33)
+#define JOBID_MINER			(39)
+#define JOBID_WEAVER		(34)
+
+#define SKILLID_STONE_THROW		(0xA0F05662)
+#define SKILLID_PUMMEL			(0xA0F069E6)
+#define SKILLID_FAST_BLADE		(0xA0F06A0E)
+#define SKILLID_HEAVY_SWING		(0xA0F06A36)
+#define SKILLID_HEAVY_SHOT		(0xA0F06A5C)
+#define SKILLID_TRUE_THURST		(0xA0F06A85)
+#define SKILLID_STONE			(0xA0F06ADB)
+#define SKILLID_THUNDER			(0xA0F06AB1)
+
+const CPlayerActor::WeaponJobMap CPlayerActor::m_weaponJobs =
+{
+	std::make_pair(ITEMDEFID_WEATHERED_SHORTBOW,		JOBID_ARCHER),
+	std::make_pair(ITEMDEFID_WEATHERED_WARAXE,			JOBID_MARAUDER),
+	std::make_pair(ITEMDEFID_WEATHERED_GLADIUS,			JOBID_GLADIATOR),
+	std::make_pair(ITEMDEFID_WEATHERED_SPEAR,			JOBID_LANCER),
+	std::make_pair(ITEMDEFID_WEATHERED_HORA,			JOBID_PUGILIST),
+	std::make_pair(ITEMDEFID_WEATHERED_SCEPTER,			JOBID_THAUMATURGE),
+	std::make_pair(ITEMDEFID_WEATHERED_CANE,			JOBID_CONJURER),
+
+	std::make_pair(ITEMDEFID_WEATHERED_ALEMBIC,			JOBID_ALCHEMIST),
+	std::make_pair(ITEMDEFID_WEATHERED_DOMINGHAMMER,	JOBID_ARMORER),
+	std::make_pair(ITEMDEFID_WEATHERED_CROSSPEINHAMMER,	JOBID_BLACKSMITH),
+	std::make_pair(ITEMDEFID_WEATHERED_HATCHET,			JOBID_BOTANIST),
+	std::make_pair(ITEMDEFID_WEATHERED_SAW,				JOBID_CARPENTER),
+	std::make_pair(ITEMDEFID_WEATHERED_SKILLET,			JOBID_CULINARIAN),
+	std::make_pair(ITEMDEFID_WEATHERED_FISHINGROD,		JOBID_FISHER),
+	std::make_pair(ITEMDEFID_WEATHERED_CHASERHAMMER,	JOBID_GOLDSMITH),
+	std::make_pair(ITEMDEFID_WEATHERED_HEADKNIFE,		JOBID_LEATHERWORKER),
+	std::make_pair(ITEMDEFID_WEATHERED_PICKAXE,			JOBID_MINER),
+	std::make_pair(ITEMDEFID_RUSTY_NEEDLE,				JOBID_WEAVER),
+};
+
+const CPlayerActor::JobSkillMap CPlayerActor::m_jobSkills =
+{
+	std::make_pair(JOBID_ARCHER,		SKILLID_HEAVY_SHOT),
+	std::make_pair(JOBID_MARAUDER,		SKILLID_HEAVY_SWING),
+	std::make_pair(JOBID_GLADIATOR,		SKILLID_FAST_BLADE),
+	std::make_pair(JOBID_LANCER,		SKILLID_TRUE_THURST),
+	std::make_pair(JOBID_PUGILIST,		SKILLID_PUMMEL),
+	std::make_pair(JOBID_THAUMATURGE,	SKILLID_THUNDER),
+	std::make_pair(JOBID_CONJURER,		SKILLID_STONE),
 };
 
 #define AUTO_ATTACK_DELAY	5.0f
@@ -258,11 +298,18 @@ void CPlayerActor::EquipItem(const PacketData& commandPacket)
 		}
 	}
 
-	uint8 newJob = 3;	//Default is Gladiator
+	uint8 newJob = JOBID_GLADIATOR;	//Default is Gladiator
 	auto weaponJobIterator = m_weaponJobs.find(inventoryItem.itemDefId);
 	if(weaponJobIterator != std::end(m_weaponJobs))
 	{
 		newJob = weaponJobIterator->second;
+	}
+
+	uint32 jobSkill = SKILLID_STONE_THROW;
+	auto jobSkillIterator = m_jobSkills.find(newJob);
+	if(jobSkillIterator != std::end(m_jobSkills))
+	{
+		jobSkill = jobSkillIterator->second;
 	}
 
 	{
@@ -354,6 +401,14 @@ void CPlayerActor::EquipItem(const PacketData& commandPacket)
 		packet->AddSetByte(CSetActorPropertyPacket::VALUE_LEVEL, 0x01);
 		packet->AddTargetProperty("charaWork/stateForAll");
 		GlobalPacketReady(this, packet);
+	}
+
+	//Update skill bar
+	{
+			auto packet = std::make_shared<CSetActorPropertyPacket>();
+			packet->AddSetWord(0xCA132BC5, jobSkill);		//Action Bar(1, 1) -> New Skill
+			packet->AddTargetProperty("charaWork/command");
+			GlobalPacketReady(this, packet);
 	}
 
 	//This seems to update the UI for level and job

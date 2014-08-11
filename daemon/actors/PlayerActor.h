@@ -36,6 +36,7 @@ public:
 
 private:
 	typedef std::map<uint32, uint8> WeaponJobMap;
+	typedef std::map<uint8, uint32> JobSkillMap;
 
 	enum
 	{
@@ -60,5 +61,6 @@ private:
 	CCharacter					m_character;
 	Inventory					m_inventory;
 	uint32						m_characterId = 0;
-	static WeaponJobMap			m_weaponJobs;
+	static const WeaponJobMap	m_weaponJobs;
+	static const JobSkillMap	m_jobSkills;
 };
