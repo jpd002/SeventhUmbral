@@ -240,18 +240,17 @@ void CPlayerActor::ProcessCommandDefault(uint32 targetId)
 {
 	switch(targetId)
 	{
-	case 0xA0F06A36:	//Heavy Swing
-		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_HEAVY_SWING, CBattleActionPacket::DESCRIPTION_HEAVY_SWING, 20);
+	case SKILLID_STONE_THROW:
+	case SKILLID_PUMMEL:
+	case SKILLID_FAST_BLADE:
+	case SKILLID_HEAVY_SWING:
+	case SKILLID_HEAVY_SHOT:
+	case SKILLID_TRUE_THURST:
+	case SKILLID_STONE:
+	case SKILLID_THUNDER:
+		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_HEAVY_SWING, 0x08100000 | (targetId & 0xFFFF), 20);
 		break;
-	case 0xA0F06A37:	//Skull Sunder
-		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_SKULL_SUNDER, CBattleActionPacket::DESCRIPTION_SKULL_SUNDER, 30);
-		break;
-	case 0xA0F06A39:	//Brutal Swing
-		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_SAVAGE_BLADE, CBattleActionPacket::DESCRIPTION_BRUTAL_SWING, 40);
-		break;
-	case 0xA0F06A3E:	//Fracture
-		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_FRACTURE, CBattleActionPacket::DESCRIPTION_FRACTURE, 50);
-		break;
+
 	default:
 		CLog::GetInstance().LogDebug(LOG_NAME, "Unknown commandDefault target id (0x%0.8X).", targetId);
 		break;
