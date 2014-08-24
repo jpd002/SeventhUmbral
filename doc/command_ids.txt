@@ -1,3 +1,4 @@
+0x0001 -> Keep alive?
 0x0003 -> Display Message
 0x0005 -> Set Map
 0x000C -> Set Music
