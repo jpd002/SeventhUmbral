@@ -108,6 +108,7 @@
     <ClCompile Include="..\daemon\packets\CompositePacket.cpp" />
     <ClCompile Include="..\daemon\packets\DisplayMessagePacket.cpp" />
     <ClCompile Include="..\daemon\packets\FinishScriptPacket.cpp" />
+    <ClCompile Include="..\daemon\packets\KeepAlivePacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetActorAppearancePacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetActorPropertyPacket.cpp" />
     <ClCompile Include="..\daemon\packets\SetActorStatePacket.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="..\daemon\packets\DisplayMessagePacket.h" />
     <ClInclude Include="..\daemon\packets\FinishScriptPacket.h" />
     <ClInclude Include="..\daemon\packets\ItemBlock.h" />
+    <ClInclude Include="..\daemon\packets\KeepAlivePacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorAppearancePacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorPropertyPacket.h" />
     <ClInclude Include="..\daemon\packets\SetActorStatePacket.h" />

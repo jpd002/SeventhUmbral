@@ -14,13 +14,12 @@
 #include "actors/PlayerActor.h"
 #include "actors/EnemyActor.h"
 
+#include "packets/KeepAlivePacket.h"
 #include "packets/SetInitialPositionPacket.h"
 #include "packets/SetWeatherPacket.h"
 #include "packets/SetMusicPacket.h"
 #include "packets/SetMapPacket.h"
 #include "packets/SetInventoryPacket.h"
-#include "packets/SetActorStatePacket.h"
-#include "packets/SetActorPropertyPacket.h"
 #include "packets/BattleActionPacket.h"
 #include "packets/DisplayMessagePacket.h"
 #include "packets/CompositePacket.h"
@@ -401,19 +400,12 @@ void CGameServerPlayer::ProcessKeepAlive(const PacketData& subPacket)
 	uint32 clientTime = *reinterpret_cast<const uint32*>(&subPacket[0x18]);
 	uint32 moreTime = *reinterpret_cast<const uint32*>(&subPacket[0x20]);
 
-	uint8 keepAlivePacket[0x50] =
 	{
-		0x01, 0x00, 0x00, 0x00, 0x50, 0x00, 0x01, 0x00, 0xEF, 0xCB, 0xA4, 0xEE, 0x3B, 0x01, 0x00, 0x00,
-		0x40, 0x00, 0x03, 0x00, 0x41, 0x29, 0x9b, 0x02, 0x41, 0x29, 0x9b, 0x02, 0x00, 0xe0, 0xd2, 0xfe,
-		0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0xcb, 0xee, 0xe0, 0x50, 0x00, 0x00, 0x00, 0x00,
-		0x4a, 0x18, 0x9c, 0x0a, 0x4d, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	};
-
-	*reinterpret_cast<uint32*>(&keepAlivePacket[0x28]) = clientTime;
-	*reinterpret_cast<uint32*>(&keepAlivePacket[0x30]) = moreTime;
-
-	QueuePacket(PacketData(std::begin(keepAlivePacket), std::end(keepAlivePacket)));
+		auto packet = std::make_shared<CKeepAlivePacket>();
+		packet->SetSourceId(PLAYER_ID);
+		packet->SetTargetId(PLAYER_ID);
+		m_currentComposite.AddPacket(packet->ToPacketData());
+	}
 }
 
 void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
