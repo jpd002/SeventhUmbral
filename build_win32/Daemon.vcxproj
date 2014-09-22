@@ -85,7 +85,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\BLOWFISH.C" />
-    <ClCompile Include="..\daemon\ActorDatabase.cpp" />
     <ClCompile Include="..\daemon\actors\Actor.cpp" />
     <ClCompile Include="..\daemon\actors\EnemyActor.cpp" />
     <ClCompile Include="..\daemon\actors\PlayerActor.cpp" />
@@ -121,10 +120,10 @@
     <ClCompile Include="..\daemon\packets\UnknownInventoryPacket.cpp" />
     <ClCompile Include="..\daemon\PacketUtils.cpp" />
     <ClCompile Include="..\daemon\SocketUtils.cpp" />
+    <ClCompile Include="..\daemon\ZoneDatabase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\BLOWFISH.H" />
-    <ClInclude Include="..\daemon\ActorDatabase.h" />
     <ClInclude Include="..\daemon\actors\Actor.h" />
     <ClInclude Include="..\daemon\actors\EnemyActor.h" />
     <ClInclude Include="..\daemon\actors\PlayerActor.h" />
@@ -165,6 +164,7 @@
     <ClInclude Include="..\daemon\SocketDef.h" />
     <ClInclude Include="..\daemon\SocketUtils.h" />
     <ClInclude Include="..\daemon\AppearanceDatabase.h" />
+    <ClInclude Include="..\daemon\ZoneDatabase.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">

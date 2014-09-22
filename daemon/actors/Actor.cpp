@@ -33,6 +33,11 @@ void CActor::SetId(uint32 id)
 	m_id = id;
 }
 
+void CActor::SetZoneId(uint32 zoneId)
+{
+	m_zoneId = zoneId;
+}
+
 void CActor::SetHp(uint32 hp)
 {
 	m_hp = hp;

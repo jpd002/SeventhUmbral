@@ -23,6 +23,8 @@ public:
 	uint32						GetId() const;
 	void						SetId(uint32);
 
+	void						SetZoneId(uint32);
+
 	void						SetHp(uint32);
 
 	virtual void				Update(float);
@@ -37,6 +39,7 @@ protected:
 	CInstance*					m_instance = nullptr;
 	uint32						m_id = 0;
 	uint32						m_hp = 0;
+	uint32						m_zoneId = 0;
 
 	void						SendHpUpdate();
 };

@@ -501,6 +501,9 @@ void CPlayerActor::DoEmote(const PacketData& commandPacket)
 
 void CPlayerActor::SwitchToActiveMode()
 {
+	const auto& zoneDatabase = CGlobalData::GetInstance().GetZoneDatabase();
+	auto zone = zoneDatabase.GetZoneOrDefault(m_zoneId);
+
 	{
 		auto packet = std::make_shared<CSetActorStatePacket>();
 		packet->SetState(CSetActorStatePacket::STATE_ACTIVE);
@@ -527,7 +530,7 @@ void CPlayerActor::SwitchToActiveMode()
 
 	{
 		auto packet = std::make_shared<CSetMusicPacket>();
-		packet->SetMusicId(CSetMusicPacket::MUSIC_BLACKSHROUD_BATTLE);
+		packet->SetMusicId(zone->battleMusicId);
 		LocalPacketReady(this, packet);
 	}
 
@@ -537,6 +540,9 @@ void CPlayerActor::SwitchToActiveMode()
 
 void CPlayerActor::SwitchToPassiveMode()
 {
+	const auto& zoneDatabase = CGlobalData::GetInstance().GetZoneDatabase();
+	auto zone = zoneDatabase.GetZoneOrDefault(m_zoneId);
+
 	{
 		auto packet = std::make_shared<CSetActorStatePacket>();
 		packet->SetState(CSetActorStatePacket::STATE_PASSIVE);
@@ -556,7 +562,7 @@ void CPlayerActor::SwitchToPassiveMode()
 
 	{
 		auto packet = std::make_shared<CSetMusicPacket>();
-		packet->SetMusicId(CSetMusicPacket::MUSIC_SHROUD);
+		packet->SetMusicId(zone->backgroundMusicId);
 		LocalPacketReady(this, packet);
 	}
 

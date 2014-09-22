@@ -38,7 +38,7 @@ private:
 	PacketData					GetInventoryInfo();
 	void						ResetInstance();
 	void						SpawnNpc(uint32, uint32, uint32, float, float, float, float);
-	void						SendTeleportSequence(uint32, uint32, float, float, float, float);
+	void						SendTeleportSequence(uint32, float, float, float, float);
 
 	SOCKET						m_clientSocket = 0;
 	Framework::CMemStream		m_incomingStream;

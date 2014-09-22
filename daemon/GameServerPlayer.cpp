@@ -444,35 +444,35 @@ void CGameServerPlayer::ProcessChat(const PacketData& subPacket)
 	}
 	else if(!strcmp(chatText, "teleport_mordhona"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_MORDHONA, CSetMusicPacket::MUSIC_MORDHONA, INITIAL_POSITION_MOR_DHONA);
+		SendTeleportSequence(CSetMapPacket::MAP_MORDHONA, INITIAL_POSITION_MOR_DHONA);
 	}
 	else if(!strcmp(chatText, "teleport_coerthas"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_COERTHAS, CSetMusicPacket::MUSIC_COERTHAS, INITIAL_POSITION_COERTHAS);
+		SendTeleportSequence(CSetMapPacket::MAP_COERTHAS, INITIAL_POSITION_COERTHAS);
 	}
 	else if(!strcmp(chatText, "teleport_thanalan"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_THANALAN, CSetMusicPacket::MUSIC_THANALAN, INITIAL_POSITION_THANALAN);
+		SendTeleportSequence(CSetMapPacket::MAP_THANALAN, INITIAL_POSITION_THANALAN);
 	}
 	else if(!strcmp(chatText, "teleport_lanoscea"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_NOSCEA, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_NOSCEA);
+		SendTeleportSequence(CSetMapPacket::MAP_NOSCEA, INITIAL_POSITION_NOSCEA);
 	}
 	else if(!strcmp(chatText, "teleport_gridania"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, INITIAL_POSITION_GRIDANIA_INN);
 	}
 	else if(!strcmp(chatText, "teleport_rivenroad"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_RIVENROAD, CSetMusicPacket::MUSIC_MORDHONA, INITIAL_POSITION_RIVENROAD);
+		SendTeleportSequence(CSetMapPacket::MAP_RIVENROAD, INITIAL_POSITION_RIVENROAD);
 	}
 	else if(!strcmp(chatText, "teleport_largeboat"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_LARGEBOAT, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_LARGEBOAT);
+		SendTeleportSequence(CSetMapPacket::MAP_LARGEBOAT, INITIAL_POSITION_LARGEBOAT);
 	}
 	else if(!strcmp(chatText, "teleport_smallboat"))
 	{
-		SendTeleportSequence(CSetMapPacket::MAP_SMALLBOAT, CSetMusicPacket::MUSIC_NOSCEA, INITIAL_POSITION_SMALLBOAT);
+		SendTeleportSequence(CSetMapPacket::MAP_SMALLBOAT, INITIAL_POSITION_SMALLBOAT);
 	}
 	else if(!strcmp(chatText, "ride_chocobo"))
 	{
@@ -627,14 +627,24 @@ void CGameServerPlayer::ProcessScriptResult(const PacketData& subPacket)
 	{
 		CLog::GetInstance().LogDebug(LOG_NAME, "Command 0x12E: Moving out of room");
 
-		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, CSetMusicPacket::MUSIC_GRIDANIA, INITIAL_POSITION_GRIDANIA_INN);
+		SendTeleportSequence(CSetMapPacket::MAP_BLACKSHROUD, INITIAL_POSITION_GRIDANIA_INN);
 
 		m_alreadyMovedOutOfRoom = true;
 	}
 }
 
-void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, float x, float y, float z, float angle)
+void CGameServerPlayer::SendTeleportSequence(uint32 levelId, float x, float y, float z, float angle)
 {
+	const auto& zoneDatabase = CGlobalData::GetInstance().GetZoneDatabase();
+	auto zone = zoneDatabase.GetZoneOrDefault(levelId);
+
+	ResetInstance();
+
+	{
+		auto playerActor = m_instance.GetActor<CPlayerActor>(PLAYER_ID);
+		playerActor->SetZoneId(levelId);
+	}
+
 	QueuePacket(PacketData(std::begin(g_client0_moor1), std::end(g_client0_moor1)));
 	QueuePacket(PacketData(std::begin(g_client0_moor2), std::end(g_client0_moor2)));
 	QueuePacket(PacketData(std::begin(g_client0_moor3), std::end(g_client0_moor3)));
@@ -653,7 +663,7 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 			CSetMusicPacket packet;
 			packet.SetSourceId(PLAYER_ID);
 			packet.SetTargetId(PLAYER_ID);
-			packet.SetMusicId(musicId);
+			packet.SetMusicId(zone->backgroundMusicId);
 			result.AddPacket(packet.ToPacketData());
 		}
 
@@ -741,19 +751,15 @@ void CGameServerPlayer::SendTeleportSequence(uint32 levelId, uint32 musicId, flo
 
 	//	QueuePacket(PacketData(std::begin(g_client0_moor40), std::end(g_client0_moor40)));
 
-		ResetInstance();
-		//Only makes sense in Black Shroud for now
-		if(levelId == CSetMapPacket::MAP_BLACKSHROUD)
-		{
-			const auto& actorDatabase = CGlobalData::GetInstance().GetActorDatabase();
-			for(const auto& actorInfo : actorDatabase.GetActors())
-			{
-				SpawnNpc(actorInfo.id, actorInfo.baseModelId, actorInfo.nameStringId, 
-					std::get<0>(actorInfo.pos), std::get<1>(actorInfo.pos), std::get<2>(actorInfo.pos), 0);
-			}
-		}
-
 		m_zoneMasterCreated = true;
 	}
 
+	if(zone != nullptr)
+	{
+		for(const auto& actorInfo : zone->actors)
+		{
+			SpawnNpc(actorInfo.id, actorInfo.baseModelId, actorInfo.nameStringId, 
+				std::get<0>(actorInfo.pos), std::get<1>(actorInfo.pos), std::get<2>(actorInfo.pos), 0);
+		}
+	}
 }
