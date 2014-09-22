@@ -43,8 +43,10 @@ static ActorVector3 ParseVector3(const std::string& vectorString)
 const CZoneDatabase::ZONE_DEF_LOCATION CZoneDatabase::m_zoneLocations[] =
 {
 	{ 101,	"lanoscea"		},
+	{ 102,	"coerthas"		},
 	{ 103,	"blackshroud"	},
 	{ 104,	"thanalan"		},
+	{ 105,	"mordhona"		}
 };
 
 CZoneDatabase::CZoneDatabase()
