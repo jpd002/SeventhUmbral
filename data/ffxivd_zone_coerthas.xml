@@ -1,3 +1,7 @@
 <Zone BackgroundMusicId="55" BattleMusicId="15">
-	<Actors />
+	<Actors>
+		<Actor Id="102100" NameString="3101705" BaseModel="10029" TopModel="0" Position="263, 304, -298" />		<!-- Ahriman -->
+		<Actor Id="102101" NameString="3101001" BaseModel="10012" TopModel="0" Position="292, 302, -246" />		<!-- Morbol -->
+		<Actor Id="102102" NameString="3100401" BaseModel="10005" TopModel="0" Position="253, 303, -215" />		<!-- Hippocerf -->
+	</Actors>
 </Zone>

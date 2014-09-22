@@ -1,0 +1,5 @@
+<Zone BackgroundMusicId="49" BattleMusicId="11">
+	<Actors>
+		<Actor Id="109100" NameString="3107301" BaseModel="10852" TopModel="0" Position="-3, 0, -5" />		<!-- Ifrit -->
+	</Actors>
+</Zone>

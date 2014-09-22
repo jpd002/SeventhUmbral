@@ -1,3 +1,7 @@
 <Zone BackgroundMusicId="67" BattleMusicId="25">
-	<Actors />
+	<Actors>
+		<Actor Id="104100" NameString="3102105" BaseModel="10033" TopModel="0" Position="1243, 264, -587" />		<!-- Coblyn -->
+		<Actor Id="104101" NameString="3100910" BaseModel="10011" TopModel="0" Position="1227, 273, -468" />		<!-- Cactuar -->
+		<Actor Id="104102" NameString="3101609" BaseModel="10028" TopModel="0" Position="1231, 264, -521" />		<!-- Bomb -->
+	</Actors>
 </Zone>

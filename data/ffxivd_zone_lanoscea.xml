@@ -1,5 +1,7 @@
 <Zone BackgroundMusicId="53" BattleMusicId="21">
 	<Actors>
-		<Actor Id="101100" NameString="3105901" BaseModel="10516" TopModel="0" Position="1146, 54, -439" />		<!-- Forest Funguar -->
+		<Actor Id="101100" NameString="3202006" BaseModel="10032" TopModel="0" Position="1146, 54, -439" />		<!-- Dodo -->
+		<Actor Id="101101" NameString="3106003" BaseModel="10518" TopModel="0" Position="1132, 53, -473" />		<!-- Wild Ewe -->
+		<Actor Id="101102" NameString="3207603" BaseModel="10013" TopModel="0" Position="1051, 51, -482" />		<!-- Megalocrab -->
 	</Actors>
 </Zone>

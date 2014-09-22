@@ -46,7 +46,8 @@ const CZoneDatabase::ZONE_DEF_LOCATION CZoneDatabase::m_zoneLocations[] =
 	{ 102,	"coerthas"		},
 	{ 103,	"blackshroud"	},
 	{ 104,	"thanalan"		},
-	{ 105,	"mordhona"		}
+	{ 105,	"mordhona"		},
+	{ 109,	"rivenroad"		}
 };
 
 CZoneDatabase::CZoneDatabase()

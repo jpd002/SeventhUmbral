@@ -1,3 +1,7 @@
 <Zone BackgroundMusicId="49" BattleMusicId="11">
-	<Actors />
+	<Actors>
+		<Actor Id="105100" NameString="3103403" BaseModel="10049" TopModel="0" Position="-196, 19, -700" />		<!-- Flan -->
+		<Actor Id="105101" NameString="3202607" BaseModel="10038" TopModel="0" Position="-247, 19, -700" />		<!-- Imp -->
+		<Actor Id="105102" NameString="3100709" BaseModel="10008" TopModel="0" Position="-252, 21, -628" />		<!-- Basilisk -->
+	</Actors>
 </Zone>
