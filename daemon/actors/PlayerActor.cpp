@@ -104,6 +104,7 @@ const CPlayerActor::JobSkillMap CPlayerActor::m_jobSkills =
 };
 
 #define AUTO_ATTACK_DELAY	5.0f
+#define CAST_DELAY			2.0f
 
 CPlayerActor::CPlayerActor(uint32 characterId)
 : m_characterId(characterId)
@@ -153,30 +154,8 @@ CPlayerActor::~CPlayerActor()
 
 void CPlayerActor::Update(float dt)
 {
-	if(m_isActiveMode && m_lockOnId != EMPTY_LOCKON_ID)
-	{
-		m_autoAttackTimer -= dt;
-		if(m_autoAttackTimer < 0)
-		{
-			static const uint32 autoAttackDamage = 10;
-
-			{
-				auto packet = std::make_shared<CBattleActionPacket>();
-				packet->SetActionSourceId(m_id);
-				packet->SetActionTargetId(m_lockOnId);
-				packet->SetAnimationId(CBattleActionPacket::ANIMATION_PLAYER_ATTACK);
-				packet->SetDescriptionId(CBattleActionPacket::DESCRIPTION_PLAYER_ATTACK);
-				packet->SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
-				packet->SetDamage(autoAttackDamage);
-				packet->SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
-				packet->SetAttackSide(CBattleActionPacket::SIDE_FRONT);
-				GlobalPacketReady(this, packet);
-			}
-
-			m_autoAttackTimer += AUTO_ATTACK_DELAY;
-			DealDamageToTarget(autoAttackDamage);
-		}
-	}
+	ProcessAutoAttack(dt);
+	ProcessCast(dt);
 }
 
 const CCharacter& CPlayerActor::GetCharacter() const
@@ -248,7 +227,7 @@ void CPlayerActor::ProcessCommandDefault(uint32 targetId)
 	case SKILLID_TRUE_THURST:
 	case SKILLID_STONE:
 	case SKILLID_THUNDER:
-		ExecuteBattleSkill(CBattleActionPacket::ANIMATION_HEAVY_SWING, 0x08100000 | (targetId & 0xFFFF), 20);
+		ExecuteBattleSkill(targetId);
 		break;
 
 	default:
@@ -569,25 +548,124 @@ void CPlayerActor::SwitchToPassiveMode()
 	m_isActiveMode = false;
 }
 
-void CPlayerActor::ExecuteBattleSkill(uint32 animationId, uint32 descriptionId, uint32 damage)
+void CPlayerActor::ExecuteBattleSkill(uint32 targetId)
 {
+	//Cannot use skill if currently casting (is this handled by the client?)
+	if(m_castCommandId != 0) return;
+
+	uint32 commandId = targetId & 0xFFFF;
+	uint32 descriptionId = 0x08100000 | (targetId & 0xFFFF);
+
+	if(targetId == SKILLID_STONE || targetId == SKILLID_THUNDER)
 	{
+		{
+			auto packet = std::make_shared<CSetActorPropertyPacket>();
+			packet->AddSetWord(0x59C40D5D, 0x88888888);		//Anything positive doesn't seem to work here even though reference packet had +2 value
+			packet->AddSetWord(0xF683A451, commandId);
+			packet->AddTargetProperty("playerWork/castState");
+			LocalPacketReady(this, packet);
+		}
+
+		//Does the animation only
+		{
+			auto packet = std::make_shared<CBattleActionPacket>();
+			packet->SetActionSourceId(m_id);
+			packet->SetActionTargetId(m_lockOnId);
+			packet->SetAnimationId((targetId == SKILLID_STONE) ? CBattleActionPacket::ANIMATION_CAST_CONJURER : CBattleActionPacket::ANIMATION_CAST_THAUMATURGE);
+			packet->SetDescriptionId(descriptionId);
+			packet->SetDamage(0);
+			packet->SetDamageType(CBattleActionPacket::DAMAGE_PREPARESPELL);
+			packet->SetFeedbackId(0x1);
+			packet->SetAttackSide(0x100);
+			GlobalPacketReady(this, packet);
+		}
+
+		m_castCommandId = commandId;
+		m_castTimer = CAST_DELAY;
+	}
+	else
+	{
+		unsigned int damage = 20;
+
 		auto packet = std::make_shared<CBattleActionPacket>();
 		packet->SetActionSourceId(m_id);
 		packet->SetActionTargetId(m_lockOnId);
-		packet->SetAnimationId(animationId);
+		packet->SetAnimationId(CBattleActionPacket::ANIMATION_HEAVY_SWING);
 		packet->SetDescriptionId(descriptionId);
 		packet->SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
 		packet->SetDamage(damage);
 		packet->SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
 		packet->SetAttackSide(CBattleActionPacket::SIDE_FRONT);
 		GlobalPacketReady(this, packet);
-	}
 
-	DealDamageToTarget(damage);
+		DealDamageToTarget(damage);
+	}
 
 	//Reset auto attack timer
 	m_autoAttackTimer = AUTO_ATTACK_DELAY;
+}
+
+void CPlayerActor::ProcessAutoAttack(float dt)
+{
+	if(!m_isActiveMode) return;
+	if(m_lockOnId == EMPTY_LOCKON_ID) return;
+
+	m_autoAttackTimer -= dt;
+	if(m_autoAttackTimer < 0)
+	{
+		static const uint32 autoAttackDamage = 10;
+
+		{
+			auto packet = std::make_shared<CBattleActionPacket>();
+			packet->SetActionSourceId(m_id);
+			packet->SetActionTargetId(m_lockOnId);
+			packet->SetAnimationId(CBattleActionPacket::ANIMATION_PLAYER_ATTACK);
+			packet->SetDescriptionId(CBattleActionPacket::DESCRIPTION_PLAYER_ATTACK);
+			packet->SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
+			packet->SetDamage(autoAttackDamage);
+			packet->SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
+			packet->SetAttackSide(CBattleActionPacket::SIDE_FRONT);
+			GlobalPacketReady(this, packet);
+		}
+
+		m_autoAttackTimer += AUTO_ATTACK_DELAY;
+		DealDamageToTarget(autoAttackDamage);
+	}
+}
+
+void CPlayerActor::ProcessCast(float dt)
+{
+	if(m_castCommandId == 0) return;
+
+	m_castTimer -= dt;
+	if(m_castTimer < 0)
+	{
+		unsigned int damage = 20;
+
+		{
+			auto packet = std::make_shared<CBattleActionPacket>();
+			packet->SetActionSourceId(m_id);
+			packet->SetAnimationId(0x01001035);
+			packet->SetDescriptionId(0x08100000 | m_castCommandId);
+			packet->SetActionTargetId(m_lockOnId);
+			packet->SetDamage(damage);
+			packet->SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
+			packet->SetFeedbackId(CBattleActionPacket::FEEDBACK_NORMAL);
+			packet->SetAttackSide(0x100);
+			GlobalPacketReady(this, packet);
+		}
+
+		//Reset spell being cast
+		{
+			auto packet = std::make_shared<CSetActorPropertyPacket>();
+			packet->AddSetWord(0xF683A451, 0);
+			packet->AddTargetProperty("playerWork/castState");
+			LocalPacketReady(this, packet);
+		}
+
+		DealDamageToTarget(damage);
+		m_castCommandId = false;
+	}
 }
 
 void CPlayerActor::DealDamageToTarget(uint32 damage)

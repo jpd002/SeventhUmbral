@@ -49,14 +49,18 @@ private:
 
 	void						SwitchToActiveMode();
 	void						SwitchToPassiveMode();
-	void						ExecuteBattleSkill(uint32, uint32, uint32);
+	void						ExecuteBattleSkill(uint32);
 	
+	void						ProcessAutoAttack(float);
+	void						ProcessCast(float);
 	void						DealDamageToTarget(uint32);
 
 	Framework::MySql::CClient	m_dbConnection;
 
 	bool						m_isActiveMode = false;
 	float						m_autoAttackTimer = 0;
+	uint32						m_castCommandId = 0;
+	float						m_castTimer = 0;
 	uint32						m_lockOnId = EMPTY_LOCKON_ID;
 	CCharacter					m_character;
 	Inventory					m_inventory;
