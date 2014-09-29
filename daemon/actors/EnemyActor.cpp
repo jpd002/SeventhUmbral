@@ -26,6 +26,10 @@ void CEnemyActor::TakeDamage(CActor* sourceActor, uint32 amount)
 			auto packet = std::make_shared<CSetActorStatePacket>();
 			packet->SetState(CSetActorStatePacket::STATE_DEAD);
 			GlobalPacketReady(this, packet);
+			//If we set the dead state here, the client state won't be updated properly till
+			//another packet is sent
+			//Need to send "you have defeated x" message.
+			m_state = STATE_DEAD;
 		}
 	}
 	else
@@ -70,4 +74,11 @@ void CEnemyActor::Update(float dt)
 			m_autoAttackTimer += AUTO_ATTACK_DELAY;
 		}
 	}
+//	if(m_state == STATE_DEAD)
+//	{
+//		auto packet = std::make_shared<CSetActorStatePacket>();
+//		packet->SetState(CSetActorStatePacket::STATE_PASSIVE);
+//		GlobalPacketReady(this, packet);
+//		m_state = STATE_IDLE;
+//	}
 }
