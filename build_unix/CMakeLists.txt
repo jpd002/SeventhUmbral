@@ -15,6 +15,7 @@ add_executable(ffxivd
 	../daemon/AppConfig.cpp
 	../daemon/AppearanceDatabase.cpp
 	../daemon/Character.cpp
+	../daemon/Clock.cpp
 	../daemon/DatabaseConnectionManager.cpp
 	../daemon/GameServer.cpp
 	../daemon/GameServerPlayer.cpp

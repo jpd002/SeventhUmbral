@@ -132,6 +132,9 @@
     <ClCompile Include="..\daemon\ZoneDatabase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\daemon\Clock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\daemon\LobbyServer.h">
@@ -258,6 +261,9 @@
       <Filter>Source Files\Packets</Filter>
     </ClInclude>
     <ClInclude Include="..\daemon\ZoneDatabase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\daemon\Clock.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

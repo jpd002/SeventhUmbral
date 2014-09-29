@@ -91,6 +91,7 @@
     <ClCompile Include="..\daemon\AppConfig.cpp" />
     <ClCompile Include="..\daemon\AppearanceDatabase.cpp" />
     <ClCompile Include="..\daemon\Character.cpp" />
+    <ClCompile Include="..\daemon\Clock.cpp" />
     <ClCompile Include="..\daemon\DatabaseConnectionManager.cpp" />
     <ClCompile Include="..\daemon\GameServer.cpp" />
     <ClCompile Include="..\daemon\GameServerPlayer.cpp" />
@@ -129,6 +130,7 @@
     <ClInclude Include="..\daemon\actors\PlayerActor.h" />
     <ClInclude Include="..\daemon\AppConfig.h" />
     <ClInclude Include="..\daemon\Character.h" />
+    <ClInclude Include="..\daemon\Clock.h" />
     <ClInclude Include="..\daemon\DatabaseConnectionManager.h" />
     <ClInclude Include="..\daemon\GameServer.h" />
     <ClInclude Include="..\daemon\GameServerPlayer.h" />

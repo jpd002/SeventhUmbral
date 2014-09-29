@@ -1,10 +1,10 @@
-#include <assert.h>
-#include <time.h>
+#include <cassert>
+#include "Clock.h"
 #include "Instance.h"
 
 CInstance::CInstance()
 {
-	m_lastUpdateTime = clock();
+	m_lastUpdateTime = CClock::GetInstance().GetCurrentTime();
 }
 
 CInstance::~CInstance()
@@ -38,8 +38,8 @@ void CInstance::ClearAllActors()
 
 void CInstance::Update()
 {
-	clock_t currentTime = clock();
-	float deltaTime = static_cast<float>(currentTime - m_lastUpdateTime) / static_cast<float>(CLOCKS_PER_SEC);
+	double currentTime = CClock::GetInstance().GetCurrentTime();
+	float deltaTime = currentTime - m_lastUpdateTime;
 	//Really bad wrap around check
 	if(deltaTime < 0)
 	{

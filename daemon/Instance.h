@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <unordered_map>
-#include <ctime>
 #include "actors/Actor.h"
 
 class CInstance
@@ -34,5 +33,5 @@ private:
 	typedef std::unordered_map<uint32, ActorPtr> ActorMap;
 
 	ActorMap		m_actors;
-	clock_t			m_lastUpdateTime = 0;
+	double			m_lastUpdateTime = 0;
 };
