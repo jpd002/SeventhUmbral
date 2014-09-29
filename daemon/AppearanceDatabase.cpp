@@ -1,4 +1,5 @@
 #include <memory>
+#include <cstdlib>
 #include "AppearanceDatabase.h"
 #include "xml/Parser.h"
 #include "xml/Utils.h"

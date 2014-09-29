@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <cstdlib>
+#include "make_unique.h"
 #include "GameServerPlayer.h"
 #include "PacketUtils.h"
 #include "GameServer_Login.h"
