@@ -645,7 +645,7 @@ void CPlayerActor::ProcessCast(float dt)
 		{
 			auto packet = std::make_shared<CBattleActionPacket>();
 			packet->SetActionSourceId(m_id);
-			packet->SetAnimationId(0x01001035);
+			packet->SetAnimationId((m_castCommandId == (SKILLID_STONE & 0xFFFF)) ? CBattleActionPacket::ANIMATION_STONE : CBattleActionPacket::ANIMATION_THUNDER);
 			packet->SetDescriptionId(0x08100000 | m_castCommandId);
 			packet->SetActionTargetId(m_lockOnId);
 			packet->SetDamage(damage);
