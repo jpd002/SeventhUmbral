@@ -1,6 +1,8 @@
 #pragma once
 
 #include "PalleonEngine.h"
+#include "UmbralModel.h"
+#include "../dataobjects/ResourceDefs.h"
 
 class CUmbralActor : public Palleon::CSceneNode
 {
@@ -18,6 +20,8 @@ public:
 	virtual void	Update(float) override;
 
 private:
+	UmbralModelPtr	CreateModel(const ModelChunkPtr&);
+
 	uint32			m_baseModelId = 0;
 	uint32			m_topModelId = 0x400;
 
