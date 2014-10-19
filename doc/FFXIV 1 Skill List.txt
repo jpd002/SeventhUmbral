@@ -1,0 +1,514 @@
+abl (Abilities)
+
+Note: 
+Ability names with a "?" behind them mean they are abilities that might have never been used in the game, but are in the data files and are mostly unrecognizable.
+Ability names with a "??" behind them mean they are abilities in the game, but were used a long time ago and I can't remember if it is the right ability or not.
+Ability names with a "???" behind them mean that they might not have names in game so I tried describing them or had a name that I made up by using Final Fantasy names or just clues to name it.
+
+0501: Nothing
+0502: Steal?
+0503: Emnity Increase (of some kind???)
+0504: Chameleon
+0505: Quelling Strike (small)
+0506: Master of Arms (this sounds and looks similar to the later shown Power Surge)
+0507: Ferocity
+0508: Blood Rite / old Sanguine Rite
+0509: Profundity
+0510: Battle Calm?
+0511: Deflection
+0512: Outmaneuver
+0513: Still Precision
+0514: Still Precision II
+0515: Tempered Will
+0516: Hawk's eye
+0517: Taunt
+0518: Dark Seal
+0519: Second Wind
+0520: Second Wind II
+0521: Second Wind III
+0522: Swiftcast??? Haste???
+0523: Swiftcast II??? Haste II???
+0524: Obsess
+0525: Obsess II
+0526: Sentinel
+0528: Defender
+0535: Featherfoot
+0536: Rampart
+0537: Pressence of Mind (old)
+0538: Hallowed Ground? (unused)
+0539: Enduring March
+0540: Murderous Intent??
+0541: Entrench?
+0544: Retaliation?
+0545: Foresight
+0546: Rampage (unused)
+0547: Disorient
+0548: Comrade in Arms
+0549: Cover
+0550: Utsusemi??? Stealth??
+0551: Speed Surge
+0552: Life Surge
+0553: Farshot
+0554: Scavenge
+0555: Trifurcate
+0556: Diversion
+0557: Diversion II
+0562: Barbari Yawp
+0563: Chainspell / Pressence of Mind (new)
+0564: Roaming Soul
+0565: Decoy
+0566: Trance Chant
+0567: Purge
+0568: Spiritbind / Spiritsong / Parsimony (different names for the same kind of skill!)
+0569: Keen Flurry
+0570: Keen Flurry II
+0571: Cadence
+0572: Cadence II
+0573: Contagion
+0574: Manaward???
+0575: Invigorate
+0576: Paradigm Shift
+0577: Foes Requium??? (I'm surprised this isn't in the data files. This looks exactly like a Foes Requim... There are only a couple hidden gems of bard songs in here!)
+0578: Looks like an invigorate of some kind???
+0579: Plant Landmine/Time bomb??? ( Arcanist was supposed to be a trap class, which would have been freaking awesome. This further suggests their skillset was mostly abilities that costed MP. There are several abilities that have a similar mark or symbol as this in the animation too.)
+0580: Punishing Barbs
+0581: Bloodbath
+0582: Bloodbath II
+0583: Aegis Boon
+0584: Aegis Boon II
+0585: Aegis Boon III (wierd, this doesn't show up in the move files in the game; not even the secret ones!)
+0586: Quickstride??
+0587: Chocobostride??? Swiftsong old??? (another bard song that looks like a "swiftsong" type ability.)
+0589: Manawall??? (I really like the look of this ability for some reason! Also it shows that Arcanist symbol in the animation and there are a couple shortly after it that have the same thing too.)
+0590: Ambidexterity
+0591: Buff Trap??? (This looks like a trap planted on the caster's feet exclusively or on a single target. It looks like they'll get a transfer trap skill later on.)
+0593: Distortion??? (looks like a 1 second blue circle then it blurs a little bit. No idea what this is)
+0598: Return Trap??? (This looks like it returns the trap previously placed back to the caster)
+0599: Detonation / Homing Missle??? (This looks like a trap on top of the user is detonating and going to an enemy. This could also be just a homing trap/missle.
+0600: Provoke (new effect is now more orange than before)
+0601: Provoke II (this was the tier II to the old animation of provoke)
+0604: Warmonger
+0605: Warmonger II
+0612: Accomplice
+0613: Accomplice II
+0614: Quelling Strike (large)
+0615: Quelling Strike II
+0616: Subtle Release
+0617: Sublte Release II (not in ingame move files either for some reason)
+0618: Collusion
+0619: Collusion II
+0624: Transfer Trap??? (this move probably transfers the BuffTtrap to an ally when the trap is at your feet. I really like how this ability looks, especially transfering to a different target.)
+0625: Healing Trap??? (I really love how this looks too. This looks like a healing trap that can go on the caster or an ally or multiple allies. This was also the base for Blissful Mind and it was shortened.)
+0626: Stun ability??? (this literally looks like like a puff of pink sparkles, but it kinda looks like a stun move. I'm not sure what else to call it!)
+0627: Stun II ability???
+0630: Line of Fire
+0631: Line of Fire II
+0632: Raging Strike
+0634: Raging Strike II
+0635: Blindside
+0636: Blindside II
+0637: Deflection II
+0638: Outmaneuver II
+0639: Ferocity II
+0640: Defender II
+0641: Defender III    (I love how this and Rampart III looks)
+0642: Rampart II
+0643: Rampart III
+0644: Scavenge II
+0645: Hawk's Eye II
+0646: Taunt II
+0647: Taunt III
+0648: Sentinel II
+0649: Featherfoot II
+0650: Featherfoot III (I like the sound effect this one makes)
+0651: Enduring March II
+0652: Foresight II
+0653: Foresight III
+0654: Disorient II
+0655: Comrade in Arms II
+0656: Speed Surge II
+0657: Life Surge II
+0658: Farshot II
+0659: Trifurcate II
+0660: Barbaric Yawp II
+0661: Decoy II
+0662: Invigorate II
+0663: Invigorate III
+0664: Quickstride II (this sounds like swiftsong's noise and part of it is used for its effect!)
+0665: Distortion II???
+0666: Provoke III (old)
+0667: Blindside III
+0668: Raging Strike III
+0669: Resonence
+0670: Soughspeak
+0671: Initiation
+0672: Emulate
+0674: Tranquility/Exaltation
+0675: Blood Rite II / Sanguine Rite II (old)
+0676: Dark Seal II
+0677: Profundity II
+0678: Soughspeak II
+0679: Purge II
+0680:  Wrist Flick Quelling Strike III? Or different animation of Quelling Strike?
+0681: Quelling Strike III? Or different animation of Quelling Strike?
+0682 Beserk (old?) 
+0683: Barrage (buff)
+0684: Fists of Fire
+0685: Fists of Earth
+0686: Power Surge
+0687: Life Surge (new)
+0688: Dread Spike
+0689: Blood for Blood
+0690: Sacred Prism
+0691: Shroud of Saints
+0692: Cleric Stance
+0693: Blissful Mind
+0694: Excruciate
+0695: Necrogenesis
+0696: Flash (ability)
+0700: Chainspell II (was supposed to be Presence of Mind because it's grouped up with the other new class and job abilities. I also like calling it Chainspell II though because it looks more like that.)
+0709: Hallowed Ground
+0711: Collusion (new) / Punishing Barbs II (this also looks like a Punishing Barbs II also and it could have been the actual animation of that, but it was only debuted in the game as the new Collusion)
+0712: Hundred Fists
+0713: Divine Veil 
+0714: Vengence 
+0715: Antagonize
+0716: Mighty Strikes
+0718: Spinning Heel
+0719: ??? Looks like a purple-pink Wrist Flick.... I know I've seen it before I just forgot it's name...
+0720: Fists of Wind
+0721: Battle Voice
+0722: Presence of Mind (this is what it's real animation was supposed to be. Not sure why they had to make a different copy of the Chainspell animation and place It somewhere else and rename it.)
+0723: Benediction
+0724: Convert
+0725: Cover (again)
+687: Dread Spike (again? This is weird.... and it's also just #687 instead with any 0's)
+
+mgc (Magic):
+0001: Nothing
+0002: Battle Regimen Queue
+0050: Barfire/ Fire shield (boss ability)
+0051: Ifrit's Invincible shield
+0053: Dispel (boss effect) also the default for your stone and thunder spells!
+0101: Cure
+0102: Raise / Resurrect (effect)
+0103: Cure II
+0106: Sacrifice 
+0107: Sacrifice II
+0114: Poisona
+0117: Mystic Cure?
+0118: Mystic Cure II?
+0119: Mystic Cure III?
+0133: Stoneskin
+0134: Stoneskin II
+0135: Stoneskin III
+0142: Resurrect (Cast) maybe Soul Ward too? (Reraise)
+0146: Cure III
+0147: Sacrifice III
+0148: Raise (Cast) maybe Reraise too?
+0149: Flash (Spell)
+0150: Swiftsong
+0151: Repose (new)
+0152: Sanguine Rite
+0501: Fire
+0502: Blizzard
+0503: Thunder
+0504: Fire II
+0506: Blizzard II
+0507: Blizzard III
+0508: Thunder II
+0509: Thunder III
+0510: Aero 
+0511: Aero II
+0512: Aero III (no sound)
+0513: Stone
+0514: Stone II
+0515: Stone III (also no sound, sorta)
+0516: Water
+0517: Water II
+0519: Banish
+0520: Banish II
+0521: Banish III
+0522: Scourge
+0523: Scourge II
+0524: Scourge III
+0525: Tornado after effect
+0526: Tornado II after effect
+0527: Tornado III after effect
+0528: Quake after effect
+0529: Quake II after effect
+0530: Quake III after effect
+0534: Gravity
+0535: Gravity II
+0536: Gravity III
+0537: Burn
+0538: Burn II
+0539: Burn III
+0540: Choke
+0541: Choke II
+0542: Choke III
+0543: Shock
+0544: Shock II
+0545: Shock III
+0546: Frost
+0547: Frost II
+0548: Frost III
+0549: Rasp 
+0550: Rasp II
+0551: Rasp III
+0552: Drown
+0553: Drown II
+0554: Drown III
+0573: Drain 
+0574: Drain II
+0575: Aspir
+0576: Aspir II
+0577: Regain
+0578: Regain II
+0579: Siphon TP
+0580: Siphon TP II
+0581: Siphon MP
+0582: Siphon MP II
+0583: Bio
+0584: Bio II
+0585: Bio III
+0586: Dia 
+0587: Dia II
+0588: Dia III
+0610: Absorb ATK
+0611: Absorb ATK II
+0612: Absorb DEF
+0613: Absorb DEF II
+0614: Absorb ACC
+0615: Absorb ACC II
+0616: Absorb EVA
+0617: Absorb EVA II
+0634: Repose (old)
+0635: Bind
+0648: Shock Spikes
+0649: Shocke Spikes II
+0650: Shock Spikes III
+0651: Sleep
+0652: Sleep II
+0653: Silence
+0654: Paralyze
+0655: Poison
+0656: Blind
+0661: Stygian Spikes
+0662: Stygian Spikes II
+0663: Tornado
+0664: Tornado II
+0665: Tornado III
+0666: Quake
+0667: Quake II
+0668: Quake III
+0669: Flare 
+0670: Flare II
+0671: Flare III
+0672: Flare after effect
+0673: Flare II after effect
+0674: Flare III after effect
+0675: Freeze
+0676: Freeze II
+0677: Freeze III
+0678: Freeze after effect
+0679: Freeze II after effect
+0680: Freeze III after effect
+0681: Burst
+0682: Burst II
+0683: Burst III
+0684: Burst after effect
+0685: Burst II after effect
+0686: Burst III after effect
+0687: Flood
+0688: Flood II
+0689: Flood III
+0690: Flood after effect
+0691: Flood II after effect
+0692: Flood III after effect
+0693: Mass Fear
+0699: Poison II
+0700: Fire III
+0701: Holy Succor
+0702: Esuna
+0703: Regen
+0704: Sleepga
+0705: Burst IV (new Burst)
+0706: Flare IV (new Flare)
+0707: Freeze IV (new Freeze)
+0708: Holy
+0709: Ballad of Magi
+0710: Paeon of War
+0711: Minuet of Rigor
+1001: Nothing
+1002: Nothing
+1003: Nothing
+1004: Nothing
+1005: Nothing
+1006: Nothing
+1085: Protect
+1086: Protect II
+1087: Protect III
+1088: Protect IV
+1089: Shell 
+1090: Shell II
+1091: Shell III
+1092: Shell IV
+1097: Slow
+1098: Slow II
+1099: Slow III
+1100: Slow IV
+1101: Shadowsear
+1102: Shadowsear II
+1103: Shadowsear III
+1132: Paralyna
+1133: Silena
+1135: Break
+4000: Nothing
+4001: Battle Regimen Queue (again)
+
+
+wsc (Weapon Skills): 
+
+Note:
+Weapon Skill names with a "?" behind them mean they are skills that might have never been used in the game, but are in the data files and are mostly unrecognizable.
+Weapon Skill with a "??" behind them mean they are skills in the game, but were used a long time ago and I can't remember if it is the right weapon skill or not.
+Weapon Skill with a "???" behind them mean that they might not have names in game so I tried describing them or had a name that I made up by using Final Fantasy names or just clues to name it.
+
+0001: Red Lotus
+0002: Circle Slash
+0003: Electric Strike??? (looks like a little spark of purple lightning. Nothing much to it, it just is a little spark with no sound)
+0005: Shield Bash
+0007: Victimize 
+0008: Pounce
+0010: Riot Blade (old)??
+0011: Skewer
+0012: Moonrise
+0013: Twisting Vice??  Righteous Way?
+0014: Trunksplitter / Heavy Swing (Default for all weaponskills currently!)
+0015: Brutal Swing
+0016: Maim
+0017: Shadowbind
+0018: Wide Volley (new)
+0019: Scouring Strike
+0020: Concussive Blow
+0021: Aura Pulse
+0023: Haymaker
+0025: Something like Barrage??
+0026: Barrage (newer)
+0027: Follow Through (has the same design as Barrage but green)
+0028: Also Barrage
+0029: Jarring Strike
+0030: Overrun?
+0031: Onion Cut
+0032: Phalanx
+0033: Howling Vortex
+0034: Spinstroke
+0035: Trammel
+0036: Heavy Trammel
+0037: Leg Sweep
+0038: Doomspike
+0039: Feint
+0040: Chaos Thrust
+0041: Brandish
+0042: Fracture
+0043: Skull Sunder
+0044: Storm's Path
+0045: Puncture
+0046: Barrage (old) 1
+0047: Barrage (old) 2
+0048: Barrage (old) 3 (this one looks a bit different)
+0049: Barrage (old) 4
+0050: Smite (not released in game!)
+0051: Foeseeker
+0052: Shrieker
+0053: Bloodletter
+0054: Mindscatter (not released in game!)
+0055: Levinbolt
+0056: Radiance
+0057: Flashfreeze
+0058: Damnation
+0059: Explosion??? (probably a trap explosion from the old arcanist)
+0060: Ice Explosion??? (could also be a smokescreen)
+0061: Shield Bash II
+0062: Shield Bash III
+0063: Victimize II
+0064: Pounce II
+0065: Concussive Blow II
+0066: Aura Pulse II
+0067: Aura Pulse III
+0068: Haymaker II
+0073: Jarring Strike II
+0074: Jarring Strike III
+0075: Riot Blade II
+0076: Circle Slash II
+0077: Red Lotus II
+0078: Overrun II?
+0079: Spinstroke II
+0080: Skewer II
+0081: Moonrise II
+0082: Leg Sweep II
+0083: Doomspike II/ Doomspike (new)
+0084: Feint II
+0085: Trunksplitter II / Heavy Swing II
+0086: Trunksplitter III / Heavy Swing III
+0087: Brutal Swing II
+0088: Maim II
+0089: Brandish II
+0090: Fracture II
+0091: Fracture III
+0092: Skull Sunder II
+0093: Whirlwind (unimplimented animation)
+0094: Shadowbind II
+0095: Wide Volley II
+0096: Scouring Strike II
+0097: Puncture II
+0098: Bloodletter II (old)
+0099: Levinbolt II
+0100: Radiance II
+0101: Phalanx II
+0102: Flashfreeze II
+1002: Seismic Shock
+1003: Simian Thrash
+1004: Asuran Fists (sad how it's not in the game :( )
+1005: Luminous Spire
+1006: Void Rend (not released)
+1007: Inferno Edge (not released and super cool)
+1008: Rage of Halone
+1009: Ring of Thorns
+1012: Onslaught?
+1013: Iron Tempist
+1014: Godsbane
+1015: Whirlwind (used in game)
+1016: Arrow Helix
+1017: Quick Nock
+1018: Swarmsting (not inplimented but looks super sick. I acctually tried swapping bloodletter with this move because it looks like a light elemental bloodletter and sure enough, they share the same weaponskill motion.)
+1019: Seismic Shock II
+1020: Iron Tempist II
+1021: Arrow Helix II
+1022: Quick Nock II
+1023: Fast Blade
+1024: Flat Blade
+1025: Savage Blade
+1026: Goring Blade
+1027: Pummel
+1028: Demolish
+1029: Howling Fist
+1030: True Thrust
+1031: Heavy Thrust
+1032: Vorpal Thrust
+1033: Impulse Drive
+1034: Full Thrust
+1035: Leaden Arrow
+1036: Heavy Shot
+1037: Rain of Death
+1038: Piercing Arrow
+1039: Gloom Arrow
+1040: Steel Cyclone
+1041: Dragon Kick
+1042: Disembowel
+1044: Spirits Within
+1045: Jump
+1046: Elusive Jump (this shouldn't be considered a weaponskill...)
+1047: Dragonfire Dive
+1048: Shoulder Tackle
