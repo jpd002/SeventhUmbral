@@ -65,7 +65,7 @@
 #define SKILLID_FAST_BLADE		(0xA0F06A0E)
 #define SKILLID_HEAVY_SWING		(0xA0F06A36)
 #define SKILLID_HEAVY_SHOT		(0xA0F06A5C)
-#define SKILLID_TRUE_THURST		(0xA0F06A85)
+#define SKILLID_TRUE_THRUST		(0xA0F06A85)
 #define SKILLID_STONE			(0xA0F06ADB)
 #define SKILLID_THUNDER			(0xA0F06AB1)
 
@@ -97,10 +97,21 @@ const CPlayerActor::JobSkillMap CPlayerActor::m_jobSkills =
 	std::make_pair(JOBID_ARCHER,		SKILLID_HEAVY_SHOT),
 	std::make_pair(JOBID_MARAUDER,		SKILLID_HEAVY_SWING),
 	std::make_pair(JOBID_GLADIATOR,		SKILLID_FAST_BLADE),
-	std::make_pair(JOBID_LANCER,		SKILLID_TRUE_THURST),
+	std::make_pair(JOBID_LANCER,		SKILLID_TRUE_THRUST),
 	std::make_pair(JOBID_PUGILIST,		SKILLID_PUMMEL),
 	std::make_pair(JOBID_THAUMATURGE,	SKILLID_THUNDER),
 	std::make_pair(JOBID_CONJURER,		SKILLID_STONE),
+};
+
+const CPlayerActor::SkillAnimationMap CPlayerActor::m_skillAnimations =
+{
+	std::make_pair(SKILLID_HEAVY_SHOT,		CBattleActionPacket::ANIMATION_HEAVY_SHOT),
+	std::make_pair(SKILLID_HEAVY_SWING,		CBattleActionPacket::ANIMATION_HEAVY_SWING),
+	std::make_pair(SKILLID_FAST_BLADE,		CBattleActionPacket::ANIMATION_FAST_BLADE),
+	std::make_pair(SKILLID_TRUE_THRUST,		CBattleActionPacket::ANIMATION_TRUE_THRUST),
+	std::make_pair(SKILLID_PUMMEL,			CBattleActionPacket::ANIMATION_PUMMEL),
+	std::make_pair(SKILLID_THUNDER,			CBattleActionPacket::ANIMATION_THUNDER),
+	std::make_pair(SKILLID_STONE,			CBattleActionPacket::ANIMATION_STONE)
 };
 
 #define AUTO_ATTACK_DELAY	5.0f
@@ -224,7 +235,7 @@ void CPlayerActor::ProcessCommandDefault(uint32 targetId)
 	case SKILLID_FAST_BLADE:
 	case SKILLID_HEAVY_SWING:
 	case SKILLID_HEAVY_SHOT:
-	case SKILLID_TRUE_THURST:
+	case SKILLID_TRUE_THRUST:
 	case SKILLID_STONE:
 	case SKILLID_THUNDER:
 		ExecuteBattleSkill(targetId);
@@ -587,10 +598,17 @@ void CPlayerActor::ExecuteBattleSkill(uint32 targetId)
 	{
 		unsigned int damage = 20;
 
+		uint32 animationId = CBattleActionPacket::ANIMATION_HEAVY_SWING;
+		auto animationIdIterator = m_skillAnimations.find(targetId);
+		if(animationIdIterator != std::end(m_skillAnimations))
+		{
+			animationId = animationIdIterator->second;
+		}
+
 		auto packet = std::make_shared<CBattleActionPacket>();
 		packet->SetActionSourceId(m_id);
 		packet->SetActionTargetId(m_lockOnId);
-		packet->SetAnimationId(CBattleActionPacket::ANIMATION_HEAVY_SWING);
+		packet->SetAnimationId(animationId);
 		packet->SetDescriptionId(descriptionId);
 		packet->SetDamageType(CBattleActionPacket::DAMAGE_NORMAL);
 		packet->SetDamage(damage);
