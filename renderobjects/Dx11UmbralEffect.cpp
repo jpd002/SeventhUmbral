@@ -1,7 +1,7 @@
 #include "Dx11UmbralEffect.h"
 #include "Dx11UmbralEffectGenerator.h"
 #include "UmbralEffect.h"
-#include "palleon/Viewport.h"
+#include "palleon/graphics/Viewport.h"
 
 CDx11UmbralEffect::CDx11UmbralEffect(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const CD3DShader& vertexShader, const CD3DShader& pixelShader, bool hasAlphaTest)
@@ -46,7 +46,7 @@ void SetParamValue(uint8* constantBufferPtr, uint32 paramOffset, const ParamType
 	}
 }
 
-void CDx11UmbralEffect::UpdateConstants(const Palleon::DX11VIEWPORT_PARAMS& viewportParams, Palleon::CMaterial* material, const CMatrix4& worldMatrix)
+void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewportParams, Palleon::CMaterial* material, const CMatrix4& worldMatrix)
 {
 	//Update vertex shader params
 	{

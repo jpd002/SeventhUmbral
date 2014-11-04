@@ -1,7 +1,7 @@
 #pragma once
 
-#include "palleon/Effect.h"
-#include "palleon/VertexBuffer.h"
+#include "palleon/graphics/Effect.h"
+#include "palleon/graphics/VertexBuffer.h"
 
 class CUmbralEffect
 {
