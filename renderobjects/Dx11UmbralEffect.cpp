@@ -86,6 +86,7 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 		auto modulateColor = material->GetEffectParamOrDefault("ps_modulateColor", CVector4(1, 1, 1, 1), m_modulateColorOffset != -1);
 		auto ambientColor = material->GetEffectParamOrDefault("ps_ambientColor", CVector4(0, 0, 0, 0), m_ambientColorOffset != -1);
 		auto diffuseColor = material->GetEffectParamOrDefault("ps_diffuseColor", CVector4(0, 0, 0, 0), m_diffuseColorOffset != -1);
+		auto diffuseScale = material->GetEffectParamOrDefault("ps_diffuseScale", CVector3(1, 1, 1), m_diffuseScaleOffset != -1);
 		auto specularColor = material->GetEffectParamOrDefault("ps_specularColor", CVector4(0, 0, 0, 0), m_specularColorOffset != -1);
 		auto shininess = material->GetEffectParamOrDefault("ps_shininess", 128.f, m_shininessOffset != -1);
 		auto reflectivity = material->GetEffectParamOrDefault("ps_reflectivity", CVector3(0, 0, 0), m_reflectivityOffset != -1);
@@ -150,6 +151,7 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 		SetParamValue(constantBufferPtr, m_modulateColorOffset, modulateColor);
 		SetParamValue(constantBufferPtr, m_ambientColorOffset, ambientColor);
 		SetParamValue(constantBufferPtr, m_diffuseColorOffset, diffuseColor);
+		SetParamValue(constantBufferPtr, m_diffuseScaleOffset, diffuseScale);
 		SetParamValue(constantBufferPtr, m_specularColorOffset, specularColor);
 		SetParamValue(constantBufferPtr, m_shininessOffset, shininess);
 		SetParamValue(constantBufferPtr, m_reflectivityOffset, reflectivity);
@@ -256,6 +258,7 @@ void CDx11UmbralEffect::ParsePixelShaderConstantTable(OffsetKeeper& constantOffs
 
 		{ "modulateColor",				m_modulateColorOffset				},
 		{ "diffuseColor",				m_diffuseColorOffset				},
+		{ "diffuseScale",				m_diffuseScaleOffset				},
 		{ "specularColor",				m_specularColorOffset				},
 		{ "shininess",					m_shininessOffset					},
 		{ "reflectivity",				m_reflectivityOffset				},

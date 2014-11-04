@@ -45,6 +45,7 @@ private:
 	uint32							m_modulateColorOffset = -1;
 	uint32							m_ambientColorOffset = -1;
 	uint32							m_diffuseColorOffset = -1;
+	uint32							m_diffuseScaleOffset = -1;
 	uint32							m_specularColorOffset = -1;
 	uint32							m_shininessOffset = -1;
 	uint32							m_reflectivityOffset = -1;
