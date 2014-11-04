@@ -91,7 +91,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\worldeditor\ActorDatabase.cpp" />
     <ClCompile Include="..\worldeditor\DebugOverlay.cpp" />
     <ClCompile Include="..\worldeditor\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -101,7 +100,6 @@
     <ClCompile Include="..\worldeditor\WorldEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\worldeditor\ActorDatabase.h" />
     <ClInclude Include="..\worldeditor\DebugOverlay.h" />
     <ClInclude Include="..\worldeditor\Pch.h" />
     <ClInclude Include="..\worldeditor\TouchFreeCamera.h" />

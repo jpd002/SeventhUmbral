@@ -8,7 +8,6 @@
 #include "../renderobjects/UmbralActor.h"
 #include "../renderobjects/UmbralMap.h"
 #include "../renderobjects/UmbralModel.h"
-#include "ActorDatabase.h"
 
 //0x03E70001 -> Mor'dhona
 //0x25B10001 -> Some boat
@@ -135,20 +134,6 @@ void CWorldEditor::CreateMap(uint32 mapId)
 void CWorldEditor::CreateActors()
 {
 	//WIP
-#if 0
-	auto sceneRoot = m_mainViewport->GetSceneRoot();
-
-	Framework::CStdStream stream("D:\\Projects\\SeventhUmbral\\data\\ffxivd_actors.xml", "rb");
-	CActorDatabase actorDatabase = CActorDatabase::CreateFromXml(stream);
-
-	for(const auto& actorDef : actorDatabase.GetActors())
-	{
-		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(actorDef.baseModelId);
-		actor->SetPosition(actorDef.position);
-		sceneRoot->AppendChild(actor);
-	}
-#endif
 }
 
 void CWorldEditor::CreateBaseAxis()

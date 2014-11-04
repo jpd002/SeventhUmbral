@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\worldeditor\ActorDatabase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\worldeditor\Pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -32,9 +29,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\worldeditor\ActorDatabase.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\worldeditor\Pch.h">
       <Filter>Source Files</Filter>
     </ClInclude>
