@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\worldeditor\DebugOverlay.cpp" />
+    <ClCompile Include="..\worldeditor\LayoutScanner.cpp" />
     <ClCompile Include="..\worldeditor\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -101,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\worldeditor\DebugOverlay.h" />
+    <ClInclude Include="..\worldeditor\LayoutScanner.h" />
     <ClInclude Include="..\worldeditor\Pch.h" />
     <ClInclude Include="..\worldeditor\TouchFreeCamera.h" />
     <ClInclude Include="..\worldeditor\WorldEditor.h" />
