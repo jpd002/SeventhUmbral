@@ -98,6 +98,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\worldeditor\TouchFreeCamera.cpp" />
+    <ClCompile Include="..\worldeditor\TranslationGizmo.cpp" />
     <ClCompile Include="..\worldeditor\WorldEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +106,7 @@
     <ClInclude Include="..\worldeditor\LayoutScanner.h" />
     <ClInclude Include="..\worldeditor\Pch.h" />
     <ClInclude Include="..\worldeditor\TouchFreeCamera.h" />
+    <ClInclude Include="..\worldeditor\TranslationGizmo.h" />
     <ClInclude Include="..\worldeditor\WorldEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -5,7 +5,6 @@
 #include "../dataobjects/FileManager.h"
 #include "../renderobjects/ResourceManager.h"
 #include "../renderobjects/GlobalResources.h"
-#include "../renderobjects/UmbralActor.h"
 #include "../renderobjects/UmbralMap.h"
 #include "../renderobjects/UmbralModel.h"
 
@@ -33,9 +32,26 @@
 #define MAIN_CAMERA_NEAR_Z	(1.0f)
 #define MAIN_CAMERA_FAR_Z	(500.f)
 
+CVector3 g_translateXPlaneNormals[2] =
+{
+	CVector3(0, 1, 0),
+	CVector3(0, 0, 1),
+};
+
+CVector3 g_translateYPlaneNormals[2] =
+{
+	CVector3(1, 0, 0),
+	CVector3(0, 0, 1)
+};
+
+CVector3 g_translateZPlaneNormals[2] =
+{
+	CVector3(1, 0, 0),
+	CVector3(0, 1, 0)
+};
+
 CWorldEditor::CWorldEditor(bool isEmbedding)
-: m_elapsed(0)
-, m_mousePosition(0, 0)
+: m_isEmbedding(isEmbedding)
 {
 	CGlobalResources::GetInstance().Initialize();
 
@@ -44,11 +60,15 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_overlayViewport.get());
 
+	m_translationGizmo = CTranslationGizmo::Create();
+
 	if(!isEmbedding)
 	{
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
-		//CFileManager::SetGamePath("F:\\FFXIV_10_Copy");
-		CreateMap(0xA09B0002);
+		CFileManager::SetGamePath("C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV");
+//		CreateMap(0x29B00001);
+		CreateActor(1, 10005);
+		SetActorPosition(1, CVector3(0, -1, 0));
 	}
 }
 
@@ -87,6 +107,18 @@ void CWorldEditor::CreateWorld()
 		m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
 	}
 
+	//Create skybox
+	{
+		auto skyTexture = Palleon::CTextureLoader::CreateCubeTextureFromFile("./data/global/skybox.dds");
+		auto skyBox = Palleon::CCubeMesh::Create();
+		skyBox->SetIsPeggedToOrigin(true);
+		skyBox->SetScale(CVector3(50, 50, 50));
+		skyBox->GetMaterial()->SetCullingMode(Palleon::CULLING_CCW);
+		skyBox->GetMaterial()->SetTexture(0, skyTexture);
+		skyBox->GetMaterial()->SetTextureCoordSource(0, Palleon::TEXTURE_COORD_CUBE_POS);
+		m_mainViewport->GetSceneRoot()->AppendChild(skyBox);
+	}
+
 	{
 		auto viewport = Palleon::CViewport::Create();
 		viewport->SetCamera(m_mainCamera);
@@ -98,18 +130,6 @@ void CWorldEditor::CreateMap(uint32 mapId)
 {
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
-	//Create skybox
-	{
-		auto skyTexture = Palleon::CTextureLoader::CreateCubeTextureFromFile("./data/global/skybox.dds");
-		auto skyBox = Palleon::CCubeMesh::Create();
-		skyBox->SetIsPeggedToOrigin(true);
-		skyBox->SetScale(CVector3(50, 50, 50));
-		skyBox->GetMaterial()->SetCullingMode(Palleon::CULLING_CCW);
-		skyBox->GetMaterial()->SetTexture(0, skyTexture);
-		skyBox->GetMaterial()->SetTextureCoordSource(0, Palleon::TEXTURE_COORD_CUBE_POS);
-		sceneRoot->AppendChild(skyBox);
-	}
-
 	{
 		auto mapLayoutPath = CFileManager::GetResourcePath(mapId);
 		auto mapLayout = std::make_shared<CMapLayout>();
@@ -119,69 +139,32 @@ void CWorldEditor::CreateMap(uint32 mapId)
 		auto map = std::make_shared<CUmbralMap>(mapLayout);
 		sceneRoot->AppendChild(map);
 	}
-#if 0
-	{
-		auto mapLayoutPath = CFileManager::GetResourcePath(0x29D90002);
-		auto mapLayout = std::make_shared<CMapLayout>();
-		mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
-
-		auto map = std::make_shared<CUmbralMap>(mapLayout);
-		sceneRoot->AppendChild(map);
-	}
-#endif
 }
 
-void CWorldEditor::CreateActors()
+void CWorldEditor::CreateActor(uint32 id, uint32 baseModelId)
 {
-	//WIP
-}
+	assert(m_actors.find(id) == m_actors.end());
 
-void CWorldEditor::CreateBaseAxis()
-{
-	auto sceneRoot = m_overlayViewport->GetSceneRoot();
-
-	static const CVector3 g_arrowScale(0.075f, 0.25f, 0.075f);
+	auto sceneRoot = m_mainViewport->GetSceneRoot();
 	
 	{
-		auto baseAxisNode = Palleon::CSceneNode::Create();
-		baseAxisNode->SetPosition(CVector3(289.2f, 5.00f, -563.f));
-		sceneRoot->AppendChild(baseAxisNode);
-
-		{
-			auto axisMesh = Palleon::CAxisMesh::Create();
-			axisMesh->SetScale(CVector3(1, 1, 1));
-			baseAxisNode->AppendChild(axisMesh);
-		}
-
-		//X arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(1, 0, 0));
-			coneMesh->SetRotation(CQuaternion(CVector3(0, 0, 1), M_PI / 2.f));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
-
-		//Y arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(0, 1, 0));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(0, 1, 0, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
-
-		//Z arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(0, 0, 1));
-			coneMesh->SetRotation(CQuaternion(CVector3(1, 0, 0), -M_PI / 2.f));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(0, 0, 1, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
+		auto actor = std::make_shared<CUmbralActor>();
+		actor->SetBaseModelId(baseModelId);
+		actor->SetPosition(CVector3(0, 2, 0));
+		sceneRoot->AppendChild(actor);
+		m_actors.insert(std::make_pair(id, actor));
 	}
+}
+
+void CWorldEditor::SetActorPosition(uint32 id, const CVector3& position)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		return;
+	}
+	actorIterator->second->SetPosition(position);
 }
 
 void CWorldEditor::Update(float dt)
@@ -196,6 +179,87 @@ void CWorldEditor::Update(float dt)
 	{
 		m_debugOverlay->SetCameraPosition(m_mainCamera->GetPosition());
 		m_debugOverlay->Update(dt);
+	}
+
+	if(m_translationGizmo->GetParent())
+	{
+		auto mouseRay = GetMouseRay();
+		m_translationGizmo->UpdateHoverState(mouseRay);
+	}
+
+	if(m_state == STATE_TRANSLATE)
+	{
+		m_lastIntersectPosition = m_intersectPosition;
+		auto mouseRay = GetMouseRay();
+		auto selectedObject = m_translationGizmo->GetParent();
+		auto objectTransform = selectedObject->GetWorldTransformation();
+		CVector3 objectPosition(objectTransform(3, 0), objectTransform(3, 1), objectTransform(3, 2));
+		if(m_translationMode == CTranslationGizmo::HITTEST_X)
+		{
+			auto translationPlane = CPlane();
+			if(fabs(m_dot[0]) > fabs(m_dot[1]))
+			{
+				translationPlane = CPlane(g_translateXPlaneNormals[0], objectPosition.y);
+			}
+			else
+			{
+				translationPlane = CPlane(g_translateXPlaneNormals[1], objectPosition.z);
+			}
+			auto intersectResult = Intersects(translationPlane, mouseRay);
+			if(intersectResult.first)
+			{
+				m_intersectPosition = intersectResult.second;
+				if(!m_lastIntersectPosition.IsNull())
+				{
+					m_delta = m_intersectPosition - m_lastIntersectPosition;
+				}
+				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(m_delta.x, 0, 0));
+			}
+		}
+		else if(m_translationMode == CTranslationGizmo::HITTEST_Y)
+		{
+			auto translationPlane = CPlane();
+			if(fabs(m_dot[0]) > fabs(m_dot[1]))
+			{
+				translationPlane = CPlane(g_translateYPlaneNormals[0], objectPosition.x);
+			}
+			else
+			{
+				translationPlane = CPlane(g_translateYPlaneNormals[1], objectPosition.z);
+			}
+			auto intersectResult = Intersects(translationPlane, mouseRay);
+			if(intersectResult.first)
+			{
+				m_intersectPosition = intersectResult.second;
+				if(!m_lastIntersectPosition.IsNull())
+				{
+					m_delta = m_intersectPosition - m_lastIntersectPosition;
+				}
+				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(0, m_delta.y, 0));
+			}
+		}
+		else if(m_translationMode == CTranslationGizmo::HITTEST_Z)
+		{
+			auto translationPlane = CPlane();
+			if(fabs(m_dot[0]) > fabs(m_dot[1]))
+			{
+				translationPlane = CPlane(g_translateZPlaneNormals[0], objectPosition.x);
+			}
+			else
+			{
+				translationPlane = CPlane(g_translateZPlaneNormals[1], objectPosition.y);
+			}
+			auto intersectResult = Intersects(translationPlane, mouseRay);
+			if(intersectResult.first)
+			{
+				m_intersectPosition = intersectResult.second;
+				if(!m_lastIntersectPosition.IsNull())
+				{
+					m_delta = m_intersectPosition - m_lastIntersectPosition;
+				}
+				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(0, 0, m_delta.z));
+			}
+		}
 	}
 }
 
@@ -214,12 +278,86 @@ void CWorldEditor::NotifyMouseMove(int x, int y)
 
 void CWorldEditor::NotifyMouseDown()
 {
-	m_mainCamera->BeginDrag(m_mousePosition);
+//	m_mainCamera->BeginDrag(m_mousePosition);
+
+	assert(m_state == STATE_IDLE);
+	if(m_translationGizmo->GetParent())
+	{
+		auto mouseRay = GetMouseRay();
+		auto testResult = m_translationGizmo->HitTest(mouseRay);
+		if(testResult != CTranslationGizmo::HITTEST_NONE)
+		{
+			m_translationGizmo->SetStickyMode(testResult);
+			m_state = STATE_TRANSLATE;
+			m_translationMode = testResult;
+			m_intersectPosition = CVector3(0, 0, 0);
+			m_lastIntersectPosition = CVector3(0, 0, 0);
+			m_delta = CVector3(0, 0, 0);
+
+			//Either xy plane or xz plane
+			switch(testResult)
+			{
+			case CTranslationGizmo::HITTEST_X:
+				for(unsigned int i = 0; i < 2; i++)
+				{
+					m_dot[i] = mouseRay.direction.Dot(g_translateXPlaneNormals[i]);
+				}
+				break;
+			case CTranslationGizmo::HITTEST_Y:
+				for(unsigned int i = 0; i < 2; i++)
+				{
+					m_dot[i] = mouseRay.direction.Dot(g_translateYPlaneNormals[i]);
+				}
+				break;
+			case CTranslationGizmo::HITTEST_Z:
+				for(unsigned int i = 0; i < 2; i++)
+				{
+					m_dot[i] = mouseRay.direction.Dot(g_translateZPlaneNormals[i]);
+				}
+				break;
+			}
+		}
+	}
 }
 
 void CWorldEditor::NotifyMouseUp()
 {
-	m_mainCamera->EndDrag();
+//	m_mainCamera->EndDrag();
+
+	if(m_state == STATE_IDLE)
+	{
+		auto mouseRay = GetMouseRay();
+
+		if(m_translationGizmo->GetParent())
+		{
+			m_translationGizmo->GetParent()->RemoveChild(m_translationGizmo);
+		}
+
+		for(const auto& actorPair : m_actors)
+		{
+			const auto& actor = actorPair.second;
+			auto boundingSphere = Transform(actor->GetBoundingSphere(), actor->GetWorldTransformation());
+			auto intersectResult = Intersects(boundingSphere, mouseRay);
+			if(intersectResult.first)
+			{
+				if(m_isEmbedding)
+				{
+					Palleon::CEmbedRemoteCall rpc;
+					rpc.SetMethod("selected");
+					rpc.SetParam("actorId", std::to_string(actorPair.first));
+					Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
+				}
+				actor->AppendChild(m_translationGizmo);
+				break;
+			}
+		}
+	}
+	else
+	{
+		m_state = STATE_IDLE;
+		m_translationGizmo->SetStickyMode(CTranslationGizmo::HITTEST_NONE);
+		m_translationMode = CTranslationGizmo::HITTEST_NONE;
+	}
 }
 
 void CWorldEditor::NotifyKeyDown(Palleon::KEY_CODE keyCode)
@@ -276,14 +414,12 @@ std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
 		CFileManager::SetGamePath(gamePath);
 		return std::string("success");
 	}
-	if(method == "SetMap")
+	else if(method == "SetMap")
 	{
 		try
 		{
 			auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
 			CreateMap(mapId);
-//			CreateActors();
-//			CreateBaseAxis();
 			return "success";
 		}
 		catch(...)
@@ -292,7 +428,28 @@ std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
 		}
 		return "success";
 	}
+	else if(method == "CreateActor")
+	{
+		try
+		{
+			auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
+			auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
+			CreateActor(id, baseModelId);
+		}
+		catch(...)
+		{
+			return "failed";
+		}
+	}
 	return std::string("failed");
+}
+
+CRay CWorldEditor::GetMouseRay() const
+{
+	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
+	auto screenPos = (m_mousePosition / screenSize) * 2 - CVector2(1, 1);
+	auto ray = m_mainCamera->Unproject(screenPos);
+	return ray;
 }
 
 Palleon::CApplication* CreateApplication(bool isEmbedding)

@@ -3,7 +3,9 @@
 #include "PalleonEngine.h"
 #include "TouchFreeCamera.h"
 #include "../dataobjects/ResourceDefs.h"
+#include "../renderobjects/UmbralActor.h"
 #include "DebugOverlay.h"
+#include "TranslationGizmo.h"
 
 class CWorldEditor : public Palleon::CApplication
 {
@@ -27,22 +29,38 @@ public:
 	virtual std::string		NotifyExternalCommand(const std::string&) override;
 
 private:
-	typedef std::vector<Palleon::SceneNodePtr> ModelArray;
-	typedef std::vector<Palleon::TexturePtr> TextureArray;
+	enum STATE
+	{
+		STATE_IDLE,
+		STATE_TRANSLATE,
+	};
+
+	typedef std::map<uint32, UmbralActorPtr> ActorMap;
 
 	void					CreateWorld();
-	void					CreateActors();
+	void					CreateActor(uint32, uint32);
+	void					SetActorPosition(uint32, const CVector3&);
 
 	void					CreateMap(uint32);
-	void					CreateBaseAxis();
 
-	CVector2				m_mousePosition;
+	CRay					GetMouseRay() const;
+
+	CVector2				m_mousePosition = CVector2(0, 0);
+
+	bool					m_isEmbedding = false;
 
 	Palleon::ViewportPtr	m_mainViewport;
 	Palleon::ViewportPtr	m_overlayViewport;
 	TouchFreeCameraPtr		m_mainCamera;
 	
-	float					m_elapsed;
+	ActorMap				m_actors;
+	TranslationGizmoPtr		m_translationGizmo;
 
-	DebugOverlayPtr			m_debugOverlay;
+	DebugOverlayPtr						m_debugOverlay;
+	STATE								m_state = STATE_IDLE;
+	CTranslationGizmo::HITTEST_RESULT	m_translationMode = CTranslationGizmo::HITTEST_NONE;
+	CVector3							m_intersectPosition = CVector3(0, 0, 0);
+	CVector3							m_lastIntersectPosition = CVector3(0, 0, 0);
+	CVector3							m_delta = CVector3(0, 0, 0);
+	float								m_dot[2];
 };
