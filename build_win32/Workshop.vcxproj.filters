@@ -19,6 +19,9 @@
     <Filter Include="Source Files\SheetViewer">
       <UniqueIdentifier>{542f2d1b-a693-41e5-9024-5836c3d7679a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ZoneEditor">
+      <UniqueIdentifier>{88838bee-b6eb-4112-bf15-7f3b595f3911}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\workshop\WinMain.cpp">
@@ -74,6 +77,15 @@
     </ClCompile>
     <ClCompile Include="..\common\GameInstallInfo.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\ZoneEditor.cpp">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\ZoneEditorPropertiesPane.cpp">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\ZoneEditorWorldPane.cpp">
+      <Filter>Source Files\ZoneEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +151,15 @@
     </ClInclude>
     <ClInclude Include="..\common\GameInstallInfo.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\ZoneEditor.h">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\ZoneEditorPropertiesPane.h">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\ZoneEditorWorldPane.h">
+      <Filter>Source Files\ZoneEditor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

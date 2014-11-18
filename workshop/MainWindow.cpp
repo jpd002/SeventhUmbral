@@ -4,6 +4,7 @@
 #include "WelcomePage.h"
 #include "SettingsPage.h"
 #include "SheetViewer.h"
+#include "ZoneEditor.h"
 #include "AppearanceViewer.h"
 #include "WorldViewer.h"
 #include "AboutWindow.h"
@@ -74,6 +75,9 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 {
 	switch(id)
 	{
+	case ID_MAINMENU_MODIFY_ZONE:
+		ShowZoneEditor();
+		break;
 	case ID_MAINMENU_INSPECT_WEAPONS:
 		ShowAppearanceViewer();
 		break;
@@ -197,6 +201,12 @@ void CMainWindow::ShowWelcomePage()
 {
 	auto welcomePage = std::make_unique<CWelcomePage>(m_hWnd);
 	InsertDocument(std::move(welcomePage));
+}
+
+void CMainWindow::ShowZoneEditor()
+{
+	auto document = std::make_unique<CZoneEditor>(m_hWnd, 0xA09B0000);
+	InsertDocument(std::move(document));
 }
 
 void CMainWindow::ShowAppearanceViewer()
