@@ -54,6 +54,7 @@ private:
 	TouchFreeCameraPtr		m_mainCamera;
 	
 	ActorMap				m_actors;
+	Palleon::SceneNodePtr	m_selectedActorNode;
 	TranslationGizmoPtr		m_translationGizmo;
 
 	DebugOverlayPtr						m_debugOverlay;

@@ -60,8 +60,6 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_overlayViewport.get());
 
-	m_translationGizmo = CTranslationGizmo::Create();
-
 	if(!isEmbedding)
 	{
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
@@ -124,6 +122,13 @@ void CWorldEditor::CreateWorld()
 		viewport->SetCamera(m_mainCamera);
 		m_overlayViewport = viewport;
 	}
+
+	{
+		auto gizmo = CTranslationGizmo::Create();
+		gizmo->SetVisible(false);
+		m_overlayViewport->GetSceneRoot()->AppendChild(gizmo);
+		m_translationGizmo = gizmo;
+	}
 }
 
 void CWorldEditor::CreateMap(uint32 mapId)
@@ -169,6 +174,15 @@ void CWorldEditor::SetActorPosition(uint32 id, const CVector3& position)
 
 void CWorldEditor::Update(float dt)
 {
+	m_translationGizmo->SetVisible(m_selectedActorNode != nullptr);
+	if(m_selectedActorNode != nullptr)
+	{
+		m_translationGizmo->SetPosition(m_selectedActorNode->GetPosition());
+		auto gizmoDistance = (m_mainCamera->GetPosition() - m_translationGizmo->GetPosition()).Length();
+		auto gizmoScale = gizmoDistance * 0.1f;
+		m_translationGizmo->SetScale(CVector3(gizmoScale, gizmoScale, gizmoScale));
+	}
+
 	m_mainCamera->Update(dt);
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
@@ -181,7 +195,7 @@ void CWorldEditor::Update(float dt)
 		m_debugOverlay->Update(dt);
 	}
 
-	if(m_translationGizmo->GetParent())
+	if(m_selectedActorNode != nullptr)
 	{
 		auto mouseRay = GetMouseRay();
 		m_translationGizmo->UpdateHoverState(mouseRay);
@@ -191,8 +205,7 @@ void CWorldEditor::Update(float dt)
 	{
 		m_lastIntersectPosition = m_intersectPosition;
 		auto mouseRay = GetMouseRay();
-		auto selectedObject = m_translationGizmo->GetParent();
-		auto objectTransform = selectedObject->GetWorldTransformation();
+		auto objectTransform = m_selectedActorNode->GetWorldTransformation();
 		CVector3 objectPosition(objectTransform(3, 0), objectTransform(3, 1), objectTransform(3, 2));
 		if(m_translationMode == CTranslationGizmo::HITTEST_X)
 		{
@@ -213,7 +226,7 @@ void CWorldEditor::Update(float dt)
 				{
 					m_delta = m_intersectPosition - m_lastIntersectPosition;
 				}
-				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(m_delta.x, 0, 0));
+				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(m_delta.x, 0, 0));
 			}
 		}
 		else if(m_translationMode == CTranslationGizmo::HITTEST_Y)
@@ -235,7 +248,7 @@ void CWorldEditor::Update(float dt)
 				{
 					m_delta = m_intersectPosition - m_lastIntersectPosition;
 				}
-				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(0, m_delta.y, 0));
+				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(0, m_delta.y, 0));
 			}
 		}
 		else if(m_translationMode == CTranslationGizmo::HITTEST_Z)
@@ -257,7 +270,7 @@ void CWorldEditor::Update(float dt)
 				{
 					m_delta = m_intersectPosition - m_lastIntersectPosition;
 				}
-				selectedObject->SetPosition(selectedObject->GetPosition() + CVector3(0, 0, m_delta.z));
+				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(0, 0, m_delta.z));
 			}
 		}
 	}
@@ -281,7 +294,7 @@ void CWorldEditor::NotifyMouseDown()
 //	m_mainCamera->BeginDrag(m_mousePosition);
 
 	assert(m_state == STATE_IDLE);
-	if(m_translationGizmo->GetParent())
+	if(m_selectedActorNode != nullptr)
 	{
 		auto mouseRay = GetMouseRay();
 		auto testResult = m_translationGizmo->HitTest(mouseRay);
@@ -294,7 +307,6 @@ void CWorldEditor::NotifyMouseDown()
 			m_lastIntersectPosition = CVector3(0, 0, 0);
 			m_delta = CVector3(0, 0, 0);
 
-			//Either xy plane or xz plane
 			switch(testResult)
 			{
 			case CTranslationGizmo::HITTEST_X:
@@ -328,10 +340,7 @@ void CWorldEditor::NotifyMouseUp()
 	{
 		auto mouseRay = GetMouseRay();
 
-		if(m_translationGizmo->GetParent())
-		{
-			m_translationGizmo->GetParent()->RemoveChild(m_translationGizmo);
-		}
+		m_selectedActorNode.reset();
 
 		for(const auto& actorPair : m_actors)
 		{
@@ -347,7 +356,7 @@ void CWorldEditor::NotifyMouseUp()
 					rpc.SetParam("actorId", std::to_string(actorPair.first));
 					Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
 				}
-				actor->AppendChild(m_translationGizmo);
+				m_selectedActorNode = actor;
 				break;
 			}
 		}
