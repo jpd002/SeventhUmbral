@@ -19,6 +19,9 @@
     <Filter Include="Source Files\sections">
       <UniqueIdentifier>{e654f67f-1b27-472c-8423-de6a25d33050}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\server">
+      <UniqueIdentifier>{cc664758-7859-4333-a29a-8d75b9256dfa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dataobjects\sections\BaseSection.cpp">
@@ -131,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\dataobjects\chunks\PgrpChunk.cpp">
       <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\server\ZoneDefinition.cpp">
+      <Filter>Source Files\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="..\dataobjects\chunks\PgrpChunk.h">
       <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\server\ZoneDefinition.h">
+      <Filter>Source Files\server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
