@@ -3,7 +3,8 @@
 #include "ZoneEditorWorldPane.h"
 #include "resource.h"
 #include "string_format.h"
-#include "palleon\EmbedRemoteCall.h"
+#include "palleon/EmbedRemoteCall.h"
+#include "math/MathStringUtils.h"
 
 CZoneEditorWorldPane::CZoneEditorWorldPane(HWND parentWnd, uint32 mapId)
 : Framework::Win32::CDialog(MAKEINTRESOURCE(IDD_ZONEEDITOR_WORLDPANE), parentWnd)
@@ -18,13 +19,33 @@ CZoneEditorWorldPane::~CZoneEditorWorldPane()
 
 }
 
-void CZoneEditorWorldPane::CreateActor(uint32 actorId, uint32 baseModelId)
+void CZoneEditorWorldPane::CreateActor(uint32 actorId)
 {
 	Palleon::CEmbedRemoteCall rpc;
 	rpc.SetMethod("CreateActor");
 	rpc.SetParam("Id", std::to_string(actorId));
+	auto result = m_embedControl->ExecuteCommand(rpc.ToString());
+	assert(result == "success");
+}
+
+void CZoneEditorWorldPane::SetActorBaseModelId(uint32 actorId, uint32 baseModelId)
+{
+	Palleon::CEmbedRemoteCall rpc;
+	rpc.SetMethod("SetActorBaseModelId");
+	rpc.SetParam("Id", std::to_string(actorId));
 	rpc.SetParam("BaseModelId", std::to_string(baseModelId));
-	m_embedControl->ExecuteCommand(rpc.ToString());
+	auto result = m_embedControl->ExecuteCommand(rpc.ToString());
+	assert(result == "success");
+}
+
+void CZoneEditorWorldPane::SetActorPosition(uint32 actorId, const CVector3& position)
+{
+	Palleon::CEmbedRemoteCall rpc;
+	rpc.SetMethod("SetActorPosition");
+	rpc.SetParam("Id", std::to_string(actorId));
+	rpc.SetParam("Position", MathStringUtils::ToString(position));
+	auto result = m_embedControl->ExecuteCommand(rpc.ToString());
+	assert(result == "success");
 }
 
 void CZoneEditorWorldPane::SetActive(bool active)
@@ -61,12 +82,14 @@ void CZoneEditorWorldPane::CreateViewer()
 		Palleon::CEmbedRemoteCall rpc;
 		rpc.SetMethod("SetGamePath");
 		rpc.SetParam("Path", CAppConfig::GetInstance().GetPreferenceString(PREF_WORKSHOP_GAME_LOCATION));
-		m_embedControl->ExecuteCommand(rpc.ToString());
+		auto result = m_embedControl->ExecuteCommand(rpc.ToString());
+		assert(result == "success");
 	}
 	{
 		Palleon::CEmbedRemoteCall rpc;
 		rpc.SetMethod("SetMap");
 		rpc.SetParam("MapId", std::to_string(m_mapId));
 		auto result = m_embedControl->ExecuteCommand(rpc.ToString());
+		assert(result == "success");
 	}
 }

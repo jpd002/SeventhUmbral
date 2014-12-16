@@ -75,6 +75,12 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 {
 	switch(id)
 	{
+	case ID_FILE_SAVE:
+		SaveCurrentDocument();
+		break;
+	case ID_FILE_QUIT:
+		Destroy();
+		break;
 	case ID_MAINMENU_MODIFY_ZONE:
 		ShowZoneEditor();
 		break;
@@ -114,9 +120,6 @@ long CMainWindow::OnCommand(unsigned short id, unsigned short cmd, HWND)
 				CloseTab(m_tabContextMenuSelection);
 			}
 		}
-		break;
-	case ID_FILE_QUIT:
-		Destroy();
 		break;
 	}
 	return FALSE;
@@ -197,6 +200,15 @@ void CMainWindow::Destroy()
 	CWindow::Destroy();
 }
 
+void CMainWindow::SaveCurrentDocument()
+{
+	unsigned int selection = m_tabs.GetSelection();
+	auto documentId = m_tabs.GetTabData(selection);
+	auto documentIterator = m_documents.find(documentId);
+	assert(documentIterator != m_documents.end());
+	if(documentIterator == m_documents.end()) return;
+}
+
 void CMainWindow::ShowWelcomePage()
 {
 	auto welcomePage = std::make_unique<CWelcomePage>(m_hWnd);
@@ -240,17 +252,40 @@ void CMainWindow::InsertDocument(DocumentPtr&& documentWindow)
 	{
 		UnselectTab(currentSelection);
 	}
+	uint32 documentId = m_nextDocumentId;
 	std::string documentName = "New Document";
-	if(auto document = dynamic_cast<IDocument*>(documentWindow.get()))
+	auto document = dynamic_cast<IDocument*>(documentWindow.get());
+	if(document)
 	{
 		documentName = document->GetName();
 	}
-	m_documents.insert(std::make_pair(m_nextDocumentId, std::move(documentWindow)));
+	m_documents.insert(std::make_pair(documentId, std::move(documentWindow)));
 	unsigned int tabIndex = m_tabs.InsertTab(string_cast<std::tstring>(documentName).c_str());
-	m_tabs.SetTabData(tabIndex, m_nextDocumentId);
+	m_tabs.SetTabData(tabIndex, documentId);
 	m_tabs.SetSelection(tabIndex);
+	if(document)
+	{
+		document->StateChanged.connect([this, tabIndex] () { OnDocumentStateChanged(tabIndex); });
+	}
 	SelectTab(tabIndex);
 	m_nextDocumentId++;
+}
+
+void CMainWindow::OnDocumentStateChanged(unsigned int tabIndex)
+{
+	auto documentId = m_tabs.GetTabData(tabIndex);
+	auto documentIterator = m_documents.find(documentId);
+	assert(documentIterator != std::end(m_documents));
+	if(documentIterator == std::end(m_documents)) return;
+	auto document = dynamic_cast<IDocument*>(documentIterator->second.get());
+	assert(document);
+	if(document == nullptr) return;
+	auto documentName = document->GetName();
+	if(document->GetDirty())
+	{
+		documentName += "*";
+	}
+	m_tabs.SetTabText(tabIndex, string_cast<std::tstring>(documentName).c_str());
 }
 
 void CMainWindow::SelectTab(int selection)

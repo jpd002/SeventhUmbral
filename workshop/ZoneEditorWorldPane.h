@@ -2,7 +2,8 @@
 
 #include "win32/Dialog.h"
 #include "win32/Edit.h"
-#include "../../Palleon/include/palleon/win32/Win32EmbedControl.h"
+#include "math/Vector3.h"
+#include "palleon/win32/Win32EmbedControl.h"
 
 class CZoneEditorWorldPane : public Framework::Win32::CDialog
 {
@@ -12,7 +13,9 @@ public:
 								CZoneEditorWorldPane(HWND, uint32);
 	virtual						~CZoneEditorWorldPane();
 
-	void						CreateActor(uint32, uint32);
+	void						CreateActor(uint32);
+	void						SetActorBaseModelId(uint32, uint32);
+	void						SetActorPosition(uint32, const CVector3&);
 
 	void						SetActive(bool);
 

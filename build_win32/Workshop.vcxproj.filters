@@ -87,6 +87,9 @@
     <ClCompile Include="..\workshop\ZoneEditorWorldPane.cpp">
       <Filter>Source Files\ZoneEditor</Filter>
     </ClCompile>
+    <ClCompile Include="..\workshop\ActorPropertyBag.cpp">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\workshop\Pch.h">
@@ -159,6 +162,9 @@
       <Filter>Source Files\ZoneEditor</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\ZoneEditorWorldPane.h">
+      <Filter>Source Files\ZoneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\ActorPropertyBag.h">
       <Filter>Source Files\ZoneEditor</Filter>
     </ClInclude>
   </ItemGroup>

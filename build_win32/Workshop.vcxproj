@@ -107,6 +107,7 @@
   <ItemGroup>
     <ClCompile Include="..\common\GameInstallInfo.cpp" />
     <ClCompile Include="..\workshop\AboutWindow.cpp" />
+    <ClCompile Include="..\workshop\ActorPropertyBag.cpp" />
     <ClCompile Include="..\workshop\AppConfig.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewer.cpp" />
     <ClCompile Include="..\workshop\AppearanceViewerActorInfoPane.cpp" />
@@ -132,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="..\common\GameInstallInfo.h" />
     <ClInclude Include="..\workshop\AboutWindow.h" />
+    <ClInclude Include="..\workshop\ActorPropertyBag.h" />
     <ClInclude Include="..\workshop\AppConfig.h" />
     <ClInclude Include="..\workshop\AppDef.h" />
     <ClInclude Include="..\workshop\AppearanceViewer.h" />
