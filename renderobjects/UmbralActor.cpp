@@ -81,111 +81,121 @@ void ReplaceMaterialParam(const Palleon::MaterialPtr& material, const char* para
 
 void CUmbralActor::RebuildActorRenderables()
 {
-	uint32 modelFolder = m_baseModelId % 10000;
-	uint32 modelClass = m_baseModelId / 10000;
-	const char* charaFolder = "";
-	const char* charaPrefix = "";
-	switch(modelClass)
+	RemoveAllChildren();
+
+	try
 	{
-	case 1:
-		charaFolder = "mon";
-		charaPrefix = "m";
-		break;
-	case 2:
-		charaFolder = "bgobj";
-		charaPrefix = "b";
-		break;
-	case 4:
-		charaFolder = "wep";
-		charaPrefix = "w";
-		break;
-	default:
-		assert(0);
-		break;
-	}
+		uint32 modelFolder = m_baseModelId % 10000;
+		uint32 modelClass = m_baseModelId / 10000;
+		const char* charaFolder = "";
+		const char* charaPrefix = "";
+		switch(modelClass)
+		{
+		case 1:
+			charaFolder = "mon";
+			charaPrefix = "m";
+			break;
+		case 2:
+			charaFolder = "bgobj";
+			charaPrefix = "b";
+			break;
+		case 4:
+			charaFolder = "wep";
+			charaPrefix = "w";
+			break;
+		default:
+			assert(0);
+			break;
+		}
 
-	uint32 subModelId = m_topModelId >> 10;
-	uint32 variation = m_topModelId & 0x3FF;
+		uint32 subModelId = m_topModelId >> 10;
+		uint32 variation = m_topModelId & 0x3FF;
 
-	auto gamePath = CFileManager::GetGamePath();
+		auto gamePath = CFileManager::GetGamePath();
 
-	uint32 textureId = 0;
-	if(modelClass == 4)
-	{
-		uint32 varWepId = 1000000000 + (modelFolder * 1000000) + (subModelId * 1000) + variation;
-		auto var = CWeaponVars::GetInstance().GetVarForId(varWepId);
-		textureId = var.textureId;
-	}
-
-	auto textureResource = ResourceNodePtr();
-
-	//Load texture
-	{
-		auto texturePath = string_format("%s/client/chara/%s/%s%0.3d/equ/e%0.3d/top_tex2/%0.4d",
-			gamePath.string().c_str(), charaFolder, charaPrefix, modelFolder, subModelId, textureId);
-
-		Framework::CStdStream inputStream(texturePath.c_str(), "rb");
-		textureResource = CSectionLoader::ReadSection(ResourceNodePtr(), inputStream);
-	}
-
-	//Load model
-	auto modelPath = string_format("%s/client/chara/%s/%s%0.3d/equ/e%0.3d/top_mdl/0001",
-		gamePath.string().c_str(), charaFolder, charaPrefix, modelFolder, subModelId);
-
-	Framework::CStdStream inputStream(modelPath.c_str(), "rb");
-
-	auto modelResource = CSectionLoader::ReadSection(ResourceNodePtr(), inputStream);
-
-	auto modelChunks = modelResource->SelectNodes<CModelChunk>();
-	assert(!modelChunks.empty());
-	for(const auto& modelChunk : modelChunks)
-	{
-		auto model = CreateModel(modelChunk);
-		AppendChild(model);
-
+		uint32 textureId = 0;
 		if(modelClass == 4)
 		{
 			uint32 varWepId = 1000000000 + (modelFolder * 1000000) + (subModelId * 1000) + variation;
 			auto var = CWeaponVars::GetInstance().GetVarForId(varWepId);
-
-			for(const auto& meshNode : model->GetChildren())
-			{
-				if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(meshNode))
-				{
-					auto meshName = mesh->GetName();
-					int materialId = 0;
-					if(meshName.find("_a") != std::string::npos)
-					{
-						materialId = 0;
-					}
-					if(meshName.find("_b") != std::string::npos)
-					{
-						materialId = 1;
-					}
-					if(meshName.find("_c") != std::string::npos)
-					{
-						materialId = 2;
-					}
-					if(meshName.find("_d") != std::string::npos)
-					{
-						assert(0);
-					}
-					const auto& varWepMaterial = var.materials[materialId];
-					auto material = mesh->GetMaterial();
-					ReplaceMaterialParam(material, "ps_diffuseColor", varWepMaterial.diffuseColor);
-					ReplaceMaterialParam(material, "ps_multiDiffuseColor", varWepMaterial.multiDiffuseColor);
-					ReplaceMaterialParam(material, "ps_specularColor", varWepMaterial.specularColor);
-					ReplaceMaterialParam(material, "ps_multiSpecularColor", varWepMaterial.multiSpecularColor);
-					ReplaceMaterialParam(material, "ps_reflectivity", varWepMaterial.specularColor);
-					ReplaceMaterialParam(material, "ps_multiReflectivity", varWepMaterial.multiSpecularColor);
-					ReplaceMaterialParam(material, "ps_shininess", varWepMaterial.shininess);
-					ReplaceMaterialParam(material, "ps_multiShininess", varWepMaterial.multiShininess);
-					mesh->SetActivePolyGroups(var.polyGroupState);
-				}
-			}
+			textureId = var.textureId;
 		}
 
-		model->SetLocalTexture(textureResource);
+		auto textureResource = ResourceNodePtr();
+
+		//Load texture
+		{
+			auto texturePath = string_format("%s/client/chara/%s/%s%0.3d/equ/e%0.3d/top_tex2/%0.4d",
+				gamePath.string().c_str(), charaFolder, charaPrefix, modelFolder, subModelId, textureId);
+
+			Framework::CStdStream inputStream(texturePath.c_str(), "rb");
+			textureResource = CSectionLoader::ReadSection(ResourceNodePtr(), inputStream);
+		}
+
+		//Load model
+		auto modelPath = string_format("%s/client/chara/%s/%s%0.3d/equ/e%0.3d/top_mdl/0001",
+			gamePath.string().c_str(), charaFolder, charaPrefix, modelFolder, subModelId);
+
+		Framework::CStdStream inputStream(modelPath.c_str(), "rb");
+
+		auto modelResource = CSectionLoader::ReadSection(ResourceNodePtr(), inputStream);
+
+		auto modelChunks = modelResource->SelectNodes<CModelChunk>();
+		assert(!modelChunks.empty());
+		for(const auto& modelChunk : modelChunks)
+		{
+			auto model = CreateModel(modelChunk);
+			AppendChild(model);
+
+			if(modelClass == 4)
+			{
+				uint32 varWepId = 1000000000 + (modelFolder * 1000000) + (subModelId * 1000) + variation;
+				auto var = CWeaponVars::GetInstance().GetVarForId(varWepId);
+
+				for(const auto& meshNode : model->GetChildren())
+				{
+					if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(meshNode))
+					{
+						auto meshName = mesh->GetName();
+						int materialId = 0;
+						if(meshName.find("_a") != std::string::npos)
+						{
+							materialId = 0;
+						}
+						if(meshName.find("_b") != std::string::npos)
+						{
+							materialId = 1;
+						}
+						if(meshName.find("_c") != std::string::npos)
+						{
+							materialId = 2;
+						}
+						if(meshName.find("_d") != std::string::npos)
+						{
+							assert(0);
+						}
+						const auto& varWepMaterial = var.materials[materialId];
+						auto material = mesh->GetMaterial();
+						ReplaceMaterialParam(material, "ps_diffuseColor", varWepMaterial.diffuseColor);
+						ReplaceMaterialParam(material, "ps_multiDiffuseColor", varWepMaterial.multiDiffuseColor);
+						ReplaceMaterialParam(material, "ps_specularColor", varWepMaterial.specularColor);
+						ReplaceMaterialParam(material, "ps_multiSpecularColor", varWepMaterial.multiSpecularColor);
+						ReplaceMaterialParam(material, "ps_reflectivity", varWepMaterial.specularColor);
+						ReplaceMaterialParam(material, "ps_multiReflectivity", varWepMaterial.multiSpecularColor);
+						ReplaceMaterialParam(material, "ps_shininess", varWepMaterial.shininess);
+						ReplaceMaterialParam(material, "ps_multiShininess", varWepMaterial.multiShininess);
+						mesh->SetActivePolyGroups(var.polyGroupState);
+					}
+				}
+			}
+
+			model->SetLocalTexture(textureResource);
+		}
+	}
+	catch(...)
+	{
+		//Use dummy model?
+		RemoveAllChildren();
 	}
 
 	m_renderableDirty = false;

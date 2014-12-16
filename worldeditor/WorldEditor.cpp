@@ -1,4 +1,5 @@
 #include <boost/lexical_cast.hpp>
+#include "math/MathStringUtils.h"
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
@@ -65,7 +66,8 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
 		CFileManager::SetGamePath("C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV");
 //		CreateMap(0x29B00001);
-		CreateActor(1, 10005);
+		CreateActor(1);
+		SetActorBaseModelId(1, 10005);
 		SetActorPosition(1, CVector3(0, -1, 0));
 	}
 }
@@ -146,7 +148,7 @@ void CWorldEditor::CreateMap(uint32 mapId)
 	}
 }
 
-void CWorldEditor::CreateActor(uint32 id, uint32 baseModelId)
+void CWorldEditor::CreateActor(uint32 id)
 {
 	assert(m_actors.find(id) == m_actors.end());
 
@@ -154,7 +156,6 @@ void CWorldEditor::CreateActor(uint32 id, uint32 baseModelId)
 	
 	{
 		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(baseModelId);
 		actor->SetPosition(CVector3(0, 2, 0));
 		sceneRoot->AppendChild(actor);
 		m_actors.insert(std::make_pair(id, actor));
@@ -170,6 +171,17 @@ void CWorldEditor::SetActorPosition(uint32 id, const CVector3& position)
 		return;
 	}
 	actorIterator->second->SetPosition(position);
+}
+
+void CWorldEditor::SetActorBaseModelId(uint32 id, uint32 baseModelId)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		return;
+	}
+	actorIterator->second->SetBaseModelId(baseModelId);
 }
 
 void CWorldEditor::Update(float dt)
@@ -357,15 +369,42 @@ void CWorldEditor::NotifyMouseUp()
 					Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
 				}
 				m_selectedActorNode = actor;
+				m_selectedActorId = actorPair.first;
 				break;
 			}
 		}
+
+		if(m_selectedActorNode == nullptr)
+		{
+			if(m_isEmbedding)
+			{
+				Palleon::CEmbedRemoteCall rpc;
+				rpc.SetMethod("selected");
+				rpc.SetParam("actorId", std::to_string(0));
+				Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
+			}
+		}
 	}
-	else
+	else if(m_state == STATE_TRANSLATE)
 	{
+		if(m_selectedActorNode != nullptr)
+		{
+			//Notify about the actor's new position
+			auto position = m_selectedActorNode->GetPosition();
+			Palleon::CEmbedRemoteCall rpc;
+			rpc.SetMethod("actorMoved");
+			rpc.SetParam("actorId", std::to_string(m_selectedActorId));
+			rpc.SetParam("position", MathStringUtils::ToString(position));
+			Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
+		}
+
 		m_state = STATE_IDLE;
 		m_translationGizmo->SetStickyMode(CTranslationGizmo::HITTEST_NONE);
 		m_translationMode = CTranslationGizmo::HITTEST_NONE;
+	}
+	else
+	{
+		
 	}
 }
 
@@ -425,30 +464,19 @@ std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
 	}
 	else if(method == "SetMap")
 	{
-		try
-		{
-			auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
-			CreateMap(mapId);
-			return "success";
-		}
-		catch(...)
-		{
-			return "failed";
-		}
-		return "success";
+		return ProcessSetMap(rpc);
 	}
 	else if(method == "CreateActor")
 	{
-		try
-		{
-			auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
-			auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
-			CreateActor(id, baseModelId);
-		}
-		catch(...)
-		{
-			return "failed";
-		}
+		return ProcessCreateActor(rpc);
+	}
+	else if(method == "SetActorBaseModelId")
+	{
+		return ProcessSetActorBaseModelId(rpc);
+	}
+	else if(method == "SetActorPosition")
+	{
+		return ProcessSetActorPosition(rpc);
 	}
 	return std::string("failed");
 }
@@ -459,6 +487,77 @@ CRay CWorldEditor::GetMouseRay() const
 	auto screenPos = (m_mousePosition / screenSize) * 2 - CVector2(1, 1);
 	auto ray = m_mainCamera->Unproject(screenPos);
 	return ray;
+}
+
+std::string CWorldEditor::ProcessSetMap(const Palleon::CEmbedRemoteCall& rpc)
+{
+	try
+	{
+		auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
+		CreateMap(mapId);
+		return "success";
+	}
+	catch(...)
+	{
+		return "failed";
+	}
+	return "success";
+}
+
+std::string CWorldEditor::ProcessCreateActor(const Palleon::CEmbedRemoteCall& rpc)
+{
+	try
+	{
+		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
+		CreateActor(id);
+		return "success";
+	}
+	catch(...)
+	{
+		return "failed";
+	}
+}
+
+std::string CWorldEditor::ProcessSetActorBaseModelId(const Palleon::CEmbedRemoteCall& rpc)
+{
+	try
+	{
+		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
+		auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
+		auto actorIterator = m_actors.find(id);
+		if(actorIterator == std::end(m_actors))
+		{
+			return "failed";
+		}
+		auto& actor = actorIterator->second;
+		actor->SetBaseModelId(baseModelId);
+		return "success";
+	}
+	catch(...)
+	{
+		return "failed";
+	}
+}
+
+std::string CWorldEditor::ProcessSetActorPosition(const Palleon::CEmbedRemoteCall& rpc)
+{
+	try
+	{
+		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
+		auto position = MathStringUtils::ParseVector3(rpc.GetParam("Position"));
+		auto actorIterator = m_actors.find(id);
+		if(actorIterator == std::end(m_actors))
+		{
+			return "failed";
+		}
+		auto& actor = actorIterator->second;
+		actor->SetPosition(position);
+		return "success";
+	}
+	catch(...)
+	{
+		return "failed";
+	}
 }
 
 Palleon::CApplication* CreateApplication(bool isEmbedding)

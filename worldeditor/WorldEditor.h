@@ -38,12 +38,17 @@ private:
 	typedef std::map<uint32, UmbralActorPtr> ActorMap;
 
 	void					CreateWorld();
-	void					CreateActor(uint32, uint32);
+	void					CreateActor(uint32);
 	void					SetActorPosition(uint32, const CVector3&);
-
+	void					SetActorBaseModelId(uint32, uint32);
 	void					CreateMap(uint32);
 
 	CRay					GetMouseRay() const;
+
+	std::string				ProcessSetMap(const Palleon::CEmbedRemoteCall&);
+	std::string				ProcessCreateActor(const Palleon::CEmbedRemoteCall&);
+	std::string				ProcessSetActorBaseModelId(const Palleon::CEmbedRemoteCall&);
+	std::string				ProcessSetActorPosition(const Palleon::CEmbedRemoteCall&);
 
 	CVector2				m_mousePosition = CVector2(0, 0);
 
@@ -55,6 +60,7 @@ private:
 	
 	ActorMap				m_actors;
 	Palleon::SceneNodePtr	m_selectedActorNode;
+	uint32					m_selectedActorId = 0;
 	TranslationGizmoPtr		m_translationGizmo;
 
 	DebugOverlayPtr						m_debugOverlay;
