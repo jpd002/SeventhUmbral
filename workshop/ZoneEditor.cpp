@@ -30,11 +30,7 @@ CZoneEditor::CZoneEditor(HWND parentWnd, uint32 mapId)
 
 CZoneEditor::~CZoneEditor()
 {
-	//This should probably be done by the main window
-	if(m_documentDirty)
-	{
-		SaveZoneDefinition();
-	}
+
 }
 
 std::string CZoneEditor::GetName() const
@@ -62,7 +58,7 @@ void CZoneEditor::Save()
 {
 	if(m_documentDirty)
 	{
-		m_documentDirty = false;
+		SaveZoneDefinition();
 	}
 }
 
@@ -115,6 +111,9 @@ void CZoneEditor::SaveZoneDefinition()
 
 	auto outputStream = Framework::CreateOutputStdStream(std::string(TEST_FILE_PATH));
 	zone.Save(outputStream);
+
+	m_documentDirty = false;
+	StateChanged();
 }
 
 void CZoneEditor::PropertyChanged(unsigned int propertyIndex)

@@ -207,6 +207,12 @@ void CMainWindow::SaveCurrentDocument()
 	auto documentIterator = m_documents.find(documentId);
 	assert(documentIterator != m_documents.end());
 	if(documentIterator == m_documents.end()) return;
+	auto documentWindow = documentIterator->second.get();
+	auto document = dynamic_cast<IDocument*>(documentWindow);
+	if(document)
+	{
+		document->Save();
+	}
 }
 
 void CMainWindow::ShowWelcomePage()
@@ -265,14 +271,17 @@ void CMainWindow::InsertDocument(DocumentPtr&& documentWindow)
 	m_tabs.SetSelection(tabIndex);
 	if(document)
 	{
-		document->StateChanged.connect([this, tabIndex] () { OnDocumentStateChanged(tabIndex); });
+		document->StateChanged.connect([this] () { OnDocumentStateChanged(); });
 	}
 	SelectTab(tabIndex);
 	m_nextDocumentId++;
 }
 
-void CMainWindow::OnDocumentStateChanged(unsigned int tabIndex)
+void CMainWindow::OnDocumentStateChanged()
 {
+	//We assume that only the current document's state can be changed
+	auto tabIndex = m_tabs.GetSelection();
+	assert(tabIndex != -1);
 	auto documentId = m_tabs.GetTabData(tabIndex);
 	auto documentIterator = m_documents.find(documentId);
 	assert(documentIterator != std::end(m_documents));

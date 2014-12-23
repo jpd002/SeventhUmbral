@@ -38,7 +38,7 @@ private:
 	void						ShowAbout();
 
 	void						InsertDocument(DocumentPtr&&);
-	void						OnDocumentStateChanged(unsigned int);
+	void						OnDocumentStateChanged();
 	void						UpdateLayout();
 
 	void						SelectTab(int);
