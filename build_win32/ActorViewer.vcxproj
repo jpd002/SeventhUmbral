@@ -94,9 +94,6 @@
     <ProjectReference Include="..\..\Palleon\build_win32\Palleon.vcxproj">
       <Project>{f800a366-7acb-417c-a565-801fc00adea1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\zlib-1.2.8\zlib-1.2.8.vcxproj">
-      <Project>{4a0b5134-ab23-452d-8513-8225fa178356}</Project>
-    </ProjectReference>
     <ProjectReference Include="DataObjects.vcxproj">
       <Project>{bfed163d-ce5b-42b9-a9fe-2153fb4ae163}</Project>
     </ProjectReference>
@@ -107,4 +104,5 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Import Project="Settings.NuGet.Executable.props" />
 </Project>
