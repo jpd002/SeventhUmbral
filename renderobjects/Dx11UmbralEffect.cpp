@@ -3,6 +3,45 @@
 #include "UmbralEffect.h"
 #include "palleon/graphics/Viewport.h"
 
+static const std::string g_vertexOcclusionScaleParamString = "vs_vertexOcclusionScale";
+static const std::string g_vertexColorBiasParamString = "vs_vertexColorBias";
+static const std::string g_modulateColorParamString = "ps_modulateColor";
+static const std::string g_ambientColorParamString = "ps_ambientColor";
+static const std::string g_diffuseColorParamString = "ps_diffuseColor";
+static const std::string g_diffuseScaleParamString = "ps_diffuseScale";
+static const std::string g_specularColorParamString = "ps_specularColor";
+static const std::string g_shininessParamString = "ps_shininess";
+static const std::string g_reflectivityParamString = "ps_reflectivity";
+static const std::string g_normalPowerParamString = "ps_normalPower";
+static const std::string g_multiDiffuseColorParamString = "ps_multiDiffuseColor";
+static const std::string g_multiSpecularColorParamString = "ps_multiSpecularColor";
+static const std::string g_multiShininessParamString = "ps_multiShininess";
+static const std::string g_multiReflectivityParamString = "ps_multiReflectivity";
+static const std::string g_multiNormalPowerParamString = "ps_multiNormalPower";
+static const std::string g_fresnelExpParamString = "ps_fresnelExp";
+static const std::string g_fresnelLightDiffBiasParamString = "ps_fresnelLightDiffBias";
+static const std::string g_specularInfluenceParamString = "ps_specularInfluence";
+static const std::string g_lightDiffusePowerParamString = "ps_lightDiffusePower";
+static const std::string g_lightDiffuseInfluenceParamString = "ps_lightDiffuseInfluence";
+static const std::string g_reflectMapInfluenceParamString = "ps_reflectMapInfluence";
+static const std::string g_glareLdrScaleParamString = "ps_glareLdrScale";
+static const std::string g_refAlphaRestrainParamString = "ps_refAlphaRestrain";
+static const std::string g_normalVectorParamString = "ps_normalVector";
+static const std::string g_depthBiasParamString = "ps_depthBias";
+static const std::string g_velvetParamParamString = "ps_velvetParam";
+static const std::string g_ambientOcclusionColorParamString = "ps_ambentOcclusionColor";
+static const std::string g_mainLightOcclusionColorParamString = "ps_mainLightOcclusionColor";
+static const std::string g_subLightOcclusionColorParamString = "ps_subLightOcclusionColor";
+static const std::string g_pointLightOcclusionColorParamString = "ps_pointLightOcclusionColor";
+static const std::string g_lightMapOcclusionColorParamString = "ps_lightMapOcclusionColor";
+static const std::string g_reflectMapOcclusionColorParamString = "ps_reflectMapOcclusionColor";
+static const std::string g_specularOcclusionColorParamString = "ps_specularOcclusionColor";
+static const std::string g_ambientLightColorParamString = "ps_ambientLightColor";
+static const std::string g_dirLightDirection0ParamString = "ps_dirLightDirection0";
+static const std::string g_dirLightDirection1ParamString = "ps_dirLightDirection1";
+static const std::string g_dirLightColor0ParamString = "ps_dirLightColor0";
+static const std::string g_dirLightColor1ParamString = "ps_dirLightColor1";
+
 CDx11UmbralEffect::CDx11UmbralEffect(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	const CD3DShader& vertexShader, const CD3DShader& pixelShader, bool hasAlphaTest)
 : CDx11Effect(device, deviceContext)
@@ -57,8 +96,8 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 		CVector3 modelBBoxOffset(0, 0, 0);
 		CVector3 modelBBoxScale(1, 1, 1);
 
-		auto vertexOcclusionScale = material->GetEffectParamOrDefault("vs_vertexOcclusionScale", 0.0f, m_vertexOcclusionScaleOffset != -1);
-		auto vertexColorBias = material->GetEffectParamOrDefault("vs_vertexColorBias", CVector4(0, 0, 0, 0), m_vertexColorBiasOffset != -1);
+		auto vertexOcclusionScale = material->GetEffectParamOrDefault(g_vertexOcclusionScaleParamString, 0.0f, m_vertexOcclusionScaleOffset != -1);
+		auto vertexColorBias = material->GetEffectParamOrDefault(g_vertexColorBiasParamString, CVector4(0, 0, 0, 0), m_vertexColorBiasOffset != -1);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 		HRESULT result = m_deviceContext->Map(m_vertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -83,41 +122,41 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 
 	//Update pixel shader params
 	{
-		auto modulateColor = material->GetEffectParamOrDefault("ps_modulateColor", CVector4(1, 1, 1, 1), m_modulateColorOffset != -1);
-		auto ambientColor = material->GetEffectParamOrDefault("ps_ambientColor", CVector4(0, 0, 0, 0), m_ambientColorOffset != -1);
-		auto diffuseColor = material->GetEffectParamOrDefault("ps_diffuseColor", CVector4(0, 0, 0, 0), m_diffuseColorOffset != -1);
-		auto diffuseScale = material->GetEffectParamOrDefault("ps_diffuseScale", CVector3(1, 1, 1), m_diffuseScaleOffset != -1);
-		auto specularColor = material->GetEffectParamOrDefault("ps_specularColor", CVector4(0, 0, 0, 0), m_specularColorOffset != -1);
-		auto shininess = material->GetEffectParamOrDefault("ps_shininess", 128.f, m_shininessOffset != -1);
-		auto reflectivity = material->GetEffectParamOrDefault("ps_reflectivity", CVector3(0, 0, 0), m_reflectivityOffset != -1);
-		auto normalPower = material->GetEffectParamOrDefault("ps_normalPower", 1.f, m_normalPowerOffset != -1);
+		auto modulateColor = material->GetEffectParamOrDefault(g_modulateColorParamString, CVector4(1, 1, 1, 1), m_modulateColorOffset != -1);
+		auto ambientColor = material->GetEffectParamOrDefault(g_ambientColorParamString, CVector4(0, 0, 0, 0), m_ambientColorOffset != -1);
+		auto diffuseColor = material->GetEffectParamOrDefault(g_diffuseColorParamString, CVector4(0, 0, 0, 0), m_diffuseColorOffset != -1);
+		auto diffuseScale = material->GetEffectParamOrDefault(g_diffuseScaleParamString, CVector3(1, 1, 1), m_diffuseScaleOffset != -1);
+		auto specularColor = material->GetEffectParamOrDefault(g_specularColorParamString, CVector4(0, 0, 0, 0), m_specularColorOffset != -1);
+		auto shininess = material->GetEffectParamOrDefault(g_shininessParamString, 128.f, m_shininessOffset != -1);
+		auto reflectivity = material->GetEffectParamOrDefault(g_reflectivityParamString, CVector3(0, 0, 0), m_reflectivityOffset != -1);
+		auto normalPower = material->GetEffectParamOrDefault(g_normalPowerParamString, 1.f, m_normalPowerOffset != -1);
 
-		auto multiDiffuseColor = material->GetEffectParamOrDefault("ps_multiDiffuseColor", CVector4(0, 0, 0, 0), m_multiDiffuseColorOffset != -1);
-		auto multiSpecularColor = material->GetEffectParamOrDefault("ps_multiSpecularColor", CVector4(0, 0, 0, 0), m_multiSpecularColorOffset != -1);
-		auto multiShininess = material->GetEffectParamOrDefault("ps_multiShininess", 128.f, m_multiShininessOffset != -1);
-		auto multiReflectivity = material->GetEffectParamOrDefault("ps_multiReflectivity", CVector3(0, 0, 0), m_multiReflectivityOffset != -1);
-		auto multiNormalPower = material->GetEffectParamOrDefault("ps_multiNormalPower", 1.f, m_multiNormalPowerOffset != -1);
+		auto multiDiffuseColor = material->GetEffectParamOrDefault(g_multiDiffuseColorParamString, CVector4(0, 0, 0, 0), m_multiDiffuseColorOffset != -1);
+		auto multiSpecularColor = material->GetEffectParamOrDefault(g_multiSpecularColorParamString, CVector4(0, 0, 0, 0), m_multiSpecularColorOffset != -1);
+		auto multiShininess = material->GetEffectParamOrDefault(g_multiShininessParamString, 128.f, m_multiShininessOffset != -1);
+		auto multiReflectivity = material->GetEffectParamOrDefault(g_multiReflectivityParamString, CVector3(0, 0, 0), m_multiReflectivityOffset != -1);
+		auto multiNormalPower = material->GetEffectParamOrDefault(g_multiNormalPowerParamString, 1.f, m_multiNormalPowerOffset != -1);
 
-		auto fresnelExp = material->GetEffectParamOrDefault("ps_fresnelExp", 1.f, m_fresnelExpOffset != -1);
-		auto fresnelLightDiffBias = material->GetEffectParamOrDefault("ps_fresnelLightDiffBias", 1.f, m_fresnelLightDiffBiasOffset != -1);
-		auto specularInfluence = material->GetEffectParamOrDefault("ps_specularInfluence", 0.f, m_specularInfluenceOffset != -1);
-		auto lightDiffusePower = material->GetEffectParamOrDefault("ps_lightDiffusePower", 0.67f, m_lightDiffusePowerOffset != -1);
-		auto lightDiffuseInfluence = material->GetEffectParamOrDefault("ps_lightDiffuseInfluence", 0.56f, m_lightDiffuseInfluenceOffset != -1);
-		auto reflectMapInfluence = material->GetEffectParamOrDefault("ps_reflectMapInfluence", 0.8f, m_reflectMapInfluenceOffset != -1);
+		auto fresnelExp = material->GetEffectParamOrDefault(g_fresnelExpParamString, 1.f, m_fresnelExpOffset != -1);
+		auto fresnelLightDiffBias = material->GetEffectParamOrDefault(g_fresnelLightDiffBiasParamString, 1.f, m_fresnelLightDiffBiasOffset != -1);
+		auto specularInfluence = material->GetEffectParamOrDefault(g_specularInfluenceParamString, 0.f, m_specularInfluenceOffset != -1);
+		auto lightDiffusePower = material->GetEffectParamOrDefault(g_lightDiffusePowerParamString, 0.67f, m_lightDiffusePowerOffset != -1);
+		auto lightDiffuseInfluence = material->GetEffectParamOrDefault(g_lightDiffuseInfluenceParamString, 0.56f, m_lightDiffuseInfluenceOffset != -1);
+		auto reflectMapInfluence = material->GetEffectParamOrDefault(g_reflectMapInfluenceParamString, 0.8f, m_reflectMapInfluenceOffset != -1);
 
-		auto glareLdrScale = material->GetEffectParamOrDefault("ps_glareLdrScale", 1.0f, m_glareLdrScaleOffset != -1);
-		auto refAlphaRestrain = material->GetEffectParamOrDefault("ps_refAlphaRestrain", 0.f, m_refAlphaRestrainOffset != -1);
-		auto normalVector = material->GetEffectParamOrDefault("ps_normalVector", CVector4(0, 0, 0, 0), m_normalVectorOffset != -1);
-		auto depthBias = material->GetEffectParamOrDefault("ps_depthBias", 0.f, m_depthBiasOffset != -1);
-		auto velvetParam = material->GetEffectParamOrDefault("ps_velvetParam", CVector2(0, 0), m_velvetParamOffset != -1);
+		auto glareLdrScale = material->GetEffectParamOrDefault(g_glareLdrScaleParamString, 1.0f, m_glareLdrScaleOffset != -1);
+		auto refAlphaRestrain = material->GetEffectParamOrDefault(g_refAlphaRestrainParamString, 0.f, m_refAlphaRestrainOffset != -1);
+		auto normalVector = material->GetEffectParamOrDefault(g_normalVectorParamString, CVector4(0, 0, 0, 0), m_normalVectorOffset != -1);
+		auto depthBias = material->GetEffectParamOrDefault(g_depthBiasParamString, 0.f, m_depthBiasOffset != -1);
+		auto velvetParam = material->GetEffectParamOrDefault(g_velvetParamParamString, CVector2(0, 0), m_velvetParamOffset != -1);
 
-		auto ambientOcclusionColor = material->GetEffectParamOrDefault("ps_ambentOcclusionColor", CVector3(1, 1, 1), m_ambientOcclusionColorOffset != -1);
-		auto mainLightOcclusionColor = material->GetEffectParamOrDefault("ps_mainLightOcclusionColor", CVector3(0, 0, 0), m_mainLightOcclusionColorOffset != -1);
-		auto subLightOcclusionColor = material->GetEffectParamOrDefault("ps_subLightOcclusionColor", CVector3(0, 0, 0), m_subLightOcclusionColorOffset != -1);
-		auto pointLightOcclusionColor = material->GetEffectParamOrDefault("ps_pointLightOcclusionColor", CVector3(0.5f, 0.5f, 0.5f), m_pointLightOcclusionColorOffset != -1);
-		auto lightMapOcclusionColor = material->GetEffectParamOrDefault("ps_lightMapOcclusionColor", CVector3(0.3f, 0.3f, 0.3f), m_lightMapOcclusionColorOffset != -1);
-		auto reflectMapOcclusionColor = material->GetEffectParamOrDefault("ps_reflectMapOcclusionColor", CVector3(0.3f, 0.3f, 0.3f), m_reflectMapOcclusionColorOffset != -1);
-		auto specularOcclusionColor = material->GetEffectParamOrDefault("ps_specularOcclusionColor", CVector3(0, 0, 0), m_specularOcclusionColorOffset != -1);
+		auto ambientOcclusionColor = material->GetEffectParamOrDefault(g_ambientOcclusionColorParamString, CVector3(1, 1, 1), m_ambientOcclusionColorOffset != -1);
+		auto mainLightOcclusionColor = material->GetEffectParamOrDefault(g_mainLightOcclusionColorParamString, CVector3(0, 0, 0), m_mainLightOcclusionColorOffset != -1);
+		auto subLightOcclusionColor = material->GetEffectParamOrDefault(g_subLightOcclusionColorParamString, CVector3(0, 0, 0), m_subLightOcclusionColorOffset != -1);
+		auto pointLightOcclusionColor = material->GetEffectParamOrDefault(g_pointLightOcclusionColorParamString, CVector3(0.5f, 0.5f, 0.5f), m_pointLightOcclusionColorOffset != -1);
+		auto lightMapOcclusionColor = material->GetEffectParamOrDefault(g_lightMapOcclusionColorParamString, CVector3(0.3f, 0.3f, 0.3f), m_lightMapOcclusionColorOffset != -1);
+		auto reflectMapOcclusionColor = material->GetEffectParamOrDefault(g_reflectMapOcclusionColorParamString, CVector3(0.3f, 0.3f, 0.3f), m_reflectMapOcclusionColorOffset != -1);
+		auto specularOcclusionColor = material->GetEffectParamOrDefault(g_specularOcclusionColorParamString, CVector3(0, 0, 0), m_specularOcclusionColorOffset != -1);
 
 		float lightDiffuseMapLod = 0;
 		float reflectMapLod = 0;
@@ -125,18 +164,18 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 		CVector2 pixelClippingDistance(-10000, 10000);
 		CVector3 enableShadowFlag(1, 0, 1);
 		CVector3 latitudeParam(1, 0, 1);
-		CVector4 ambientLightColor = viewportParams.viewport->GetEffectParamOrDefault("ps_ambientLightColor", CVector4(0.1f, 0.1f, 0.1f, 0));
+		CVector4 ambientLightColor = viewportParams.viewport->GetEffectParamOrDefault(g_ambientLightColorParamString, CVector4(0.1f, 0.1f, 0.1f, 0));
 
 		CVector3 dirLightDirections[2] = 
 		{
-			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection0", CVector3(0, 0, 0)),
-			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightDirection1", CVector3(0, 0, 0))
+			viewportParams.viewport->GetEffectParamOrDefault(g_dirLightDirection0ParamString, CVector3(0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault(g_dirLightDirection1ParamString, CVector3(0, 0, 0))
 		};
 
 		CVector4 dirLightColors[2] =
 		{
-			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor0", CVector4(0, 0, 0, 0)),
-			viewportParams.viewport->GetEffectParamOrDefault("ps_dirLightColor1", CVector4(0, 0, 0, 0))
+			viewportParams.viewport->GetEffectParamOrDefault(g_dirLightColor0ParamString, CVector4(0, 0, 0, 0)),
+			viewportParams.viewport->GetEffectParamOrDefault(g_dirLightColor1ParamString, CVector4(0, 0, 0, 0))
 		};
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
