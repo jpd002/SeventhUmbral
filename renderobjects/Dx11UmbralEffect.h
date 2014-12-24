@@ -28,6 +28,9 @@ private:
 	uint32							m_vertexOcclusionScaleOffset = -1;
 	uint32							m_vertexColorBiasOffset = -1;
 
+	uint32							m_uvOfs0Offset = -1;
+	uint32							m_uvOfs1Offset = -1;
+
 	uint32							m_pointLightColorsOffset = -1;
 	uint32							m_pointLightParamsOffset = -1;
 	uint32							m_pointLightPositionsOffset = -1;

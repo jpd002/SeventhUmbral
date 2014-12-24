@@ -5,6 +5,8 @@
 
 static const std::string g_vertexOcclusionScaleParamString = "vs_vertexOcclusionScale";
 static const std::string g_vertexColorBiasParamString = "vs_vertexColorBias";
+static const std::string g_uvOfs0ParamString = "vs_uvofs0";
+static const std::string g_uvOfs1ParamString = "vs_uvofs1";
 static const std::string g_modulateColorParamString = "ps_modulateColor";
 static const std::string g_ambientColorParamString = "ps_ambientColor";
 static const std::string g_diffuseColorParamString = "ps_diffuseColor";
@@ -98,6 +100,8 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 
 		auto vertexOcclusionScale = material->GetEffectParamOrDefault(g_vertexOcclusionScaleParamString, 0.0f, m_vertexOcclusionScaleOffset != -1);
 		auto vertexColorBias = material->GetEffectParamOrDefault(g_vertexColorBiasParamString, CVector4(0, 0, 0, 0), m_vertexColorBiasOffset != -1);
+		auto uvOfs0 = material->GetEffectParamOrDefault(g_uvOfs0ParamString, CVector2(0, 0), m_uvOfs0Offset != -1);
+		auto uvOfs1 = material->GetEffectParamOrDefault(g_uvOfs1ParamString, CVector2(0, 0), m_uvOfs1Offset != -1);
 
 		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
 		HRESULT result = m_deviceContext->Map(m_vertexConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -110,6 +114,8 @@ void CDx11UmbralEffect::UpdateConstants(const Palleon::VIEWPORT_PARAMS& viewport
 		SetParamValue(constantBufferPtr, m_modelBBoxScaleOffset, modelBBoxScale);
 		SetParamValue(constantBufferPtr, m_vertexOcclusionScaleOffset, vertexOcclusionScale);
 		SetParamValue(constantBufferPtr, m_vertexColorBiasOffset, vertexColorBias);
+		SetParamValue(constantBufferPtr, m_uvOfs0Offset, uvOfs0);
+		SetParamValue(constantBufferPtr, m_uvOfs1Offset, uvOfs1);
 		SetParamValue<uint32>(constantBufferPtr, m_isUseInstancingOffset, 0);
 		if(m_viewITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_viewITMatrixOffset) = viewITMatrix.Transpose();
 		if(m_worldITMatrixOffset != -1)			*reinterpret_cast<CMatrix4*>(constantBufferPtr + m_worldITMatrixOffset) = worldITMatrix.Transpose();
@@ -246,6 +252,8 @@ void CDx11UmbralEffect::ParseVertexShaderConstantTable(OffsetKeeper& constantOff
 		{ "ModelBBoxScale",			m_modelBBoxScaleOffset			},
 		{ "vertexOcclusionScale",	m_vertexOcclusionScaleOffset	},
 		{ "vertexColorBias",		m_vertexColorBiasOffset			},
+		{ "uvofs0",					m_uvOfs0Offset					},
+		{ "uvofs1",					m_uvOfs1Offset					},
 		{ "PointLightColors",		m_pointLightColorsOffset		},
 		{ "PointLightParams",		m_pointLightParamsOffset		},
 		{ "PointLightPositions",	m_pointLightPositionsOffset		},
