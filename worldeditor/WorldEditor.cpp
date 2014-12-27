@@ -74,6 +74,10 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 
 CWorldEditor::~CWorldEditor()
 {
+	if(m_map)
+	{
+		m_map->CancelLoading();
+	}
 	m_debugOverlay.reset();
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
 	CGlobalResources::GetInstance().Release();
@@ -145,6 +149,7 @@ void CWorldEditor::CreateMap(uint32 mapId)
 
 		auto map = std::make_shared<CUmbralMap>(mapLayout);
 		sceneRoot->AppendChild(map);
+		m_map = map;
 	}
 }
 

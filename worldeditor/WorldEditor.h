@@ -4,6 +4,7 @@
 #include "TouchFreeCamera.h"
 #include "../dataobjects/ResourceDefs.h"
 #include "../renderobjects/UmbralActor.h"
+#include "../renderobjects/UmbralMap.h"
 #include "DebugOverlay.h"
 #include "TranslationGizmo.h"
 
@@ -58,6 +59,7 @@ private:
 	Palleon::ViewportPtr	m_overlayViewport;
 	TouchFreeCameraPtr		m_mainCamera;
 	
+	UmbralMapPtr			m_map;
 	ActorMap				m_actors;
 	Palleon::SceneNodePtr	m_selectedActorNode;
 	uint32					m_selectedActorId = 0;
