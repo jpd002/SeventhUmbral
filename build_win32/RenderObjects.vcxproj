@@ -24,7 +24,6 @@
     <ClCompile Include="..\renderobjects\UmbralMap.cpp" />
     <ClCompile Include="..\renderobjects\UmbralMesh.cpp" />
     <ClCompile Include="..\renderobjects\UmbralModel.cpp" />
-    <ClCompile Include="..\renderobjects\WeaponVars.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\renderobjects\D3DShader.h" />
@@ -41,7 +40,6 @@
     <ClInclude Include="..\renderobjects\UmbralMap.h" />
     <ClInclude Include="..\renderobjects\UmbralMesh.h" />
     <ClInclude Include="..\renderobjects\UmbralModel.h" />
-    <ClInclude Include="..\renderobjects\WeaponVars.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5ED74EF0-BD48-4424-B76E-87CE618CC31B}</ProjectGuid>

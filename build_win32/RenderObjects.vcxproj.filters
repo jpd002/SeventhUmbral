@@ -54,9 +54,6 @@
     <ClCompile Include="..\renderobjects\UmbralModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\renderobjects\WeaponVars.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\renderobjects\D3DShader.h">
@@ -99,9 +96,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\renderobjects\UmbralModel.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\renderobjects\WeaponVars.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
