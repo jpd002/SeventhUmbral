@@ -33,6 +33,7 @@
     <ClCompile Include="..\dataobjects\FileManager.cpp" />
     <ClCompile Include="..\dataobjects\GtexData.cpp" />
     <ClCompile Include="..\dataobjects\HalfFloat.cpp" />
+    <ClCompile Include="..\dataobjects\itemvar\TexPathVars.cpp" />
     <ClCompile Include="..\dataobjects\MapLayout.cpp" />
     <ClCompile Include="..\dataobjects\ResourceNode.cpp" />
     <ClCompile Include="..\dataobjects\SectionLoader.cpp" />
@@ -73,6 +74,10 @@
     <ClInclude Include="..\dataobjects\FileManager.h" />
     <ClInclude Include="..\dataobjects\GtexData.h" />
     <ClInclude Include="..\dataobjects\HalfFloat.h" />
+    <ClInclude Include="..\dataobjects\itemvar\EquipVars.h" />
+    <ClInclude Include="..\dataobjects\itemvar\ItemVars.h" />
+    <ClInclude Include="..\dataobjects\itemvar\TexPathVars.h" />
+    <ClInclude Include="..\dataobjects\itemvar\WeaponVars.h" />
     <ClInclude Include="..\dataobjects\MapLayout.h" />
     <ClInclude Include="..\dataobjects\ResourceDefs.h" />
     <ClInclude Include="..\dataobjects\ResourceNode.h" />
