@@ -4,7 +4,7 @@
 #include "UmbralModel.h"
 #include "UmbralMesh.h"
 #include "../dataobjects/FileManager.h"
-#include "WeaponVars.h"
+#include "../dataobjects/itemvar/WeaponVars.h"
 
 CUmbralActor::CUmbralActor()
 {
