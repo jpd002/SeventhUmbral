@@ -9,16 +9,25 @@
 
 #define TEST_FILE_PATH ("C:\\Projects\\SeventhUmbral\\test.xml")
 
+#define ID_ACTOR_NEW	0xBEEF
+
 CZoneEditor::CZoneEditor(HWND parentWnd, uint32 mapId)
 : CDialog(MAKEINTRESOURCE(IDD_ZONEEDITOR), parentWnd)
 {
 	SetClassPtr();
 
+	m_toolbar = Framework::Win32::CToolBar(m_hWnd);
+	m_toolbar.InsertTextButton(_T("N"), ID_ACTOR_NEW);
+	m_toolbar.SetButtonToolTipText(ID_ACTOR_NEW, _T("Create New Actor"));
+
 	m_mainSplitter = std::make_unique<Framework::Win32::CHorizontalSplitter>(m_hWnd, GetClientRect());
 	m_propertiesPane = std::make_unique<CZoneEditorPropertiesPane>(m_mainSplitter->m_hWnd);
-	m_worldPane = std::make_unique<CZoneEditorWorldPane>(m_mainSplitter->m_hWnd, mapId);
+	m_worldPane = std::make_unique<CWorldEditorControl>(m_mainSplitter->m_hWnd);
 
 	m_worldPane->NotificationRaised.connect([&] (const std::string& command) { WorldNotificationRaised(command); } );
+	m_worldPane->SetControlScheme(CWorldEditorControl::CONTROL_SCHEME::EDITOR);
+	m_worldPane->SetCameraPosition(CVector3(297.f, 15.f, -551.f));
+	m_worldPane->SetMap(mapId);
 
 	m_mainSplitter->SetChild(0, m_worldPane->m_hWnd);
 	m_mainSplitter->SetChild(1, m_propertiesPane->m_hWnd);
@@ -62,11 +71,53 @@ void CZoneEditor::Save()
 	}
 }
 
+long CZoneEditor::OnCommand(unsigned short id, unsigned short, HWND)
+{
+	switch(id)
+	{
+	case ID_ACTOR_NEW:
+		CreateNewActor();
+		break;
+	}
+	return TRUE;
+}
+
 long CZoneEditor::OnSize(unsigned int, unsigned int, unsigned int)
 {
-	auto rect = GetClientRect();
-	m_mainSplitter->SetSizePosition(rect);
+	m_toolbar.Resize();
+	auto clientRect = GetClientRect();
+	auto toolbarClientRect = m_toolbar.GetWindowRect();
+	clientRect.SetTop(toolbarClientRect.Height());
+	m_mainSplitter->SetSizePosition(clientRect);
 	return FALSE;
+}
+
+void CZoneEditor::CreateNewActor()
+{
+	auto cameraPosition = m_worldPane->GetCameraPosition();
+	auto actorPosition = cameraPosition + CVector3(0, 0, -1);
+
+	auto actorId = GenerateUnusedActorId();
+
+	auto newActor = ACTOR();
+	newActor.id				= actorId;
+	newActor.baseModelId	= 10002;
+	newActor.position		= actorPosition;
+	m_actors.insert(std::make_pair(newActor.id, newActor));
+
+	m_worldPane->CreateActor(newActor.id);
+	m_worldPane->SetActorBaseModelId(newActor.id, newActor.baseModelId);
+	m_worldPane->SetActorPosition(newActor.id, newActor.position);
+}
+
+uint32 CZoneEditor::GenerateUnusedActorId() const
+{
+	uint32 actorId = 1;
+	for(const auto& actorPair : m_actors)
+	{
+		actorId = std::max<uint32>(actorPair.first, actorId + 1);
+	}
+	return actorId;
 }
 
 void CZoneEditor::LoadZoneDefinition()

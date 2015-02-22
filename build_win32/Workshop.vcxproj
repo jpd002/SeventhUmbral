@@ -122,10 +122,10 @@
     <ClCompile Include="..\workshop\SheetViewerSchemaPane.cpp" />
     <ClCompile Include="..\workshop\WelcomePage.cpp" />
     <ClCompile Include="..\workshop\WinMain.cpp" />
+    <ClCompile Include="..\workshop\WorldEditorControl.cpp" />
     <ClCompile Include="..\workshop\WorldViewer.cpp" />
     <ClCompile Include="..\workshop\ZoneEditor.cpp" />
     <ClCompile Include="..\workshop\ZoneEditorPropertiesPane.cpp" />
-    <ClCompile Include="..\workshop\ZoneEditorWorldPane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\GameInstallInfo.h" />
@@ -148,10 +148,10 @@
     <ClInclude Include="..\workshop\SheetViewerDataPane.h" />
     <ClInclude Include="..\workshop\SheetViewerSchemaPane.h" />
     <ClInclude Include="..\workshop\WelcomePage.h" />
+    <ClInclude Include="..\workshop\WorldEditorControl.h" />
     <ClInclude Include="..\workshop\WorldViewer.h" />
     <ClInclude Include="..\workshop\ZoneEditor.h" />
     <ClInclude Include="..\workshop\ZoneEditorPropertiesPane.h" />
-    <ClInclude Include="..\workshop\ZoneEditorWorldPane.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\workshop\Res.rc" />

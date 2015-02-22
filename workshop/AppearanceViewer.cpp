@@ -3,6 +3,8 @@
 #include "win32/VerticalSplitter.h"
 #include "resource.h"
 
+#define WORLDEDITOR_ACTORID		(1)
+
 CAppearanceViewer::CAppearanceViewer(HWND parentWnd)
 : CDialog(MAKEINTRESOURCE(IDD_APPEARANCEVIEWER), parentWnd)
 {
@@ -10,8 +12,11 @@ CAppearanceViewer::CAppearanceViewer(HWND parentWnd)
 	m_mainSplitter = std::make_unique<Framework::Win32::CHorizontalSplitter>(m_hWnd, GetClientRect());
 	m_subSplitter = std::make_unique<Framework::Win32::CVerticalSplitter>(m_mainSplitter->m_hWnd, GetClientRect());
 	m_actorListPane = std::make_unique<CAppearanceViewerActorListPane>(m_mainSplitter->m_hWnd);
-	m_actorViewPane = std::make_unique<CAppearanceViewerActorViewPane>(m_subSplitter->m_hWnd);
+	m_actorViewPane = std::make_unique<CWorldEditorControl>(m_subSplitter->m_hWnd);
 	m_actorInfoPane = std::make_unique<CAppearanceViewerActorInfoPane>(m_subSplitter->m_hWnd);
+
+	m_actorViewPane->SetControlScheme(CWorldEditorControl::CONTROL_SCHEME::VIEWER);
+	m_actorViewPane->CreateActor(WORLDEDITOR_ACTORID);
 
 	m_mainSplitter->SetChild(0, m_actorListPane->m_hWnd);
 	m_mainSplitter->SetChild(1, m_subSplitter->m_hWnd);
@@ -62,7 +67,8 @@ long CAppearanceViewer::OnNotify(WPARAM, LPNMHDR nmhdr)
 
 void CAppearanceViewer::OnActorListPaneSelChange(CAppearanceViewerActorListPane::SELCHANGE_INFO* selChangeInfo)
 {
-	m_actorViewPane->SetActor(selChangeInfo->baseModelId, selChangeInfo->topModelId);
+	m_actorViewPane->SetActorBaseModelId(WORLDEDITOR_ACTORID, selChangeInfo->baseModelId);
+	m_actorViewPane->SetActorTopModelId(WORLDEDITOR_ACTORID, selChangeInfo->topModelId);
 	uint32 modelFolder = selChangeInfo->baseModelId % 10000;
 	uint32 subModelId = selChangeInfo->topModelId >> 10;
 	uint32 variation = selChangeInfo->topModelId & 0x3FF;

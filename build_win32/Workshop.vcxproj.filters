@@ -22,6 +22,9 @@
     <Filter Include="Source Files\ZoneEditor">
       <UniqueIdentifier>{88838bee-b6eb-4112-bf15-7f3b595f3911}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\WorldViewer">
+      <UniqueIdentifier>{79c10494-d600-4352-b39e-7883c5de9eb4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\workshop\WinMain.cpp">
@@ -40,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\workshop\AboutWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\workshop\WorldViewer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\workshop\WelcomePage.cpp">
@@ -84,11 +84,14 @@
     <ClCompile Include="..\workshop\ZoneEditorPropertiesPane.cpp">
       <Filter>Source Files\ZoneEditor</Filter>
     </ClCompile>
-    <ClCompile Include="..\workshop\ZoneEditorWorldPane.cpp">
-      <Filter>Source Files\ZoneEditor</Filter>
-    </ClCompile>
     <ClCompile Include="..\workshop\ActorPropertyBag.cpp">
       <Filter>Source Files\ZoneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\WorldEditorControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workshop\WorldViewer.cpp">
+      <Filter>Source Files\WorldViewer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -117,9 +120,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\Document.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\workshop\WorldViewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\workshop\WelcomePage.h">
@@ -161,11 +161,14 @@
     <ClInclude Include="..\workshop\ZoneEditorPropertiesPane.h">
       <Filter>Source Files\ZoneEditor</Filter>
     </ClInclude>
-    <ClInclude Include="..\workshop\ZoneEditorWorldPane.h">
-      <Filter>Source Files\ZoneEditor</Filter>
-    </ClInclude>
     <ClInclude Include="..\workshop\ActorPropertyBag.h">
       <Filter>Source Files\ZoneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\WorldEditorControl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\workshop\WorldViewer.h">
+      <Filter>Source Files\WorldViewer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

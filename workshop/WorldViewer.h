@@ -2,9 +2,8 @@
 
 #include <unordered_map>
 #include "win32/Dialog.h"
-#include "win32/Static.h"
 #include "Document.h"
-#include "../../Palleon/include/palleon/win32/Win32EmbedControl.h"
+#include "WorldEditorControl.h"
 
 class CWorldViewer : public Framework::Win32::CDialog, public IDocument
 {
@@ -20,10 +19,8 @@ protected:
 	long						OnSize(unsigned int, unsigned int, unsigned int) override;
 
 private:
-	typedef std::shared_ptr<Palleon::CWin32EmbedControl> EmbedControlPtr;
+	typedef std::unique_ptr<CWorldEditorControl> WorldEditorControlPtr;
 
-	void						CreateViewer();
-
-	EmbedControlPtr				m_embedControl;
+	WorldEditorControlPtr		m_viewer;
 	uint32						m_mapId = 0;
 };

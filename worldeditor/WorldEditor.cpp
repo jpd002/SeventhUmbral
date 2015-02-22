@@ -1,13 +1,12 @@
-#include <boost/lexical_cast.hpp>
-#include "math/MathStringUtils.h"
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
 #include "../dataobjects/FileManager.h"
 #include "../renderobjects/ResourceManager.h"
 #include "../renderobjects/GlobalResources.h"
-#include "../renderobjects/UmbralMap.h"
 #include "../renderobjects/UmbralModel.h"
+#include "EditorControlScheme.h"
+#include "ViewerControlScheme.h"
 
 //0x03E70001 -> Mor'dhona
 //0x25B10001 -> Some boat
@@ -30,26 +29,8 @@
 //0x92050004 -> Some beach
 
 #define MAIN_CAMERA_FOV		(M_PI / 4.f)
-#define MAIN_CAMERA_NEAR_Z	(1.0f)
-#define MAIN_CAMERA_FAR_Z	(500.f)
-
-CVector3 g_translateXPlaneNormals[2] =
-{
-	CVector3(0, 1, 0),
-	CVector3(0, 0, 1),
-};
-
-CVector3 g_translateYPlaneNormals[2] =
-{
-	CVector3(1, 0, 0),
-	CVector3(0, 0, 1)
-};
-
-CVector3 g_translateZPlaneNormals[2] =
-{
-	CVector3(1, 0, 0),
-	CVector3(0, 1, 0)
-};
+#define MAIN_CAMERA_NEAR_Z	(0.01f)
+#define MAIN_CAMERA_FAR_Z	(100.f)
 
 CWorldEditor::CWorldEditor(bool isEmbedding)
 : m_isEmbedding(isEmbedding)
@@ -61,14 +42,20 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_overlayViewport.get());
 
+	//m_controlScheme = std::make_shared<CViewerControlScheme>(*this);
+	m_controlScheme = std::make_shared<CEditorControlScheme>(*this);
+
 	if(!isEmbedding)
 	{
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
 		CFileManager::SetGamePath("C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV");
-//		CreateMap(0x29B00001);
+//		CreateMap(0xA09B0000);
+//		CreateMap(0x29B00003);
 		CreateActor(1);
-		SetActorBaseModelId(1, 10005);
-		SetActorPosition(1, CVector3(0, -1, 0));
+		SetActorBaseModelId(1, 1);
+//		SetActorTopModelId(1, 0x828);
+//		SetActorPosition(1, CVector3(0, 0, -2));
+//		m_mainCamera->SetPosition(CVector3(297.f, 15.f, -551.f));
 	}
 }
 
@@ -80,7 +67,41 @@ CWorldEditor::~CWorldEditor()
 	}
 	m_debugOverlay.reset();
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
+	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_overlayViewport.get());
 	CGlobalResources::GetInstance().Release();
+}
+
+bool CWorldEditor::GetIsEmbedding() const
+{
+	return m_isEmbedding;
+}
+
+TouchFreeCameraPtr CWorldEditor::GetMainCamera() const
+{
+	return m_mainCamera;
+}
+
+TranslationGizmoPtr CWorldEditor::GetTranslationGizmo() const
+{
+	return m_translationGizmo;
+}
+
+Palleon::SceneNodePtr CWorldEditor::GetActorRotationNode() const
+{
+	return m_actorRotationNode;
+}
+
+UmbralActorPtr CWorldEditor::GetActor(uint32 actorId) const
+{
+	auto actorIterator = m_actors.find(actorId);
+	assert(actorIterator != std::end(m_actors));
+	auto actor = actorIterator->second;
+	return actor;
+}
+
+const CWorldEditor::ActorMap& CWorldEditor::GetActors() const
+{
+	return m_actors;
 }
 
 void CWorldEditor::CreateWorld()
@@ -90,7 +111,6 @@ void CWorldEditor::CreateWorld()
 	{
 		auto camera = CTouchFreeCamera::Create();
 		camera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
-		camera->SetPosition(CVector3(0, 2, 0));
 		m_mainCamera = camera;
 	}
 
@@ -101,14 +121,14 @@ void CWorldEditor::CreateWorld()
 	}
 
 	{
-		auto lightDir0 = CVector3(1, -1, 0).Normalize();
-		auto lightDir1 = CVector3(-1, -1, 0).Normalize();
+		auto lightDir0 = CVector3(0, -1, 0).Normalize();
+		auto lightDir1 = CVector3(1, -1, 0).Normalize();
 
 		m_mainViewport->SetEffectParameter("ps_ambientLightColor", Palleon::CEffectParameter(CVector4(0, 0, 0, 0)));
 		m_mainViewport->SetEffectParameter("ps_dirLightDirection0", Palleon::CEffectParameter(lightDir0));
 		m_mainViewport->SetEffectParameter("ps_dirLightDirection1", Palleon::CEffectParameter(lightDir1));
-		m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
-		m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
+		m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.00f, 1.00f, 1.00f, 0)));
+		m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(0.20f, 0.20f, 0.20f, 0)));
 	}
 
 	//Create skybox
@@ -134,6 +154,12 @@ void CWorldEditor::CreateWorld()
 		gizmo->SetVisible(false);
 		m_overlayViewport->GetSceneRoot()->AppendChild(gizmo);
 		m_translationGizmo = gizmo;
+	}
+
+	{
+		auto node = Palleon::CSceneNode::Create();
+		m_mainViewport->GetSceneRoot()->AppendChild(node);
+		m_actorRotationNode = node;
 	}
 }
 
@@ -161,9 +187,13 @@ void CWorldEditor::CreateActor(uint32 id)
 	
 	{
 		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetPosition(CVector3(0, 2, 0));
 		sceneRoot->AppendChild(actor);
 		m_actors.insert(std::make_pair(id, actor));
+	}
+
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
 	}
 }
 
@@ -184,112 +214,53 @@ void CWorldEditor::SetActorBaseModelId(uint32 id, uint32 baseModelId)
 	assert(actorIterator != std::end(m_actors));
 	if(actorIterator == std::end(m_actors))
 	{
-		return;
+		throw std::runtime_error("Actor doesn't exist");
 	}
 	actorIterator->second->SetBaseModelId(baseModelId);
+
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
+	}
+}
+
+void CWorldEditor::SetActorTopModelId(uint32 id, uint32 topModelId)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		throw std::runtime_error("Actor doesn't exist");
+	}
+	actorIterator->second->SetTopModelId(topModelId);
+
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
+	}
 }
 
 void CWorldEditor::Update(float dt)
 {
-	m_translationGizmo->SetVisible(m_selectedActorNode != nullptr);
-	if(m_selectedActorNode != nullptr)
+	if(m_controlScheme)
 	{
-		m_translationGizmo->SetPosition(m_selectedActorNode->GetPosition());
-		auto gizmoDistance = (m_mainCamera->GetPosition() - m_translationGizmo->GetPosition()).Length();
-		auto gizmoScale = gizmoDistance * 0.1f;
-		m_translationGizmo->SetScale(CVector3(gizmoScale, gizmoScale, gizmoScale));
+		m_controlScheme->PreUpdate(dt);
 	}
 
-	m_mainCamera->Update(dt);
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
 	m_overlayViewport->GetSceneRoot()->Update(dt);
 	m_overlayViewport->GetSceneRoot()->UpdateTransformations();
 
+	if(m_controlScheme)
+	{
+		m_controlScheme->PostUpdate(dt);
+	}
+
 	if(m_debugOverlay)
 	{
 		m_debugOverlay->SetCameraPosition(m_mainCamera->GetPosition());
 		m_debugOverlay->Update(dt);
-	}
-
-	if(m_selectedActorNode != nullptr)
-	{
-		auto mouseRay = GetMouseRay();
-		m_translationGizmo->UpdateHoverState(mouseRay);
-	}
-
-	if(m_state == STATE_TRANSLATE)
-	{
-		m_lastIntersectPosition = m_intersectPosition;
-		auto mouseRay = GetMouseRay();
-		auto objectTransform = m_selectedActorNode->GetWorldTransformation();
-		CVector3 objectPosition(objectTransform(3, 0), objectTransform(3, 1), objectTransform(3, 2));
-		if(m_translationMode == CTranslationGizmo::HITTEST_X)
-		{
-			auto translationPlane = CPlane();
-			if(fabs(m_dot[0]) > fabs(m_dot[1]))
-			{
-				translationPlane = CPlane(g_translateXPlaneNormals[0], objectPosition.y);
-			}
-			else
-			{
-				translationPlane = CPlane(g_translateXPlaneNormals[1], objectPosition.z);
-			}
-			auto intersectResult = Intersects(translationPlane, mouseRay);
-			if(intersectResult.first)
-			{
-				m_intersectPosition = intersectResult.second;
-				if(!m_lastIntersectPosition.IsNull())
-				{
-					m_delta = m_intersectPosition - m_lastIntersectPosition;
-				}
-				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(m_delta.x, 0, 0));
-			}
-		}
-		else if(m_translationMode == CTranslationGizmo::HITTEST_Y)
-		{
-			auto translationPlane = CPlane();
-			if(fabs(m_dot[0]) > fabs(m_dot[1]))
-			{
-				translationPlane = CPlane(g_translateYPlaneNormals[0], objectPosition.x);
-			}
-			else
-			{
-				translationPlane = CPlane(g_translateYPlaneNormals[1], objectPosition.z);
-			}
-			auto intersectResult = Intersects(translationPlane, mouseRay);
-			if(intersectResult.first)
-			{
-				m_intersectPosition = intersectResult.second;
-				if(!m_lastIntersectPosition.IsNull())
-				{
-					m_delta = m_intersectPosition - m_lastIntersectPosition;
-				}
-				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(0, m_delta.y, 0));
-			}
-		}
-		else if(m_translationMode == CTranslationGizmo::HITTEST_Z)
-		{
-			auto translationPlane = CPlane();
-			if(fabs(m_dot[0]) > fabs(m_dot[1]))
-			{
-				translationPlane = CPlane(g_translateZPlaneNormals[0], objectPosition.x);
-			}
-			else
-			{
-				translationPlane = CPlane(g_translateZPlaneNormals[1], objectPosition.y);
-			}
-			auto intersectResult = Intersects(translationPlane, mouseRay);
-			if(intersectResult.first)
-			{
-				m_intersectPosition = intersectResult.second;
-				if(!m_lastIntersectPosition.IsNull())
-				{
-					m_delta = m_intersectPosition - m_lastIntersectPosition;
-				}
-				m_selectedActorNode->SetPosition(m_selectedActorNode->GetPosition() + CVector3(0, 0, m_delta.z));
-			}
-		}
 	}
 }
 
@@ -302,267 +273,44 @@ void CWorldEditor::NotifySizeChanged()
 
 void CWorldEditor::NotifyMouseMove(int x, int y)
 {
-	m_mousePosition = CVector2(static_cast<float>(x), static_cast<float>(y));
-	m_mainCamera->UpdateDrag(m_mousePosition);
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseMove(x, y);
 }
 
 void CWorldEditor::NotifyMouseDown()
 {
-//	m_mainCamera->BeginDrag(m_mousePosition);
-
-	assert(m_state == STATE_IDLE);
-	if(m_selectedActorNode != nullptr)
-	{
-		auto mouseRay = GetMouseRay();
-		auto testResult = m_translationGizmo->HitTest(mouseRay);
-		if(testResult != CTranslationGizmo::HITTEST_NONE)
-		{
-			m_translationGizmo->SetStickyMode(testResult);
-			m_state = STATE_TRANSLATE;
-			m_translationMode = testResult;
-			m_intersectPosition = CVector3(0, 0, 0);
-			m_lastIntersectPosition = CVector3(0, 0, 0);
-			m_delta = CVector3(0, 0, 0);
-
-			switch(testResult)
-			{
-			case CTranslationGizmo::HITTEST_X:
-				for(unsigned int i = 0; i < 2; i++)
-				{
-					m_dot[i] = mouseRay.direction.Dot(g_translateXPlaneNormals[i]);
-				}
-				break;
-			case CTranslationGizmo::HITTEST_Y:
-				for(unsigned int i = 0; i < 2; i++)
-				{
-					m_dot[i] = mouseRay.direction.Dot(g_translateYPlaneNormals[i]);
-				}
-				break;
-			case CTranslationGizmo::HITTEST_Z:
-				for(unsigned int i = 0; i < 2; i++)
-				{
-					m_dot[i] = mouseRay.direction.Dot(g_translateZPlaneNormals[i]);
-				}
-				break;
-			}
-		}
-	}
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseDown();
 }
 
 void CWorldEditor::NotifyMouseUp()
 {
-//	m_mainCamera->EndDrag();
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseUp();
+}
 
-	if(m_state == STATE_IDLE)
-	{
-		auto mouseRay = GetMouseRay();
-
-		m_selectedActorNode.reset();
-
-		for(const auto& actorPair : m_actors)
-		{
-			const auto& actor = actorPair.second;
-			auto boundingSphere = Transform(actor->GetBoundingSphere(), actor->GetWorldTransformation());
-			auto intersectResult = Intersects(boundingSphere, mouseRay);
-			if(intersectResult.first)
-			{
-				if(m_isEmbedding)
-				{
-					Palleon::CEmbedRemoteCall rpc;
-					rpc.SetMethod("selected");
-					rpc.SetParam("actorId", std::to_string(actorPair.first));
-					Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
-				}
-				m_selectedActorNode = actor;
-				m_selectedActorId = actorPair.first;
-				break;
-			}
-		}
-
-		if(m_selectedActorNode == nullptr)
-		{
-			if(m_isEmbedding)
-			{
-				Palleon::CEmbedRemoteCall rpc;
-				rpc.SetMethod("selected");
-				rpc.SetParam("actorId", std::to_string(0));
-				Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
-			}
-		}
-	}
-	else if(m_state == STATE_TRANSLATE)
-	{
-		if(m_selectedActorNode != nullptr)
-		{
-			//Notify about the actor's new position
-			auto position = m_selectedActorNode->GetPosition();
-			Palleon::CEmbedRemoteCall rpc;
-			rpc.SetMethod("actorMoved");
-			rpc.SetParam("actorId", std::to_string(m_selectedActorId));
-			rpc.SetParam("position", MathStringUtils::ToString(position));
-			Palleon::CEmbedManager::GetInstance().NotifyClient(rpc);
-		}
-
-		m_state = STATE_IDLE;
-		m_translationGizmo->SetStickyMode(CTranslationGizmo::HITTEST_NONE);
-		m_translationMode = CTranslationGizmo::HITTEST_NONE;
-	}
-	else
-	{
-		
-	}
+void CWorldEditor::NotifyMouseWheel(int delta)
+{
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseWheel(delta);
 }
 
 void CWorldEditor::NotifyKeyDown(Palleon::KEY_CODE keyCode)
 {
-	switch(keyCode)
-	{
-	case Palleon::KEY_CODE_ARROW_UP:
-		m_mainCamera->BeginMoveForward();
-		break;
-	case Palleon::KEY_CODE_ARROW_DOWN:
-		m_mainCamera->BeginMoveBackward();
-		break;
-	case Palleon::KEY_CODE_ARROW_LEFT:
-		m_mainCamera->BeginStrafeLeft();
-		break;
-	case Palleon::KEY_CODE_ARROW_RIGHT:
-		m_mainCamera->BeginStrafeRight();
-		break;
-	}
-	
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyKeyDown(keyCode);
 }
 
 void CWorldEditor::NotifyKeyUp(Palleon::KEY_CODE keyCode)
 {
-	switch(keyCode)
-	{
-	case Palleon::KEY_CODE_ARROW_UP:
-		m_mainCamera->EndMoveForward();
-		break;
-	case Palleon::KEY_CODE_ARROW_DOWN:
-		m_mainCamera->EndMoveBackward();
-		break;
-	case Palleon::KEY_CODE_ARROW_LEFT:
-		m_mainCamera->EndStrafeLeft();
-		break;
-	case Palleon::KEY_CODE_ARROW_RIGHT:
-		m_mainCamera->EndStrafeRight();
-		break;
-	}
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyKeyUp(keyCode);
 }
 
 void CWorldEditor::NotifyInputCancelled()
 {
+	if(!m_controlScheme) return;
 	m_mainCamera->CancelInputTracking();
-}
-
-std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
-{
-	Palleon::CEmbedRemoteCall rpc(command);
-	auto method = rpc.GetMethod();
-	if(method == "SetGamePath")
-	{
-		auto gamePath = rpc.GetParam("Path");
-		CFileManager::SetGamePath(gamePath);
-		return std::string("success");
-	}
-	else if(method == "SetMap")
-	{
-		return ProcessSetMap(rpc);
-	}
-	else if(method == "CreateActor")
-	{
-		return ProcessCreateActor(rpc);
-	}
-	else if(method == "SetActorBaseModelId")
-	{
-		return ProcessSetActorBaseModelId(rpc);
-	}
-	else if(method == "SetActorPosition")
-	{
-		return ProcessSetActorPosition(rpc);
-	}
-	return std::string("failed");
-}
-
-CRay CWorldEditor::GetMouseRay() const
-{
-	auto screenSize = Palleon::CGraphicDevice::GetInstance().GetScreenSize();
-	auto screenPos = (m_mousePosition / screenSize) * 2 - CVector2(1, 1);
-	auto ray = m_mainCamera->Unproject(screenPos);
-	return ray;
-}
-
-std::string CWorldEditor::ProcessSetMap(const Palleon::CEmbedRemoteCall& rpc)
-{
-	try
-	{
-		auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
-		CreateMap(mapId);
-		return "success";
-	}
-	catch(...)
-	{
-		return "failed";
-	}
-	return "success";
-}
-
-std::string CWorldEditor::ProcessCreateActor(const Palleon::CEmbedRemoteCall& rpc)
-{
-	try
-	{
-		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
-		CreateActor(id);
-		return "success";
-	}
-	catch(...)
-	{
-		return "failed";
-	}
-}
-
-std::string CWorldEditor::ProcessSetActorBaseModelId(const Palleon::CEmbedRemoteCall& rpc)
-{
-	try
-	{
-		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
-		auto baseModelId = boost::lexical_cast<uint32>(rpc.GetParam("BaseModelId"));
-		auto actorIterator = m_actors.find(id);
-		if(actorIterator == std::end(m_actors))
-		{
-			return "failed";
-		}
-		auto& actor = actorIterator->second;
-		actor->SetBaseModelId(baseModelId);
-		return "success";
-	}
-	catch(...)
-	{
-		return "failed";
-	}
-}
-
-std::string CWorldEditor::ProcessSetActorPosition(const Palleon::CEmbedRemoteCall& rpc)
-{
-	try
-	{
-		auto id = boost::lexical_cast<uint32>(rpc.GetParam("Id"));
-		auto position = MathStringUtils::ParseVector3(rpc.GetParam("Position"));
-		auto actorIterator = m_actors.find(id);
-		if(actorIterator == std::end(m_actors))
-		{
-			return "failed";
-		}
-		auto& actor = actorIterator->second;
-		actor->SetPosition(position);
-		return "success";
-	}
-	catch(...)
-	{
-		return "failed";
-	}
 }
 
 Palleon::CApplication* CreateApplication(bool isEmbedding)

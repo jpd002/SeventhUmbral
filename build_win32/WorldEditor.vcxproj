@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\worldeditor\DebugOverlay.cpp" />
+    <ClCompile Include="..\worldeditor\EditorControlScheme.cpp" />
     <ClCompile Include="..\worldeditor\LayoutScanner.cpp" />
     <ClCompile Include="..\worldeditor\Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -96,14 +97,20 @@
     </ClCompile>
     <ClCompile Include="..\worldeditor\TouchFreeCamera.cpp" />
     <ClCompile Include="..\worldeditor\TranslationGizmo.cpp" />
+    <ClCompile Include="..\worldeditor\ViewerControlScheme.cpp" />
     <ClCompile Include="..\worldeditor\WorldEditor.cpp" />
+    <ClCompile Include="..\worldeditor\WorldEditor_Rpc.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\worldeditor\ControlScheme.h" />
     <ClInclude Include="..\worldeditor\DebugOverlay.h" />
+    <ClInclude Include="..\worldeditor\EditorControlScheme.h" />
     <ClInclude Include="..\worldeditor\LayoutScanner.h" />
     <ClInclude Include="..\worldeditor\Pch.h" />
+    <ClInclude Include="..\worldeditor\RpcDefs.h" />
     <ClInclude Include="..\worldeditor\TouchFreeCamera.h" />
     <ClInclude Include="..\worldeditor\TranslationGizmo.h" />
+    <ClInclude Include="..\worldeditor\ViewerControlScheme.h" />
     <ClInclude Include="..\worldeditor\WorldEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

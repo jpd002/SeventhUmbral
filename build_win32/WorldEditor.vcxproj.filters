@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\ControlSchemes">
+      <UniqueIdentifier>{1e5acacd-3e60-4fe9-994b-4d375eb070b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\worldeditor\Pch.cpp">
@@ -33,6 +36,15 @@
     <ClCompile Include="..\worldeditor\LayoutScanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\worldeditor\WorldEditor_Rpc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\worldeditor\EditorControlScheme.cpp">
+      <Filter>Source Files\ControlSchemes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\worldeditor\ViewerControlScheme.cpp">
+      <Filter>Source Files\ControlSchemes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\worldeditor\Pch.h">
@@ -52,6 +64,18 @@
     </ClInclude>
     <ClInclude Include="..\worldeditor\LayoutScanner.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\worldeditor\RpcDefs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\worldeditor\ControlScheme.h">
+      <Filter>Source Files\ControlSchemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\worldeditor\EditorControlScheme.h">
+      <Filter>Source Files\ControlSchemes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\worldeditor\ViewerControlScheme.h">
+      <Filter>Source Files\ControlSchemes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
