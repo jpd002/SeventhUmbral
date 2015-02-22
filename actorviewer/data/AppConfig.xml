@@ -1,6 +1,0 @@
-<Config>
-	<Preference Name="screen.width" Type="integer" Value="1024" />
-	<Preference Name="screen.height" Type="integer" Value="768" />
-	<Preference Name="window.title" Type="string" Value="Actor Viewer" />
-	<Preference Name="screen.orientation.portrait" Type="boolean" Value="true" />
-</Config>
