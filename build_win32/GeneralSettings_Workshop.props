@@ -15,7 +15,7 @@
       <AdditionalDependencies>d3d11.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Palleon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <CustomBuildStep>
       <Command>copy "$(WindowsSdkDir)redist\d3d\x86\D3DCompiler_47.DLL" "$(TargetDir)"</Command>

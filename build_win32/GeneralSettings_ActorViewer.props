@@ -12,7 +12,7 @@
       <AdditionalManifestDependencies>name='PalleonEmbedProxy' type='Win32' processorArchitecture='X86' version='1.0.0.0';%(AdditionalManifestDependencies)</AdditionalManifestDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(PALLEON_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Palleon\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>$(ProjectDir)..\actorviewer\Pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>$(ProjectDir)..\actorviewer\Pch.h</ForcedIncludeFiles>

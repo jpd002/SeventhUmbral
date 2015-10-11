@@ -4,8 +4,6 @@
   <PropertyGroup Label="UserMacros">
     <TDEMU_PATH>path_to\tdemu</TDEMU_PATH>
     <MYSQL_PATH>path_to\mysql-connector-c-6.1.1</MYSQL_PATH>
-    <FRAMEWORK_PATH>path_to\framework</FRAMEWORK_PATH>
-    <PALLEON_PATH>path_to\palleon</PALLEON_PATH>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>
@@ -14,12 +12,6 @@
     </BuildMacro>
     <BuildMacro Include="MYSQL_PATH">
       <Value>$(MYSQL_PATH)</Value>
-    </BuildMacro>
-    <BuildMacro Include="FRAMEWORK_PATH">
-      <Value>$(FRAMEWORK_PATH)</Value>
-    </BuildMacro>
-    <BuildMacro Include="PALLEON_PATH">
-      <Value>$(PALLEON_PATH)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>
