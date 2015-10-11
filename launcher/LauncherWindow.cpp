@@ -50,7 +50,7 @@ CLauncherWindow::CLauncherWindow()
 	}
 
 	{
-		auto webBrowserPlaceholder = Framework::Win32::CStatic(GetItem(IDC_WEBBROWSER_PLACEHODLER));
+		auto webBrowserPlaceholder = Framework::Win32::CStatic(GetItem(IDC_WEBBROWSER_PLACEHOLDER));
 
 		RECT placeHolderRect = webBrowserPlaceholder.GetWindowRect();
 		ScreenToClient(m_hWnd, reinterpret_cast<LPPOINT>(&placeHolderRect) + 0);
