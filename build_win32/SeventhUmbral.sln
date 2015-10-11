@@ -66,6 +66,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedClient", "..\..
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedProxy", "..\..\Palleon\build_win32\PalleonEmbedProxy.vcxproj", "{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib-1.2.8", "..\..\Dependencies\build_win32\zlib-1.2.8.vcxproj", "{55FA4E66-2FBB-4165-A9CA-D126D13879BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -124,6 +126,10 @@ Global
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}.Debug|Win32.Build.0 = Debug|Win32
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}.Release|Win32.ActiveCfg = Release|Win32
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}.Release|Win32.Build.0 = Release|Win32
+		{55FA4E66-2FBB-4165-A9CA-D126D13879BD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{55FA4E66-2FBB-4165-A9CA-D126D13879BD}.Debug|Win32.Build.0 = Debug|Win32
+		{55FA4E66-2FBB-4165-A9CA-D126D13879BD}.Release|Win32.ActiveCfg = Release|Win32
+		{55FA4E66-2FBB-4165-A9CA-D126D13879BD}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -134,5 +140,6 @@ Global
 		{F800A366-7ACB-417C-A565-801FC00ADEA1} = {874EFBC0-3D03-4459-8052-37869643DDC1}
 		{96467766-1448-43E2-9828-F05557CFC80E} = {874EFBC0-3D03-4459-8052-37869643DDC1}
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7} = {874EFBC0-3D03-4459-8052-37869643DDC1}
+		{55FA4E66-2FBB-4165-A9CA-D126D13879BD} = {874EFBC0-3D03-4459-8052-37869643DDC1}
 	EndGlobalSection
 EndGlobal
