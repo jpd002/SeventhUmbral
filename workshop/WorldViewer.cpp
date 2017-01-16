@@ -1,16 +1,14 @@
-#include "AppConfig.h"
-#include "AppPreferences.h"
 #include "WorldViewer.h"
 #include "resource.h"
-#include "palleon\EmbedRemoteCall.h"
-
 
 CWorldViewer::CWorldViewer(HWND parentWnd, uint32 mapId)
 : CDialog(MAKEINTRESOURCE(IDD_WORLDVIEWER), parentWnd)
 , m_mapId(mapId)
 {
 	SetClassPtr();
-	CreateViewer();
+	m_viewer = std::make_unique<CWorldEditorControl>(m_hWnd);
+	m_viewer->SetControlScheme(CWorldEditorControl::CONTROL_SCHEME::EDITOR);
+	m_viewer->SetMap(m_mapId);
 }
 
 CWorldViewer::~CWorldViewer()
@@ -38,41 +36,15 @@ std::string CWorldViewer::GetName() const
 
 void CWorldViewer::SetActive(bool active)
 {
-	m_embedControl->SetRunning(active);
+	m_viewer->SetActive(active);
 }
 
 long CWorldViewer::OnSize(unsigned int, unsigned int, unsigned int)
 {
 	auto rect = GetClientRect();
-	if(m_embedControl)
+	if(m_viewer)
 	{
-		m_embedControl->SetSizePosition(rect);
+		m_viewer->SetSizePosition(rect);
 	}
 	return FALSE;
-}
-
-void CWorldViewer::CreateViewer()
-{
-	assert(!m_embedControl);
-
-	TCHAR moduleFileName[_MAX_PATH];
-	GetModuleFileName(NULL, moduleFileName, _MAX_PATH);
-	boost::filesystem::path dataPath(moduleFileName);
-	dataPath.remove_leaf();
-	dataPath /= "worldeditor";
-
-	m_embedControl = std::make_shared<Palleon::CWin32EmbedControl>(m_hWnd, GetClientRect(),
-		_T("WorldEditor.exe"), dataPath.native().c_str());
-	{
-		Palleon::CEmbedRemoteCall rpc;
-		rpc.SetMethod("SetGamePath");
-		rpc.SetParam("Path", CAppConfig::GetInstance().GetPreferenceString(PREF_WORKSHOP_GAME_LOCATION));
-		m_embedControl->ExecuteCommand(rpc.ToString());
-	}
-	{
-		Palleon::CEmbedRemoteCall rpc;
-		rpc.SetMethod("SetMap");
-		rpc.SetParam("MapId", std::to_string(m_mapId));
-		auto result = m_embedControl->ExecuteCommand(rpc.ToString());
-	}
 }

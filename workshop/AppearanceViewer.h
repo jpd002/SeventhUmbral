@@ -2,11 +2,10 @@
 
 #include <unordered_map>
 #include "win32/Dialog.h"
-#include "win32/Edit.h"
 #include "win32/Splitter.h"
 #include "AppearanceViewerActorListPane.h"
-#include "AppearanceViewerActorViewPane.h"
 #include "AppearanceViewerActorInfoPane.h"
+#include "WorldEditorControl.h"
 #include "Document.h"
 
 class CAppearanceViewer : public Framework::Win32::CDialog, public IDocument
@@ -25,7 +24,7 @@ protected:
 
 private:
 	typedef std::unique_ptr<CAppearanceViewerActorListPane> ActorListPanePtr;
-	typedef std::unique_ptr<CAppearanceViewerActorViewPane> ActorViewPanePtr;
+	typedef std::unique_ptr<CWorldEditorControl> WorldEditorControlPtr;
 	typedef std::unique_ptr<CAppearanceViewerActorInfoPane> ActorInfoPanePtr;
 	typedef std::unique_ptr<Framework::Win32::CSplitter> SplitterPtr;
 
@@ -35,6 +34,6 @@ private:
 	SplitterPtr					m_subSplitter;
 
 	ActorListPanePtr			m_actorListPane;
-	ActorViewPanePtr			m_actorViewPane;
+	WorldEditorControlPtr		m_actorViewPane;
 	ActorInfoPanePtr			m_actorInfoPane;
 };

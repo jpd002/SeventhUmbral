@@ -1,14 +1,12 @@
-#include <boost/lexical_cast.hpp>
 #include "WorldEditor.h"
 #include "StdStream.h"
 #include "StdStreamUtils.h"
 #include "../dataobjects/FileManager.h"
 #include "../renderobjects/ResourceManager.h"
 #include "../renderobjects/GlobalResources.h"
-#include "../renderobjects/UmbralActor.h"
-#include "../renderobjects/UmbralMap.h"
 #include "../renderobjects/UmbralModel.h"
-#include "ActorDatabase.h"
+#include "EditorControlScheme.h"
+#include "ViewerControlScheme.h"
 
 //0x03E70001 -> Mor'dhona
 //0x25B10001 -> Some boat
@@ -31,12 +29,11 @@
 //0x92050004 -> Some beach
 
 #define MAIN_CAMERA_FOV		(M_PI / 4.f)
-#define MAIN_CAMERA_NEAR_Z	(1.0f)
-#define MAIN_CAMERA_FAR_Z	(500.f)
+#define MAIN_CAMERA_NEAR_Z	(0.01f)
+#define MAIN_CAMERA_FAR_Z	(100.f)
 
 CWorldEditor::CWorldEditor(bool isEmbedding)
-: m_elapsed(0)
-, m_mousePosition(0, 0)
+: m_isEmbedding(isEmbedding)
 {
 	CGlobalResources::GetInstance().Initialize();
 
@@ -45,19 +42,66 @@ CWorldEditor::CWorldEditor(bool isEmbedding)
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_mainViewport.get());
 	Palleon::CGraphicDevice::GetInstance().AddViewport(m_overlayViewport.get());
 
+	//m_controlScheme = std::make_shared<CViewerControlScheme>(*this);
+	m_controlScheme = std::make_shared<CEditorControlScheme>(*this);
+
 	if(!isEmbedding)
 	{
 		m_debugOverlay = std::make_shared<CDebugOverlay>();
-		//CFileManager::SetGamePath("F:\\FFXIV_10_Copy");
-		CreateMap(0xA09B0002);
+		CFileManager::SetGamePath("C:\\Program Files (x86)\\SquareEnix\\FINAL FANTASY XIV");
+//		CreateMap(0xA09B0000);
+//		CreateMap(0x29B00003);
+		CreateActor(1);
+		SetActorBaseModelId(1, 1);
+//		SetActorTopModelId(1, 0x828);
+//		SetActorPosition(1, CVector3(0, 0, -2));
+//		m_mainCamera->SetPosition(CVector3(297.f, 15.f, -551.f));
 	}
 }
 
 CWorldEditor::~CWorldEditor()
 {
+	if(m_map)
+	{
+		m_map->CancelLoading();
+	}
 	m_debugOverlay.reset();
 	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_mainViewport.get());
+	Palleon::CGraphicDevice::GetInstance().RemoveViewport(m_overlayViewport.get());
 	CGlobalResources::GetInstance().Release();
+}
+
+bool CWorldEditor::GetIsEmbedding() const
+{
+	return m_isEmbedding;
+}
+
+TouchFreeCameraPtr CWorldEditor::GetMainCamera() const
+{
+	return m_mainCamera;
+}
+
+TranslationGizmoPtr CWorldEditor::GetTranslationGizmo() const
+{
+	return m_translationGizmo;
+}
+
+Palleon::SceneNodePtr CWorldEditor::GetActorRotationNode() const
+{
+	return m_actorRotationNode;
+}
+
+UmbralActorPtr CWorldEditor::GetActor(uint32 actorId) const
+{
+	auto actorIterator = m_actors.find(actorId);
+	assert(actorIterator != std::end(m_actors));
+	auto actor = actorIterator->second;
+	return actor;
+}
+
+const CWorldEditor::ActorMap& CWorldEditor::GetActors() const
+{
+	return m_actors;
 }
 
 void CWorldEditor::CreateWorld()
@@ -67,7 +111,6 @@ void CWorldEditor::CreateWorld()
 	{
 		auto camera = CTouchFreeCamera::Create();
 		camera->SetPerspectiveProjection(MAIN_CAMERA_FOV, screenSize.x / screenSize.y, MAIN_CAMERA_NEAR_Z, MAIN_CAMERA_FAR_Z, Palleon::HANDEDNESS_RIGHTHANDED);
-		camera->SetPosition(CVector3(0, 2, 0));
 		m_mainCamera = camera;
 	}
 
@@ -78,26 +121,15 @@ void CWorldEditor::CreateWorld()
 	}
 
 	{
-		auto lightDir0 = CVector3(1, -1, 0).Normalize();
-		auto lightDir1 = CVector3(-1, -1, 0).Normalize();
+		auto lightDir0 = CVector3(0, -1, 0).Normalize();
+		auto lightDir1 = CVector3(1, -1, 0).Normalize();
 
 		m_mainViewport->SetEffectParameter("ps_ambientLightColor", Palleon::CEffectParameter(CVector4(0, 0, 0, 0)));
 		m_mainViewport->SetEffectParameter("ps_dirLightDirection0", Palleon::CEffectParameter(lightDir0));
 		m_mainViewport->SetEffectParameter("ps_dirLightDirection1", Palleon::CEffectParameter(lightDir1));
-		m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
-		m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(1.0f, 1.0f, 1.0f, 0)));
+		m_mainViewport->SetEffectParameter("ps_dirLightColor0", Palleon::CEffectParameter(CVector4(1.00f, 1.00f, 1.00f, 0)));
+		m_mainViewport->SetEffectParameter("ps_dirLightColor1", Palleon::CEffectParameter(CVector4(0.20f, 0.20f, 0.20f, 0)));
 	}
-
-	{
-		auto viewport = Palleon::CViewport::Create();
-		viewport->SetCamera(m_mainCamera);
-		m_overlayViewport = viewport;
-	}
-}
-
-void CWorldEditor::CreateMap(uint32 mapId)
-{
-	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
 	//Create skybox
 	{
@@ -108,8 +140,32 @@ void CWorldEditor::CreateMap(uint32 mapId)
 		skyBox->GetMaterial()->SetCullingMode(Palleon::CULLING_CCW);
 		skyBox->GetMaterial()->SetTexture(0, skyTexture);
 		skyBox->GetMaterial()->SetTextureCoordSource(0, Palleon::TEXTURE_COORD_CUBE_POS);
-		sceneRoot->AppendChild(skyBox);
+		m_mainViewport->GetSceneRoot()->AppendChild(skyBox);
 	}
+
+	{
+		auto viewport = Palleon::CViewport::Create();
+		viewport->SetCamera(m_mainCamera);
+		m_overlayViewport = viewport;
+	}
+
+	{
+		auto gizmo = CTranslationGizmo::Create();
+		gizmo->SetVisible(false);
+		m_overlayViewport->GetSceneRoot()->AppendChild(gizmo);
+		m_translationGizmo = gizmo;
+	}
+
+	{
+		auto node = Palleon::CSceneNode::Create();
+		m_mainViewport->GetSceneRoot()->AppendChild(node);
+		m_actorRotationNode = node;
+	}
+}
+
+void CWorldEditor::CreateMap(uint32 mapId)
+{
+	auto sceneRoot = m_mainViewport->GetSceneRoot();
 
 	{
 		auto mapLayoutPath = CFileManager::GetResourcePath(mapId);
@@ -119,93 +175,87 @@ void CWorldEditor::CreateMap(uint32 mapId)
 
 		auto map = std::make_shared<CUmbralMap>(mapLayout);
 		sceneRoot->AppendChild(map);
+		m_map = map;
 	}
-#if 0
-	{
-		auto mapLayoutPath = CFileManager::GetResourcePath(0x29D90002);
-		auto mapLayout = std::make_shared<CMapLayout>();
-		mapLayout->Read(Framework::CreateInputStdStream(mapLayoutPath.native()));
-
-		auto map = std::make_shared<CUmbralMap>(mapLayout);
-		sceneRoot->AppendChild(map);
-	}
-#endif
 }
 
-void CWorldEditor::CreateActors()
+void CWorldEditor::CreateActor(uint32 id)
 {
-	//WIP
-#if 0
+	assert(m_actors.find(id) == m_actors.end());
+
 	auto sceneRoot = m_mainViewport->GetSceneRoot();
-
-	Framework::CStdStream stream("D:\\Projects\\SeventhUmbral\\data\\ffxivd_actors.xml", "rb");
-	CActorDatabase actorDatabase = CActorDatabase::CreateFromXml(stream);
-
-	for(const auto& actorDef : actorDatabase.GetActors())
-	{
-		auto actor = std::make_shared<CUmbralActor>();
-		actor->SetBaseModelId(actorDef.baseModelId);
-		actor->SetPosition(actorDef.position);
-		sceneRoot->AppendChild(actor);
-	}
-#endif
-}
-
-void CWorldEditor::CreateBaseAxis()
-{
-	auto sceneRoot = m_overlayViewport->GetSceneRoot();
-
-	static const CVector3 g_arrowScale(0.075f, 0.25f, 0.075f);
 	
 	{
-		auto baseAxisNode = Palleon::CSceneNode::Create();
-		baseAxisNode->SetPosition(CVector3(289.2f, 5.00f, -563.f));
-		sceneRoot->AppendChild(baseAxisNode);
+		auto actor = std::make_shared<CUmbralActor>();
+		sceneRoot->AppendChild(actor);
+		m_actors.insert(std::make_pair(id, actor));
+	}
 
-		{
-			auto axisMesh = Palleon::CAxisMesh::Create();
-			axisMesh->SetScale(CVector3(1, 1, 1));
-			baseAxisNode->AppendChild(axisMesh);
-		}
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
+	}
+}
 
-		//X arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(1, 0, 0));
-			coneMesh->SetRotation(CQuaternion(CVector3(0, 0, 1), M_PI / 2.f));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(1, 0, 0, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
+void CWorldEditor::SetActorPosition(uint32 id, const CVector3& position)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		return;
+	}
+	actorIterator->second->SetPosition(position);
+}
 
-		//Y arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(0, 1, 0));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(0, 1, 0, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
+void CWorldEditor::SetActorBaseModelId(uint32 id, uint32 baseModelId)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		throw std::runtime_error("Actor doesn't exist");
+	}
+	actorIterator->second->SetBaseModelId(baseModelId);
 
-		//Z arrow
-		{
-			auto coneMesh = Palleon::CConeMesh::Create();
-			coneMesh->SetPosition(CVector3(0, 0, 1));
-			coneMesh->SetRotation(CQuaternion(CVector3(1, 0, 0), -M_PI / 2.f));
-			coneMesh->SetScale(g_arrowScale);
-			coneMesh->GetMaterial()->SetColor(CColor(0, 0, 1, 1));
-			baseAxisNode->AppendChild(coneMesh);
-		}
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
+	}
+}
+
+void CWorldEditor::SetActorTopModelId(uint32 id, uint32 topModelId)
+{
+	auto actorIterator = m_actors.find(id);
+	assert(actorIterator != std::end(m_actors));
+	if(actorIterator == std::end(m_actors))
+	{
+		throw std::runtime_error("Actor doesn't exist");
+	}
+	actorIterator->second->SetTopModelId(topModelId);
+
+	if(m_controlScheme)
+	{
+		m_controlScheme->NotifyActorChanged(id);
 	}
 }
 
 void CWorldEditor::Update(float dt)
 {
-	m_mainCamera->Update(dt);
+	if(m_controlScheme)
+	{
+		m_controlScheme->PreUpdate(dt);
+	}
+
 	m_mainViewport->GetSceneRoot()->Update(dt);
 	m_mainViewport->GetSceneRoot()->UpdateTransformations();
 	m_overlayViewport->GetSceneRoot()->Update(dt);
 	m_overlayViewport->GetSceneRoot()->UpdateTransformations();
+
+	if(m_controlScheme)
+	{
+		m_controlScheme->PostUpdate(dt);
+	}
 
 	if(m_debugOverlay)
 	{
@@ -223,141 +273,47 @@ void CWorldEditor::NotifySizeChanged()
 
 void CWorldEditor::NotifyMouseMove(int x, int y)
 {
-	m_mousePosition = CVector2(static_cast<float>(x), static_cast<float>(y));
-	m_mainCamera->UpdateDrag(m_mousePosition);
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseMove(x, y);
 }
 
 void CWorldEditor::NotifyMouseDown()
 {
-	m_mainCamera->BeginDrag(m_mousePosition);
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseDown();
 }
 
 void CWorldEditor::NotifyMouseUp()
 {
-	m_mainCamera->EndDrag();
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseUp();
+}
+
+void CWorldEditor::NotifyMouseWheel(int delta)
+{
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyMouseWheel(delta);
 }
 
 void CWorldEditor::NotifyKeyDown(Palleon::KEY_CODE keyCode)
 {
-	switch(keyCode)
-	{
-	case Palleon::KEY_CODE_ARROW_UP:
-		m_mainCamera->BeginMoveForward();
-		break;
-	case Palleon::KEY_CODE_ARROW_DOWN:
-		m_mainCamera->BeginMoveBackward();
-		break;
-	case Palleon::KEY_CODE_ARROW_LEFT:
-		m_mainCamera->BeginStrafeLeft();
-		break;
-	case Palleon::KEY_CODE_ARROW_RIGHT:
-		m_mainCamera->BeginStrafeRight();
-		break;
-	}
-	
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyKeyDown(keyCode);
 }
 
 void CWorldEditor::NotifyKeyUp(Palleon::KEY_CODE keyCode)
 {
-	switch(keyCode)
-	{
-	case Palleon::KEY_CODE_ARROW_UP:
-		m_mainCamera->EndMoveForward();
-		break;
-	case Palleon::KEY_CODE_ARROW_DOWN:
-		m_mainCamera->EndMoveBackward();
-		break;
-	case Palleon::KEY_CODE_ARROW_LEFT:
-		m_mainCamera->EndStrafeLeft();
-		break;
-	case Palleon::KEY_CODE_ARROW_RIGHT:
-		m_mainCamera->EndStrafeRight();
-		break;
-	}
+	if(!m_controlScheme) return;
+	m_controlScheme->NotifyKeyUp(keyCode);
 }
 
 void CWorldEditor::NotifyInputCancelled()
 {
+	if(!m_controlScheme) return;
 	m_mainCamera->CancelInputTracking();
 }
 
-std::string CWorldEditor::NotifyExternalCommand(const std::string& command)
-{
-	Palleon::CEmbedRemoteCall rpc(command);
-	auto method = rpc.GetMethod();
-	if(method == "SetGamePath")
-	{
-		auto gamePath = rpc.GetParam("Path");
-		CFileManager::SetGamePath(gamePath);
-		return std::string("success");
-	}
-	if(method == "SetMap")
-	{
-		try
-		{
-			auto mapId = boost::lexical_cast<uint32>(rpc.GetParam("MapId"));
-			CreateMap(mapId);
-//			CreateActors();
-//			CreateBaseAxis();
-			return "success";
-		}
-		catch(...)
-		{
-			return "failed";
-		}
-		return "success";
-	}
-	return std::string("failed");
-}
-
-//#define _SCAN_LAYOUTS
-
-#ifdef _SCAN_LAYOUTS
-
-#include <Windows.h>
-#include "string_format.h"
-
-bool IsFileMapLayout(const boost::filesystem::path& filePath)
-{
-	auto inputStream = Framework::CreateInputStdStream(filePath.string());
-
-	uint8 header[0x10];
-	inputStream.Read(header, 0x10);
-	if(header[0] == 0x4D && header[1] == 0x61 && header[2] == 0x70 && header[3] == 0x4C)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void AnalyseDirectory(const boost::filesystem::path& directoryPath)
-{
-	for(boost::filesystem::directory_iterator pathIterator(directoryPath); 
-		pathIterator != boost::filesystem::directory_iterator(); pathIterator++)
-	{
-		const auto& path = *pathIterator;
-		if(boost::filesystem::is_directory(path))
-		{
-			AnalyseDirectory(path);
-			continue;
-		}
-		bool result = IsFileMapLayout(path);
-		if(result)
-		{
-			OutputDebugStringA(string_format("Found MapLayout File: '%s'...\r\n", path.path().string().c_str()).c_str());
-		}
-	}
-}
-
-#endif
-
 Palleon::CApplication* CreateApplication(bool isEmbedding)
 {
-#ifdef _SCAN_LAYOUTS
-	AnalyseDirectory(CFileManager::GetGamePath());
-#endif
 	return new CWorldEditor(isEmbedding);
 }

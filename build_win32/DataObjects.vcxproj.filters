@@ -19,6 +19,12 @@
     <Filter Include="Source Files\sections">
       <UniqueIdentifier>{e654f67f-1b27-472c-8423-de6a25d33050}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\server">
+      <UniqueIdentifier>{cc664758-7859-4333-a29a-8d75b9256dfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\itemvar">
+      <UniqueIdentifier>{1673dc53-49ed-48a5-a3a4-544dbe7d615d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dataobjects\sections\BaseSection.cpp">
@@ -131,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="..\dataobjects\chunks\PgrpChunk.cpp">
       <Filter>Source Files\chunks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\server\ZoneDefinition.cpp">
+      <Filter>Source Files\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dataobjects\itemvar\TexPathVars.cpp">
+      <Filter>Source Files\itemvar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +259,21 @@
     </ClInclude>
     <ClInclude Include="..\dataobjects\chunks\PgrpChunk.h">
       <Filter>Source Files\chunks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\server\ZoneDefinition.h">
+      <Filter>Source Files\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\itemvar\EquipVars.h">
+      <Filter>Source Files\itemvar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\itemvar\ItemVars.h">
+      <Filter>Source Files\itemvar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\itemvar\WeaponVars.h">
+      <Filter>Source Files\itemvar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dataobjects\itemvar\TexPathVars.h">
+      <Filter>Source Files\itemvar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

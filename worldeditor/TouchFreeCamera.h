@@ -33,6 +33,12 @@ public:
 	void						BeginStrafeRight();
 	void						EndStrafeRight();
 
+	void						BeginMoveUp();
+	void						EndMoveUp();
+
+	void						BeginMoveDown();
+	void						EndMoveDown();
+
 	void						BeginDrag(const CVector2&);
 	void						UpdateDrag(const CVector2&);
 	void						EndDrag();
@@ -44,6 +50,8 @@ private:
 	bool						m_isMovingBackward = false;
 	bool						m_isStrafingLeft = false;
 	bool						m_isStrafingRight = false;
+	bool						m_isMovingUp = false;
+	bool						m_isMovingDown = false;
 	bool						m_isDragging = false;
 
 	float						m_cameraHAngle = 0;

@@ -4,6 +4,8 @@
 #include "win32/Dialog.h"
 #include "win32/Tab.h"
 
+class IDocument;
+
 class CMainWindow : public Framework::Win32::CDialog
 {
 public:
@@ -25,13 +27,18 @@ private:
 	void						LoadWindowRect();
 	void						SaveWindowRect();
 	void						Destroy();
+
+	void						SaveCurrentDocument();
+
 	void						ShowWelcomePage();
+	void						ShowZoneEditor();
 	void						ShowAppearanceViewer();
 	void						ShowWorldViewer(uint32);
 	void						ShowSheetViewer(uint32);
 	void						ShowAbout();
 
 	void						InsertDocument(DocumentPtr&&);
+	void						OnDocumentStateChanged();
 	void						UpdateLayout();
 
 	void						SelectTab(int);

@@ -9,7 +9,7 @@ public:
 									CDx11UmbralEffect(ID3D11Device*, ID3D11DeviceContext*, const CD3DShader&, const CD3DShader&, bool);
 	virtual							~CDx11UmbralEffect();
 
-	virtual void					UpdateConstants(const Palleon::DX11VIEWPORT_PARAMS&, Palleon::CMaterial*, const CMatrix4&) override;
+	virtual void					UpdateConstants(const Palleon::VIEWPORT_PARAMS&, Palleon::CMaterial*, const CMatrix4&) override;
 
 private:
 	virtual D3D11InputLayoutPtr		CreateInputLayout(const Palleon::VERTEX_BUFFER_DESCRIPTOR&) override;
@@ -28,6 +28,9 @@ private:
 	uint32							m_vertexOcclusionScaleOffset = -1;
 	uint32							m_vertexColorBiasOffset = -1;
 
+	uint32							m_uvOfs0Offset = -1;
+	uint32							m_uvOfs1Offset = -1;
+
 	uint32							m_pointLightColorsOffset = -1;
 	uint32							m_pointLightParamsOffset = -1;
 	uint32							m_pointLightPositionsOffset = -1;
@@ -45,6 +48,7 @@ private:
 	uint32							m_modulateColorOffset = -1;
 	uint32							m_ambientColorOffset = -1;
 	uint32							m_diffuseColorOffset = -1;
+	uint32							m_diffuseScaleOffset = -1;
 	uint32							m_specularColorOffset = -1;
 	uint32							m_shininessOffset = -1;
 	uint32							m_reflectivityOffset = -1;

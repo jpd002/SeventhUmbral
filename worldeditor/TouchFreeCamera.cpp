@@ -46,6 +46,12 @@ void CTouchFreeCamera::Update(float dt)
 		float direction = m_isMovingForward ? (-1.0f) : (1.0f);
 		m_cameraPosition += (forwardVector * direction * MOVE_SPEED * dt);
 	}
+	if(m_isMovingUp || m_isMovingDown)
+	{
+		CVector3 upVector = CVector3(0, 1, 0) * rotationMatrix;
+		float direction = m_isMovingUp ? (-1.0f) : (1.0f);
+		m_cameraPosition += (upVector * direction * MOVE_SPEED * dt);
+	}
 
 	CMatrix4 translationMatrix(CMatrix4::MakeTranslation(-m_cameraPosition.x, -m_cameraPosition.y, -m_cameraPosition.z));
 	CMatrix4 totalMatrix = translationMatrix * rotationMatrix;
@@ -75,50 +81,74 @@ void CTouchFreeCamera::SetVerticalAngle(float vAngle)
 
 void CTouchFreeCamera::BeginMoveForward()
 {
-	assert(!m_isMovingForward);
+//	assert(!m_isMovingForward);
 	m_isMovingForward = true;
 }
 
 void CTouchFreeCamera::EndMoveForward()
 {
-	assert(m_isMovingForward);
+//	assert(m_isMovingForward);
 	m_isMovingForward = false;
 }
 
 void CTouchFreeCamera::BeginMoveBackward()
 {
-	assert(!m_isMovingBackward);
+//	assert(!m_isMovingBackward);
 	m_isMovingBackward = true;
 }
 
 void CTouchFreeCamera::EndMoveBackward()
 {
-	assert(m_isMovingBackward);
+//	assert(m_isMovingBackward);
 	m_isMovingBackward = false;
 }
 
 void CTouchFreeCamera::BeginStrafeLeft()
 {
-	assert(!m_isStrafingLeft);
+//	assert(!m_isStrafingLeft);
 	m_isStrafingLeft = true;
 }
 
 void CTouchFreeCamera::EndStrafeLeft()
 {
-	assert(m_isStrafingLeft);
+//	assert(m_isStrafingLeft);
 	m_isStrafingLeft = false;
 }
 
 void CTouchFreeCamera::BeginStrafeRight()
 {
-	assert(!m_isStrafingRight);
+//	assert(!m_isStrafingRight);
 	m_isStrafingRight = true;
 }
 
 void CTouchFreeCamera::EndStrafeRight()
 {
-	assert(m_isStrafingRight);
+//	assert(m_isStrafingRight);
 	m_isStrafingRight = false;
+}
+
+void CTouchFreeCamera::BeginMoveUp()
+{
+//	assert(!m_isMovingUp);
+	m_isMovingUp = true;
+}
+
+void CTouchFreeCamera::EndMoveUp()
+{
+//	assert(m_isMovingUp);
+	m_isMovingUp = false;
+}
+
+void CTouchFreeCamera::BeginMoveDown()
+{
+//	assert(!m_isMovingDown);
+	m_isMovingDown = true;
+}
+
+void CTouchFreeCamera::EndMoveDown()
+{
+//	assert(m_isMovingDown);
+	m_isMovingDown = false;
 }
 
 void CTouchFreeCamera::BeginDrag(const CVector2& mousePosition)
@@ -148,4 +178,6 @@ void CTouchFreeCamera::CancelInputTracking()
 	m_isMovingBackward = false;
 	m_isStrafingLeft = false;
 	m_isStrafingRight = false;
+	m_isMovingUp = false;
+	m_isMovingDown = false;
 }

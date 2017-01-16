@@ -3,6 +3,39 @@
 
 CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 {
+	m_initThread = std::thread([&, mapLayout] () { InitializeMap(mapLayout); } );
+}
+
+CUmbralMap::~CUmbralMap()
+{
+	CancelLoading();
+}
+
+void CUmbralMap::GetMeshes(Palleon::MeshArray& meshes, const Palleon::CCamera* camera)
+{
+	std::lock_guard<std::mutex> instancesLock(m_instancesMutex);
+	auto cameraFrustum = camera->GetFrustum();
+	for(const auto& instance : m_instances)
+	{
+		auto boundingSphere = instance->GetWorldBoundingSphere();
+		if(cameraFrustum.Intersects(boundingSphere))
+		{
+			meshes.push_back(instance.get());
+		}
+	}
+}
+
+void CUmbralMap::CancelLoading()
+{
+	if(m_initThread.joinable())
+	{
+		m_loadingCanceled = true;
+		m_initThread.join();
+	}
+}
+
+void CUmbralMap::InitializeMap(const MapLayoutPtr& mapLayout)
+{
 	for(const auto& resourceItem : mapLayout->GetResourceItems())
 	{
 		if(resourceItem.type == '\0trb' || resourceItem.type == '\0txb')
@@ -11,18 +44,15 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 		}
 	}
 
-	const auto& layoutNodes = mapLayout->GetLayoutNodes();
+	auto instancesToBuild = GetInstancesToBuild(mapLayout);
+	CreateInstances(mapLayout, instancesToBuild);
+}
 
-	//Build bg parts
-	for(const auto& nodePair : layoutNodes)
-	{
-		if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(nodePair.second))
-		{
-			auto bgPartObject = CreateBgPartObject(mapLayout, bgPartObjectNode);
-			assert(bgPartObject);
-			m_bgPartObjects.insert(std::make_pair(nodePair.first, bgPartObject));
-		}
-	}
+CUmbralMap::InstanceInfoMap CUmbralMap::GetInstancesToBuild(const MapLayoutPtr& mapLayout)
+{
+	InstanceInfoMap instancesToBuild;
+
+	const auto& layoutNodes = mapLayout->GetLayoutNodes();
 
 	for(const auto& nodePair : layoutNodes)
 	{
@@ -46,46 +76,62 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 					auto refNode = refNodeIterator->second;
 					if(auto bgPartsBaseObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 					{
-						auto bgPartObjectIterator = m_bgPartObjects.find(item.nodePtr);
-						assert(bgPartObjectIterator != std::end(m_bgPartObjects));
-						if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
-
-						auto tempNode = Palleon::CSceneNode::Create();
-						tempNode->AppendChild(bgPartObjectIterator->second);
-						tempNode->SetPosition(instancePosition);
-						tempNode->SetRotation(instanceRotY);
-						tempNode->UpdateTransformations();
-						tempNode->TraverseNodes(
-							[&] (const Palleon::SceneNodePtr& node)
-							{
-								if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
-								{
-									auto instance = mesh->CreateInstance();
-									m_instances.push_back(instance);
-								}
-								return true;
-							}
-						);
+						INSTANCE_INFO instanceInfo;
+						instanceInfo.position	= instancePosition;
+						instanceInfo.rotation	= instanceRotY;
+						instancesToBuild.insert(std::make_pair(item.nodePtr, instanceInfo));
 					}
 				}
 			}
 			else if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(refNode))
 			{
-				auto bgPartObjectIterator = m_bgPartObjects.find(refNodeIterator->first);
-				assert(bgPartObjectIterator != std::end(m_bgPartObjects));
-				if(bgPartObjectIterator == std::end(m_bgPartObjects)) continue;
+				INSTANCE_INFO instanceInfo;
+				instanceInfo.position	= instancePosition;
+				instanceInfo.rotation	= instanceRotY;
+				instancesToBuild.insert(std::make_pair(refNodeIterator->first, instanceInfo));
+			}
+		}
+	}
+
+	return std::move(instancesToBuild);
+}
+
+void CUmbralMap::CreateInstances(const MapLayoutPtr& mapLayout, const InstanceInfoMap& instancesToBuild)
+{
+	auto sharedContext = Palleon::CGraphicDevice::GetInstance().CreateSharedContext();
+
+	const auto& layoutNodes = mapLayout->GetLayoutNodes();
+
+	//Build bg parts
+	for(const auto& nodePair : layoutNodes)
+	{
+		if(auto bgPartObjectNode = std::dynamic_pointer_cast<CMapLayout::BGPARTS_BASE_OBJECT_NODE>(nodePair.second))
+		{
+			if(m_loadingCanceled) return;
+
+			auto bgPartObject = CreateBgPartObject(mapLayout, bgPartObjectNode);
+			assert(bgPartObject);
+			m_bgPartObjects.insert(std::make_pair(nodePair.first, bgPartObject));
+
+			auto instancesBegin = instancesToBuild.lower_bound(nodePair.first);
+			auto instancesEnd = instancesToBuild.upper_bound(nodePair.first);
+
+			for(auto instanceIterator = instancesBegin;
+				instanceIterator != instancesEnd; instanceIterator++)
+			{
+				const auto& instanceInfo(instanceIterator->second);
 
 				auto tempNode = Palleon::CSceneNode::Create();
-				tempNode->AppendChild(bgPartObjectIterator->second);
-				tempNode->SetPosition(instancePosition);
-				tempNode->SetRotation(instanceRotY);
+				tempNode->AppendChild(bgPartObject);
+				tempNode->SetPosition(instanceInfo.position);
+				tempNode->SetRotation(instanceInfo.rotation);
 				tempNode->UpdateTransformations();
-
 				tempNode->TraverseNodes(
 					[&] (const Palleon::SceneNodePtr& node)
 					{
 						if(auto mesh = std::dynamic_pointer_cast<CUmbralMesh>(node))
 						{
+							std::lock_guard<std::mutex> instancesLock(m_instancesMutex);
 							auto instance = mesh->CreateInstance();
 							m_instances.push_back(instance);
 						}
@@ -93,24 +139,8 @@ CUmbralMap::CUmbralMap(const MapLayoutPtr& mapLayout)
 					}
 				);
 			}
-		}
-	}
-}
 
-CUmbralMap::~CUmbralMap()
-{
-
-}
-
-void CUmbralMap::GetMeshes(Palleon::MeshArray& meshes, const Palleon::CCamera* camera)
-{
-	auto cameraFrustum = camera->GetFrustum();
-	for(const auto& instance : m_instances)
-	{
-		auto boundingSphere = instance->GetWorldBoundingSphere();
-		if(cameraFrustum.Intersects(boundingSphere))
-		{
-			meshes.push_back(instance.get());
+			sharedContext->Flush();
 		}
 	}
 }
