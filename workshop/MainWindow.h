@@ -26,7 +26,7 @@ private:
 
 	void						LoadWindowRect();
 	void						SaveWindowRect();
-	void						Destroy();
+	unsigned int				Destroy() override;
 
 	void						SaveCurrentDocument();
 

@@ -189,7 +189,7 @@ void CMainWindow::SaveWindowRect()
 	CAppConfig::GetInstance().SetPreferenceBoolean(PREF_MAINWINDOW_MAXIMIZED, windowPlacement.showCmd == SW_SHOWMAXIMIZED);
 }
 
-void CMainWindow::Destroy()
+unsigned int CMainWindow::Destroy()
 {
 	for(const auto& documentPair : m_documents)
 	{
@@ -197,7 +197,7 @@ void CMainWindow::Destroy()
 	}
 	m_documents.clear();
 	SaveWindowRect();
-	CWindow::Destroy();
+	return CWindow::Destroy();
 }
 
 void CMainWindow::SaveCurrentDocument()
