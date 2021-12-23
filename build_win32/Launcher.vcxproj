@@ -14,12 +14,13 @@
     <ProjectGuid>{DF41EE7B-C688-4495-96EA-B1B5D7486A79}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Launcher</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140_xp</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -54,10 +55,13 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>Pch.h</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(TDEMU_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(TDEMU_PATH);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest />
     <PostBuildEvent />
@@ -117,10 +121,10 @@
     <ClCompile Include="..\launcher\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Dependencies\build_win32\zlib-1.2.8.vcxproj">
+    <ProjectReference Include="..\sub_modules\Dependencies\build_win32\zlib-1.2.8.vcxproj">
       <Project>{55fa4e66-2fbb-4165-a9ca-d126d13879bd}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\Framework\build_win32\Framework.vcxproj">
+    <ProjectReference Include="..\sub_modules\Framework\build_win32\Framework.vcxproj">
       <Project>{553ce050-a97e-4e6e-ae84-057a1f0fa45d}</Project>
     </ProjectReference>
   </ItemGroup>

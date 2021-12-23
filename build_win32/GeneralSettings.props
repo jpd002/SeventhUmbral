@@ -11,7 +11,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\Dependencies\zlib-1.2.8;..\..\Framework\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\sub_modules\Dependencies\zlib-1.2.8;..\sub_modules\Framework\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
   </ItemDefinitionGroup>

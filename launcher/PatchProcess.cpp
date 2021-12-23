@@ -56,7 +56,7 @@ void CPatchProcess::PatchGame()
 	}
 
 	auto gameLocationPath = Utils::GetGameLocationPathFromSettings();
-	CPatcherWindow patcherWindow(gameLocationPath, patchDownloadLocationPath);
+	CPatcherWindow patcherWindow(gameLocationPath, patchDownloadLocationPath.c_str());
 	patcherWindow.DoModal();
 }
 

@@ -8,7 +8,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Launcher", "Launcher.vcxpro
 		{553CE050-A97E-4E6E-AE84-057A1F0FA45D} = {553CE050-A97E-4E6E-AE84-057A1F0FA45D}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "..\..\Framework\build_win32\Framework.vcxproj", "{553CE050-A97E-4E6E-AE84-057A1F0FA45D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Framework", "..\sub_modules\Framework\build_win32\Framework.vcxproj", "{553CE050-A97E-4E6E-AE84-057A1F0FA45D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Daemon", "Daemon.vcxproj", "{5E47C890-818C-402E-AAEF-48A40210BF1B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,11 +18,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Daemon", "Daemon.vcxproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketUnpacker", "..\tools\PacketUnpacker\PacketUnpacker.csproj", "{AB3566EA-EF04-4CD3-B8E1-502BAC419588}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameworkMySql", "..\..\Framework\build_win32\FrameworkMySql.vcxproj", "{DE7EC936-F8A7-4A7A-85E2-5D0439365F21}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameworkMySql", "..\sub_modules\Framework\build_win32\FrameworkMySql.vcxproj", "{DE7EC936-F8A7-4A7A-85E2-5D0439365F21}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataObjects", "DataObjects.vcxproj", "{BFED163D-CE5B-42B9-A9FE-2153FB4AE163}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Palleon", "..\..\Palleon\build_win32\Palleon.vcxproj", "{F800A366-7ACB-417C-A565-801FC00ADEA1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Palleon", "..\sub_modules\Palleon\build_win32\Palleon.vcxproj", "{F800A366-7ACB-417C-A565-801FC00ADEA1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7} = {D1E15A24-D97F-452A-8A32-069F4B5BDBA7}
 	EndProjectSection
@@ -49,14 +49,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Workshop", "Workshop.vcxpro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{874EFBC0-3D03-4459-8052-37869643DDC1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedClient", "..\..\Palleon\build_win32\PalleonEmbedClient.vcxproj", "{96467766-1448-43E2-9828-F05557CFC80E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedClient", "..\sub_modules\Palleon\build_win32\PalleonEmbedClient.vcxproj", "{96467766-1448-43E2-9828-F05557CFC80E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D1E15A24-D97F-452A-8A32-069F4B5BDBA7} = {D1E15A24-D97F-452A-8A32-069F4B5BDBA7}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedProxy", "..\..\Palleon\build_win32\PalleonEmbedProxy.vcxproj", "{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PalleonEmbedProxy", "..\sub_modules\Palleon\build_win32\PalleonEmbedProxy.vcxproj", "{D1E15A24-D97F-452A-8A32-069F4B5BDBA7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib-1.2.8", "..\..\Dependencies\build_win32\zlib-1.2.8.vcxproj", "{55FA4E66-2FBB-4165-A9CA-D126D13879BD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib-1.2.8", "..\sub_modules\Dependencies\build_win32\zlib-1.2.8.vcxproj", "{55FA4E66-2FBB-4165-A9CA-D126D13879BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
