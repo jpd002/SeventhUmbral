@@ -1,0 +1,9 @@
+[submodule "sub_modules/Dependencies"]
+	path = sub_modules/Dependencies
+	url = https://github.com/jpd002/Play-Dependencies.git
+[submodule "sub_modules/Framework"]
+	path = sub_modules/Framework
+	url = https://github.com/jpd002/Play--Framework.git
+[submodule "sub_modules/Palleon"]
+	path = sub_modules/Palleon
+	url = https://github.com/jpd002/Palleon.git

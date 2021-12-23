@@ -1,5 +1,5 @@
 #pragma once
-
+#pragma comment (lib, "Shlwapi.lib")
 class CLauncher
 {
 public:

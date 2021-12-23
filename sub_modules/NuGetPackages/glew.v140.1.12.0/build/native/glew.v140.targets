@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="glew_v140_init">
+  <PropertyGroup Label="Debug and static and RuntimeLibraryNull" Condition="( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 ) And '$(Linkage-glew_v140.ToLower())' == 'static' And ('$(RuntimeLibrary)' == '')">
+    <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+  </PropertyGroup>
+  <PropertyGroup Label="Release and static and RuntimeLibraryNull" Condition="( $(Configuration.ToLower().IndexOf('debug')) == -1 ) And '$(Linkage-glew_v140.ToLower())' == 'static' And ('$(RuntimeLibrary)' == '')">
+    <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+  </PropertyGroup>
+  <PropertyGroup Label="Default initializers for properties">
+    <Linkage-glew_v140 Condition="'$(Linkage-glew_v140)' == ''">dynamic</Linkage-glew_v140>
+    <CallingConvention-glew_v140 Condition="'$(CallingConvention-glew_v140)' == ''">cdecl</CallingConvention-glew_v140>
+  </PropertyGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\default-propertiesui.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\glew.v140-propertiesui-4fd2a020-b12c-4517-aede-2048c42ff480.xml" />
+  </ItemGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="static" Condition="'$(Linkage-glew_v140.ToLower())' == 'static'">
+    <ClCompile>
+      <RuntimeLibrary>$(RuntimeLibrary)</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and Release" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Release\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and Debug" Condition="'$(Platform.ToLower())' == 'win32' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\Debug\glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and Release" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Release\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and Debug" Condition="'$(Platform.ToLower())' == 'x64' And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\Debug\glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <UsingTask TaskName="glew_v140_Contains" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Text Output="false" ParameterType="System.String" />
+      <Library Output="false" Required="true" ParameterType="System.String" />
+      <Value Output="false" Required="true" ParameterType="System.String" />
+      <Result Output="true" ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code>Result = ((Text ?? "").Split(';').Contains(Library) ) ? Value : String.Empty;</Code>
+    </Task>
+  </UsingTask>
+  <Target Name="glew_v140_init">
+    <glew_v140_Contains Text="Linkage-dynamic" Library="glew_v140" Value="dynamic" Condition="'$(Linkage-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="Linkage-static" Library="glew_v140" Value="static" Condition="'$(Linkage-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="Linkage-ltcg" Library="glew_v140" Value="ltcg" Condition="'$(Linkage-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="Linkage-sxs" Library="glew_v140" Value="sxs" Condition="'$(Linkage-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="CallingConvention-cdecl" Library="glew_v140" Value="cdecl" Condition="'$(CallingConvention-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="CallingConvention-stdcall" Library="glew_v140" Value="stdcall" Condition="'$(CallingConvention-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="CallingConvention-fastcall" Library="glew_v140" Value="fastcall" Condition="'$(CallingConvention-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="CallingConvention-thiscall" Library="glew_v140" Value="thiscall" Condition="'$(CallingConvention-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-glew_v140" />
+    </glew_v140_Contains>
+    <glew_v140_Contains Text="CallingConvention-clrcall" Library="glew_v140" Value="clrcall" Condition="'$(CallingConvention-glew_v140)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-glew_v140" />
+    </glew_v140_Contains>
+  </Target>
+</Project>
