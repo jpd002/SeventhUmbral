@@ -109,10 +109,25 @@ void CLauncher::Launch(const char* workingDirectory, const char* lobbyHostName, 
 
 	PROCESS_INFORMATION procInfo = { 0 };
 
-
+	SYSTEM_INFO siSysInfo;
+	GetSystemInfo(&siSysInfo);
+	BOOL isMorethanSixteenThreads = false;
 	KAFFINITY affinity = 0x00000000000000FF;
-	HANDLE currentProcess = GetCurrentProcess();
-	SetProcessAffinityMask(currentProcess, affinity);
+
+
+	if (siSysInfo.dwNumberOfProcessors >= 16 )
+	{
+		isMorethanSixteenThreads = true;
+	}
+
+
+	if (isMorethanSixteenThreads)
+	{
+		
+		HANDLE currentProcess = GetCurrentProcess();
+		SetProcessAffinityMask(currentProcess, affinity);
+	}
+	
 
 	BOOL processCreated = CreateProcessA(NULL, completeCommandLine, NULL, NULL, FALSE, CREATE_SUSPENDED | NORMAL_PRIORITY_CLASS, NULL, workingDirectory, &startupInfo, &procInfo);
 	if(!processCreated)
@@ -131,25 +146,32 @@ void CLauncher::Launch(const char* workingDirectory, const char* lobbyHostName, 
 		throw;
 	}
 
-	SetProcessAffinityMask(procInfo.hProcess, affinity);
-	wchar_t selfdir[MAX_PATH] = { 0 };
-	GetModuleFileName(NULL, selfdir, MAX_PATH);
-	PathRemoveFileSpec(selfdir);
+	if (isMorethanSixteenThreads)
+	{
+		SetProcessAffinityMask(procInfo.hProcess, affinity);
+		wchar_t selfdir[MAX_PATH] = { 0 };
+		GetModuleFileName(NULL, selfdir, MAX_PATH);
+		PathRemoveFileSpec(selfdir);
 
-	std::wstring dllPath = std::wstring(selfdir) + TEXT("\\AffinityInjector.dll");
+		std::wstring dllPath = std::wstring(selfdir) + TEXT("\\AffinityInjector.dll");
 
 
-	if (InjectDll(dllPath.c_str(), procInfo)) {
-		printf("Dll was successfully injected.\n");
+		if (InjectDll(dllPath.c_str(), procInfo)) {
+			printf("Dll was successfully injected.\n");
+		}
+		else {
+			printf("Terminating the Injector app...");
+		}
+	}else
+	{
+		ResumeThread(procInfo.hThread);
+
+		CloseHandle(procInfo.hProcess);
+		CloseHandle(procInfo.hThread);	
 	}
-	else {
-		printf("Terminating the Injector app...");
-	}
+	
 
-	//ResumeThread(procInfo.hThread);
-
-	//CloseHandle(procInfo.hProcess);
-	//CloseHandle(procInfo.hThread);
+	
 }
 
 
