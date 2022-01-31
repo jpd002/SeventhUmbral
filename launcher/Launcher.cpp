@@ -77,7 +77,7 @@ void CLauncher::Launch(const char* workingDirectory, const char* lobbyHostName, 
 
 	char commandLine[1024];
 	uint32 currentTickCount = GetTickCount();
-	sprintf(commandLine, " T =%d /LANG =en-us /REGION =2 /SERVER_UTC =1356916742 /SESSION_ID =%s", currentTickCount, sessionId);
+	sprintf(commandLine, " T =%u /LANG =en-us /REGION =2 /SERVER_UTC =1356916742 /SESSION_ID =%s", currentTickCount, sessionId);
 
 	char encryptionKey[9];
 	sprintf(encryptionKey, "%0.8x", currentTickCount & ~0xFFFF);
